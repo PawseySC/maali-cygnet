@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
 MAALI_URL="http://www.python.org/ftp/python/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.xz"
