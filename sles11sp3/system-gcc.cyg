@@ -23,4 +23,15 @@ MAALI_TOOL_VERSION=`gcc -v 2>&1 | grep 'gcc version' | cut -d ' ' -f 3`
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='gcc'
 
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='gcc'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_CC='gcc'
+MAALI_MODULE_SET_CXX='g++'
+MAALI_MODULE_SET_FC='gfortran'
+MAALI_MODULE_SET_F77='gfortran'
+MAALI_MODULE_SET_F90='gfortran'
+MAALI_MODULE_SET_F95='gfortran'
+MAALI_MODULE_SET_F9X='gfortran'
+
 ##############################################################################
