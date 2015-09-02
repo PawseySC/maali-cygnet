@@ -8,6 +8,9 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 # URL to download the source code from
 MAALI_URL="http://www.hdfgroup.org/ftp/HDF/releases/HDF$MAALI_TOOL_VERSION/src/hdf-$MAALI_TOOL_VERSION.tar.bz2"
 
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/hdf-$MAALI_TOOL_VERSION.tar.bz2"
 
