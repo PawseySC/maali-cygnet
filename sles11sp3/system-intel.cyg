@@ -17,7 +17,10 @@ MAALI_TOOL_BUILD_DIR=""
 # this only creates a module file
 MAALI_REMODULE=1
 
-if [ -d /ivec/intel/15.0.0 ]; then
+if [ -d /pawsey/intel/15.0.3 ]; then
+  MAALI_TOOL_VERSION='15.0.3'
+  MAALI_INSTALL_DIR='/pawsey/intel/15.0.3'
+elif [ -d /ivec/intel/15.0.0 ]; then
   MAALI_TOOL_VERSION='15.0.0'
   MAALI_INSTALL_DIR='/ivec/intel/15.0.0'
 fi
