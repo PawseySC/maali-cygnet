@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/wgs-assembler/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
@@ -29,9 +29,13 @@ function maali_build {
     sed -i -e 's/gcc/icc/g' kmer/Make.compilers
     sed -i -e 's/g++/icpc/g' kmer/Make.compilers
 
-    sed -i -e s'/g++/icpc/g' src/c_make.as
-    sed -i -e s'/g++/icpc/g' src/c_make.gen
+    sed -i -e 's/g++/icpc/g' src/c_make.as
+    sed -i -e 's/g++/icpc/g' src/c_make.gen
+
+    sed -i -e 's/gcc/icc/g' samtools/Makefile
   fi
+
+  sed -i -e 's/-lcurses/-lncurses/g' samtools/Makefile
 
   cd kmer
   maali_run "gmake install"
@@ -40,6 +44,11 @@ function maali_build {
   cd ..
   maali_run "mkdir -p $MAALI_INSTALL_DIR/Linux-amd64/"
   maali_run "mv Linux-amd64/bin Linux-amd64/lib $MAALI_INSTALL_DIR/Linux-amd64"
+
+  # fix symbolic link
+  cd $MAALI_INSTALL_DIR/Linux-amd64/bin
+  rm -f pacBioToCA
+  ln -s PBcR pacBioToCA
 }
 
 ##############################################################################
