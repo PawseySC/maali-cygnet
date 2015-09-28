@@ -1,0 +1,78 @@
+##############################################################################
+# maali cygnet file for structure
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.6.8"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/rajanil/fastStructure/archive/master.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/master"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fastStructure-master"
+
+# prerequistes of fastStructure
+MAALI_TOOL_PREREQ="numpy/1.6.2 scipy/0.11.0 cython/0.22 gsl/1.15 matplotlib/1.4.1"
+
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_GCC"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE='bio-apps'
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+
+# copy everything from $MAALI_TOOL_BUILD_DIR/ to $MAALI_INSTALL_DIR/lib/python2.6/site-packages to compile 
+# because some files in the vars/ subdirectory are needed when running 
+# and 'python setup.py build_ext --build-lib=$MAALI_INSTALL_DIR/bin'
+# or 'python setup.py install --prefix=$MAALI_INSTALL_DIR'
+# wouldn't move those files to $MAALI_INSTALL_DIR/lib/python2.6/site-packages/vars
+# plus, there are not many files in total if there is any redundancy
+
+# Ergh stolen from cle52, I believe I should write this has it got hard coded paths. As no default compiler is loaded variables like MAALI_GSL_HOME is not set!
+ 
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR/lib/python2.6/site-packages'
+  maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/lib/python2.6/site-packages'
+  cd "$MAALI_INSTALL_DIR/lib/python2.6/site-packages"
+   
+  #Will fail, as it load no default GCC, so it doesn't know path of MAALI_GSL_HOME 
+  #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_GSL_HOME}/lib
+  #export CFLAGS="-I${MAALI_GSL_HOME}/include/gsl"
+  #export LDFLAGS="-L${MAALI_GSL_HOME}/lib"
+
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ivec/sles11sp3/devel/gcc/4.8.3/gsl/1.15/lib
+  export CFLAGS="-I/ivec/sles11sp3/devel/gcc/4.8.3/gsl/1.15/include"
+  export LDFLAGS="-L/ivec/sles11sp3/devel/gcc/4.8.3/gsl/1.15/lib"
+
+  cd vars/
+  maali_run 'python setup.py build_ext --inplace'
+  cd ../
+  maali_run 'python setup.py build_ext --inplace'
+
+# copy structure.py distruct.py and chooseK.py from lib/python2.6/site-packages to bin 
+# and make them executables
+
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR/bin'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/structure.py $MAALI_INSTALL_DIR/bin/'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/distruct.py $MAALI_INSTALL_DIR/bin/'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/chooseK.py $MAALI_INSTALL_DIR/bin/'
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/structure.py
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/distruct.py
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/chooseK.py
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/structure.py "
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/distruct.py "
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/chooseK.py "
+
+}
+
+##############################################################################

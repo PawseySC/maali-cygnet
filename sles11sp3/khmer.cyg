@@ -1,0 +1,35 @@
+##############################################################################
+# maali cygnet file for khmer
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/ged-lab/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+# MAALI_TOOL_TYPE="python"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="screed/0.7.1"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/3.4.1"
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+# MAALI_WIKI_TOOL_NAME=""
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+MAALI_WIKI_CATEGORY="Bioinformatics"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

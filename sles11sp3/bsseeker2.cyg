@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for BSseeker2
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="http://pellegrini.mcdb.ucla.edu/BS_Seeker2/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="pysam/0.8.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+# MAALI_WIKI_TOOL_NAME=""
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+MAALI_WIKI_CATEGORY="Bioinformatics"
+
+##############################################################################
+
+function maali_python_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  for file in `ls *.py`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+  for library in bs_align bs_index bs_utils galaxy
+  do
+    maali_run "mkdir -p $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library"
+    for file in `ls $library`
+    do
+      if [ -f "$library/$file" ]; then
+        maali_run "install -m 644 $library/$file $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/"
+      elif [ -d "$library/$file" ]; then
+        maali_run "mkdir $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/$file"
+      else
+        echo "ERROR - $library/$file is not a file or directory"
+        exit
+      fi
+    done
+  done
+
+}
+
+##############################################################################
