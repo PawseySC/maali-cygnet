@@ -7,13 +7,22 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} >= 1) 1 else 0" | bc) -eq 1 ]]; then
+   echo "$MAALI_TOOL_VERSION"
+  if [ "$MAALI_TOOL_VERSION" == "1.1" ]; then
+    MAALI_URL="https://github.com/samtools/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_VERSION.tar.gz"
+  else
     MAALI_URL="https://github.com/samtools/$MAALI_TOOL_NAME/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+  fi
 else
-    MAALI_URL="http://sourceforge.net/projects/samtools/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+  MAALI_URL="http://sourceforge.net/projects/samtools/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
 fi
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+if [ "$MAALI_TOOL_VERSION" == "1.1" ]; then
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+else
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+fi
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"

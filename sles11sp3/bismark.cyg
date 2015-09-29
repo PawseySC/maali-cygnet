@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for bismark
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.bioinformatics.babraham.ac.uk/projects/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="bowtie2/2.1.0 samtools/0.1.19"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+
+  for file in "bismark bismark2bedGraph bismark2report bismark_genome_preparation bismark_methylation_extractor deduplicate_bismark"
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+  done
+
+  for file in "bismark_sitrep.tpl Bismark_User_Guide.pdf license.txt RELEASE_NOTES.txt RRBS_Guide.pdf"
+  do
+    maali_run "install -m 644 $file $MAALI_INSTALL_DIR/bin"
+  done
+}
+
+##############################################################################
