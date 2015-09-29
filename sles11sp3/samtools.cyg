@@ -51,18 +51,31 @@ function maali_build {
   # fix for SLES11
   sed -i -e 's/lcurses/lncurses/g' Makefile
 
+  module list
+  echo $MAALI_HTSLIB_HOME
+  echo $LOADEDMODULES
+
   if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} >= 1) 1 else 0" | bc) -eq 1 ]]; then
-      # this should already be installed
-      rm -r htslib*
+      if [ "$MAALI_TOOL_VERSION" != "1.1" ]; then
+        # this should already be installed
+        rm -r htslib*
+      fi
 
       if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
           sed -i -e 's!gcc!icc!g' Makefile
       fi
 
-      sed -i -e 's!HTSDIR = htslib-1.2.1!HTSDIR = '$MAALI_HTSLIB_HOME'/include!g' Makefile
-      sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
-      sed -i -e 's!HTSLIB = $(HTSDIR)/!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/!g' Makefile
-      sed -i -e 's!BGZIP  = $(HTSDIR)/bgzip!BGZIP  = '$MAALI_HTSLIB_HOME'/bin/bgzip!g' Makefile
+      if [ "$MAALI_TOOL_VERSION" == "1.1" ]; then
+        sed -i -e 's!HTSDIR = ../htslib!HTSDIR = '$MAALI_HTSLIB_HOME'/include!g' Makefile
+        sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
+        sed -i -e 's!HTSLIB = $(HTSDIR)/libhts.a!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/libhts.a!g' Makefile
+        sed -i -e 's!BGZIP  = $(HTSDIR)/bgzip!BGZIP  = '$MAALI_HTSLIB_HOME'/bin/bgzip!g' Makefile
+      else
+        sed -i -e 's!HTSDIR = htslib-1.2.1!HTSDIR = '$MAALI_HTSLIB_HOME'/include!g' Makefile
+        sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
+        sed -i -e 's!HTSLIB = $(HTSDIR)/!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/!g' Makefile
+        sed -i -e 's!BGZIP  = $(HTSDIR)/bgzip!BGZIP  = '$MAALI_HTSLIB_HOME'/bin/bgzip!g' Makefile
+      fi
 
       maali_run "make"
       maali_run "make prefix=$MAALI_INSTALL_DIR install"

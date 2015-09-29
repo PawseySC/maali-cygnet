@@ -28,6 +28,8 @@ fi
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='intel'
 
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH='bin mkl/tools'
 MAALI_MODULE_SET_LD_LIBRARY_PATH='mkl/lib/intel64 composerxe/lib/intel64'
 MAALI_MODULE_SET_MANPATH='man/en_US'
