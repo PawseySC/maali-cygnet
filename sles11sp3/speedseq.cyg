@@ -1,0 +1,104 @@
+##############################################################################
+# maali cygnet file for speedseq
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/cc2qe/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_VERSION.tar.gz"
+
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+SPEEDSEQ_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/v//g'`
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$SPEEDSEQ_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_GCC_COMPILERS bwa/0.7.12 lumpy-sv/0.2.11 python/2.7.6 pysam/0.8.0 vawk/0.0.1 parallel/20150522 freebayes/0.9.21 root/5.34.20 bamkit/0.1 mbuffer/20140310 svtyper/0.0.2 ensembl-tools/76 numpy/1.6.2 scipy/0.11.0"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+  maali_run "install -m 755 bin/speedseq $MAALI_INSTALL_DIR/bin/"
+
+  cd src/cnvnator
+  sed -i -e 's;/include;/include/root;g' Makefile
+  sed -i -e 's;/lib;/lib/root;g' Makefile
+  sed -i -e 's;/lib/rootbam.a;/libbam.a;g' Makefile
+  sed -i -e 's/-lcurses/-lncurses/g' src/samtools/Makefile
+  maali_run "make"
+  for file in `ls bin/*`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  cat <<EOF >$MAALI_INSTALL_DIR/bin/speedseq.config
+#!/bin/bash -e
+
+# general
+SPEEDSEQ_HOME=\$MAALI_SPEEDSEQ_HOME
+SAMBAMBA=\$MAALI_SAMBAMBA_HOME/bin/sambamba
+BGZIP=\$MAALI_HTSLIB_HOME/bin/bgzip
+TABIX=\$MAALI_HTSLIB_HOME/bin/tabix
+VAWK=\$MAALI_VAWK_HOME/bin/vawk
+PARALLEL=\$MAALI_PARALLEL_HOME/bin/parallel
+PYTHON=\$MAALI_PYTHON_HOME/bin/python2.7
+
+# align
+BWA=\$MAALI_BWA_HOME/bin/bwa
+SAMBLASTER=\$MAALI_SAMBLASTER_HOME/bin/samblaster
+
+# var/somatic
+FREEBAYES=\$MAALI_FREEBAYES_HOME/bin/freebayes
+VEP=\$MAALI_ENSEMBLTOOLS_HOME/bin/variant_effect_predictor.pl
+VEP_CACHE_DIR=\$MAALI_ENSEMBLTOOLS_HOME/annotations/vep_cache
+
+# sv
+LUMPYEXPRESS=\$MAALI_LUMPYSV_HOME/bin/lumpyexpress
+LUMPY=\$MAALI_LUMPYSV_HOME/bin/lumpy
+PAIREND_DISTRO=\$MAALI_LUMPYSV_HOME/scripts/pairend_distro.py
+SVTYPER=\$MAALI_SVTYPER_HOME/bin/svtyper
+BAMGROUPREADS=\$MAALI_BAMKIT_HOME/bin/bamgroupreads.py
+BAMFILTERRG=\$MAALI_BAMKIT_HOME/bin/bamfilterrg.py
+BAMLMAALI=\$MAALI_BAMKIT_HOME/bin/bamlibs.py
+
+# CNVnator
+CNVNATOR_WRAPPER=\$SPEEDSEQ_HOME/bin/cnvnator_wrapper.py
+CNVNATOR_MULTI=\$SPEEDSEQ_HOME/bin/cnvnator-multi
+ANNOTATE_RD=\$SPEEDSEQ_HOME/bin/annotate_rd.py
+CNVNATOR_CHROMS_DIR=$SPEEDSEQ_HOME/annotations/cnvnator_chroms
+
+# re-align
+BAMTOFASTQ=\$MAALI_BAMKIT_HOME/bin/bamtofastq.py
+MBUFFER=\$MAALI_MBUFFER_HOME/bin/mbuffer
+BAMHEADRG=\$MAALI_BAMKIT_HOME/bin/bamheadrg.py
+BAMCLEANHEADER=\$MAALI_BAMKIT_HOME/bin/bamcleanheader.py
+EOF
+
+}
+
+##############################################################################

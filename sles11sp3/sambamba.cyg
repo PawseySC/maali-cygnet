@@ -1,0 +1,51 @@
+##############################################################################
+# maali cygnet file for sambamba
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/lomereiter/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="dmd/2.065.0 ldc/0.12.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "rmdir BioD"
+# this is broken
+#  maali_run "git clone https://github.com/biod/BioD"
+# BioD/bio/bam/thirdparty/msgpack.d(170): Error: template bio.bam.thirdparty.msgpack.unpack(bool withFieldName = false, Args...)(in ubyte[] buffer, ref Args args) conflicts with function bio.bam.thirdparty.msgpack.unpack at BioD/bio/bam/thirdparty/msgpack.d(149)
+# BioD/bio/bam/thirdparty/msgpack.d(184): Error: template bio.bam.thirdparty.msgpack.unpack(Type, bool withFieldName = false)(in ubyte[] buffer) conflicts with function bio.bam.thirdparty.msgpack.unpack at BioD/bio/bam/thirdparty/msgpack.d(149)
+
+  maali_run "unzip -q -q $MAALI_SRC/BioD-93ac39e.zip"
+  mv BioD* BioD
+
+  mkdir -p build/
+  maali_run "ldmd2 @sambamba-ldmd-release.rsp"
+  maali_run "gcc -Wl,--gc-sections -o build/sambamba build/sambamba.o -Lhtslib -Llz4/lib -Wl,-Bstatic -lhts -llz4 -Wl,-Bdynamic -l:libphobos2-ldc.a -l:libdruntime-ldc.a  -lrt -lpthread -lm"
+
+  maali_run "make sambamba-ldmd2-64"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 build/sambamba $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

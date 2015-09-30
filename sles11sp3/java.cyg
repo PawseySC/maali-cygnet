@@ -47,7 +47,7 @@ function maali_build {
   cd ..
   rmdir $MAALI_INSTALL_DIR
   tar zxf $MAALI_DST
-  mv jdk*MAALI_JAVA_MAJOR_VERSION*MAALI_JAVA_UPDATE_VERSION* $MAALI_INSTALL_DIR
+  mv jdk*$MAALI_JAVA_MAJOR_VERSION*$MAALI_JAVA_UPDATE_VERSION* $MAALI_INSTALL_DIR
 }
 
 ##############################################################################

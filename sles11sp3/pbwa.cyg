@@ -1,25 +1,26 @@
 ##############################################################################
-# maali cygnet file for bowtie
+# maali cygnet file for Parallel BWA
 ##############################################################################
+
+MAALI_BWA_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '-' -f 2`
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/arq5x/bedtools2/releases/download/v${MAALI_TOOL_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME_ORIG"_"$MAALI_TOOL_VERSION.zip/download"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG"_"$MAALI_TOOL_VERSION.zip"
 
 # where the unpacked source code is located
-if [ "$MAALI_TOOL_VERSION" == "2.21.0" ] ; then
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2"
-else
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2-${MAALI_TOOL_VERSION}"
-fi
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG"_"$MAALI_BWA_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -29,18 +30,14 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    sed -i -e 's!gcc!icc!g' Makefile
-    sed -i -e 's!g++!icpc!g' Makefile
+  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      sed -i -e 's/icc/gcc/g' Makefile.sgi
+      sed -i -e 's/icpc/g++/g' Makefile.sgi
   fi
 
-  maali_run "make"
+  maali_run "make -f Makefile.sgi"
   maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
-
-  for file in `ls bin/*`
-  do
-    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
-  done
+  maali_run "install -m 755 pBWA $MAALI_INSTALL_DIR/bin"
 }
 
 ##############################################################################

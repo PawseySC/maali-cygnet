@@ -1,0 +1,60 @@
+##############################################################################
+# maali cygnet file for CEGMA
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://korflab.ucdavis.edu/datasets/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="geneid/1.4.4 wise/2.2.3-rc7 hmmer/3.0 blast+/2.2.31"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_SETENV='CEGMA=$MAALI_APP_HOME'
+MAALI_MODULE_SET_SETENV='PERL5LIB=$PERL5LIB:$MAALI_INSTALL_DIR/lib'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "make"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  for file in `ls bin`
+  do
+    maali_run "install -m 755 bin/$file $MAALI_INSTALL_DIR/bin"
+  done
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/data"
+  for file in `ls data/*.*`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/data/"
+  done
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/data/hmm_profiles"
+  for file in `ls data/hmm_profiles/*.*`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/data/hmm_profiles/"
+  done
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/lib"
+  for file in `ls lib/*.*`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/"
+  done
+
+}
+
+##############################################################################

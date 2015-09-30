@@ -1,0 +1,72 @@
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.mothur.org/w/images/f/f0/Mothur.$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/Mothur.$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Mothur.source"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# Automatically overwrite __MACOSX
+export UNZIP="-o"
+
+##############################################################################
+
+function maali_build {
+
+  cd Mothur.source
+
+  # Perform gymnastics on the makefile before building
+  sed -i -e 's/USEMPI ?= no/USEMPI ?= yes/' makefile
+  sed -i -e 's/TARGET_ARCH += -arch x86_64/#TARGET_ARCH += -arch x86_64/' makefile
+  sed -i -e 's/#CXXFLAGS += -mtune=native -march=native/CXXFLAGS += -mtune=native -march=native/' makefile
+  sed -i -e 's/CXX = mpic++/CXX = mpicxx/' makefile
+
+  # Fix the broken MPI source. Did the author even bother to check that it compiled?
+  set -o noglob
+
+  patch -p0  <<EOF
+--- clustersplitcommand.cpp		2014-11-24 15:03:30.198945000 +0800
++++ clustersplitcommand.cpp.orig	2014-11-25 09:18:56.662208000 +0800
+@@ -484,7 +484,6 @@
+                     
+                 }
+                 deleteFiles = true;
+-            }
+ 		//****************** break up files between processes and cluster each file set ******************************//
+ 	#ifdef USE_MPI
+ 			////you are process 0 from above////
+@@ -715,6 +714,7 @@
+ 		#endif
+ 
+ 		return 0;
++            }
+ 	}
+ 	catch(exception& e) {
+ 		m->errorOut(e, "ClusterSplitCommand", "execute");
+EOF
+
+  set +o noglob
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "make"
+  maali_run "make install"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 mothur $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

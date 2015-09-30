@@ -1,25 +1,24 @@
 ##############################################################################
-# maali cygnet file for bowtie
+# maali cygnet file for geneid
 ##############################################################################
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/arq5x/bedtools2/releases/download/v${MAALI_TOOL_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://genome.crg.es/pub/software/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.Jan_13_2011.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.Jan_13_2011.tar.gz"
 
 # where the unpacked source code is located
-if [ "$MAALI_TOOL_VERSION" == "2.21.0" ] ; then
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2"
-else
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2-${MAALI_TOOL_VERSION}"
-fi
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -36,10 +35,13 @@ function maali_build {
 
   maali_run "make"
   maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 bin/geneid $MAALI_INSTALL_DIR/bin/"
 
-  for file in `ls bin/*`
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/param"
+
+  for file in "param/*.param"
   do
-    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/param/"
   done
 }
 
