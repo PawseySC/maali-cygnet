@@ -116,6 +116,9 @@ function maali_build {
     fi
   done
 
+/group/director100/schibeci/software/sles11sp3/build/augustus-3.0.2/auxprogs/bam2wig/Makefile:SAMTOOLS=/fs1.cm/katharina/tools/samtools/
+
+
   cd auxprogs/bam2hints
 
   sed -i -e "s;/home/mario/tools/bamtools;$MAALI_BAMTOOLS_HOME;g" Makefile
@@ -128,7 +131,7 @@ function maali_build {
   cd ../bam2wig
 
   sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
-  sed -i -e 's;LMAALI=$(SAMTOOLS)/libbam.a;LMAALI='"$BAM_ROOT"'/lib/libbam.a;' Makefile
+  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
   sed -i -e's/-lcurses/-lncurses/g' Makefile
 
   # needs the source for samtools

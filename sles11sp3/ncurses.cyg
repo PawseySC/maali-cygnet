@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for ncurses
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://ftp.gnu.org/pub/gnu/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+
+# for auto-building module fils
+
+## These are boolean options set to 1 to add to module
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+# Description of what the package/tool is.
+MAALI_MODULE_WHATIS="ncurses is a programming library providing an API, allowing the programmer to write text user interfaces in a terminal-independent manner."
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "./configure -prefix $MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################

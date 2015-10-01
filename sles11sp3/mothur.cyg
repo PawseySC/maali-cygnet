@@ -1,16 +1,20 @@
 ##############################################################################
+cygnet file for Mothur
+##############################################################################
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://www.mothur.org/w/images/f/f0/Mothur.$MAALI_TOOL_VERSION.zip"
+MAALI_MD5_FILENAME_CHAR1=`echo -n "${MAALI_TOOL_NAME_ORIG}.$MAALI_TOOL_VERSION.zip" | md5sum | cut -c 1`
+MAALI_MD5_FILENAME_CHAR12=`echo -n "${MAALI_TOOL_NAME_ORIG}.$MAALI_TOOL_VERSION.zip" | md5sum | cut -c 1,2`
+MAALI_URL="http://www.mothur.org/w/images/$MAALI_MD5_FILENAME_CHAR1/$MAALI_MD5_FILENAME_CHAR12/${MAALI_TOOL_NAME_ORIG}.$MAALI_TOOL_VERSION.zip"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/Mothur.$MAALI_TOOL_VERSION.zip"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}.$MAALI_TOOL_VERSION.zip"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Mothur.source"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}.source"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -28,7 +32,7 @@ export UNZIP="-o"
 
 function maali_build {
 
-  cd Mothur.source
+  cd ${MAALI_TOOL_NAME_ORIG}.source
 
   # Perform gymnastics on the makefile before building
   sed -i -e 's/USEMPI ?= no/USEMPI ?= yes/' makefile

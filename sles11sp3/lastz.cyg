@@ -45,6 +45,7 @@ function maali_build {
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     sed -i -e 's!gcc!icc!g' src/Makefile
   fi
+  sed -i -e 's/-Wall -Wextra -Werror/-Wall -Wextra/g' src/Makefile
 
   export LASTZ_INSTALL="$MAALI_INSTALL_DIR/bin"
   maali_run "make"

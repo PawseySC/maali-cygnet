@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/tassel${MAALI_TOOL_VERSION}_standalone"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/1.7.0_65"
+MAALI_TOOL_PREREQ="java/7u65"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

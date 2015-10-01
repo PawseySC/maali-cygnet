@@ -24,7 +24,7 @@ MAALI_TOOL_PREREQ=""
 MAALI_TOOL_BUILD_PREREQ="cmake/2.8.10.2"
 
 # for auto-building module files
-MAALI_MODULE_SET_PKGCONFIG=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 ##############################################################################
 

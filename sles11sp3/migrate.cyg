@@ -6,7 +6,11 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://popgen.sc.fsu.edu/newversions/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+  MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.0/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+else
+  MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.x/${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
@@ -33,8 +37,8 @@ function maali_build {
   maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
-  maali_run "cp conf.h src/"
-  maali_run "cp conf.h.in src/"
+#  maali_run "cp conf.h src/"
+#  maali_run "cp conf.h.in src/"
 
   sed -i -e "s/for(int i=0;i<FOUR; i++)/int i;\n for(i=0;i<FOUR;i++)/g" src/mutationmodel.c
 
@@ -51,16 +55,16 @@ function maali_build {
   sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile
   sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile.in
 
-  maali_run "cp ../../migrate-3.6.5/src/broyden.h src/"
-  maali_run "cp ../../migrate-3.6.5/src/broyden.c src/"
-  maali_run "cp ../../migrate-3.6.5/src/combroyden.h src/"
-  maali_run "cp ../../migrate-3.6.5/src/combroyden2.c src/"
-  maali_run "cp ../../migrate-3.6.5/src/gammalike.h src/"
-  maali_run "cp ../../migrate-3.6.5/src/gammalike.c src/"
-  maali_run "cp ../../migrate-3.6.5/src/profile.h src/"
-  maali_run "cp ../../migrate-3.6.5/src/profile.c src/"
-  maali_run "cp ../../migrate-3.6.5/src/joint-chains.h src/"
-  maali_run "cp ../../migrate-3.6.5/src/joint-chains.c src/"
+#  maali_run "cp ../../migrate-3.6.5/src/broyden.h src/"
+#  maali_run "cp ../../migrate-3.6.5/src/broyden.c src/"
+#  maali_run "cp ../../migrate-3.6.5/src/combroyden.h src/"
+#  maali_run "cp ../../migrate-3.6.5/src/combroyden2.c src/"
+#  maali_run "cp ../../migrate-3.6.5/src/gammalike.h src/"
+#  maali_run "cp ../../migrate-3.6.5/src/gammalike.c src/"
+#  maali_run "cp ../../migrate-3.6.5/src/profile.h src/"
+#  maali_run "cp ../../migrate-3.6.5/src/profile.c src/"
+#  maali_run "cp ../../migrate-3.6.5/src/joint-chains.h src/"
+#  maali_run "cp ../../migrate-3.6.5/src/joint-chains.c src/"
 
   maali_run "make mpis"
   maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"
