@@ -25,7 +25,7 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "mkdir $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 cap3 $MAALI_INSTALL_DIR/bin/"
   maali_run "install -m 755 formcon $MAALI_INSTALL_DIR/bin/"
 }

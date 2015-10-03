@@ -41,7 +41,7 @@ function maali_build {
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
       sed -i -e 's/CC=gcc/CC=icc/g' inc/common.mk
   fi
-  mkdir -p $MAALI_INSTALL_DIR/bin
+  makedir "$MAALI_INSTALL_DIR/bin"
 
   maali_run "make BINDIR=$MAALI_INSTALL_DIR/bin/"
 }

@@ -39,9 +39,9 @@ function maali_build {
   sed -i -e 's!BIN_DIR     := $(TOP_DIR)!BIN_DIR     := '$MAALI_INSTALL_DIR'/bin!g' Makefile
   sed -i -e 's!AUX_BIN_DIR := $(TOP_DIR)/aux_bin!AUX_BIN_DIR := '$MAALI_INSTALL_DIR'/aux_bin!g' Makefile
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/aux_bin"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/scripts"
+  makedir "$MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/aux_bin"
+  makedir "$MAALI_INSTALL_DIR/scripts"
 
   maali_run "make"
 

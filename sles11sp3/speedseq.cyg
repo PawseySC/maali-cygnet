@@ -41,7 +41,7 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
   maali_run "install -m 755 bin/speedseq $MAALI_INSTALL_DIR/bin/"
 

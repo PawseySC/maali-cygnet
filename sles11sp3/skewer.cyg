@@ -23,14 +23,14 @@ MAALI_MODULE_SET_PATH=1
 ##############################################################################
 
 function maali_unpack {
-  maali_run "mkdir $MAALI_TOOL_BUILD_DIR"
+  makedir "$MAALI_TOOL_BUILD_DIR"
 }
 
 ##############################################################################
 
 function maali_build {
 
-  maali_run "mkdir -p ${MAALI_INSTALL_DIR}/bin"
+  makedir "${MAALI_INSTALL_DIR}/bin"
   maali_run "install -m 755 ${MAALI_DST} ${MAALI_INSTALL_DIR}/bin/${MAALI_TOOL_NAME}"
 }
 

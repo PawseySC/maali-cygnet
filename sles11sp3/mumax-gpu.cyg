@@ -25,13 +25,9 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_build {
     cd $MAALI_BUILD_DIR
-# the package downloaded from MAALI_URL is not used, having MAALI_URL there is to avoid ibs 'package does not exist' error
     rm -rf ${MAALI_TOOL_MAJOR_VERSION}-${MAALI_TOOL_VERSION} 
     mkdir -p $MAALI_TOOL_BUILD_DIR
     cd $MAALI_TOOL_BUILD_DIR
-# golang searches for $GOPATH/src so make a src/ dir under $MAALI_TOOL_BUILD_DIR
-    #mkdir -p src
-# go get downloads and installs the package as well as its dependencies to $GOPATH 
     export GOPATH=$MAALI_TOOL_BUILD_DIR
     go get -u -v github.com/mumax/3/...
     cp -r $MAALI_TOOL_BUILD_DIR/bin $MAALI_INSTALL_DIR/ 

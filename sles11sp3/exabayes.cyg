@@ -38,7 +38,7 @@ function maali_build {
   cd $MAALI_TOOL_BUILD_DIR
 
   # configure and compile
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-mpi MPICXX=CC"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-mpi MPICXX=mpicxx"
   maali_run "make"
   maali_run "make install"
 }

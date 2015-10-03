@@ -35,7 +35,7 @@ function maali_unpack {
 ##############################################################################
 
 function maali_build {
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 $MAALI_DST $MAALI_INSTALL_DIR/bin/trf"
 }
 

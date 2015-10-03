@@ -33,7 +33,7 @@ function maali_build {
   maali_run "make"
 
   cd ..
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "mv bin docs inc lib LICENSE sample-run scripts *.pdf $MAALI_INSTALL_DIR"
   sed -i -e "s!/fs/szgenefinding/Glimmer3!$MAALI_INSTALL_DIR!g" $MAALI_INSTALL_DIR/scripts/*.csh
   sed -i -e "s!/fs/szgenefinding/Glimmer3!$MAALI_INSTALL_DIR!g" $MAALI_INSTALL_DIR/sample-run/*.csh

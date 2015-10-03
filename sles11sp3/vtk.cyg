@@ -58,7 +58,7 @@ function maali_cmake_build {
   maali_run "tar zxf $MAALI_TMP_SRC"
 
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run "mkdir vtk-build"
+  makedir "vtk-build"
   cd vtk-build
 
   if [[ "$MAALI_TOOL_VERSION_MAJOR" -lt "6" ]]; then

@@ -30,7 +30,7 @@ function maali_build {
   fi
 
   maali_run "make"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 bayescan_2.1 $MAALI_INSTALL_DIR/bin"
   maali_run "make clean"
 }

@@ -38,14 +38,14 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 bin/lumpy $MAALI_INSTALL_DIR/bin/"
   maali_run "install -m 755 bin/lumpyexpress $MAALI_INSTALL_DIR/bin/"
   maali_run "install -m 644 bin/lumpyexpress.config $MAALI_INSTALL_DIR/bin/"
 
   sed -i -e 's!'$MAALI_TOOL_BUILD_DIR/'!'$MAALI_INSTALL_DIR'!g' $MAALI_INSTALL_DIR/bin/lumpyexpress.config
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/scripts"
+  makedir "$MAALI_INSTALL_DIR/scripts"
   for file in `ls scripts/*.py`
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts/"

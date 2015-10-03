@@ -34,7 +34,7 @@ function maali_build {
 
   cd src/dmd
   maali_run "make -f posix.mak"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 dmd $MAALI_INSTALL_DIR/bin/"
 
   cat <<EOF >$MAALI_INSTALL_DIR/bin/dmd.conf

@@ -35,7 +35,7 @@ function maali_unpack {
     maali_wiki ".....suppressing unpack. Using VisIt build script"
 
     # create the build directory for the VisIt script and copy the script there
-    maali_run "mkdir -p $MAALI_TOOL_BUILD_DIR"
+    makedir "$MAALI_TOOL_BUILD_DIR"
     cd $MAALI_TOOL_BUILD_DIR
     cp $MAALI_DST . 
     maali_run "chmod +x ./build_$MAALI_TOOL_NAME$VISIT_VERSION"

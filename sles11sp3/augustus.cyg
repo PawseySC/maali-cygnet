@@ -72,14 +72,14 @@ function maali_build {
   maali_run "make"
 
   # binary files
-  maali_run "mkdir $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   for file in "bin/*"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
   done
 
   # perl scripts
-  maali_run "mkdir $MAALI_INSTALL_DIR/scripts"
+  makedir "$MAALI_INSTALL_DIR/scripts"
   for file in "scripts/*.pl"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts"
@@ -92,15 +92,15 @@ function maali_build {
   done
 
   # config files
-  maali_run "mkdir $MAALI_INSTALL_DIR/config"
+  makedir "$MAALI_INSTALL_DIR/config"
   for dir in `ls config`
   do
-    maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir"
+    makedir "$MAALI_INSTALL_DIR/config/$dir"
 
     if [ "$dir" == "species" ]; then
       for subdir in `ls config/$dir`
       do
-        maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir/$subdir"
+        makedir "$MAALI_INSTALL_DIR/config/$dir/$subdir"
 
         for file in "config/$dir/$subdir/*.*"
         do
@@ -143,7 +143,7 @@ function maali_build {
   cd ../checkTargetSortedness
 
   sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
-  sed -i -e 's;LMAALI=$(SAMTOOLS)/libbam.a;LMAALI='"$BAM_ROOT"'/lib/libbam.a;' Makefile
+  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
   sed -i -e's/-lcurses/-lncurses/g' Makefile
 
   # needs the source for samtools
@@ -157,7 +157,7 @@ function maali_build {
 
   sed -i -e 's;INCLUDES = -I$(BAMTOOLS)/include;INCLUDES = -I'"$MAALI_BAMTOOLS_HOME"'/include/bamtools;g' src/Makefile
   sed -i -e 's;$(BAMTOOLS)/src/toolkit;'"$MAALI_BAMTOOLS_HOME"'/src/toolkit;g' src/Makefile
-  sed -i -e 's;LMAALI = $(BAMTOOLS)/lib/libbamtools.a;LMAALI = '"$MAALI_BAMTOOLS_HOME"'/lib/bamtools/libbamtools.a;g' src/Makefile
+  sed -i -e 's;LIBS = $(BAMTOOLS)/lib/libbamtools.a;LIBS = '"$MAALI_BAMTOOLS_HOME"'/lib/bamtools/libbamtools.a;g' src/Makefile
 
   maali_run "make clean"
   maali_run "make"

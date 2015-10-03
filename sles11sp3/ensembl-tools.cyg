@@ -39,12 +39,12 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   cd scripts/variant_effect_predictor
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/annotations/vep_cache"
+  makedir "$MAALI_INSTALL_DIR/annotations/vep_cache"
   maali_run "perl INSTALL.pl -c $MAALI_INSTALL_DIR/annotations/vep_cache -a ac -s homo_sapiens -y GRCh37"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 variant_effect_predictor.pl $MAALI_INSTALL_DIR/bin"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/lib/perl5/site_perl"
+  makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl"
   maali_run "mv Bio $MAALI_INSTALL_DIR/lib/perl5/site_perl/"
 
 }

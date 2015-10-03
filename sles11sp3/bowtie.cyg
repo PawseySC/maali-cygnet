@@ -35,7 +35,7 @@ function maali_build {
   fi
 
   maali_run "make"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
 
   for file in "bowtie bowtie-inspect bowtie-build"
   do

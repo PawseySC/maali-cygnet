@@ -26,7 +26,7 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR/src"
 
   maali_run "make"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 vsearch $MAALI_INSTALL_DIR/bin/"
 }
 

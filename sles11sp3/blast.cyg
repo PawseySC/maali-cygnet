@@ -35,7 +35,7 @@ function maali_build {
   fi
 
   maali_run "./ncbi/make/makedis.csh"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR"
+  makedir "$MAALI_INSTALL_DIR"
   maali_run "mv ncbi/bin ncbi/data $MAALI_INSTALL_DIR"
 }
 

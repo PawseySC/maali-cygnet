@@ -54,7 +54,7 @@ function maali_build {
   # this is version 0.1
   git checkout 6b8c207e3fdec323c5694822fb5b7f09c2e8f3ab
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   for file in `ls *.py`
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"

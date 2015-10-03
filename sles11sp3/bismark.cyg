@@ -28,7 +28,7 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
 
   for file in "bismark bismark2bedGraph bismark2report bismark_genome_preparation bismark_methylation_extractor deduplicate_bismark"
   do

@@ -30,7 +30,7 @@ function maali_build {
   sed -i 's/#define MAX_SEQ [0-9]\+/#define MAX_SEQ 10000000/' cdhit-common.h
 
   maali_run "make openmp=yes"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "cp -v cd-hit cd-hit-est cd-hit-2d cd-hit-est-2d cd-hit-div cd-hit-454 *.pl $MAALI_INSTALL_DIR/bin"
 
 }
