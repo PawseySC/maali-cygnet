@@ -37,7 +37,7 @@ function maali_build {
   sed -i -e 's/#include "global.h"/#include <getopt.h>\n#include "global.h"/g' sparsePregraph/pregraph_sparse.cpp
 
   maali_run "make"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 SOAPdenovo-127mer $MAALI_INSTALL_DIR/bin/"
   maali_run "install -m 755 SOAPdenovo-63mer $MAALI_INSTALL_DIR/bin/"
 }

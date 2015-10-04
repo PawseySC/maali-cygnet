@@ -10,7 +10,7 @@ MAALI_URL="https://storage.googleapis.com/golang/${MAALI_TOOL_NAME}${MAALI_TOOL_
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.src.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
@@ -28,7 +28,7 @@ function maali_build {
   cp -r $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/ 
   cd $MAALI_INSTALL_DIR
   cd src
-  ./all.bash
+  maali_run "./all.bash"
 }
 
 ##############################################################################

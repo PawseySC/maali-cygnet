@@ -38,7 +38,7 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-curses"
-  maali_run "make SHLIB_LMAALI=-lncurses all shared"
+  maali_run "make SHLIB_LIBS=-lncurses all shared"
   maali_run "make install"
 }
 

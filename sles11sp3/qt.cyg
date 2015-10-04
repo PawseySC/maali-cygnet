@@ -9,6 +9,8 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
   # not true of 4.8.7
   MAALI_URL="http://download.qt.io/archive/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/qt-everywhere-opensource-src-4.8.4.tar.gz"
+  # http://anychimirror101.mirrors.tds.net/pub/Qt/archive/qt/4.8/4.8.4/qt-everywhere-opensource-src-4.8.4.tar.gz
+  # http://anychimirror101.mirrors.tds.net/pub/Qt/archive/qt/4.6/qt-everywh
 else
   MAALI_URL="http://download.qt.io/official_releases/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/single/$MAALI_TOOL_NAME-everywhere-opensource-src-$MAALI_TOOL_VERSION.tar.xz"
 fi

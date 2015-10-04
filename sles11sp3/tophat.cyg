@@ -45,7 +45,7 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   export LDFLAGS="-L$BOOST_ROOT/lib"
-  export LMAALI="-lboost_thread"
+  export LIBS="-lboost_thread"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-bam=$BAM_ROOT"
   maali_run "make"
   maali_run "make install"

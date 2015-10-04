@@ -42,7 +42,7 @@ function maali_build {
 
   cd ..
   maali_run "rm bin/glimmerhmm_linux"
-  maali_run "makedir $MAALI_INSTALL_DIR"
+  maali_run "maali_makedir $MAALI_INSTALL_DIR"
   maali_run "mv bin COPYRIGHT LICENSE README.first train trained_dir $MAALI_INSTALL_DIR"
 }
 

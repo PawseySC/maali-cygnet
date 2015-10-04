@@ -28,8 +28,8 @@ function maali_build {
 
     cd "$MAALI_TOOL_BUILD_DIR"
 
-        makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
-        makedir "$MAALI_INSTALL_DIR/bin"
+        maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+        maali_makedir "$MAALI_INSTALL_DIR/bin"
 
     for file in `ls *.py`
     do

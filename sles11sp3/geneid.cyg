@@ -34,10 +34,10 @@ function maali_build {
   fi
 
   maali_run "make"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 bin/geneid $MAALI_INSTALL_DIR/bin/"
 
-  makedir "$MAALI_INSTALL_DIR/param"
+  maali_makedir "$MAALI_INSTALL_DIR/param"
 
   for file in "param/*.param"
   do

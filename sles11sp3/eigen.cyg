@@ -34,7 +34,7 @@ function maali_cmake_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"*
 
-  makedir "$MAALI_TOOL_NAME-build"
+  maali_makedir "$MAALI_TOOL_NAME-build"
   cd "$MAALI_TOOL_NAME-build"
   maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR .."
   maali_run "make"

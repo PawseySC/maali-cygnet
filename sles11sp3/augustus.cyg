@@ -72,14 +72,14 @@ function maali_build {
   maali_run "make"
 
   # binary files
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in "bin/*"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
   done
 
   # perl scripts
-  makedir "$MAALI_INSTALL_DIR/scripts"
+  maali_makedir "$MAALI_INSTALL_DIR/scripts"
   for file in "scripts/*.pl"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts"
@@ -92,15 +92,15 @@ function maali_build {
   done
 
   # config files
-  makedir "$MAALI_INSTALL_DIR/config"
+  maali_makedir "$MAALI_INSTALL_DIR/config"
   for dir in `ls config`
   do
-    makedir "$MAALI_INSTALL_DIR/config/$dir"
+    maali_makedir "$MAALI_INSTALL_DIR/config/$dir"
 
     if [ "$dir" == "species" ]; then
       for subdir in `ls config/$dir`
       do
-        makedir "$MAALI_INSTALL_DIR/config/$dir/$subdir"
+        maali_makedir "$MAALI_INSTALL_DIR/config/$dir/$subdir"
 
         for file in "config/$dir/$subdir/*.*"
         do

@@ -38,9 +38,9 @@ function maali_build {
   fi
 
   maali_run "make"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "mv bwa *.pl $MAALI_INSTALL_DIR/bin"
-  makedir "$MAALI_INSTALL_DIR/share/man/man1"
+  maali_makedir "$MAALI_INSTALL_DIR/share/man/man1"
   maali_run "mv bwa.1 $MAALI_INSTALL_DIR/share/man/man1"
 }
 

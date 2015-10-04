@@ -31,22 +31,22 @@ MAALI_WIKI_CATEGORY="Bioinformatics"
 function maali_python_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in `ls *.py`
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
   done
 
-  makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+  maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
   for library in bs_align bs_index bs_utils galaxy
   do
-    makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library"
+    maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library"
     for file in `ls $library`
     do
       if [ -f "$library/$file" ]; then
         maali_run "install -m 644 $library/$file $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/"
       elif [ -d "$library/$file" ]; then
-        makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/$file"
+        maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/$file"
       else
         echo "ERROR - $library/$file is not a file or directory"
         exit

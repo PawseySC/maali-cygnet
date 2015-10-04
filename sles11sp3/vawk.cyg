@@ -37,7 +37,7 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 vawk $MAALI_INSTALL_DIR/bin/"
 
 }

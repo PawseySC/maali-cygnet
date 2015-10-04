@@ -30,7 +30,7 @@ function maali_build {
   maali_run "./configure gfortran"
   maali_run "make "
   maali_run "make parallel"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "cp $MAALI_TOOL_BUILD_DIR/packmol $MAALI_INSTALL_DIR/bin/"
   maali_run "cp $MAALI_TOOL_BUILD_DIR/ppackmol $MAALI_INSTALL_DIR/bin/"
   maali_run "cp $MAALI_TOOL_BUILD_DIR/solvate.tcl $MAALI_INSTALL_DIR/bin/"

@@ -27,7 +27,7 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 pigz $MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 unpigz $MAALI_INSTALL_DIR/bin"
 }

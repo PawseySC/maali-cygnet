@@ -38,7 +38,7 @@ function maali_build {
   cd ../src
   maali_run "gmake"
   cd ..
-  makedir "$MAALI_INSTALL_DIR/Linux-amd64/"
+  maali_makedir "$MAALI_INSTALL_DIR/Linux-amd64/"
   maali_run "mv Linux-amd64/bin Linux-amd64/lib $MAALI_INSTALL_DIR/Linux-amd64"
 }
 

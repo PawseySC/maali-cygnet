@@ -44,7 +44,7 @@ function maali_build {
   maali_run "gcc -Wl,--gc-sections -o build/sambamba build/sambamba.o -Lhtslib -Llz4/lib -Wl,-Bstatic -lhts -llz4 -Wl,-Bdynamic -l:libphobos2-ldc.a -l:libdruntime-ldc.a  -lrt -lpthread -lm"
 
   maali_run "make sambamba-ldmd2-64"
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 build/sambamba $MAALI_INSTALL_DIR/bin/"
 }
 

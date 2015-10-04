@@ -34,9 +34,9 @@ function maali_build {
   fi
 
   maali_run "make"
-  makedir "$MAALI_INSTALL_DIR/bin/"
+  maali_makedir "$MAALI_INSTALL_DIR/bin/"
   maali_run "mv velvetg velveth contrib/shuffleSequences_fasta/shuffleSequences_fastq.pl contrib/shuffleSequences_fasta/shuffleSequences_fasta.pl $MAALI_INSTALL_DIR/bin/"
-  makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
   maali_run "mv contrib/VelvetOptimiser-2.2.4/VelvetOptimiser.pl $MAALI_INSTALL_DIR/bin/"
   maali_run "mv contrib/VelvetOptimiser-2.2.4/VelvetOpt/ $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
   maali_run "make clean"

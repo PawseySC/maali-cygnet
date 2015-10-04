@@ -29,13 +29,13 @@ MAALI_MODULE_SET_PERLLIB='share/perl5'
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in "merge_gtf_transcripts.py RangeFinder.py filter_gtfs.pl eval.pl combine_eval_reports.pl gff3_to_gtf.pl filter_badlist.pl graph_gtfs.pl validate_gtf.pl evaluate_gtf.pl get_distribution.pl get_overlap_stats.pl make_intron_lenght_vs_performance_graph.pl get_general_stats.pl validate_splice_sites.pl"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
   done
 
-  makedir "$MAALI_INSTALL_DIR/share/perl5"
+  maali_makedir "$MAALI_INSTALL_DIR/share/perl5"
   for file in "Eval.pm GTF.pm"
   do
     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/share/perl5"

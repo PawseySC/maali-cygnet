@@ -31,25 +31,25 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make"
 
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in `ls bin`
   do
     maali_run "install -m 755 bin/$file $MAALI_INSTALL_DIR/bin"
   done
 
-  makedir "$MAALI_INSTALL_DIR/data"
+  maali_makedir "$MAALI_INSTALL_DIR/data"
   for file in `ls data/*.*`
   do
      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/data/"
   done
 
-  makedir "$MAALI_INSTALL_DIR/data/hmm_profiles"
+  maali_makedir "$MAALI_INSTALL_DIR/data/hmm_profiles"
   for file in `ls data/hmm_profiles/*.*`
   do
      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/data/hmm_profiles/"
   done
 
-  makedir "$MAALI_INSTALL_DIR/lib"
+  maali_makedir "$MAALI_INSTALL_DIR/lib"
   for file in `ls lib/*.*`
   do
      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/"

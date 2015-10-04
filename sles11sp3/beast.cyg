@@ -62,7 +62,7 @@ function maali_build {
     cd ..
   fi
 
-  makedir "$MAALI_INSTALL_DIR/"
+  maali_makedir "$MAALI_INSTALL_DIR/"
 
   if [ $MAALI_TOOL_MAJOR_VERSION -lt 2 ]; then 
     maali_run "mv bin doc examples images lib *.txt $MAALI_INSTALL_DIR"

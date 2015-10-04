@@ -35,7 +35,7 @@ function maali_build {
 
   maali_run "make"
 
-  makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 structure $MAALI_INSTALL_DIR/bin/"
 }
 
