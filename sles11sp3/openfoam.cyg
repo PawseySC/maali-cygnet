@@ -8,6 +8,9 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 # URL to download the source code from
 MAALI_URL="http://downloads.sourceforge.net/foam/OpenFOAM-$MAALI_TOOL_VERSION.tgz?use_mirror=aarnet http://downloads.sourceforge.net/foam/ThirdParty-$MAALI_TOOL_VERSION.tgz?use_mirror=aarnet"
 
+# patch files to download
+MAALI_TOOL_PATCHES="001 002"
+
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/OpenFOAM-$MAALI_TOOL_VERSION.tgz $MAALI_SRC/ThirdParty-$MAALI_TOOL_VERSION.tgz"
 
@@ -132,7 +135,11 @@ function maali_build {
 
   # Patch files for Zeus build
   cd $FOAM_INST_DIR
-  maali_run "patch -p0 < $MAALI_FILES_PATH/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.zeus.patch"
+  if [ "$MAALI_TOOL_VERSION" == "2.3.1" ]; then
+    maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+  elif [ "$MAALI_TOOL_VERSION" == "2.2.2" ]; then
+    maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.002.patch"
+  fi
 
   # Adjust the compilers
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
@@ -161,7 +168,7 @@ function maali_build {
      
      cd $WM_THIRD_PARTY_DIR
      # I had to do this by hand and use cmake to set the mpif90 compiler
-     maali_run "./makeParaView4 -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$PYTHON_LIB_VERSION.so"
+     maali_run "./makeParaView4 -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$MAALI_PYTHON_LIB_VERSION.so"
      
      cd $FOAM_UTILITIES/postProcessing/graphics/PV4Readers
      maali_run "./Allwclean"
@@ -170,7 +177,7 @@ function maali_build {
   elif [ "$MAALI_TOOL_VERSION" == "2.2.2" ]; then
      
      cd $WM_THIRD_PARTY_DIR
-     maali_run "./makeParaView -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$PYTHON_LIB_VERSION.so"
+     maali_run "./makeParaView -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$MAALI_PYTHON_LIB_VERSION.so"
   
      cd $FOAM_UTILITIES/postProcessing/graphics/PV3Readers
      maali_run "./Allwclean"

@@ -35,7 +35,7 @@ MAALI_TOOL_PREREQ=""
 if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
   MAALI_TOOL_CONFIGURE="-v -confirm-license -stl -opensource -release -shared -system-zlib -system-libtiff -system-libpng -system-libjpeg -opengl -webkit"
 else
-  MAALI_TOOL_CONFIGURE="-confirm-license -opensource -release -shared -system-zlib -system-libpng -system-libjpeg -opengl -verbose -qt-xcb"
+  MAALI_TOOL_CONFIGURE="-confirm-license -opensource -release -shared -system-zlib -system-libpng -system-libjpeg -opengl -verbose -no-xcb"
 fi
 
 # for auto-building module fils

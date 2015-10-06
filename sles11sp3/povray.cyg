@@ -6,20 +6,20 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/POV-Ray/povray/archive/${MAALI_TOOL_VERSION}-stable.tar.gz"
+if [ "$MAALI_TOOL_VERSION" == "3.7.0.0" ]; then
+  MAALI_URL="https://github.com/POV-Ray/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+else
+  MAALI_URL="http://www.povray.org/ftp/pub/povray/Old-Versions/Official-3.62/Unix/$MAALI_TOOL_NAME-${MAALI_TOOL_VERSION}.tar.gz"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-if [ $MAALI_TOOL_VERSION == 3.7 ]; then
-    MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-stable"
-else
-    MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
-fi
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites
-if [ $MAALI_TOOL_VERSION == 3.7 ]; then
+if [ "$MAALI_TOOL_VERSION" == "3.7.0.0" ]; then
   MAALI_TOOL_PREREQ="boost/1.49.0"
 else
   MAALI_TOOL_PREREQ=""
@@ -35,7 +35,7 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   export COMPILED_BY="Pawsey Supercomputing Team <help@ivec.org>"
 
-  if [ $MAALI_TOOL_VERSION == 3.7 ]; then
+  if [ "$MAALI_TOOL_VERSION" == "3.7.0.0" ]; then
     cd unix
     maali_run "./prebuild.sh"
     cd ..

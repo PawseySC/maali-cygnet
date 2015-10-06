@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://www.ebi.ac.uk/~zerbino/velvet/$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tgz"
+MAALI_URL="http://www.ebi.ac.uk/~zerbino/velvet/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tgz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tgz"

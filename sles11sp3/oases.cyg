@@ -12,7 +12,7 @@ MAALI_URL="http://www.ebi.ac.uk/~zerbino/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME}_${M
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tgz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_0.2.8"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"

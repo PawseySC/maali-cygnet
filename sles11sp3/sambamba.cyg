@@ -31,17 +31,13 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "rmdir BioD"
-# this is broken
-#  maali_run "git clone https://github.com/biod/BioD"
-# BioD/bio/bam/thirdparty/msgpack.d(170): Error: template bio.bam.thirdparty.msgpack.unpack(bool withFieldName = false, Args...)(in ubyte[] buffer, ref Args args) conflicts with function bio.bam.thirdparty.msgpack.unpack at BioD/bio/bam/thirdparty/msgpack.d(149)
-# BioD/bio/bam/thirdparty/msgpack.d(184): Error: template bio.bam.thirdparty.msgpack.unpack(Type, bool withFieldName = false)(in ubyte[] buffer) conflicts with function bio.bam.thirdparty.msgpack.unpack at BioD/bio/bam/thirdparty/msgpack.d(149)
 
-  maali_run "unzip -q -q $MAALI_SRC/BioD-93ac39e.zip"
+  if [ ! -f "$MAALI_SRC/BioD-4779c70.zip" ]; then
+    wget -O "$MAALI_SRC/BioD-4779c70.zip" -q https://github.com/biod/BioD/archive/4779c702b344a1f3eaf7cc4a99cb9767a818c89d.zip
+  fi
+
+  maali_run "unzip -q -q $MAALI_SRC/BioD-4779c70.zip"
   mv BioD* BioD
-
-  mkdir -p build/
-  maali_run "ldmd2 @sambamba-ldmd-release.rsp"
-  maali_run "gcc -Wl,--gc-sections -o build/sambamba build/sambamba.o -Lhtslib -Llz4/lib -Wl,-Bstatic -lhts -llz4 -Wl,-Bdynamic -l:libphobos2-ldc.a -l:libdruntime-ldc.a  -lrt -lpthread -lm"
 
   maali_run "make sambamba-ldmd2-64"
   maali_makedir "$MAALI_INSTALL_DIR/bin"

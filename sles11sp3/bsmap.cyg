@@ -32,6 +32,8 @@ function maali_build {
     sed -i -e 's!g++!icpc!g' Makefile
   fi
 
+  maali_run "dos2unix *.cpp"
+  sed -i -e 's/#include<iostream>/#include<iostream>\n#include<unistd.h>/g' param.cpp
   maali_run "make"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 
