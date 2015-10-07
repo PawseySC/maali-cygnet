@@ -15,9 +15,7 @@ MAALI_DST="$MAALI_SRC/master"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fastStructure-master"
 
 # prerequistes of fastStructure
-MAALI_TOOL_PREREQ="numpy/1.6.2 scipy/0.11.0 cython/0.22 gsl/1.15 matplotlib/1.4.1"
-
-MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_PREREQ="gcc/4.8.3 numpy/1.6.2 scipy/0.11.0 cython/0.22 gsl/1.15 matplotlib/1.4.1"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE='bio-apps'
