@@ -1,5 +1,5 @@
 ##############################################################################
-cygnet file for Mothur
+# cygnet file for Mothur
 ##############################################################################
 
 # specify which compilers we want to build the tool with
@@ -29,46 +29,20 @@ MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
-# Automatically overwrite __MACOSX
-export UNZIP="-o"
+# allow us to exclude files when unzipping
+MAALI_UNZIP_EXCLUDE="'*__MACOSX*'"
 
 ##############################################################################
 
 function maali_build {
 
-  cd ${MAALI_TOOL_NAME_ORIG}.source
+  cd $MAALI_TOOL_BUILD_DIR
 
   # Perform gymnastics on the makefile before building
   sed -i -e 's/USEMPI ?= no/USEMPI ?= yes/' makefile
   sed -i -e 's/TARGET_ARCH += -arch x86_64/#TARGET_ARCH += -arch x86_64/' makefile
   sed -i -e 's/#CXXFLAGS += -mtune=native -march=native/CXXFLAGS += -mtune=native -march=native/' makefile
   sed -i -e 's/CXX = mpic++/CXX = mpicxx/' makefile
-
-  # Fix the broken MPI source. Did the author even bother to check that it compiled?
-  set -o noglob
-
-  patch -p0  <<EOF
---- clustersplitcommand.cpp		2014-11-24 15:03:30.198945000 +0800
-+++ clustersplitcommand.cpp.orig	2014-11-25 09:18:56.662208000 +0800
-@@ -484,7 +484,6 @@
-                     
-                 }
-                 deleteFiles = true;
--            }
- 		//****************** break up files between processes and cluster each file set ******************************//
- 	#ifdef USE_MPI
- 			////you are process 0 from above////
-@@ -715,6 +714,7 @@
- 		#endif
- 
- 		return 0;
-+            }
- 	}
- 	catch(exception& e) {
- 		m->errorOut(e, "ClusterSplitCommand", "execute");
-EOF
-
-  set +o noglob
 
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make"

@@ -34,9 +34,9 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
-MAALI_MODULE_SET_VTK_HOME='$MAALI_INSTALL_DIR'
-MAALI_MODULE_SET_VTKDATA_ROOT='$MAALI_INSTALL_DIR/VTKData'
-MAALI_MODULE_SET_PYTHONPATH='$MAALI_INSTALL_DIR/lib/python$env(MAALI_PYTHON_LIB_VERSION)/site-packages'
+MAALI_MODULE_SET_VTK_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_VTKDATA_ROOT='$MAALI_APP_HOME/VTKData'
+MAALI_MODULE_SET_PYTHONPATH='lib/python\$env\(MAALI_PYTHON_LIB_VERSION\)/site-packages'
 
 ##############################################################################
 
@@ -58,7 +58,7 @@ function maali_cmake_build {
   maali_run "tar zxf $MAALI_TMP_SRC"
 
   cd $MAALI_TOOL_BUILD_DIR
-  maali_makedir "vtk-build"
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/vtk-build"
   cd vtk-build
 
   if [[ "$MAALI_TOOL_VERSION_MAJOR" -lt "6" ]]; then

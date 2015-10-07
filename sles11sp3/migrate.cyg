@@ -35,10 +35,12 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_makedir "$MAALI_INSTALL_DIR/man/man1"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
-#  maali_run "cp conf.h src/"
-#  maali_run "cp conf.h.in src/"
+  maali_run "aclocal"
+  maali_run "autoconf"
+  maali_run "autoheader"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
   sed -i -e "s/for(int i=0;i<FOUR; i++)/int i;\n for(i=0;i<FOUR;i++)/g" src/mutationmodel.c
 
@@ -54,17 +56,6 @@ function maali_build {
 
   sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile
   sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile.in
-
-#  maali_run "cp ../../migrate-3.6.5/src/broyden.h src/"
-#  maali_run "cp ../../migrate-3.6.5/src/broyden.c src/"
-#  maali_run "cp ../../migrate-3.6.5/src/combroyden.h src/"
-#  maali_run "cp ../../migrate-3.6.5/src/combroyden2.c src/"
-#  maali_run "cp ../../migrate-3.6.5/src/gammalike.h src/"
-#  maali_run "cp ../../migrate-3.6.5/src/gammalike.c src/"
-#  maali_run "cp ../../migrate-3.6.5/src/profile.h src/"
-#  maali_run "cp ../../migrate-3.6.5/src/profile.c src/"
-#  maali_run "cp ../../migrate-3.6.5/src/joint-chains.h src/"
-#  maali_run "cp ../../migrate-3.6.5/src/joint-chains.c src/"
 
   maali_run "make mpis"
   maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"

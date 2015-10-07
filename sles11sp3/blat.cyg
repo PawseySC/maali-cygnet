@@ -25,7 +25,7 @@ MAALI_TOOL_PREREQ=""
 MAALI_TOOL_BUILD_PREREQ=""
 
 # packages that need to be installed in the operating system for this build to work
-MAALI_SYSTEM_PACKAGES_PREREQ='mysql-devel'
+MAALI_SYSTEM_PACKAGES_PREREQ='libmysqlclient-devel'
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""

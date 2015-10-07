@@ -6,13 +6,13 @@
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-MAALI_URL="http://www.maizegenetics.net/tassel/tassel${MAALI_TOOL_VERSION}_standalone.zip"
+MAALI_URL="http://sourceforge.net/projects/${MAALI_TOOL_NAME}/files/Tassel%20${MAALI_TOOL_VERSION}/2013-04-25/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-src-20130425.zip/download"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/tassel${MAALI_TOOL_VERSION}_standalone.zip"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-src-20130425.zip"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/tassel${MAALI_TOOL_VERSION}_standalone"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/tassel3-src"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -20,8 +20,14 @@ MAALI_TOOL_TYPE="bio-apps"
 # tool pre-requisites
 MAALI_TOOL_PREREQ="java/7u65"
 
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="ant/1.9.6"
+
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+
+# allow us to exclude files when unzipping
+MAALI_UNZIP_EXCLUDE="'*__MACOSX*' '*.DS_Store*' '*.svn*'"
 
 ##############################################################################
 
@@ -31,7 +37,9 @@ function maali_build {
   maali_makedir "$MAALI_INSTALL_DIR/jar"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 
-  for exe in run_anything.pl run_pipeline.pl start_tassel.pl
+  maali_run "ant"
+
+  for exe in run_gbs_pipeline.pl run_pipeline.pl start_tassel.pl
   do
     maali_run "install -m 755 $exe $MAALI_INSTALL_DIR/bin"
     sed -i -e "s!\$top/lib!$MAALI_INSTALL_DIR/jar!g" "$MAALI_INSTALL_DIR/bin/$exe"
@@ -42,6 +50,9 @@ function maali_build {
   do
     maali_run "install -m 644 $jar $MAALI_INSTALL_DIR/jar"
   done
+
+  cd ..
+  maali_run "install -m 644 dist/sTASSEL.jar $MAALI_INSTALL_DIR/jar"
 
 }
 

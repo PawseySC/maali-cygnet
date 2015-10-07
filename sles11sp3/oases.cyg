@@ -20,6 +20,9 @@ MAALI_TOOL_TYPE="bio-apps"
 # tool pre-requisites
 MAALI_TOOL_PREREQ=""
 
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ='texlive-latex'
+
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
