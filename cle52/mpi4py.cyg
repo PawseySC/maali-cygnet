@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for mpi4py
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://bitbucket.org/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/downloads/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_CRAY_GCC_PRGENV gcc/4.8.2 cray-mpich/7.2.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+
+# change to build directory
+cd $MAALI_TOOL_BUILD_DIR
+
+GCC_MAJOR_MINOR=`gcc -dumpversion | tr -d '.' | cut -c 1-2`
+MPI_DIR=${CRAY_MPICH2_BASEDIR}/mpich2-gnu/${GCC_MAJOR_MINOR}
+
+cat <<-EOF >mpi.cfg
+[mpi]
+include_dirs = ${MPI_DIR}/include
+library_dirs = ${MPI_DIR}/lib
+libraries = mpich
+EOF
+
+maali_run "python setup.py build"
+maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+cd ${MAALI_INSTALL_DIR} && ln -s ${MAALI_INSTALL_DIR}/lib/python${PYTHON_LIB_VERSION}/site-packages/${MAALI_TOOL_NAME}/bin bin
+
+}
+##############################################################################
