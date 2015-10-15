@@ -1,0 +1,150 @@
+##############################################################################
+# maali cygnet file for AUGUSTUS
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://bioinf.uni-greifswald.de/augustus/binaries/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="boost/1.57.0 bamtools/2.3.0 samtools/0.1.19 htslib/1.2.1"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="bin scripts"
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_AUGUSTUS_CONFIG_PATH='$MAALI_APP_HOME/config'
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_BUILD_DIR
+
+  # requires samtools/0.1.19 so should be already downloaded
+  if [ -f "$MAALI_SRC/samtools-0.1.19.tar.bz2" ]; then
+    maali_run "tar jxf $MAALI_SRC/samtools-0.1.19.tar.bz2"
+  else
+    echo "Please compile samtools 0.1.19"
+    exit
+  fi
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  sed -i -e 's/-static//g' src/Makefile
+
+  sed -i -e 's!-I../include!-I../include -I${BOOST_ROOT}/include!g' src/Makefile
+  sed -i -e 's!-lboost_iostreams!-L${BOOST_ROOT}/lib -lboost_iostreams!g' src/Makefile
+
+  maali_run "make"
+
+  # binary files
+  maali_run "mkdir $MAALI_INSTALL_DIR/bin"
+  for file in "bin/*"
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+  done
+
+  # perl scripts
+  maali_run "mkdir $MAALI_INSTALL_DIR/scripts"
+  for file in "scripts/*.pl"
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts"
+  done
+
+  # perl modules
+  for file in "scripts/*.pm"
+  do
+    maali_run "install -m 644 $file $MAALI_INSTALL_DIR/scripts"
+  done
+
+  # config files
+  maali_run "mkdir $MAALI_INSTALL_DIR/config"
+  for dir in `ls config`
+  do
+    maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir"
+
+    if [ "$dir" == "species" ]; then
+      for subdir in `ls config/$dir`
+      do
+        maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir/$subdir"
+
+        for file in "config/$dir/$subdir/*.*"
+        do
+          maali_run "install -m 644 $file $MAALI_INSTALL_DIR/config/$dir/$subdir/"
+        done
+
+      done
+    else
+      for file in "config/$dir/*.*"
+      do
+        maali_run "install -m 644 $file $MAALI_INSTALL_DIR/config/$dir/"
+      done
+    fi
+  done
+
+  cd auxprogs/bam2hints
+
+  sed -i -e "s;/home/mario/tools/bamtools;$MAALI_BAMTOOLS_HOME;g" Makefile
+  sed -i -e "s;/include;/include/bamtools;g" Makefile
+  sed -i -e "s;/lib/libbamtools.a;/lib/bamtools/libbamtools.a;g" Makefile
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "install -m 755 bam2hints $MAALI_INSTALL_DIR/bin/"
+
+  cd ../bam2wig
+
+  sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
+  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
+  sed -i -e 's/-lcurses/-lncurses/g' Makefile
+  sed -i -e 's;/home/penat/git/htslib/;'"$MAALI_HTSLIB_HOME"'/lib;g' Makefile
+
+  # needs the source for samtools
+  cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "install -m 755 bam2wig $MAALI_INSTALL_DIR/bin/"
+
+  cd ../checkTargetSortedness
+
+  sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
+  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
+  sed -i -e's/-lcurses/-lncurses/g' Makefile
+
+  # needs the source for samtools
+  cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
+  maali_run "make"
+  maali_run "install -m 755 checkTargetSortedness $MAALI_INSTALL_DIR/bin/"
+
+  cd ../filterBam
+
+  export BAMTOOLS=$MAALI_BAMTOOLS_HOME
+
+  sed -i -e 's;INCLUDES = -I$(BAMTOOLS)/include;INCLUDES = -I'"$MAALI_BAMTOOLS_HOME"'/include/bamtools;g' src/Makefile
+  sed -i -e 's;$(BAMTOOLS)/src/toolkit;'"$MAALI_BAMTOOLS_HOME"'/src/toolkit;g' src/Makefile
+  sed -i -e 's;LIBS = $(BAMTOOLS)/lib/libbamtools.a;LIBS = '"$MAALI_BAMTOOLS_HOME"'/lib/bamtools/libbamtools.a;g' src/Makefile
+
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "install -m 755 bin/filterBam $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

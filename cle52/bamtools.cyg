@@ -1,0 +1,67 @@
+##############################################################################
+# maali cygnet file for augustus
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/pezmaster31/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH="lib/$MAALI_TOOL_NAME"
+
+##############################################################################
+
+function maali_cmake_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  # cmake likes to build in a director of it's own
+  maali_makedir "$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_NAME-build"
+
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  if [ $DEBUG ]; then
+    maali_run "make VERBOSE=TRUE"
+  else
+    maali_run "make"
+  fi
+  maali_run "make install"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  # to support augustus auxprogs
+  maali_makedir "$MAALI_INSTALL_DIR/src/toolkit/"
+  for file in `ls src/toolkit/*.h`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/src/toolkit/"
+  done
+
+}
+
+##############################################################################

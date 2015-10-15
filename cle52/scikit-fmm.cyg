@@ -2,16 +2,11 @@
 # maali cygnet file for scikit-fmm
 ##############################################################################
 
-# ibs -c ashley -t scikit-fmm -v 0.0.5 -p -d
-
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from ie
-# https://pypi.python.org/packages/source/s/scikit-fmm/scikit-fmm-0.0.5.tar.gz#md5=07826fc4fd09e2cc1e97bfbe38eb2e34
-
-#MAALI_URL="http://pypi.python.org/packages/source/p/pycuda/pycuda-$MAALI_TOOL_VERSION.tar.gz"
-MAALI_URL="https://pypi.python.org/packages/source/s/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_URL="https://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -20,13 +15,12 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-# Numpy Version are linked to Scipy Version
-# Piece of Crap yes setuptools is a runtime requirement and not a prereq for building
-MAALI_TOOL_PREREQ="numpy/1.6.2 scipy/0.11.0 setuptools/1.1.6"
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.25 gcc/4.8.2 numpy/1.6.2 scipy/0.11.0 setuptools/1.1.6"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-# MAALI_TOOL_BUILD_PREREQ="setuptools/1.1.6"
+MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+
 ##############################################################################

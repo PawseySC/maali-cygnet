@@ -53,9 +53,7 @@ include_dirs = ${LIBSCI_DIR}/include
 blas_libs = sci_gnu
 library_dirs = ${LIBSCI_DIR}/lib
 include_dirs = ${LIBSCI_DIR}/include
-EOF
 
-cat <<EOF >setup.cfg
 [build]
 compiler = unix
 fcompiler = gnu95
