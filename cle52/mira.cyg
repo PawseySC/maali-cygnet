@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for mira
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/mira-assembler/files/MIRA/stable/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="boost/1.57.0 gperftools/2.2.1"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--with-boost=$MAALI_BOOST_HOME --with-tcmalloc-dir=$MAALI_GPERFTOOLS_HOME/lib/libtcmalloc.a'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+    # allows late evaluation
+    MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+    # for Cray
+    export LC_ALL=C
+
+    sed -i -e 's;#include <boost/filesystem.hpp>;#include <iostream>\n#include <boost/filesystem.hpp>;g' src/progs/quirks.C
+
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+    maali_run "make"
+    maali_run "make install"
+}
+
+##############################################################################

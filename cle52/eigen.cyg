@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for cmake
+# maali cygnet file for eigen
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
@@ -11,29 +11,38 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
-# URL to download the source code from
-MAALI_URL="http://www.cmake.org/files/v${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+# URL to download the source code from - need to register
+MAALI_URL="http://bitbucket.org/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/get/$MAALI_TOOL_VERSION.tar.bz2"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_NAME"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PKGCONFIG=1
 
 ##############################################################################
 
-function maali_build {
-  # cmake uses bootstrap
+function maali_cmake_build {
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  cd "$MAALI_TOOL_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR"*
 
-  maali_run "./bootstrap --prefix=$MAALI_INSTALL_DIR"
+  mkdir "$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_NAME-build"
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR .."
   maali_run "make"
   maali_run "make install"
 }

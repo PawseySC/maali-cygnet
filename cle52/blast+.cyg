@@ -1,9 +1,9 @@
 ##############################################################################
-# maali cygnet file for cmake
+# maali cygnet file for blast+
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -12,30 +12,31 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://www.cmake.org/files/v${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-${MAALI_TOOL_VERSION}+-src.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/ncbi-blast-${MAALI_TOOL_VERSION}+-src.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi-blast-${MAALI_TOOL_VERSION}+-src"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="bio-apps"
 
-# for auto-building module files
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# defined environment variable of the basic path  
 MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
 function maali_build {
-  # cmake uses bootstrap
 
-  cd "$MAALI_TOOL_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR/c++"
 
-  maali_run "./bootstrap --prefix=$MAALI_INSTALL_DIR"
-  maali_run "make"
-  maali_run "make install"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR CC=cc CXX=CC CFLAGS=-O3 CXXFLAGS=-O3 --without-gui --without-fastcgi"
+
 }
 
 ##############################################################################

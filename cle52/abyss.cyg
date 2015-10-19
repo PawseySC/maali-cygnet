@@ -54,7 +54,7 @@ function maali_build {
 
   find $MAALI_TOOL_BUILD_DIR -name Makefile | xargs -n1 -i sed -i -e 's/-Wall -Wextra -Werror/-Wall -Wextra/g' {}
 
-  maali_run "make -j $MAALI_CORES"
+  maali_run "make"
   maali_run "make install"
 
   # abyss-pe is a wrapper script which spawns mpi or aprun process. You have to mangle it

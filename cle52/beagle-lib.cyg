@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for beagle-lib
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# needed for URL
+MAALI_TOOL_VERSION_BEAGLE=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="http://beagle-lib.googlecode.com/svn/tags/beagle_release"_"$MAALI_TOOL_VERSION_BEAGLE"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/jdk1.7.0_45"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_BEAGLE_LIB_DIR='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_download {
+  maali_wiki ".. supressing downloading as beagle-lib has no downloads"
+}
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking as beagle-lib has no downloads"
+}
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_BUILD_DIR"
+
+  # need to export from SVN
+  maali_run "svn export $MAALI_URL beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
+            
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "./autogen.sh"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
