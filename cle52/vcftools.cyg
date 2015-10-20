@@ -1,9 +1,9 @@
 ##############################################################################
-# maali cygnet file for BLAST
+# maali cygnet file for vcftools
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -12,36 +12,32 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/$MAALI_TOOL_VERSION/ncbi.tar.gz"
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/${MAALI_TOOL_NAME}_$MAALI_TOOL_VERSION.tar.gz/download"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/ncbi.tar.gz"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_$MAALI_TOOL_VERSION.tar.gz2"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ=""
-
-# defined environment variable of the basic path  
+# for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_BLASTDB='/group/data/blast'
-MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
+MAALI_MODULE_SET_PERLLIB='lib/perl5/site_perl'
 
 ##############################################################################
 
 function maali_build {
-  cd "$MAALI_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR"
 
-  sed -i -e 's/gcc/cc/g' ncbi/platform/linux.ncbi.mk
-  cat ncbi/platform/linux.ncbi.mk
+  sed -i -e 's!g++!CC!g' Makefile
+  sed -i -e 's!g++!CC!g' cpp/Makefile
 
-  maali_run "./ncbi/make/makedis.csh"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR"
-  maali_run "mv ncbi/bin ncbi/data $MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install PREFIX=$MAALI_INSTALL_DIR"
+  maali_run "mv bin/vcftools $MAALI_INSTALL_DIR/bin"
 }
 
 ##############################################################################

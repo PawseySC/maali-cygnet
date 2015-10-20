@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for tassel
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://bitbucket.org/tasseladmin/tassel-5-standalone/get/V${MAALI_TOOL_VERSION}.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/jdk1.7.0_45"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"*
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  for file in `ls *.pl`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+    sed -i -e 's!"$top/lib"!"'$MAALI_INSTALL_DIR'/lib"!g' $MAALI_INSTALL_DIR/bin/$file
+  done
+  maali_run "install -m 644 sTASSEL.jar $MAALI_INSTALL_DIR/bin/"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/lib"
+  for file in `ls lib/*.jar`
+  do
+    maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/"
+  done
+}
+
+##############################################################################

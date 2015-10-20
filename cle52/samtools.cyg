@@ -60,7 +60,9 @@ function maali_build {
   maali_run "mkdir -p $MAALI_INSTALL_DIR/include/bam"
   maali_run "install -m 644 *.h $MAALI_INSTALL_DIR/include/bam"
   maali_run "mkdir -p $MAALI_INSTALL_DIR/include/htslib"
-  maali_run "install -m 644 htslib-*/htslib/*.h $MAALI_INSTALL_DIR/include/htslib"
+  if [[ $(echo "if (${MAALI_TOOL_MAJOR_MINOR_VERSION} > 0.1) 1 else 0" | bc) -eq 1 ]]; then
+    maali_run "install -m 644 htslib-*/htslib/*.h $MAALI_INSTALL_DIR/include/htslib"
+  fi
 
 }
 

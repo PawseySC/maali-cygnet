@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for BLAST
+# maali cygnet file for structure
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
@@ -12,36 +12,40 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/release/$MAALI_TOOL_VERSION/ncbi.tar.gz"
+MAALI_URL="http://pritchardlab.stanford.edu/structure_software/release_versions/v${MAALI_TOOL_VERSION}/structure_kernel_source.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/ncbi.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/structure_kernel_src"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ=""
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
 
-# defined environment variable of the basic path  
+# for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_BLASTDB='/group/data/blast'
-MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
 
 ##############################################################################
 
 function maali_build {
-  cd "$MAALI_BUILD_DIR"
 
-  sed -i -e 's/gcc/cc/g' ncbi/platform/linux.ncbi.mk
-  cat ncbi/platform/linux.ncbi.mk
+  cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "./ncbi/make/makedis.csh"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR"
-  maali_run "mv ncbi/bin ncbi/data $MAALI_INSTALL_DIR"
+  sed -i -e 's/CC = gcc/CC = cc/g' Makefile
+
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    sed -i -e 's/-Wall//g' Makefile
+    sed -i -e 's/-pedantic//g' Makefile
+  fi
+
+  maali_run "make"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 structure $MAALI_INSTALL_DIR/bin/"
+
 }
 
 ##############################################################################

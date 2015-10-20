@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for PGDspider 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.cmpg.unibe.ch/software/PGDSpider/${MAALI_TOOL_NAME_ORIG}_$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/jdk1.7.0_45"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+    maali_run "java -Xmx1024m -Xms512M -jar PGDSpider2-cli.jar"
+    maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+    maali_run "mv * $MAALI_INSTALL_DIR/bin"
+    sed '1 s/\xEF\xBB\xBF//' <$MAALI_INSTALL_DIR/bin/PGDSpider2.sh >temp.sh
+    mv temp.sh $MAALI_INSTALL_DIR/bin/PGDSpider2.sh
+    cp $MAALI_INSTALL_DIR/bin/PGDSpider2.sh $MAALI_INSTALL_DIR/bin/PGDSpider2-cli.sh
+    sed -i "s/PGDSpider2.jar/\$MAALI_PGDSPIDER_HOME\/bin\/PGDSpider2.jar \$\@/g" $MAALI_INSTALL_DIR/bin/PGDSpider2.sh
+    sed -i "s/PGDSpider2.jar/\$MAALI_PGDSPIDER_HOME\/bin\/PGDSpider2-cli.jar \$\@/g" $MAALI_INSTALL_DIR/bin/PGDSpider2-cli.sh
+    maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/PGDSpider2.sh"
+    maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/PGDSpider2-cli.sh"
+}
+
+##############################################################################
