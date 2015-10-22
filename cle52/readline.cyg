@@ -1,0 +1,32 @@
+##############################################################################
+# maali cygnet file for readline package 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="http://git.savannah.gnu.org/cgit/readline.git/snapshot/$MAALI_TOOL_NAME-master.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-master.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-master"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="--srcdir $MAALI_TOOL_BUILD_DIR --enable-shared"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_readline_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_WHATIS="The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in."
+
+##############################################################################

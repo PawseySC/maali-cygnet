@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for aoflagger
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://downloads.sourceforge.net/project/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="boost gsl casacore fftw lapack"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS="-dynamic" -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DLAPACK_LIBRARIES=$LAPACK/lib/liblapack.so -DBLAS_LIBRARIES=$LAPACK/lib/libblas.so -DGSL_LIB=$MAALI_GSL_HOME/lib/libgsl.so -DGSL_INCLUDE_DIR=$MAALI_GSL_HOME/include -DFFTW3_LIB=$FFTW_DIR/libfftw3.so -DFFTW3_INCLUDE_DIR=$FFTW_INC -DBoost_INCLUDE_DIR=$BOOST_ROOT/include -DBOOST_ASIO_H_FOUND=$BOOST_ROOT/include/boost -DFITSIO_LIB=$CFITSIO_ROOT/lib/libcfitsio.so -DFITSIO_INCLUDE_DIR=$CFITSIO_ROOT/include -DCASA_MS_LIB=$CASACORE_ROOT/lib/libcasa_ms.so -DCASA_TABLES_LIB=$CASACORE_ROOT/lib/libcasa_tables.so -DCASA_CASA_LIB=$CASACORE_ROOT/lib/libcasa_casa.so -DCASA_MEASURES_LIB=$CASACORE_ROOT/lib/libcasa_measures.so -DCASA_INCLUDE_DIR=$CASACORE_ROOT/include/casacore'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_AOFLAGGER_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_WHATIS=""
+
+##############################################################################
+
+function maali_cmake_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  sed -i 's;message(WARNING \" The graphical user interface library GTKMM;#message(WARNING \" The graphical user interface library GTKMM ;g;' src/CMakeLists.txt
+
+  if [ ! -d build ]; then 
+    mkdir build
+  fi
+
+  cd "build"
+  maali_run "cmake $MAALI_TOOL_CONFIGURE .. "
+  maali_run "make"
+  maali_run "make install"
+
+}
+
+##############################################################################
