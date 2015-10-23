@@ -1,0 +1,10 @@
+--- fortran/src/Makefile.am.orig	2014-09-18 17:01:13.000000000 +0800
++++ fortran/src/Makefile.am	2014-09-18 17:01:38.093918000 +0800
+@@ -181,6 +181,7 @@
+ else
+   H5test_kind_SOURCES = $(srcdir)/H5test_kind.f90
+ endif
++H5test_kind_LDFLAGS=-static-libgfortran
+ 
+ # Mark this directory as part of the Fortran API
+ FORTRAN_API=yes
