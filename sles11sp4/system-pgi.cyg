@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for creating module file for system gcc
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+if [ -d /pawsey/pgi/14.7 ]; then
+  MAALI_TOOL_VERSION='14.7'
+  MAALI_INSTALL_DIR='/pawsey/pgi/14.7'
+elif [ -d /ivec/pgi/14.7 ]; then
+  MAALI_TOOL_VERSION='14.7'
+  MAALI_INSTALL_DIR='/ivec/pgi/14.7'
+fi
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='pgi'
+
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PGI='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_CC='pgcc'
+MAALI_MODULE_SET_CXX='pgcpp '
+MAALI_MODULE_SET_FC='pgfortran'
+MAALI_MODULE_SET_F77='pgf77'
+MAALI_MODULE_SET_F90='pgf90'
+MAALI_MODULE_SET_F95='pgf95 '
+MAALI_MODULE_SET_PATH='linux86-64/$MAALI_TOOL_VERSION/bin'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/share_objects/lib64 linux86-64/$MAALI_TOOL_VERSION/lib linux86-64/$MAALI_TOOL_VERSION/libso'
+MAALI_MODULE_SET_MANPATH='linux86-64/$MAALI_TOOL_VERSION/man'
+
+##############################################################################
