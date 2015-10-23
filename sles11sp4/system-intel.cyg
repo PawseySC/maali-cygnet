@@ -20,17 +20,24 @@ MAALI_REMODULE=1
 if [ -d /pawsey/intel/15.0.4 ]; then
   MAALI_TOOL_VERSION='15.0.4'
   MAALI_INSTALL_DIR='/pawsey/intel/15.0.4'
+  MAALI_INTEL_LICENSE_DIR='/pawsey/intel/licenses'
 elif [ -d /pawsey/intel/15.0.3 ]; then
   MAALI_TOOL_VERSION='15.0.3'
   MAALI_INSTALL_DIR='/pawsey/intel/15.0.3'
+  MAALI_INTEL_LICENSE_DIR='/pawsey/intel/licenses'
 elif [ -d /ivec/intel/15.0.0 ]; then
   MAALI_TOOL_VERSION='15.0.0'
   MAALI_INSTALL_DIR='/ivec/intel/15.0.0'
+  MAALI_INTEL_LICENSE_DIR='/ivec/intel/licenses'
 fi
 
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='intel'
 
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
 MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
 MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH='bin mkl/tools'

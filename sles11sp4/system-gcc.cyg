@@ -24,6 +24,9 @@ MAALI_INSTALL_DIR='/usr'
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='gcc'
 
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
 # for auto-building module files
 MAALI_MODULE_SET_COMPILER='gcc'
 MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'

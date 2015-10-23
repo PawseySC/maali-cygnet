@@ -31,7 +31,10 @@ fi
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='intel-mkl'
 
-# this is evil, do not try this at home
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
 MAALI_MODULE_SET_PATH='tools'
 MAALI_MODULE_SET_LD_LIBRARY_PATH='lib/intel64'
 MAALI_MODULE_SET_MANPATH='man/en_US'
