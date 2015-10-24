@@ -1,0 +1,39 @@
+##############################################################################
+# maali cygnet file for packmol (autoconf versions prior to 4.6)
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS "
+
+# URL to download the source code from
+MAALI_URL="http://leandro.iqm.unicamp.br/packmol/versionhistory/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  sed -i -e 's/double precision :: a1,a2,a3,datom,dtemp, xdiff1, xdiff2, xdiff3/double precision :: a1,a2,a3,datom,dtemp, xdiff1, xdiff2, xdiff3,tol/g' geasyparallel.f90
+  maali_run "chmod +x ./configure"
+  maali_run "./configure gfortran"
+  maali_run "make "
+  maali_run "make parallel"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/packmol $MAALI_INSTALL_DIR/bin/"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/ppackmol $MAALI_INSTALL_DIR/bin/"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/solvate.tcl $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

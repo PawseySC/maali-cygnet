@@ -1,0 +1,193 @@
+##############################################################################
+# maali cygnet file for OpenFOAM
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://downloads.sourceforge.net/foam/OpenFOAM-$MAALI_TOOL_VERSION.tgz?use_mirror=aarnet http://downloads.sourceforge.net/foam/ThirdParty-$MAALI_TOOL_VERSION.tgz?use_mirror=aarnet"
+
+# patch files to download
+MAALI_TOOL_PATCHES="001 002"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/OpenFOAM-$MAALI_TOOL_VERSION.tgz $MAALI_SRC/ThirdParty-$MAALI_TOOL_VERSION.tgz"
+
+# where the unpacked source code is located - OpenFOAM builds in place
+MAALI_TOOL_BUILD_DIR=""
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI qt/4.8.7 boost/1.49.0 cmake/2.8.12.2 python/2.7.10"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+
+# for module building
+if [ "$IBS_TOOL_VERSION" == "2.3.1" ]; then
+  MAALI_PARAVIEW_VERSION=4.1.0
+  MAALI_PARAVIEW_VERSION_MAJOR=4.1
+  MAALI_PARAVIEW_NAME=ParaView
+  MAALI_CGAL_VERSION=4.3
+elif [ "$IBS_TOOL_VERSION" == "2.2.2" ]; then
+  MAALI_PARAVIEW_VERSION=3.12.0
+  MAALI_PARAVIEW_VERSION_MAJOR=3.12
+  MAALI_PARAVIEW_NAME=paraview
+fi
+
+# for auto-building module files
+MAALI_MODULE_WHATIS="Provides the environment for the CFD package OpenFOAM."
+MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
+MAALI_MODULE_SET_FOAM_INST_DIR='$MAALI_APP_HOME'
+MAALI_MODULE_SET_WM_PROJECT='OpenFOAM'
+MAALI_MODULE_SET_WM_PROJECT_VERSION='$IBS_TOOL_VERSION'
+MAALI_MODULE_SET_WM_COMPILER='\$env\(foam_COMPILER\)'
+MAALI_MODULE_SET_WM_ARCH_OPTION='64'
+MAALI_MODULE_SET_WM_PRECISION_OPTION='DP'
+MAALI_MODULE_SET_WM_COMPILE_OPTION='Opt'
+MAALI_MODULE_SET_WM_MPLIB='SGIMPI'
+MAALI_MODULE_SET_WM_OSTYPE='POSIX'
+MAALI_MODULE_SET_FOAM_SIGFPE=''
+MAALI_MODULE_SET_WM_PROJECT_INST_DIR='\$env\(FOAM_INST_DIR\)'
+MAALI_MODULE_SET_WM_PROJECT_DIR='\$env\(WM_PROJECT_INST_DIR\)/\$env\(WM_PROJECT\)-\$env\(WM_PROJECT_VERSION\)'
+MAALI_MODULE_SET_WM_THIRD_PARTY_DIR='\$env\(WM_PROJECT_INST_DIR\)/ThirdParty-\$env\(WM_PROJECT_VERSION\)'
+MAALI_MODULE_SET_WM_PROJECT_USER_DIR='\$env\(HOME\)/\$env\(WM_PROJECT\)/\$env\(USER\)-\$env\(WM_PROJECT_VERSION\)'
+MAALI_MODULE_SET_FOAM_SETTINGS=''
+MAALI_MODULE_SET_WM_ARCH='linux64'
+MAALI_MODULE_SET_WM_COMPILER_LIB_ARCH='64'
+MAALI_MODULE_SET_WM_CC='mpicc'
+MAALI_MODULE_SET_WM_CXX='mpicxx'
+MAALI_MODULE_SET_WM_CFLAGS='-O3 -fPIC'
+MAALI_MODULE_SET_WM_CXXFLAGS='-O3 -fPIC'
+MAALI_MODULE_SET_WM_LDFLAGS='-O3'
+MAALI_MODULE_SET_FOAM_JOB_DIR='\$env\(WM_PROJECT_INST_DIR\)/jobControl'
+MAALI_MODULE_SET_WM_DIR='\$env\(WM_PROJECT_DIR\)/wmake'
+MAALI_MODULE_SET_WM_LINK_LANGUAGE='c++'
+MAALI_MODULE_SET_WM_OPTIONS='\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_COMPILE_OPTION\)'
+MAALI_MODULE_SET_FOAM_APPBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
+MAALI_MODULE_SET_FOAM_LIBBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
+MAALI_MODULE_SET_FOAM_EXT_LIBBIN='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
+MAALI_MODULE_SET_FOAM_SITE_APPBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/bin'
+MAALI_MODULE_SET_FOAM_SITE_LIBBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/lib'
+MAALI_MODULE_SET_FOAM_USER_APPBIN='\$env\(WM_PROJECT_USER_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
+MAALI_MODULE_SET_FOAM_USER_LIBBIN='\$env\(WM_PROJECT_USER_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
+MAALI_MODULE_SET_FOAM_APP='\$env\(WM_PROJECT_DIR\)/applications'
+MAALI_MODULE_SET_FOAM_SRC='\$env\(WM_PROJECT_DIR\)/src'
+MAALI_MODULE_SET_FOAM_TUTORIALS='\$env\(WM_PROJECT_DIR\)/tutorials'
+MAALI_MODULE_SET_FOAM_UTILITIES='\$env\(FOAM_APP\)/utilities'
+MAALI_MODULE_SET_FOAM_SOLVERS='\$env\(FOAM_APP\)/solvers'
+MAALI_MODULE_SET_FOAM_RUN='\$env\(WM_PROJECT_USER_DIR\)/run'
+MAALI_MODULE_SET_FOAM_MPI='mpt-2.10'
+MAALI_MODULE_SET_FOAM_MPI_LIBBIN='\$env\(FOAM_LIBBIN\)/\$env\(FOAM_MPI\)'
+MAALI_MODULE_SET_MPI_ARCH_PATH='\$env\(MPI_ROOT\)'
+MAALI_MODULE_SET_MPI_BUFFER_SIZE='20000000'
+MAALI_MODULE_SET_ParaView_VERSION='$MAALI_PARAVIEW_VERSION'
+MAALI_MODULE_SET_ParaView_MAJOR='$MAALI_PARAVIEW_VERSION_MAJOR'
+MAALI_MODULE_SET_ParaView_DIR='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/$MAALI_PARAVIEW_NAME-$MAALI_PARAVIEW_VERSION'
+MAALI_MODULE_SET_ParaView_LIB_DIR='\$env\(ParaView_DIR\)/lib/paraview-$MAALI_PARAVIEW_VERSION_MAJOR'
+MAALI_MODULE_SET_ParaView_INCLUDE_DIR='\$env\(ParaView_DIR\)/include/paraview-$MAALI_PARAVIEW_VERSION_MAJOR'
+MAALI_MODULE_SET_PV_PLUGIN_PATH='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib/paraview-\$env\(ParaView_MAJOR\)'
+MAALI_MODULE_SET_BOOST_ARCH_PATH='\$env\(IBS_BOOST_HOME\)'
+MAALI_MODULE_SET_MPFR_ARCH_PATH='\$env\(IBS_MPFR_HOME\)'
+MAALI_MODULE_SET_GMP_ARCH_PATH='\$env\(IBS_GMP_HOME\)'
+MAALI_MODULE_SET_CGAL_ARCH_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/CGAL-4.3'
+#prepend-path PATH                   \$env(WM_THIRD_PARTY_DIR)/platforms/\$env(WM_ARCH)\$env(WM_COMPILER)/gperftools-svn/bin
+#prepend-path PATH                   \$env(ParaView_DIR)/bin
+#prepend-path PATH                   \$env(FOAM_USER_APPBIN)
+#prepend-path PATH                   \$env(FOAM_SITE_APPBIN)
+#prepend-path PATH                   \$env(FOAM_APPBIN)
+#prepend-path PATH                   \$env(WM_PROJECT_DIR)/bin
+#prepend-path PATH                   \$env(WM_DIR)
+#prepend-path LD_LIBRARY_PATH        \$env(WM_THIRD_PARTY_DIR)/platforms/\$env(WM_ARCH)\$env(WM_COMPILER)/gperftools-svn/lib
+#prepend-path LD_LIBRARY_PATH        \$env(CGAL_ARCH_PATH)/lib
+#prepend-path LD_LIBRARY_PATH        \$env(ParaView_LIB_DIR)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_MPI_LIBBIN)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_EXT_LIBBIN)/\$env(FOAM_MPI)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_USER_LIBBIN)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_SITE_LIBBIN)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_LIBBIN)
+#prepend-path LD_LIBRARY_PATH        \$env(FOAM_EXT_LIBBIN)
+#append-path LD_LIBRARY_PATH         \$env(FOAM_LIBBIN)/dummy
+
+##############################################################################
+
+function maali_unpack {
+    maali_wiki ".. supressing unpacking OpenFoam source as it builds in place"
+}
+
+##############################################################################
+
+function maali_build {
+  # OpenFOAM builds in place
+
+  cd "$MAALI_INSTALL_DIR"
+  maali_wiki ".. moving to $MAALI_INSTALL_DIR"
+
+  for MAALI_TMP_DST in $MAALI_DST; do
+    maali_wiki "... unpacking $MAALI_TMP_DST"
+    tar zxf $MAALI_TMP_DST
+  done
+
+  # Set up the location of OpenFOAM's bashrc file
+  export FOAM_INST_DIR="$MAALI_INSTALL_DIR"
+  foamDotFile=$FOAM_INST_DIR/OpenFOAM-$MAALI_TOOL_VERSION/etc/bashrc
+
+  # Patch files for Zeus build
+  cd $FOAM_INST_DIR
+  if [ "$MAALI_TOOL_VERSION" == "2.3.1" ]; then
+    maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+  elif [ "$MAALI_TOOL_VERSION" == "2.2.2" ]; then
+    maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.002.patch"
+  fi
+
+  # Adjust the compilers
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      sed -i -e 's/export WM_COMPILER=Gcc/export WM_COMPILER=Icc/g' $foamDotFile
+      # TODO
+      # Need to add a sed command to change the compiler in the scotch Makefile.inc for intel
+  elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      sed -i -e 's/export WM_COMPILER=Gcc/export WM_COMPILER=Gcc/g' $foamDotFile
+  fi
+ 
+  [ -f $foamDotFile ] && . $foamDotFile
+  export WM_COMPPROCS=8
+
+  # Build CGAL before OpenFOAM
+  if [ "MAALI_TOOL_VERSION" == "2.3.1" ]; then
+      cd $WM_THIRD_PARTY_DIR
+      maali_run "./makeCGAL gmp-system mpfr-system boost-system"
+  fi
+
+  # Build OpenFOAM
+  cd $WM_PROJECT_DIR
+  maali_run "./Allwmake"
+
+  # Build Paraview for paraFOAM
+  if [ "$MAALI_TOOL_VERSION" == "2.3.1" ]; then  
+     
+     cd $WM_THIRD_PARTY_DIR
+     # I had to do this by hand and use cmake to set the mpif90 compiler
+     maali_run "./makeParaView4 -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$MAALI_PYTHON_LIB_VERSION.so"
+     
+     cd $FOAM_UTILITIES/postProcessing/graphics/PV4Readers
+     maali_run "./Allwclean"
+     maali_run "./Allwmake"
+  
+  elif [ "$MAALI_TOOL_VERSION" == "2.2.2" ]; then
+     
+     cd $WM_THIRD_PARTY_DIR
+     maali_run "./makeParaView -mpi -qt -python -python-lib $PYTHON_DIR/lib/libpython$MAALI_PYTHON_LIB_VERSION.so"
+  
+     cd $FOAM_UTILITIES/postProcessing/graphics/PV3Readers
+     maali_run "./Allwclean"
+     maali_run "./Allwmake"
+ 
+  fi
+
+  # fix permissions
+  maali_run "find $MAALI_INSTALL_DIR -perm 750 -exec chmod 755 {} \;"
+  maali_run "find $MAALI_INSTALL_DIR -perm 640 -exec chmod 644 {} \;"
+}
+
+##############################################################################
