@@ -1,0 +1,30 @@
+##############################################################################
+# maali cygnet file for ROOT
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://root.cern.ch/download/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.source.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.source.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_ROOTSYS='$MAALI_APP_HOME'
+MAALI_MODULE_SET_LIBPATH='$MAALI_APP_HOME/lib/root'
+MAALI_MODULE_SET_DYLD_LIBRARY_PATH='$MAALI_APP_HOME/lib/root'
+MAALI_MODULE_SET_PYTHONPATH='lib/root'
+MAALI_MODULE_SET_SHLIB_PATH='$MAALI_APP_HOME/lib/root'
+
+##############################################################################

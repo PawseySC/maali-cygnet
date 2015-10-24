@@ -1,33 +1,37 @@
 ##############################################################################
-# maali cygnet file for LDC
+# maali cygnet file for lapack 
 ##############################################################################
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/ldc-developers/ldc/releases/download/v$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src.tar.gz"
+MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="libconfig/1.5"
+MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2 llvm/3.7.0"
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='-DLIBCONFIG_INCLUDE_DIR=$MAALI_LIBCONFIG_HOME/include -DLIBCONFIG_LIBRARY=$MAALI_LIBCONFIG_HOME/lib/libconfig++.a'
+MAALI_TOOL_CONFIGURE='-DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_BUILD_TYPE:STRING=Release'
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_LAPACK='$MAALI_INSTALL_DIR'
+
+# currently not implemented
+MAALI_MODULE_WHATIS="LAPACK libs"
 
 ##############################################################################
