@@ -33,13 +33,13 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   cd src/dmd
-  maali_run "make -f posix.mak"
+  maali_run "make -f posix.mak AUTO_BOOTSTRAP=1"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 dmd $MAALI_INSTALL_DIR/bin/"
 
   cat <<EOF >$MAALI_INSTALL_DIR/bin/dmd.conf
 [Environment64]
-DFLAGS=-I%@P%/../../src/phobos -I%@P%/../../src/druntime/import -L-L$MAALI_INSTALL_DIR/lib -L--export-dynamic
+DFLAGS=-I%@P%/../../src/phobos -I%@P%/../../src/druntime/import -L-L$MAALI_INSTALL_DIR/linux/lib64 -L--export-dynamic
 EOF
 
   cd "$MAALI_TOOL_BUILD_DIR"
