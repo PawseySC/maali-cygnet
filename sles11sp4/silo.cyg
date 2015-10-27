@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -18,14 +18,14 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="hdf5/1.8.10"
+MAALI_TOOL_PREREQ="hdf5/1.8.15-patch1 qt/4.8.7"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 
-MAALI_TOOL_CONFIGURE='--enable-silex --enable-fortran --enable-shared --with-hdf5=$HDF5_DIR/include,$HDF5_DIR/lib'
-MAALI_TOOL_CONFIGURE_NOHDF5='--enable-silex --enable-fortran --enable-shared'
+MAALI_TOOL_CONFIGURE='--enable-silex --enable-fortran --enable-shared --with-hdf5=$HDF5_DIR/include,$HDF5_DIR/lib --with-Qt-dir=$MAALI_QT_HOME'
+MAALI_TOOL_CONFIGURE_NOHDF5='--enable-silex --enable-fortran --enable-shared --with-Qt-dir=$MAALI_QT_HOME'
 
 ##############################################################################
 

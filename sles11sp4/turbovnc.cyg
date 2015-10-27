@@ -18,10 +18,10 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="tools"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="libjpeg-turbo/1.4.0"
+MAALI_TOOL_PREREQ="libjpeg-turbo/1.4.2"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12"
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='-DTJPEG_INCLUDE_DIR=$MAALI_LIBJPEGTURBO_HOME/include -DTJPEG_LIBRARY=$MAALI_LIBJPEGTURBO_HOME/lib/libturbojpeg.a'
