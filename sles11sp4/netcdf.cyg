@@ -21,7 +21,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_CONFIGURE='--enable-netcdf-4'
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="szip/2.1 zlib/1.2.8 hdf5/1.8.10"
+MAALI_TOOL_PREREQ="szip/2.1 zlib/1.2.8 hdf5/1.8.15-patch1"
 
 # runs in front of the configure line
 # separate c++ and fortran wrappers
