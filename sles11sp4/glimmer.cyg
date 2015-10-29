@@ -1,0 +1,42 @@
+##############################################################################
+# maali cygnet file for glimmer
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# needs a specia version
+MAALI_GLIMMER_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\.//g'`
+MAALI_GLIMMER_DIR=`echo $MAALI_TOOL_VERSION | sed -e 's/b//g'`
+
+# URL to download the source code from
+MAALI_URL="http://www.cbcb.umd.edu/software/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME$MAALI_GLIMMER_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME$MAALI_GLIMMER_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}${MAALI_GLIMMER_DIR}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="bin scripts"
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cd src
+  maali_run "make"
+
+  cd ..
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "mv bin docs inc lib LICENSE sample-run scripts *.pdf $MAALI_INSTALL_DIR"
+  sed -i -e "s!/fs/szgenefinding/Glimmer3!$MAALI_INSTALL_DIR!g" $MAALI_INSTALL_DIR/scripts/*.csh
+  sed -i -e "s!/fs/szgenefinding/Glimmer3!$MAALI_INSTALL_DIR!g" $MAALI_INSTALL_DIR/sample-run/*.csh
+}
+
+##############################################################################
