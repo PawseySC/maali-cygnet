@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for freebayes
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/arq5x/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="samblaster/0.1.21 samtools/1.2 sambamba/0.4.7"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='bin scripts'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "make"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 bin/lumpy $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 755 bin/lumpyexpress $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 644 bin/lumpyexpress.config $MAALI_INSTALL_DIR/bin/"
+
+  sed -i -e 's!'$MAALI_TOOL_BUILD_DIR/'!'$MAALI_INSTALL_DIR'!g' $MAALI_INSTALL_DIR/bin/lumpyexpress.config
+
+  maali_makedir "$MAALI_INSTALL_DIR/scripts"
+  for file in `ls scripts/*.py`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts/"
+  done
+
+}
+
+##############################################################################
