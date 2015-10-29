@@ -1,0 +1,66 @@
+##############################################################################
+# maali cygnet file for beagle-lib
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# needed for URL
+MAALI_TOOL_VERSION_BEAGLE=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="http://beagle-lib.googlecode.com/svn/tags/beagle_release"_"$MAALI_TOOL_VERSION_BEAGLE"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/7u65"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_BEAGLE_LIB_DIR='$MAALI_APP_HOME'
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+##############################################################################
+
+function maali_download {
+  maali_wiki ".. supressing downloading as beagle-lib has no downloads"
+}
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking as beagle-lib has no downloads"
+}
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_BUILD_DIR"
+
+  # need to export from SVN
+  maali_run "svn export $MAALI_URL beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
+  
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "./autogen.sh"
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-cuda=$NVIDIA_CUDA_HOME"
+  else
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  fi
+
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
