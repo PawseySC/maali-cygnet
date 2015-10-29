@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://bioinf.uni-greifswald.de/augustus/binaries/old/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://bioinf.uni-greifswald.de/augustus/binaries/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="boost/1.49.0 bamtools/2.3.0 samtools/0.1.19"
+MAALI_TOOL_PREREQ="boost/1.49.0 bamtools/2.4.0 samtools/0.1.19"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
