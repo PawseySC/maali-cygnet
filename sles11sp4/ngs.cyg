@@ -1,0 +1,35 @@
+##############################################################################
+# maali cygnet file for ngs
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/ncbi/$MAALI_TOOL_NAME_ORIG/archive/$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION/ngs-sdk"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="NGS Language Bindings"
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
