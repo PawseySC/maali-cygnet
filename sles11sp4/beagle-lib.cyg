@@ -18,7 +18,7 @@ MAALI_URL="http://beagle-lib.googlecode.com/svn/tags/beagle_release"_"$MAALI_TOO
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/7u65"
+MAALI_TOOL_PREREQ="java/8u66"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
