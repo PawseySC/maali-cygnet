@@ -1,0 +1,64 @@
+##############################################################################
+# maali cygnet file for bamkit
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/cc2qe/bamkit"
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/2.7.6 pysam/0.8.0"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_download {
+  maali_wiki ".. supressing downloading as we are using a git repository"
+}
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking as we are using a git repository"
+}
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_BUILD_DIR"
+
+  maali_run "git clone $MAALI_URL"
+  cd $MAALI_TOOL_NAME
+  # this is version 0.1
+  git checkout 6b8c207e3fdec323c5694822fb5b7f09c2e8f3ab
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  for file in `ls *.py`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+}
+
+##############################################################################
