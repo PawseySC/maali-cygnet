@@ -1,0 +1,38 @@
+##############################################################################
+# maali cygnet file for cd-hit
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/weizhongli/cdhit/archive/V$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  #issue 12292
+  sed -i 's/#define MAX_SEQ [0-9]\+/#define MAX_SEQ 10000000/' cdhit-common.h
+
+  maali_run "make openmp=yes"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "cp -v cd-hit cd-hit-est cd-hit-2d cd-hit-est-2d cd-hit-div cd-hit-454 *.pl $MAALI_INSTALL_DIR/bin"
+
+}
+
+##############################################################################
