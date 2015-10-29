@@ -51,10 +51,6 @@ function maali_build {
   # fix for SLES11
   sed -i -e 's/lcurses/lncurses/g' Makefile
 
-  module list
-  echo $MAALI_HTSLIB_HOME
-  echo $LOADEDMODULES
-
   if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} >= 1) 1 else 0" | bc) -eq 1 ]]; then
       if [ "$MAALI_TOOL_VERSION" != "1.1" ]; then
         # this should already be installed
