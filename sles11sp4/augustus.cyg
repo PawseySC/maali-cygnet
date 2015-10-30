@@ -75,7 +75,6 @@ function maali_build {
   # compilation aborted for pp_profile.cc (code 2)
   # make: *** [pp_profile.o] Error 2
 
-  # /pawsey/sles11sp4/bio-apps/gcc/4.8.5/bamtools/2.4.0/include/bamtools
   maali_run "make"
 
   # binary files
@@ -123,18 +122,7 @@ function maali_build {
     fi
   done
 
-  cd auxprogs/bam2hints
-
-  sed -i -e "s;/home/mario/tools/bamtools;$MAALI_BAMTOOLS_HOME;g" Makefile
-  sed -i -e "s;/include;/include/bamtools;g" Makefile
-  sed -i -e "s;INCLUDES = /usr/include/bamtools;INCLUDES = $MAALI_BAMTOOLS_HOME/include;g" Makefile
-  cat Makefile
-  sed -i -e "s;/lib/libbamtools.a;/lib/bamtools/libbamtools.a;g" Makefile
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bam2hints $MAALI_INSTALL_DIR/bin/"
-
-  cd ../bam2wig
+  cd auxprogs/checkTargetSortedness
 
   sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
   sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
@@ -142,32 +130,10 @@ function maali_build {
 
   # needs the source for samtools
   cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bam2wig $MAALI_INSTALL_DIR/bin/"
 
-  cd ../checkTargetSortedness
-
-  sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
-  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
-  sed -i -e's/-lcurses/-lncurses/g' Makefile
-
-  # needs the source for samtools
-  cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
   maali_run "make"
   maali_run "install -m 755 checkTargetSortedness $MAALI_INSTALL_DIR/bin/"
 
-  cd ../filterBam
-
-  export BAMTOOLS=$MAALI_BAMTOOLS_HOME
-
-  sed -i -e 's;INCLUDES = -I$(BAMTOOLS)/include;INCLUDES = -I'"$MAALI_BAMTOOLS_HOME"'/include/bamtools;g' src/Makefile
-  sed -i -e 's;$(BAMTOOLS)/src/toolkit;'"$MAALI_BAMTOOLS_HOME"'/src/toolkit;g' src/Makefile
-  sed -i -e 's;LIBS = $(BAMTOOLS)/lib/libbamtools.a;LIBS = '"$MAALI_BAMTOOLS_HOME"'/lib/bamtools/libbamtools.a;g' src/Makefile
-
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bin/filterBam $MAALI_INSTALL_DIR/bin/"
 }
 
 ##############################################################################
