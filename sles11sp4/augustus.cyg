@@ -53,6 +53,12 @@ function maali_build {
   sed -i -e 's!-I../include!-I../include -I${BOOST_ROOT}/include!g' src/Makefile
   sed -i -e 's!-lboost_iostreams!-L${BOOST_ROOT}/lib -lboost_iostreams!g' src/Makefile
 
+  sed -i -e "s;INCLUDES = /usr/include/bamtools;INCLUDES = $MAALI_BAMTOOLS_HOME/include/bamtools;g" auxprogs/bam2hints/Makefile
+  sed -i -e "s;LIBS = -lbamtools -lz;LIBS = -L$MAALI_BAMTOOLS_HOME/lib/bamtools -lbamtools -lz;g" auxprogs/bam2hints/Makefile
+
+  sed -i -e "s;BAMTOOLS = /usr/include/bamtools;BAMTOOLS = $MAALI_BAMTOOLS_HOME/include/bamtools;g" auxprogs/filterBam/src/Makefile
+  sed -i -e "s;LIBS = -lbamtools -lz;LIBS = -L$MAALI_BAMTOOLS_HOME/lib/bamtools -lbamtools -lz;g" auxprogs/filterBam/src/Makefile
+  
   # icpc -c -Wall -Wno-sign-compare -ansi -O2    -o pp_profile.o pp_profile.cc -I../include -I. 
   # pp_profile.cc(91): error: namespace "PP" has no member "operator<<"
   #   ostream& PP::operator<<(ostream& strm, const Column& c) {
@@ -69,6 +75,7 @@ function maali_build {
   # compilation aborted for pp_profile.cc (code 2)
   # make: *** [pp_profile.o] Error 2
 
+  # /pawsey/sles11sp4/bio-apps/gcc/4.8.5/bamtools/2.4.0/include/bamtools
   maali_run "make"
 
   # binary files
@@ -116,13 +123,12 @@ function maali_build {
     fi
   done
 
-/group/director100/schibeci/software/sles11sp3/build/augustus-3.0.2/auxprogs/bam2wig/Makefile:SAMTOOLS=/fs1.cm/katharina/tools/samtools/
-
-
   cd auxprogs/bam2hints
 
   sed -i -e "s;/home/mario/tools/bamtools;$MAALI_BAMTOOLS_HOME;g" Makefile
   sed -i -e "s;/include;/include/bamtools;g" Makefile
+  sed -i -e "s;INCLUDES = /usr/include/bamtools;INCLUDES = $MAALI_BAMTOOLS_HOME/include;g" Makefile
+  cat Makefile
   sed -i -e "s;/lib/libbamtools.a;/lib/bamtools/libbamtools.a;g" Makefile
   maali_run "make clean"
   maali_run "make"

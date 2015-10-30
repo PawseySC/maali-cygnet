@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/FastQC"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/7u65"
+MAALI_TOOL_PREREQ="java/8u66"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

@@ -18,7 +18,7 @@ MAALI_TOOL_TYPE="bio-apps"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="pysam/0.8.0"
+MAALI_TOOL_PREREQ="pysam/0.8.3"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

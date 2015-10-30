@@ -21,7 +21,7 @@ MAALI_TOOL_TYPE="bio-apps"
 MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="dmd/2.065.0 ldc/0.12.1"
+MAALI_TOOL_BUILD_PREREQ="dmd/2.068.2 ldc/0.16.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

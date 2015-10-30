@@ -6,13 +6,13 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/ekg/freebayes"
+MAALI_URL="https://github.com/ekg/freebayes/archive/v${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST=""
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -34,25 +34,9 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-function maali_download {
-  maali_wiki ".. supressing downloading as freebayes will not build from the zip file"
-}
-
-##############################################################################
-
-function maali_unpack {
-  maali_wiki ".. supressing unpacking as freebayes *requires* you to clone the repository"
-}
-
-##############################################################################
-
 function maali_cmake_build {
   cd "$MAALI_BUILD_DIR"
 
-  maali_run "git clone --recursive $MAALI_URL"
-  cd $MAALI_TOOL_NAME
-  # this is version 0.9.21
-  git checkout 1635a15917a444bb6aed9cba457b6a192f1f4962
   maali_run "make"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 

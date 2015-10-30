@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.10.1 python-dateutil/2.4.2 pytz/2015.6"
+MAALI_TOOL_PREREQ="numpy/1.10.1 python-dateutil/2.4.2 pytz/2015.7"
 
 # for version 1.4.0
 # tornado

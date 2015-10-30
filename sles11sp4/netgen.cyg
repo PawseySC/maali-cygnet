@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://downloads.sourceforge.net/project/netgen-mesher/netgen-mesher/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz/download"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
