@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for wgs
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/wgs-assembler/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="Linux-amd64/bin"
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's/gcc/icc/g' kmer/Make.compilers
+    sed -i -e 's/g++/icpc/g' kmer/Make.compilers
+
+    sed -i -e 's/g++/icpc/g' src/c_make.as
+    sed -i -e 's/g++/icpc/g' src/c_make.gen
+
+    sed -i -e 's/gcc/icc/g' samtools/Makefile
+  fi
+
+  sed -i -e 's/-lcurses/-lncurses/g' samtools/Makefile
+
+  cd kmer
+  maali_run "gmake install"
+  cd ../src
+  maali_run "gmake"
+  cd ..
+  maali_makedir "$MAALI_INSTALL_DIR/Linux-amd64/"
+  maali_run "mv Linux-amd64/bin Linux-amd64/lib $MAALI_INSTALL_DIR/Linux-amd64"
+
+  # fix symbolic link
+  cd $MAALI_INSTALL_DIR/Linux-amd64/bin
+  rm -f pacBioToCA
+  ln -s PBcR pacBioToCA
+}
+
+##############################################################################
