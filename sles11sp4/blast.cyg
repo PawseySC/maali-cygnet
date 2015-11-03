@@ -28,7 +28,7 @@ MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
 ##############################################################################
 
 function maali_build {
-  cd "$MAALI_TOOL_BUILD_DIR/c++"
+  cd "$MAALI_BUILD_DIR"
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export LINUX_MODE=icc

@@ -12,7 +12,7 @@ MAALI_URL="https://github.com/arq5x/bedtools2/releases/download/v${MAALI_TOOL_VE
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-if [ "$MAALI_TOOL_VERSION" == "2.21.0" ] ; then
+if [[ "$MAALI_TOOL_VERSION" == "2.21.0" ]] || [[ "$MAALI_TOOL_VERSION" == "2.25.0" ]] ; then
   MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2"
 else
   MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2-${MAALI_TOOL_VERSION}"

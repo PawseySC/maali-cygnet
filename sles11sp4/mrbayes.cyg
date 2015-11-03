@@ -5,6 +5,9 @@
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
 # URL to download the source code from
 MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz/download"
 
@@ -18,10 +21,17 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"_"$MAALI_TOOL_VERSION/sr
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI beagle-lib/2.1.2"
+if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+  MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI beagle-lib-gpu/2.1.2"
+else
+  MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI beagle-lib/2.1.2"
+fi
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
 
 ##############################################################################
 

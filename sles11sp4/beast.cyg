@@ -7,13 +7,13 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 if [ $MAALI_TOOL_MAJOR_VERSION -ge 2 ]; then 
   # URL to download the source code from
-  MAALI_URL="https://github.com/CompEvol/beast2/releases/download/v$MAALI_TOOL_VERSION/BEAST.v$MAALI_TOOL_VERSION.tgz"
+  MAALI_URL="https://github.com/CompEvol/beast2/archive/v$MAALI_TOOL_VERSION.tar.gz"
 
   # location we are downloading the source code to
-  MAALI_DST="$MAALI_SRC/BEAST.v$MAALI_TOOL_VERSION.tgz"
+  MAALI_DST="$MAALI_SRC/BEAST.v$MAALI_TOOL_VERSION.tar.gz"
 
   # where the unpacked source code is located
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/BEAST"
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/beast2-$MAALI_TOOL_VERSION"
 else
   # URL to download the source code from
   MAALI_URL="http://beast-mcmc.googlecode.com/files/BEASTv$MAALI_TOOL_VERSION.tgz"
@@ -72,7 +72,8 @@ function maali_build {
 java -Xms64m -Xmx1024m -Djava.library.path="\$BEAST_LIB:\$BEAGLE_LIB_DIR/lib" -cp "\$BEAST_LIB/beast.jar:\$BEAST_LIB/beast-beagle.jar" dr.app.beast.BeastMain \$*
 EOF
   else
-    maali_run "mv bin examples images lib *.txt $MAALI_INSTALL_DIR"
+    maali_run "mv examples lib $MAALI_INSTALL_DIR"
+    maali_run " mv release/Linux/bin $MAALI_INSTALL_DIR"
 
     cat <<EOF >"$MAALI_INSTALL_DIR/bin/beast"
 #!/bin/bash

@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from - need to register
-MAALI_PICARD_VERSION=`echo $$MAALI_TOOL_VERSION | cut -d '.' -f 2`
+MAALI_PICARD_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 2`
 if [ $MAALI_PICARD_VERSION -gt 119 ]; then
   MAALI_URL="https://github.com/broadinstitute/picard/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
 else

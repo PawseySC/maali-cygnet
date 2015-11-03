@@ -42,7 +42,9 @@ function maali_build {
 
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
-  sed -i -e "s/for(int i=0;i<FOUR; i++)/int i;\n for(i=0;i<FOUR;i++)/g" src/mutationmodel.c
+  if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+    sed -i -e "s/for(int i=0;i<FOUR; i++)/int i;\n for(i=0;i<FOUR;i++)/g" src/mutationmodel.c
+  fi
 
   maali_run "make"
   maali_run "install -m 755 migrate-n $MAALI_INSTALL_DIR/bin/"
@@ -54,8 +56,10 @@ function maali_build {
 
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
-  sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile
-  sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile.in
+  if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+    sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile
+    sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile.in
+  fi
 
   maali_run "make mpis"
   maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"
