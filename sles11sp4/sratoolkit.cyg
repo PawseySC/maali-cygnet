@@ -36,7 +36,6 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_build {
   cd $MAALI_TOOL_BUILD_DIR
-  echo hello
 
   maali_run "make"
   maali_run "mv linux/gcc/stat/x86_64/rel/bin linux/gcc/stat/x86_64/rel/lib $MAALI_INSTALL_DIR"
