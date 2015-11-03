@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for Trinity RNA-Seq Assembly
+##############################################################################
+
+# specify which compilers we want to build the tool with - binary requires MAALI 1.5.4 or higher
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/${MAALI_TOOL_NAME}_r${MAALI_TOOL_VERSION}.tar.gz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_r${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_r${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gcc/4.8.3 java/7u65 bowtie/1.0.0 samtools/0.1.19"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="Trinity RNA-Seq Assembly"
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="toplevel"
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  
+  cd Chrysalis
+  make
+
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "mv * $MAALI_INSTALL_DIR/"
+}
+
+##############################################################################

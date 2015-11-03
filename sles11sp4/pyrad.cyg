@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for pyRAD
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://github.com/dereneaton/${MAALI_TOOL_NAME}/archive/${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+MAALI_TOOL_PREREQ="python/2.7.6 numpy/1.6.2 scipy/0.11.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+##############################################################################
+
+function maali_build {
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+        maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+        maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+    for file in `ls *.py`
+    do
+        maali_run "sed -i 's/python2/python/g' $file"
+        maali_run "install -m 644 $file $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+    done
+
+    maali_run "sed -i 's/python2/python/g' pyRAD"
+    maali_run "install -m 755 pyRAD $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################

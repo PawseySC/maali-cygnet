@@ -1,0 +1,30 @@
+##############################################################################
+# maali cygnet file for structure
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+if [ $MAALI_TOOL_VERSION == 1.32 ]; then
+  MAALI_URL="http://catchenlab.life.illinois.edu/stacks/source/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+else 
+  MAALI_URL="http://creskolab.uoregon.edu/stacks/source/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+fi
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="CFLAGS=-O3 CXXFLAGS=-O3 LDFLAGS=-dynamic"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

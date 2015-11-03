@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for Trimmomatic
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.usadellab.org/cms/uploads/supplementary/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/7u65"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+# MAALI_WIKI_TOOL_NAME=""
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/jar"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/adapters"
+
+  for file in adapters/*.fa
+  do
+    maali_run "install -m 644 $file $MAALI_INSTALL_DIR/adapters/"
+  done
+
+  maali_run "install -m 644 $MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar $MAALI_INSTALL_DIR/jar"
+
+  cat <<EOF >"$MAALI_INSTALL_DIR/bin/$MAALI_TOOL_NAME"
+#!/bin/bash
+
+java -Xmx1g -jar \$MAALI_TRIMMOMATIC_HOME/jar/$jar \$*
+EOF
+}
+
+##############################################################################
