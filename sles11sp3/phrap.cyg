@@ -1,0 +1,70 @@
+##############################################################################
+# maali cygnet file for phrap
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/distrib.tar.Z"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_RESTRICT_GROUP='phrap'
+
+# make a directory before unpacking
+MAALI_UNPACK_MKDIR=1
+
+##############################################################################
+
+function maali_build {
+
+  cd $MAALI_TOOL_BUILD_DIR
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's/CC= cc/CC=icc/g' makefile
+  fi
+
+  maali_run "make"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR/bin"
+    maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR/bin"
+  fi
+
+  for file in "cluster cross_match loco phrap phrapview swat"
+  do
+    if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+      maali_run "install -m 750 -g $MAALI_MODULE_RESTRICT_GROUP $file $MAALI_INSTALL_DIR/bin"
+    else
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    fi
+  done
+
+  maali_run "rm -f *.o"
+  maali_run "make manyreads"
+
+  for file in "cross_match.manyreads phrap.manyreads phrap.longreads"
+  do      
+    if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+      maali_run "install -m 750 -g $MAALI_MODULE_RESTRICT_GROUP $file $MAALI_INSTALL_DIR/bin"
+    else
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    fi
+  done              
+}
+
+##############################################################################
