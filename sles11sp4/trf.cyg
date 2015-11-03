@@ -1,0 +1,42 @@
+##############################################################################
+# maali cygnet file for trf
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://tandem.bu.edu/cgi-bin/trf/trf.download.pl?fileselect=26"
+
+# strip dots out of version
+MAALI_TRF_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\.//g'`
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/trf$MAALI_TRF_VERSION.linux64"
+
+# where the unpacked source code is located - TRF is a single binary
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking TRF is a single binary"
+}
+
+##############################################################################
+
+function maali_build {
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 $MAALI_DST $MAALI_INSTALL_DIR/bin/trf"
+}
+
+##############################################################################
