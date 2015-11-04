@@ -22,7 +22,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$SPEEDSEQ_VERSION"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_GCC_COMPILERS bwa/0.7.12 lumpy-sv/0.2.11 python/2.7.6 pysam/0.8.0 vawk/0.0.1 parallel/20150522 freebayes/0.9.21 root/5.34.20 bamkit/0.1 mbuffer/20140310 svtyper/0.0.2 ensembl-tools/76 numpy/1.6.2 scipy/0.11.0"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_GCC_COMPILERS bwa/0.7.12 lumpy-sv/0.2.11 $MAALI_DEFAULT_27_PYTHON pysam/0.8.3 vawk/0.0.1 parallel/20151022 freebayes/0.9.21 root/5.34.34 bamkit/0.1 mbuffer/20151002 svtyper/0.0.2 ensembl-tools/76 numpy/1.10.1 scipy/0.16.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -42,7 +42,6 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"
-  maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
   maali_run "install -m 755 bin/speedseq $MAALI_INSTALL_DIR/bin/"
 
   cd src/cnvnator

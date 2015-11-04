@@ -46,13 +46,11 @@ function maali_unpack {
 
 ##############################################################################
 
-function maali_build {
+function maali_python_build {
   cd "$MAALI_BUILD_DIR"
 
   maali_run "git clone $MAALI_URL"
   cd $MAALI_TOOL_NAME
-  # this is version 0.0.1
-  git checkout be20d77c0902d58fea1c1210af35e79a7ecd2f1f
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in `ls *.py`

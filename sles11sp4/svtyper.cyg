@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="binary"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/hall-lab/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.zip"
@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="python/2.7.6 pysam/0.8.0"
+MAALI_TOOL_PREREQ="pysam/0.8.3"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -34,7 +34,7 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-function maali_build {
+function maali_python_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"

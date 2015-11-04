@@ -30,14 +30,33 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
+
+  sed -i -e 's;-Bdynamic;-Bdynamic -L'$MAALI_LDC_HOME'/lib;g' Makefile
+
   maali_run "rmdir BioD"
 
-  if [ ! -f "$MAALI_SRC/BioD-4779c70.zip" ]; then
-    wget -O "$MAALI_SRC/BioD-4779c70.zip" -q https://github.com/biod/BioD/archive/4779c702b344a1f3eaf7cc4a99cb9767a818c89d.zip
+  if [ ! -f "$MAALI_SRC/BioD-1eb4a67.zip" ]; then
+    wget -O "$MAALI_SRC/BioD-1eb4a67.zip" -q https://github.com/biod/BioD/archive/1eb4a6761e5d54c90577958a41729faf45414b35.zip
   fi
 
-  maali_run "unzip -q -q $MAALI_SRC/BioD-4779c70.zip"
+  maali_run "unzip -q -q $MAALI_SRC/BioD-1eb4a67.zip"
   mv BioD* BioD
+
+  maali_run "rmdir htslib"
+  if [ ! -f "$MAALI_SRC/htslib-2f3c3ea.zip" ]; then
+    wget -O "$MAALI_SRC/htslib-2f3c3ea.zip" -q https://github.com/lomereiter/htslib/archive/2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5.zip
+  fi
+
+  maali_run "unzip -q -q $MAALI_SRC/htslib-2f3c3ea.zip"
+  mv htslib* htslib
+
+  maali_run "rmdir lz4"
+  if [ ! -f "$MAALI_SRC/lz4-160661c.zip" ]; then
+    wget -O "$MAALI_SRC/lz4-160661c.zip" -q https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.zip
+  fi
+
+  maali_run "unzip -q -q $MAALI_SRC/lz4-160661c.zip"
+  mv lz4* lz4
 
   maali_run "make sambamba-ldmd2-64"
   maali_makedir "$MAALI_INSTALL_DIR/bin"

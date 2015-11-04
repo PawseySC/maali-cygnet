@@ -3,22 +3,22 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="binary"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_r${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_r${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/8u66 bowtie/1.0.0 samtools/0.1.19"
+MAALI_TOOL_PREREQ="java/8u66 bowtie/1.1.2 samtools/0.1.19 parafly/2013-01-21"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -30,18 +30,74 @@ MAALI_WIKI_TOOL_NAME="Trinity RNA-Seq Assembly"
 # MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH="toplevel"
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PERLLIB=1
 
 ##############################################################################
 
 function maali_build {
   cd $MAALI_TOOL_BUILD_DIR
-  
-  cd Chrysalis
-  make
 
-  cd $MAALI_TOOL_BUILD_DIR
-  maali_run "mv * $MAALI_INSTALL_DIR/"
+  cd Inchworm
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+  cd ..
+
+  # cd Chrysalis
+  # maali_run "make"
+
+  # cd $MAALI_TOOL_BUILD_DIR
+  # maali_run "mv * $MAALI_INSTALL_DIR/"
+
+  find PerlLib
+
+  maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+
+  for file in `ls PerlLib/*.pm`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  done
+
+  for dir in CDNA HPC KmerGraphLib Simulate
+  do
+    maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/$dir/"
+
+    for file in `ls PerlLib/$dir/*.pm`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/$dir/"
+    done
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/share/util"
+  for file in `ls util/*.pl`
+  do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/share/util/"
+  done
+
+  for dir in support_scripts
+  do
+    maali_makedir "$MAALI_INSTALL_DIR/share/util/$dir"
+
+    for file in `ls util/$dir/*.pl`
+    do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/share/util/$dir/"
+    done
+
+    for file in `ls util/$dir/*.jar`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/share/util/$dir/"
+    done
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 Trinity $MAALI_INSTALL_DIR/bin/"
+
+  sed -i -e 's;$ROOTDIR/util;'$MAALI_INSTALL_DIR'/share/util;g' $MAALI_INSTALL_DIR/bin/Trinity
+  sed -i -e 's;"$ROOTDIR/trinity-plugins/parafly/bin/ParaFly";$ENV{"MAALI_PARAFLY_HOME"} . "/bin/ParaFly";g' $MAALI_INSTALL_DIR/bin/Trinity
+  sed -i -e 's;$FindBin::Bin/../../Trinity;'$MAALI_INSTALL_DIR'/bin/Trinity;g' $MAALI_INSTALL_DIR/share/util/support_scripts/write_partitioned_trinity_cmds.pl
+  sed -i -e 's;$ROOTDIR/Inchworm/bin;'$MAALI_INSTALL_DIR'/bin;g' $MAALI_INSTALL_DIR/bin/Trinity
+
 }
 
 ##############################################################################
