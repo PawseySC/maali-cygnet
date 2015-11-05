@@ -6,11 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
-  MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.0/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
-else
-  MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.x/${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
-fi
+MAALI_URL="http://popgen.sc.fsu.edu/currentversions/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
