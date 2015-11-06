@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for OpenDX (autoconf versions prior to 4.6)
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS $MAALI_DEFAULT_INTEL_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://http.debian.net/debian/pool/main/d/dx/${MAALI_TOOL_NAME}_$MAALI_TOOL_VERSION.orig.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_$MAALI_TOOL_VERSION.orig.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java hdf4 netcdf"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+
+   cd $MAALI_TOOL_BUILD_DIR
+
+   MAALI_KERNEL_VERSION=`uname -r | sed -e 's/-default//g'`
+
+   export CPPFLAGS='-I/usr/src/$MAALI_KERNEL_VERSION/include -I/usr/include'
+   export LDFLAGS='/usr/lib64/libGL.so.1 /usr/lib64/libGLU.so.1'
+   maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-shared --disable-static"
+   maali_run "make"
+   maali_run "make install"
+}
+
+##############################################################################
