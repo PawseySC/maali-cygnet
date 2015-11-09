@@ -1,0 +1,137 @@
+##############################################################################
+# maali cygnet file for visit
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# Visit has underscores in the version...a bit of sed to deal with that
+VISIT_VERSION="`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`"
+
+# URL to download the VisIt build script
+MAALI_URL="http://portal.nersc.gov/project/$MAALI_TOOL_NAME/releases/$MAALI_TOOL_VERSION/build_$MAALI_TOOL_NAME$VISIT_VERSION"
+
+# location we are downloading VisIt build script to
+MAALI_DST="$MAALI_SRC/build_$MAALI_TOOL_NAME$VISIT_VERSION"
+
+# location of VisIt build 
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/2.7.6 mpt"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_VISIT_ROOT='$IBS_APP_HOME'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_TOOL_VERSION/linux-x86_64/lib'
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION//linux-x86_64/lib/site-packages'
+
+##############################################################################
+
+function maali_unpack {
+    maali_wiki ".....suppressing unpack. Using VisIt build script"
+
+    # create the build directory for the VisIt script and copy the script there
+    maali_run "mkdir -p $MAALI_TOOL_BUILD_DIR"
+    cd $MAALI_TOOL_BUILD_DIR
+    cp $MAALI_DST . 
+    maali_run "chmod +x ./build_$MAALI_TOOL_NAME$VISIT_VERSION"
+    maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_BUILD_DIR"
+}
+
+##############################################################################
+
+function maali_build {
+
+  # First build all of the third party librarie for VisIt 
+  # --no-visit flag disables building VisIt
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "PAR_COMPILER=$MPI_ROOT/bin/mpicc PAR_INCLUDE=-I$MPI_ROOT/include ./build_$MAALI_TOOL_NAME$VISIT_VERSION --build-mode Release --parallel --prefix $MAALI_INSTALL_DIR --system-python --qt --vtk --hdf5 --icet --netcdf --silo --silex --szip --xdmf --no-visit"
+
+  # Unpack VisIt source code
+  maali_run "tar xf $MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz"
+
+  # Use pre-built configure file for cmake
+  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_BUILD_DIR"
+  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src/config-site/"
+
+  # Use VisIt's cmake to generate VisIt makefiles and build environment
+  cd $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src
+  maali_run "$MAALI_TOOL_BUILD_DIR/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake ."
+
+  # Build VisIt
+  maali_run "make -j8 install"
+
+  # Create host XML file
+  cat <<EOF >"$MAALI_INSTALL_DIR/host_zeus.xml"
+<?xml version="1.0"?>
+<Object name="MachineProfile">
+    <Field name="hostNickname" type="string">zeus</Field>
+    <Field name="host" type="string">zeus.pawsey.ivec.org</Field>
+    <Field name="userName" type="string">notset</Field>
+    <Field name="hostAliases" type="string"></Field>
+    <Field name="directory" type="string">$MAALI_INSTALL_DIR</Field>
+    <Field name="shareOneBatchJob" type="bool">false</Field>
+    <Field name="sshPortSpecified" type="bool">true</Field>
+    <Field name="sshPort" type="int">22</Field>
+    <Field name="sshCommandSpecified" type="bool">true</Field>
+    <Field name="sshCommand" type="stringVector">"ssh" </Field>
+    <Field name="useGateway" type="bool">false</Field>
+    <Field name="gatewayHost" type="string"></Field>
+    <Field name="clientHostDetermination" type="string">MachineName</Field>
+    <Field name="manualClientHostName" type="string"></Field>
+    <Field name="tunnelSSH" type="bool">true</Field>
+    <Field name="maximumNodesValid" type="bool">true</Field>
+    <Field name="maximumNodes" type="int">1</Field>
+    <Field name="maximumProcessorsValid" type="bool">true</Field>
+    <Field name="maximumProcessors" type="int">16</Field>
+    <Object name="LaunchProfile">
+        <Field name="timeout" type="int">240</Field>
+        <Field name="numProcessors" type="int">1</Field>
+        <Field name="numNodesSet" type="bool">true</Field>
+        <Field name="numNodes" type="int">1</Field>
+        <Field name="partitionSet" type="bool">false</Field>
+        <Field name="partition" type="string"></Field>
+        <Field name="bankSet" type="bool">false</Field>
+        <Field name="bank" type="string"></Field>
+        <Field name="timeLimitSet" type="bool">false</Field>
+        <Field name="timeLimit" type="string"></Field>
+        <Field name="launchMethodSet" type="bool">true</Field>
+        <Field name="launchMethod" type="string">srun</Field>
+        <Field name="forceStatic" type="bool">true</Field>
+        <Field name="forceDynamic" type="bool">false</Field>
+        <Field name="active" type="bool">false</Field>
+        <Field name="arguments" type="stringVector"></Field>
+        <Field name="parallel" type="bool">true</Field>
+        <Field name="launchArgsSet" type="bool">true</Field>
+        <Field name="launchArgs" type="string">--mpi=pmi2</Field>
+        <Field name="sublaunchArgsSet" type="bool">false</Field>
+        <Field name="sublaunchArgs" type="string"></Field>
+        <Field name="sublaunchPreCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPreCmd" type="string"></Field>
+        <Field name="sublaunchPostCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPostCmd" type="string"></Field>
+        <Field name="machinefileSet" type="bool">false</Field>
+        <Field name="machinefile" type="string"></Field>
+        <Field name="visitSetsUpEnv" type="bool">false</Field>
+        <Field name="canDoHWAccel" type="bool">false</Field>
+        <Field name="GPUsPerNode" type="int">1</Field>
+        <Field name="XArguments" type="string"></Field>
+        <Field name="launchXServers" type="bool">false</Field>
+        <Field name="XDisplay" type="string">:%l</Field>
+        <Field name="numThreads" type="int">0</Field>
+        <Field name="constrainNodeProcs" type="bool">false</Field>
+        <Field name="allowableNodes" type="intVector"></Field>
+        <Field name="allowableProcs" type="intVector"></Field>
+        <Field name="profileName" type="string">Parallel</Field>
+    </Object>
+    <Field name="activeProfile" type="int">0</Field>
+</Object>
+EOF
+
+}
+
+##############################################################################
