@@ -21,13 +21,13 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="tools"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="python/2.7.6 $MAALI_DEFAULT_MPI"
+MAALI_TOOL_PREREQ="python/2.7.6 mpt"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_LD_LIBRARY_PATH='linux-x86_64/lib'
-MAALI_MODULE_SET_PYTHONPATH='linux-x86_64/lib/site-packages'
-MAALI_MODULE_SET_VISIT_ROOT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_VISIT_ROOT='$IBS_APP_HOME'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_TOOL_VERSION/linux-x86_64/lib'
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION//linux-x86_64/lib/site-packages'
 
 ##############################################################################
 
@@ -35,7 +35,7 @@ function maali_unpack {
     maali_wiki ".....suppressing unpack. Using VisIt build script"
 
     # create the build directory for the VisIt script and copy the script there
-    maali_makedir "$MAALI_TOOL_BUILD_DIR"
+    maali_run "mkdir -p $MAALI_TOOL_BUILD_DIR"
     cd $MAALI_TOOL_BUILD_DIR
     cp $MAALI_DST . 
     maali_run "chmod +x ./build_$MAALI_TOOL_NAME$VISIT_VERSION"
@@ -46,132 +46,92 @@ function maali_unpack {
 
 function maali_build {
 
-    # First build all of the third party librarie for VisIt 
-    # --no-visit flag disables building VisIt
-    cd $MAALI_TOOL_BUILD_DIR
-    maali_run "PAR_COMPILER=$MPI_ROOT/bin/mpicc PAR_INCLUDE=-I$MPI_ROOT/include ./build_$MAALI_TOOL_NAME$VISIT_VERSION --build-mode Release --parallel --prefix $MAALI_INSTALL_DIR --system-python --qt --vtk --hdf5 --icet --netcdf --silo --silex --szip --xdmf --no-visit"
+  # First build all of the third party librarie for VisIt 
+  # --no-visit flag disables building VisIt
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "PAR_COMPILER=$MPI_ROOT/bin/mpicc PAR_INCLUDE=-I$MPI_ROOT/include ./build_$MAALI_TOOL_NAME$VISIT_VERSION --build-mode Release --parallel --prefix $MAALI_INSTALL_DIR --system-python --qt --vtk --hdf5 --icet --netcdf --silo --silex --szip --xdmf --no-visit"
 
-    # Unpack VisIt source code
-    maali_run "tar xf $MAALI_TOOL_NAME$MAALI_TOOL_VERISON.tar.gz"
+  # Unpack VisIt source code
+  maali_run "tar xf $MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz"
 
-    # Use pre-built configure file for cmake
-    cat <<EOF >$MAALI_TOOL_BUILD_DIR/zeus.cmake
-#$MAALI_TOOL_BUILD_DIR/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake
-##
-## ./build_visit2_9_2 generated host.cmake
-## created: Mon Jun 22 14:07:32 AWST 2015
-## system: Linux zeus 3.0.101-0.46-default #1 SMP Wed Dec 17 11:04:10 UTC 2014 (8356111) x86_64 x86_64 x86_64 GNU/Linux
-## by: stapops
+  # Use pre-built configure file for cmake
+  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_BUILD_DIR"
+  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src/config-site/"
 
-##
-## Setup VISITHOME & VISITARCH variables.
-##
-SET(VISITHOME $MAALI_INSTALL_DIR/visit)
-SET(VISITARCH linux-x86_64_gcc-4.8)
+  # Use VisIt's cmake to generate VisIt makefiles and build environment
+  cd $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src
+  maali_run "$MAALI_TOOL_BUILD_DIR/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake ."
 
-## Compiler flags.
-##
-VISIT_OPTION_DEFAULT(CMAKE_INSTALL_PREFIX $MAALI_INSTALL_DIR)
-VISIT_OPTION_DEFAULT(VISIT_C_COMPILER gcc TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(VISIT_CXX_COMPILER g++ TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(VISIT_C_FLAGS " -m64 -fPIC -fvisibility=hidden" TYPE STRING)
-VISIT_OPTION_DEFAULT(VISIT_CXX_FLAGS " -m64 -fPIC -fvisibility=hidden" TYPE STRING)
+  # Build VisIt
+  maali_run "make -j8 install"
 
-##
-## Parallel Build Setup.
-##
-VISIT_OPTION_DEFAULT(VISIT_PARALLEL ON TYPE BOOL)
-## (configured w/ mpi compiler wrapper)
-VISIT_OPTION_DEFAULT(VISIT_MPI_COMPILER $MPI_ROOT/bin/mpicc TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(MPI_C_INCLUDE_PATH $MPI_ROOT/include TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(MPI_C_LIBRARIES $MPI_ROOT/lib/libmpi.so;$MPI_ROOT/lib/libmpi++.so TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(MPI_CXX_INCLUDE_PATH $MPI_ROOT/include TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(MPI_CXX_LIBRARIES $MPI_ROOT/lib/libmpi.so;$MPI_ROOT/lib/libmpi++.so TYPE FILEPATH)
-VISIT_OPTION_DEFAULT(VISIT_PARALLEL_LINKER_FLAGS "-lstdc++" TYPE STRING)
-
-##
-## VisIt Thread Option
-##
-VISIT_OPTION_DEFAULT(VISIT_THREAD OFF TYPE BOOL)
-
-##############################################################
-##
-## Database reader plugin support libraries
-##
-## The HDF4, HDF5 and NetCDF libraries must be first so that
-## their libdeps are defined for any plugins that need them.
-##
-## For libraries with LIBDEP settings, order matters.
-## Libraries with LIBDEP settings that depend on other
-## Library's LIBDEP settings must come after them.
-##############################################################
-##
-
-##
-## Python
-##
-VISIT_OPTION_DEFAULT(VISIT_PYTHON_DIR $PYTHON_DIR)
-VISIT_OPTION_DEFAULT(PYTHON_INCLUDE_PATH $PYTHON_DIR/include/python$MAALI_PYTHON_LIB_VERSION )
-VISIT_OPTION_DEFAULT(PYTHON_LIBRARY $PYTHON_DIR/lib/libpython$MAALI_PYTHON_LIB_VERSION.so)
-VISIT_OPTION_DEFAULT(PYTHON_LIBRARY_DIR $PYTHON_DIR/lib)
-VISIT_OPTION_DEFAULT(PYTHON_VERSION $MAALI_PYTHON_LIB_VERSION)
-SET(VISIT_PYTHON_SKIP_INSTALL ON)
-
-##
-## Qt
-##
-VISIT_OPTION_DEFAULT(VISIT_QT_BIN \${VISITHOME}/qt/4.8.3/\${VISITARCH}/bin)
-
-##
-## VTK
-##
-SETUP_APP_VERSION(VTK 6.1.0)
-VISIT_OPTION_DEFAULT(VISIT_VTK_DIR \${VISITHOME}/vtk/\${VTK_VERSION}/\${VISITARCH})
-##
-
-##
-## SZIP
-##
-VISIT_OPTION_DEFAULT(VISIT_SZIP_DIR \${VISITHOME}/szip/2.1/\${VISITARCH})
-
-##
-## HDF5
-##
-VISIT_OPTION_DEFAULT(VISIT_HDF5_DIR \${VISITHOME}/hdf5/1.8.7/\${VISITARCH})
-VISIT_OPTION_DEFAULT(VISIT_HDF5_LIBDEP \${VISITHOME}/szip/2.1/\${VISITARCH}/lib sz /usr/lib z TYPE STRING)
-
-##
-## Ice-T
-##
-VISIT_OPTION_DEFAULT(VISIT_ICET_DIR \${VISITHOME}/icet/1.0.0/\${VISITARCH})
-
-##
-## NetCDF
-##
-VISIT_OPTION_DEFAULT(VISIT_NETCDF_DIR \${VISITHOME}/netcdf/4.1.1/\${VISITARCH})
-VISIT_OPTION_DEFAULT(VISIT_NETCDF_LIBDEP HDF5_LIBRARY_DIR hdf5_hl HDF5_LIBRARY_DIR hdf5 ${VISIT_HDF5_LIBDEP} TYPE STRING)
-
-##
-## Silo
-##
-VISIT_OPTION_DEFAULT(VISIT_SILO_DIR \${VISITHOME}/silo/4.10.1/\${VISITARCH})
-VISIT_OPTION_DEFAULT(VISIT_SILO_LIBDEP HDF5_LIBRARY_DIR hdf5 \${VISIT_HDF5_LIBDEP} TYPE STRING)
-
-##
-## Xdmf
-##
-VISIT_OPTION_DEFAULT(VISIT_XDMF_DIR \${VISITHOME}/Xdmf/2.1.1/\${VISITARCH})
-VISIT_OPTION_DEFAULT(VISIT_XDMF_LIBDEP HDF5_LIBRARY_DIR hdf5  VTK_LIBRARY_DIRS vtklibxml2-\${VTK_MAJOR_VERSION}.\${VTK_MINOR_VERSION}  TYPE STRING)
+  # Create host XML file
+  cat <<EOF >"$MAALI_INSTALL_DIR/host_zeus.xml"
+<?xml version="1.0"?>
+<Object name="MachineProfile">
+    <Field name="hostNickname" type="string">zeus</Field>
+    <Field name="host" type="string">zeus.pawsey.ivec.org</Field>
+    <Field name="userName" type="string">notset</Field>
+    <Field name="hostAliases" type="string"></Field>
+    <Field name="directory" type="string">$MAALI_INSTALL_DIR</Field>
+    <Field name="shareOneBatchJob" type="bool">false</Field>
+    <Field name="sshPortSpecified" type="bool">true</Field>
+    <Field name="sshPort" type="int">22</Field>
+    <Field name="sshCommandSpecified" type="bool">true</Field>
+    <Field name="sshCommand" type="stringVector">"ssh" </Field>
+    <Field name="useGateway" type="bool">false</Field>
+    <Field name="gatewayHost" type="string"></Field>
+    <Field name="clientHostDetermination" type="string">MachineName</Field>
+    <Field name="manualClientHostName" type="string"></Field>
+    <Field name="tunnelSSH" type="bool">true</Field>
+    <Field name="maximumNodesValid" type="bool">true</Field>
+    <Field name="maximumNodes" type="int">1</Field>
+    <Field name="maximumProcessorsValid" type="bool">true</Field>
+    <Field name="maximumProcessors" type="int">16</Field>
+    <Object name="LaunchProfile">
+        <Field name="timeout" type="int">240</Field>
+        <Field name="numProcessors" type="int">1</Field>
+        <Field name="numNodesSet" type="bool">true</Field>
+        <Field name="numNodes" type="int">1</Field>
+        <Field name="partitionSet" type="bool">false</Field>
+        <Field name="partition" type="string"></Field>
+        <Field name="bankSet" type="bool">false</Field>
+        <Field name="bank" type="string"></Field>
+        <Field name="timeLimitSet" type="bool">false</Field>
+        <Field name="timeLimit" type="string"></Field>
+        <Field name="launchMethodSet" type="bool">true</Field>
+        <Field name="launchMethod" type="string">srun</Field>
+        <Field name="forceStatic" type="bool">true</Field>
+        <Field name="forceDynamic" type="bool">false</Field>
+        <Field name="active" type="bool">false</Field>
+        <Field name="arguments" type="stringVector"></Field>
+        <Field name="parallel" type="bool">true</Field>
+        <Field name="launchArgsSet" type="bool">true</Field>
+        <Field name="launchArgs" type="string">--mpi=pmi2</Field>
+        <Field name="sublaunchArgsSet" type="bool">false</Field>
+        <Field name="sublaunchArgs" type="string"></Field>
+        <Field name="sublaunchPreCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPreCmd" type="string"></Field>
+        <Field name="sublaunchPostCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPostCmd" type="string"></Field>
+        <Field name="machinefileSet" type="bool">false</Field>
+        <Field name="machinefile" type="string"></Field>
+        <Field name="visitSetsUpEnv" type="bool">false</Field>
+        <Field name="canDoHWAccel" type="bool">false</Field>
+        <Field name="GPUsPerNode" type="int">1</Field>
+        <Field name="XArguments" type="string"></Field>
+        <Field name="launchXServers" type="bool">false</Field>
+        <Field name="XDisplay" type="string">:%l</Field>
+        <Field name="numThreads" type="int">0</Field>
+        <Field name="constrainNodeProcs" type="bool">false</Field>
+        <Field name="allowableNodes" type="intVector"></Field>
+        <Field name="allowableProcs" type="intVector"></Field>
+        <Field name="profileName" type="string">Parallel</Field>
+    </Object>
+    <Field name="activeProfile" type="int">0</Field>
+</Object>
 EOF
 
-    maali_run "cp $MAALI_TOOL_BUILD_DIR/zeus.cmake $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src/config-site/"
-
-    # Use VisIt's cmake to generate VisIt makefiles and build environment
-    cd $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src
-    maali_run "$MAALI_TOOL_BUILD_DIR/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake ."
-
-    # Build VisIt
-    maali_run "make -j $MAALI_CORES install"
 }
 
 ##############################################################################
