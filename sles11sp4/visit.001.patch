@@ -1,0 +1,105 @@
+## ./build_visit2_9_2 generated host.cmake
+## created: Mon Jun 22 14:07:32 AWST 2015
+## system: Linux zeus 3.0.101-0.46-default #1 SMP Wed Dec 17 11:04:10 UTC 2014 (8356111) x86_64 x86_64 x86_64 GNU/Linux
+## by: stapops
+
+##
+## Setup VISITHOME & VISITARCH variables.
+##
+SET(VISITHOME /pawsey/sles11sp4/build/visit-2.9.2/visit)
+SET(VISITARCH linux-x86_64_gcc-4.8)
+
+## Compiler flags.
+##
+VISIT_OPTION_DEFAULT(CMAKE_INSTALL_PREFIX /pawsey/sles11sp4/tools/gcc/4.8.5/visit/2.9.2)
+VISIT_OPTION_DEFAULT(VISIT_C_COMPILER gcc TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(VISIT_CXX_COMPILER g++ TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(VISIT_C_FLAGS " -m64 -fPIC -fvisibility=hidden" TYPE STRING)
+VISIT_OPTION_DEFAULT(VISIT_CXX_FLAGS " -m64 -fPIC -fvisibility=hidden" TYPE STRING)
+
+##
+## Parallel Build Setup.
+##
+VISIT_OPTION_DEFAULT(VISIT_PARALLEL ON TYPE BOOL)
+## (configured w/ mpi compiler wrapper)
+VISIT_OPTION_DEFAULT(VISIT_MPI_COMPILER /opt/sgi/mpt/mpt-2.12/bin/mpicc TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(MPI_C_INCLUDE_PATH /opt/sgi/mpt/mpt-2.12/include TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(MPI_C_LIBRARIES /opt/sgi/mpt/mpt-2.12/lib/libmpi.so;/opt/sgi/mpt/mpt-2.12/lib/libmpi++.so TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(MPI_CXX_INCLUDE_PATH /opt/sgi/mpt/mpt-2.12/include TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(MPI_CXX_LIBRARIES /opt/sgi/mpt/mpt-2.12/lib/libmpi.so;/opt/sgi/mpt/mpt-2.12/lib/libmpi++.so TYPE FILEPATH)
+VISIT_OPTION_DEFAULT(VISIT_PARALLEL_LINKER_FLAGS "-lstdc++" TYPE STRING)
+
+##
+## VisIt Thread Option
+##
+VISIT_OPTION_DEFAULT(VISIT_THREAD OFF TYPE BOOL)
+
+##############################################################
+##
+## Database reader plugin support libraries
+##
+## The HDF4, HDF5 and NetCDF libraries must be first so that
+## their libdeps are defined for any plugins that need them.
+##
+## For libraries with LIBDEP settings, order matters.
+## Libraries with LIBDEP settings that depend on other
+## Library's LIBDEP settings must come after them.
+##############################################################
+##
+
+##
+## Python
+##
+VISIT_OPTION_DEFAULT(VISIT_PYTHON_DIR /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6)
+VISIT_OPTION_DEFAULT(PYTHON_INCLUDE_PATH /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/include/python2.7 )
+VISIT_OPTION_DEFAULT(PYTHON_LIBRARY /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/lib/libpython2.7.so)
+VISIT_OPTION_DEFAULT(PYTHON_LIBRARY_DIR /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/lib)
+VISIT_OPTION_DEFAULT(PYTHON_VERSION 2.7)
+SET(VISIT_PYTHON_SKIP_INSTALL ON)
+
+##
+## Qt
+##
+VISIT_OPTION_DEFAULT(VISIT_QT_BIN ${VISITHOME}/qt/4.8.3/${VISITARCH}/bin)
+
+##
+## VTK
+##
+SETUP_APP_VERSION(VTK 6.1.0)
+VISIT_OPTION_DEFAULT(VISIT_VTK_DIR ${VISITHOME}/vtk/${VTK_VERSION}/${VISITARCH})
+##
+
+##
+## SZIP
+##
+VISIT_OPTION_DEFAULT(VISIT_SZIP_DIR ${VISITHOME}/szip/2.1/${VISITARCH})
+
+##
+## HDF5
+##
+VISIT_OPTION_DEFAULT(VISIT_HDF5_DIR ${VISITHOME}/hdf5/1.8.7/${VISITARCH})
+VISIT_OPTION_DEFAULT(VISIT_HDF5_LIBDEP ${VISITHOME}/szip/2.1/${VISITARCH}/lib sz /usr/lib z TYPE STRING)
+
+##
+## Ice-T
+##
+VISIT_OPTION_DEFAULT(VISIT_ICET_DIR ${VISITHOME}/icet/1.0.0/${VISITARCH})
+
+##
+## NetCDF
+##
+VISIT_OPTION_DEFAULT(VISIT_NETCDF_DIR ${VISITHOME}/netcdf/4.1.1/${VISITARCH})
+VISIT_OPTION_DEFAULT(VISIT_NETCDF_LIBDEP HDF5_LIBRARY_DIR hdf5_hl HDF5_LIBRARY_DIR hdf5 ${VISIT_HDF5_LIBDEP} TYPE STRING)
+
+##
+## Silo
+##
+VISIT_OPTION_DEFAULT(VISIT_SILO_DIR ${VISITHOME}/silo/4.10.1/${VISITARCH})
+VISIT_OPTION_DEFAULT(VISIT_SILO_LIBDEP HDF5_LIBRARY_DIR hdf5 ${VISIT_HDF5_LIBDEP} TYPE STRING)
+
+##
+## Xdmf
+##
+VISIT_OPTION_DEFAULT(VISIT_XDMF_DIR ${VISITHOME}/Xdmf/2.1.1/${VISITARCH})
+VISIT_OPTION_DEFAULT(VISIT_XDMF_LIBDEP HDF5_LIBRARY_DIR hdf5  VTK_LIBRARY_DIRS vtklibxml2-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}  TYPE STRING)
+
