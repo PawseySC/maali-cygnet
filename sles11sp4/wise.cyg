@@ -7,6 +7,7 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="http://korflab.ucdavis.edu/Datasets/cegma/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_URL="http://www.ebi.ac.uk/~birney/wise2/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
@@ -37,6 +38,7 @@ function maali_build {
 
   cd src
   maali_run "sed -i -e 's/getline/getLine/g' HMMer2/sqio.c"
+  maali_run "sed -i -e 's/isnumber/isdigit/g' models/phasemodel.c"
   maali_run "make clean"
   maali_run "make all CC=$CC"
 

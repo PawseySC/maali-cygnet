@@ -31,6 +31,9 @@ fi
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='cuda'
 
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
 # for auto-building module files
 MAALI_MODULE_SET_CUDA_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH='bin samples/bin/linux/release'

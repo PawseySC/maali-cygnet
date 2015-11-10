@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java hdf4 netcdf"
+MAALI_TOOL_PREREQ="java/8u66 hdf4/4.2.11 netcdf/4.1.3"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -33,8 +33,9 @@ function maali_build {
 
    MAALI_KERNEL_VERSION=`uname -r | sed -e 's/-default//g'`
 
-   export CPPFLAGS='-I/usr/src/$MAALI_KERNEL_VERSION/include -I/usr/include'
+   export CPPFLAGS="-I/usr/src/linux-$MAALI_KERNEL_VERSION/include -I/usr/include"
    export LDFLAGS='/usr/lib64/libGL.so.1 /usr/lib64/libGLU.so.1'
+
    maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-shared --disable-static"
    maali_run "make"
    maali_run "make install"

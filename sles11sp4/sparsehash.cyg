@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # fails on intel
 # ./src/sparsehash/sparse_hash_map(94): catastrophic error: expected a file name

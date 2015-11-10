@@ -51,9 +51,10 @@ function maali_build {
   maali_run "VMDINSTALLBINDIR=$MAALI_INSTALL_DIR/bin VMDINSTALLLIBRARYDIR=$MAALI_INSTALL_DIR/lib ./configure "
   cd src
   sed -i -e "s/..\/plugins\/$temp_arch\/molfile/..\/plugins\/compile\/lib_$temp_arch\/molfile/g" Makefile
+  sed -i -e 's/-lGLU -lX11/-lGLU -lX11 -lXcursor -lXinerama/g' Makefile
   # sed -i -e "s/\/usr\/local\/encap\/cuda-4.0\/bin\/nvcc/nvcc/g" Makefile
 
-  maali_run "make "
+  maali_run "make"
   maali_run "make install"
 
 }

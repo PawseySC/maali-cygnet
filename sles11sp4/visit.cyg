@@ -11,6 +11,9 @@ VISIT_VERSION="`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`"
 # URL to download the VisIt build script
 MAALI_URL="http://portal.nersc.gov/project/$MAALI_TOOL_NAME/releases/$MAALI_TOOL_VERSION/build_$MAALI_TOOL_NAME$VISIT_VERSION"
 
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
 # location we are downloading VisIt build script to
 MAALI_DST="$MAALI_SRC/build_$MAALI_TOOL_NAME$VISIT_VERSION"
 
@@ -39,7 +42,6 @@ function maali_unpack {
     cd $MAALI_TOOL_BUILD_DIR
     cp $MAALI_DST . 
     maali_run "chmod +x ./build_$MAALI_TOOL_NAME$VISIT_VERSION"
-    maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_BUILD_DIR"
 }
 
 ##############################################################################
@@ -49,14 +51,19 @@ function maali_build {
   # First build all of the third party librarie for VisIt 
   # --no-visit flag disables building VisIt
   cd $MAALI_TOOL_BUILD_DIR
+  sed -i -e 's/BYPASS_QT_LICENSE="no"/BYPASS_QT_LICENSE="yes"/g' build_$MAALI_TOOL_NAME$VISIT_VERSION
   maali_run "PAR_COMPILER=$MPI_ROOT/bin/mpicc PAR_INCLUDE=-I$MPI_ROOT/include ./build_$MAALI_TOOL_NAME$VISIT_VERSION --build-mode Release --parallel --prefix $MAALI_INSTALL_DIR --system-python --qt --vtk --hdf5 --icet --netcdf --silo --silex --szip --xdmf --no-visit"
 
+  if [ ! -f "$MAALI_SRC/$MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz" ]; then
+    wget -q -O $MAALI_SRC/$MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz http://portal.nersc.gov/project/$MAALI_TOOL_NAME/releases/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz
+  fi
+
   # Unpack VisIt source code
-  maali_run "tar xf $MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz"
+  maali_run "tar xf $MAALI_SRC/$MAALI_TOOL_NAME$MAALI_TOOL_VERSION.tar.gz"
 
   # Use pre-built configure file for cmake
-  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_BUILD_DIR"
-  maali_run "cp $MAALI_FILES_PATH/zeus.cmake $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src/config-site/"
+  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch $MAALI_TOOL_BUILD_DIR/$HOSTNAME.cmake"
+  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src/config-site/$HOSTNAME.cmake"
 
   # Use VisIt's cmake to generate VisIt makefiles and build environment
   cd $MAALI_TOOL_NAME$MAALI_TOOL_VERSION/src
@@ -70,7 +77,7 @@ function maali_build {
 <?xml version="1.0"?>
 <Object name="MachineProfile">
     <Field name="hostNickname" type="string">zeus</Field>
-    <Field name="host" type="string">zeus.pawsey.ivec.org</Field>
+    <Field name="host" type="string">zeus.pawsey.org.au</Field>
     <Field name="userName" type="string">notset</Field>
     <Field name="hostAliases" type="string"></Field>
     <Field name="directory" type="string">$MAALI_INSTALL_DIR</Field>
