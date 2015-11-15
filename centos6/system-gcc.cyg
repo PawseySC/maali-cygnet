@@ -19,9 +19,13 @@ MAALI_REMODULE=1
 
 # need to set this to create the module
 MAALI_TOOL_VERSION=`gcc -v 2>&1 | grep 'gcc version' | cut -d ' ' -f 3`
+MAALI_INSTALL_DIR='/usr'
 
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='gcc'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
 
 # for auto-building module files
 MAALI_MODULE_SET_COMPILER='gcc'
