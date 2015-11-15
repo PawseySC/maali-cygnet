@@ -1,0 +1,68 @@
+##############################################################################
+# maali cygnet file for creating module file for system gcc
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+if [ -d /pawsey/intel/15.0.5 ]; then
+  MAALI_TOOL_VERSION='15.0.5'
+  MAALI_INSTALL_DIR='/pawsey/intel/15.0.5'
+  MAALI_INTEL_LICENSE_DIR='/pawsey/intel/licenses'
+elif [ -d /pawsey/intel/15.0.3 ]; then
+  MAALI_TOOL_VERSION='15.0.3'
+  MAALI_INSTALL_DIR='/pawsey/intel/15.0.3'
+  MAALI_INTEL_LICENSE_DIR='/pawsey/intel/licenses'
+elif [ -d /ivec/intel/15.0.0 ]; then
+  MAALI_TOOL_VERSION='15.0.0'
+  MAALI_INSTALL_DIR='/ivec/intel/15.0.0'
+  MAALI_INTEL_LICENSE_DIR='/ivec/intel/licenses'
+elif [ -d /home/software/apps/intel ]; then
+  MAALI_TOOL_VERSION='16.0'
+  MAALI_INSTALL_DIR='/home/software/apps/intel'
+  MAALI_INTEL_LICENSE_DIR='/home/software/apps/intel/licenses'
+fi
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='intel'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PATH='bin mkl/tools'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='mkl/lib/intel64 composerxe/lib/intel64'
+MAALI_MODULE_SET_MANPATH='man/en_US'
+MAALI_MODULE_SET_CC='icc'
+MAALI_MODULE_SET_CXX='icpc'
+MAALI_MODULE_SET_FC='ifort'
+MAALI_MODULE_SET_F77='ifort'
+MAALI_MODULE_SET_F90='ifort'
+MAALI_MODULE_SET_F95='ifort'
+MAALI_MODULE_SET_F9X='ifort'
+MAALI_MODULE_SET_MPICC_CC='icc'
+MAALI_MODULE_SET_MPICXX_CXX='icpc'
+MAALI_MODULE_SET_INTEL_PATH=''
+MAALI_MODULE_SET_INTEL_INC_PATH='compiler/include include'
+MAALI_MODULE_SET_INTEL_LIB_PATH='mkl/lib/intel64 lib/intel64'
+MAALI_MODULE_SET_INTEL_LICENSE_FILE='/ivec/intel/licenses/USE_SERVER.lic'
+MAALI_MODULE_SET_MKLROOT='/ivec/intel/15.0.0/mkl'
+MAALI_MODULE_SET_OMP_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_DYNAMIC='FALSE'
+
+##############################################################################
