@@ -30,6 +30,10 @@ elif [ -d /ivec/intel/15.0.0 ]; then
   MAALI_INSTALL_DIR='/ivec/intel/15.0.0'
   MAALI_INTEL_LICENSE_DIR='/ivec/intel/licenses'
 elif [ -d /home/software/apps/intel ]; then
+  MAALI_TOOL_VERSION='15.0.0'
+  MAALI_INSTALL_DIR='/home/software/apps/intel/15.0.0/intel'
+  MAALI_INTEL_LICENSE_DIR='/home/software/apps/intel/licenses'
+elif [ -d /home/software/apps/intel ]; then
   MAALI_TOOL_VERSION='16.0'
   MAALI_INSTALL_DIR='/home/software/apps/intel'
   MAALI_INTEL_LICENSE_DIR='/home/software/apps/intel/licenses'
