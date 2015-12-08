@@ -70,7 +70,7 @@ function maali_build {
   maali_run "$MAALI_TOOL_BUILD_DIR/visit/cmake/3.0.2/linux-x86_64_gcc-4.8/bin/cmake ."
 
   # Build VisIt
-  maali_run "make -j8 install"
+  maali_run "make install VERBOSE=TRUE"
 
   # Create host XML file
   cat <<EOF >"$MAALI_INSTALL_DIR/host_zeus.xml"

@@ -50,10 +50,10 @@ VISIT_OPTION_DEFAULT(VISIT_THREAD OFF TYPE BOOL)
 ##
 ## Python
 ##
-VISIT_OPTION_DEFAULT(VISIT_PYTHON_DIR /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6)
-VISIT_OPTION_DEFAULT(PYTHON_INCLUDE_PATH /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/include/python2.7 )
-VISIT_OPTION_DEFAULT(PYTHON_LIBRARY /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/lib/libpython2.7.so)
-VISIT_OPTION_DEFAULT(PYTHON_LIBRARY_DIR /pawsey/sles11sp4/apps/gcc/4.4.7/python/2.7.6/lib)
+VISIT_OPTION_DEFAULT(VISIT_PYTHON_DIR /pawsey/sles11sp4/apps/gcc/4.3.4/python/2.7.10)
+VISIT_OPTION_DEFAULT(PYTHON_INCLUDE_PATH /pawsey/sles11sp4/apps/gcc/4.3.4/python/2.7.10/include/python2.7 )
+VISIT_OPTION_DEFAULT(PYTHON_LIBRARY /pawsey/sles11sp4/apps/gcc/4.3.4/python/2.7.10/lib/libpython2.7.so)
+VISIT_OPTION_DEFAULT(PYTHON_LIBRARY_DIR /pawsey/sles11sp4/apps/gcc/4.3.4/python/2.7.10/lib)
 VISIT_OPTION_DEFAULT(PYTHON_VERSION 2.7)
 SET(VISIT_PYTHON_SKIP_INSTALL ON)
 
