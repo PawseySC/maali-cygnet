@@ -27,7 +27,7 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_CONFIGURE='--with-hdf5=$HDF5_DIR --with-netcdf=$NETCDF_DIR --with-udunits2=$MAALI_UDUNITS_HOME --with-proj=$MAALI_PROJ_HOME'
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-hdf5/1.8.13 cray-netcdf/4.3.2 udunits/2.2.17 fftw/3.3.4.0 proj/4.8.0"
+MAALI_TOOL_PREREQ="cray-hdf5/1.8.13 cray-netcdf/4.3.2 udunits/2.2.20 fftw/3.3.4.0 proj/4.8.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

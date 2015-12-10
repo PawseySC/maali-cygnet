@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -39,7 +39,7 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   maali_run "make"
-  maali_run "make install"
+  maali_run "make install prefix=$MAALI_INSTALL_DIR"
 }
 
 ##############################################################################

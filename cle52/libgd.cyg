@@ -1,9 +1,9 @@
 ##############################################################################
-# maali cygnet file for wcslib
+# maali cygnet file for libgd
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -12,27 +12,35 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="ftp://ftp.atnf.csiro.au/pub/software/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/gd-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+MAALI_DST="$MAALI_SRC/gd-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-gd-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# tool pre-requisites 
+# tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ=""
-
-# add additional configure options
-MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_WCSLIB_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS=""
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+
+   cd $MAALI_TOOL_BUILD_DIR
+   sed -i 's/dist-xz//g' configure.ac
+   maali_run "./bootstrap.sh"
+   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+   maali_run "make"
+   maali_run "make install"
+}
 
 ##############################################################################

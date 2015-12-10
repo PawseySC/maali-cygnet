@@ -22,7 +22,7 @@ if [ $MAALI_TOOL_MAJOR_VERSION -ge 2 ]; then
   MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/BEAST"
 else
   # URL to download the source code from
-  MAALI_URL="http://beast-mcmc.googlecode.com/files/BEASTv$MAALI_TOOL_VERSION.tgz"
+  MAALI_URL="https://github.com/beast-dev/beast-mcmc/releases/download/$MAALI_TOOL_VERSION/BEASTv$MAALI_TOOL_VERSION.tgz"
 
   # location we are downloading the source code to
   MAALI_DST="$MAALI_SRC/BEASTv$MAALI_TOOL_VERSION.tgz"

@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-MAALI_URL="http://www.cmpg.unibe.ch/software/PGDSpider/${MAALI_TOOL_NAME_ORIG}_$MAALI_TOOL_VERSION.zip"
+MAALI_URL="http://www.cmpg.unibe.ch/software/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME_ORIG}_${MAALI_TOOL_VERSION}.zip"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_$MAALI_TOOL_VERSION.zip"

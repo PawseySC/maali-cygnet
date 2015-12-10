@@ -2,8 +2,14 @@
 # maali cygnet file for exabayes 
 ##############################################################################
 
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://www.dropbox.com/sh/nghfer321li7oiu/AADcNa60I18t6Sc3QscotV1qa/exabayes-1.4.1.tar.gz?dl=1 "
@@ -18,7 +24,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites, include CUDA if on Fornax
-MAALI_TOOL_PREREQ=""
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=''

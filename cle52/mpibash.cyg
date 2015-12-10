@@ -69,8 +69,9 @@ function maali_build {
   maali_run "make install"
 
   cd "$MAALI_TOOL_BUILD_DIR"
+  export CC=cc
 
-  maali_run "./configure --prefix=${MAALI_INSTALL_DIR} --with-bashdir=${MAALI_TOOL_BUILD_DIR}/bash-4.3.30"
+  maali_run "./configure --prefix=${MAALI_INSTALL_DIR} --with-bashdir=${MAALI_BUILD_DIR}/bash-4.3.30"
   maali_run "make"
   maali_run "make install"
 

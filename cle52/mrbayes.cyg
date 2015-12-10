@@ -24,7 +24,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="beagle-lib/2.1.2 cray-mpich/7.0.0"
+MAALI_TOOL_PREREQ="beagle-lib/2.1.2 cray-mpich/7.0.0 craype-network-aries"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=''

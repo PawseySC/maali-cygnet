@@ -6,13 +6,13 @@
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-MAALI_URL="http://sourceforge.net/projects/evidencemodeler/files/evidencemodeler/${MAALI_TOOL_NAME_ORIG}_r${MAALI_TOOL_VERSION}.tgz/download"
+MAALI_URL="https://github.com/EVidenceModeler/EVidenceModeler/archive/v${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_r${MAALI_TOOL_VERSION}.tgz"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_r${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/EVidenceModeler-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
