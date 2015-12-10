@@ -1,5 +1,5 @@
 ##############################################################################
-# Maali cygnet file for R
+# maali cygnet file for octave
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
@@ -12,18 +12,26 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://cran.csiro.au/src/base/R-$MAALI_TOOL_MAJOR_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://ftp.gnu.org/gnu/octave/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/R-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="pcre/8.37 fftw cray-hdf5 cray-libsci"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="LDFLAGS=-dynamic --enable-R-shlib"
+MAALI_TOOL_CONFIGURE='F77=ftn --with-fftw3-includedir=${FFTW_INC} --with-fftw3-libdir=${FFTW_DIR} --with-blas=" " CPPFLAGS=-I${FFTW_INC} --without-curl'
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
 
 ##############################################################################

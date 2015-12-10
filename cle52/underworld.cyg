@@ -1,0 +1,69 @@
+##############################################################################
+# maali cygnet file for Underworld
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from 
+MAALI_URL="http://underworldproject.org/downloads/underworld-${MAALI_TOOL_VERSION}/underworld-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Underworld-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich cray-petsc cray-hdf5 libxml2 python numpy"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="mercurial"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_WHATIS="Underworld is a 3D-parallel geodynamic modelling framework capable of deriving viscous / viscoplastic thermal, chemical and thermochemical models consistent with tectonic processes, such as mantle convection and lithospheric deformation over long time scales."
+
+##############################################################################
+
+function maali_build {
+
+  cd ${MAALI_TOOL_BUILD_DIR}
+
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    sed -i "s/'petscmat', 'petscvec', 'petsc'/'craypetsc_cray_real'/" ./config/packages/PETSc.py
+  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i "s/'petscmat', 'petscvec', 'petsc'/'craypetsc_intel_real'/" ./config/packages/PETSc.py
+  elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    sed -i "s/'petscmat', 'petscvec', 'petsc'/'craypetsc_gnu_real'/" ./config/packages/PETSc.py
+  else
+    echo "Unknown compiler"
+    exit 1
+  fi
+
+  sed -i "s/'petscsnes', 'petscksp', 'petscdm',//" ./config/packages/PETSc.py
+
+  maali_run "./configure.py --cc=cc --cxx=CC --with-warnings=0 --libxml2-dir=${MAALI_LIBXML2_HOME} --mpi-dir=${MPICH_DIR} --hdf5-dir=${HDF5_DIR} --petsc-dir=${PETSC_DIR} --numpy-dir=${MAALI_NUMPY_HOME}/lib/python2.6/site-packages/numpy/core --with-spherical=0 --with-viscoelastic=0 --with_importers=1 --with-glucifer=0 --with-geothermal=0 --with-viewer=0 --optimisation-flag=-O2 --with-debugging=0 --lib-type=shared"
+
+  echo <<EOF >> config.cfg
+LINK = ['cc']
+LINKCOM="$LINK -dynamic -o $TARGET $LINKFLAGS $SOURCES $_LIBDIRFLAGS $_LIBFLAGS"
+EOF
+
+  sed -i "s!#include <petscmg.h>!//#include <petscmg.h>!" ./StgFEM/Discretisation/src/Discretisation.h
+
+  maali_run "./scons.py -j ${MAALI_CORES}"
+
+  rsync -grtl ${MAALI_TOOL_BUILD_DIR}/ ${MAALI_INSTALL_DIR}/
+
+}
+##############################################################################

@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for denchar, an utility of siesta
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://departments.icmab.es/leem/siesta/CodeAccess/Code/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
+
+# patch files to download
+MAALI_TOOL_PATCHES="001 002"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/siesta-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/siesta-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-netcdf/4.3.2"
+MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 alps"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "patch -p1 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+
+  cd "$MAALI_TOOL_BUILD_DIR/Obj"
+  maali_run "sh ../Src/obj_setup.sh"
+  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch arch.make"
+  maali_run "make"
+
+  # compile and install Denchar utility
+  cd "$MAALI_TOOL_BUILD_DIR/Util/Denchar/Src"
+  maali_run "make denchar"
+  maali_run "install -m 755 denchar $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################

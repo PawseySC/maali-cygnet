@@ -1,0 +1,79 @@
+##############################################################################
+# maali cygnet file for LAMMPS
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from 
+MAALI_URL="http://lammps.sandia.gov/tars/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw"
+
+# for auto-building module files
+MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_PATH='src'
+MAALI_MODULE_WHATIS="LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator. LAMMPS has potentials for soft materials (biomolecules, polymers) and solid-state materials (metals, semiconductors) and coarse-grained or mesoscopic systems."
+
+##############################################################################
+
+function maali_build {
+
+  MAALI_LOCAL_BUILD_DIR="$MAALI_APPS_DIR/$COMPILER/$COMPILER_VER/$MAALI_TOOL_NAME"
+
+  mv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR
+
+  export CC=CC
+  export LINK=CC
+
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    export CCFLAGS="-O3 -hfp3 -hnoomp"
+    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -\I$(FFTW_INC)"
+    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3"
+  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    module unlaod cray-libsci
+    export CCFLAGS="-O2 -DLAMMPS_MEMALIGN=64 -fno-alias -ansi-alias -restrict -override-limits"
+    export FFT_INC='-DFFT_MKL -DFFT_SINGLE -I\$(MKLROOT)/include'
+    export FFT_PATH=
+    export FFT_LIB='-mkl=sequential -dynamic'
+  else #GNU
+    export CCFLAGS="-O3 -funroll-loops"
+    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -I\$(FFTW_INC)"
+    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3"
+  fi
+  export SHFLAGS='-fPIC'
+
+  export MPI_INC='-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1'
+  export JPG_INC='-I/usr/include'
+  export JPG_LIB='-L/usr/lib -ljpeg -lpng12'
+  export LMP_INC='-DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_FFMPEG -DLAMMPS_GZIP -DPACK_ARRAY'
+  export CRAYPE_LINK_TYPE='dynamic'
+
+  cd "$MAALI_INSTALL_DIR/src"	
+  maali_wiki " ... make packages"
+
+  maali_run  "make -e -j $MAALI_CORES yes-class2"
+  maali_run  "make -e -j $MAALI_CORES yes-kspace"
+  maali_run "make -e -j $MAALI_CORES yes-rigid"
+  maali_run "make -e -j $MAALI_CORES yes-mpiio"
+  maali_run "make -e -j $MAALI_CORES mpi"
+ 
+}
+
+##############################################################################

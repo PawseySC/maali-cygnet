@@ -1,15 +1,9 @@
 ##############################################################################
-# Maali cygnet file for R
+# maali cygnet file for R
 ##############################################################################
 
-# specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
-
-# specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
-
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="http://cran.csiro.au/src/base/R-$MAALI_TOOL_MAJOR_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"

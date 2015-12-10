@@ -1,0 +1,67 @@
+##############################################################################
+# maali cygnet file for cp2k
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/cp2k/files/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="fftw"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='exe/Linux-x86-64-intel'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+cat << EOF > ${MAALI_TOOL_BUILD_DIR}/makefiles/arch/MAGNUS-gfortran.psmp
+CC       = cc
+CPP      =
+FC       = ftn
+LD       = ftn
+AR       = ar -r
+DFLAGS   = -D__GFORTRAN -D__FFTW3 -D__FFTSG -D__LIBINT \
+           -D__parallel -D__BLACS -D__SCALAPACK -D__HAS_NO_SHARED_GLIBC \
+           -D__STATM_RESIDENT -D__LIBXC2 -D__HAS_smm_dnn -D__HAS_LIBGRID
+CPPFLAGS = -traditional -C $(DFLAGS) -P
+CFLAGS   = $(DFLAGS)
+FCFLAGS  = $(DFLAGS) -O3 -fopenmp -mavx -funroll-loops -ffast-math -ftree-vectorize \
+           -ffree-form -ffree-line-length-512
+LDFLAGS  = $(FCFLAGS)
+LIB_LOC  = $MAALI_TOOL_BUILD_DIR/cp2k/libs
+LMAALI     = -L$(LIB_LOC)/libint/1.1.5/lib -lderiv -lint -lstdc++ \
+           -L$(LIB_LOC)/libgrid -lgrid \
+           -L$(LIB_LOC)/libsmm -lsmm_dnn \
+           -L$(LIB_LOC)/libxc/2.2.0/lib -lxcf90 -lxc \
+           -lfftw3 -lfftw3_threads
+EOF
+
+  cd makefiles
+
+  maali_run "make -j $MAALI_CORES ARCH=CRAY-XC30-intel VERSION=sopt"
+  maali_run "make -j $MAALI_CORES ARCH=CRAY-XC30-intel VERSION=popt"
+  
+  maali_run "rsync -av --exclude=obj --exclude=CVS --exclude=tests --exclude=src --exclude=arch $MAALI_TOOL_BUILD_DIR/ $MAALI_INSTALL_DIR/"
+}
+
+##############################################################################

@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for povray
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/POV-Ray/povray/archive/${MAALI_TOOL_VERSION}-stable.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+if [ $MAALI_TOOL_VERSION == 3.7 ]; then
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-stable"
+else
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+fi
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  if [ $MAALI_TOOL_VERSION == 3.7 ]; then
+    module load boost
+    cd "$MAALI_TOOL_BUILD_DIR"
+    export COMPILED_BY="Pawsey Supercomputing Centre <help@pawsey.org.au>"
+    cd unix
+    maali_run "./prebuild.sh"
+    cd ..
+    maali_run "./configure --prefix=${MAALI_INSTALL_DIR}  --with-boost=${BOOST_ROOT} --with-boost-libdir=${BOOST_ROOT}/lib"
+    maali_run "make"
+    maali_run "make install"
+  else  
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+    export COMPILED_BY="Pawsey Supercomputing Centre <help@pawsey.org.au>"
+
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR --disable-shared"
+    maali_run "make"
+    maali_run "make install"
+
+    # requested by Paul Bourke - 23/2/2012
+    sed -i -e 's/;none/none/g' "$MAALI_INSTALL_DIR/etc/povray/3.6/povray.conf"
+    sed -i -e 's/restricted/;restricted/g' "$MAALI_INSTALL_DIR/etc/povray/3.6/povray.conf"
+    sed -i -e 's/;allowed/allowed/g' "$MAALI_INSTALL_DIR/etc/povray/3.6/povray.conf"
+    sed -i -e 's/forbidden/;forbidden/g' "$MAALI_INSTALL_DIR/etc/povray/3.6/povray.conf"
+  fi
+}
+
+##############################################################################

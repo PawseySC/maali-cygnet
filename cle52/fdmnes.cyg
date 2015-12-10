@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for fdmnes 
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# consistant naming schemes are a myth
+MAALI_FDMNES_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`;
+
+# URL to download the source code from
+MAALI_URL="http://neel.cnrs.fr/IMG/zip/${MAALI_TOOL_NAME}_${MAALI_FDMNES_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_FDMNES_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fdmnes"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-tpsl lapack"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd prog/
+  maali_run "rm *.h"
+  maali_run "sed -i 's/gfortran/ftn/g' makefile" 
+# build with MPI, MUMPS, BLAS, LAPACK libraries
+  maali_run "sed -i 's/-lmpiseq/-lmpich/g' makefile" 
+  maali_run "sed -i 's;-llapack -lblas;-L${LAPACK}/lib/liblapack.so -L${LAPACK}/lib/libblas.so;g' makefile" 
+  maali_run "make"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 fdmnes $MAALI_INSTALL_DIR/bin/"
+}
+             
+
+##############################################################################
+
