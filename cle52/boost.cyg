@@ -42,6 +42,9 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    # See https://software.intel.com/en-us/forums/intel-c-compiler/topic/516083
+    sed -i -e 's/!defined(__EDG_VERSION__)/!defined(__EDG_VERSION__) || defined(__INTEL_COMPILER)/g' boost/mpl/aux_/config/gcc.hpp
+
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --without-libraries=python --with-toolset=intel-linux"
     maali_run "./bjam toolset=intel release"
   else
