@@ -21,7 +21,7 @@ MAALI_TOOL_PATCHES="001"
 MAALI_CPMD_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`;
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_CPMD_VERSION.tar"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_CPMD_VERSION.tar.gz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/CPMD"
@@ -30,7 +30,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/CPMD"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

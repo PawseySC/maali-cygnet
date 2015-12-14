@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fdmnes"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-tpsl lapack"
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries cray-tpsl lapack"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -37,17 +37,15 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
   cd prog/
-  maali_run "rm *.h"
   maali_run "sed -i 's/gfortran/ftn/g' makefile" 
-# build with MPI, MUMPS, BLAS, LAPACK libraries
   maali_run "sed -i 's/-lmpiseq/-lmpich/g' makefile" 
   maali_run "sed -i 's;-llapack -lblas;-L${LAPACK}/lib/liblapack.so -L${LAPACK}/lib/libblas.so;g' makefile" 
   maali_run "make"
+
+  cd ..
 
   maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 fdmnes $MAALI_INSTALL_DIR/bin/"
 }
              
-
 ##############################################################################
-

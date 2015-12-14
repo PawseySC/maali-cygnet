@@ -50,21 +50,29 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   sed -i -e 's/-static//g' src/Makefile
+  sed -i -e 's/g++/CC/g' src/Makefile auxprogs/joingenes/Makefile auxprogs/homGeneMapping/src/Makefile auxprogs/bam2hints/Makefile
+  sed -i -e 's/gcc/cc/g' auxprogs/checkTargetSortedness/Makefile auxprogs/bam2wig/Makefile auxprogs/compileSpliceCands/Makefile auxprogs/aln2wig/Makefile
 
   sed -i -e 's!-I../include!-I../include -I${BOOST_ROOT}/include!g' src/Makefile
   sed -i -e 's!-lboost_iostreams!-L${BOOST_ROOT}/lib -lboost_iostreams!g' src/Makefile
 
+  sed -i -e "s;INCLUDES = /usr/include/bamtools;INCLUDES = $MAALI_BAMTOOLS_HOME/include/bamtools;g" auxprogs/bam2hints/Makefile
+  sed -i -e "s;LIBS = -lbamtools -lz;LIBS = -L$MAALI_BAMTOOLS_HOME/lib/bamtools -lbamtools -lz;g" auxprogs/bam2hints/Makefile
+
+  sed -i -e "s;BAMTOOLS = /usr/include/bamtools;BAMTOOLS = $MAALI_BAMTOOLS_HOME/include/bamtools;g" auxprogs/filterBam/src/Makefile
+  sed -i -e "s;LIBS = -lbamtools -lz;LIBS = -L$MAALI_BAMTOOLS_HOME/lib/bamtools -lbamtools -lz;g" auxprogs/filterBam/src/Makefile
+
   maali_run "make"
 
   # binary files
-  maali_run "mkdir $MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
   for file in "bin/*"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
   done
 
   # perl scripts
-  maali_run "mkdir $MAALI_INSTALL_DIR/scripts"
+  maali_makedir "$MAALI_INSTALL_DIR/scripts"
   for file in "scripts/*.pl"
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/scripts"
@@ -77,15 +85,15 @@ function maali_build {
   done
 
   # config files
-  maali_run "mkdir $MAALI_INSTALL_DIR/config"
+  maali_makedir "$MAALI_INSTALL_DIR/config"
   for dir in `ls config`
   do
-    maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir"
+    maali_makedir "$MAALI_INSTALL_DIR/config/$dir"
 
     if [ "$dir" == "species" ]; then
       for subdir in `ls config/$dir`
       do
-        maali_run "mkdir $MAALI_INSTALL_DIR/config/$dir/$subdir"
+        maali_makedir "$MAALI_INSTALL_DIR/config/$dir/$subdir"
 
         for file in "config/$dir/$subdir/*.*"
         do
@@ -101,29 +109,7 @@ function maali_build {
     fi
   done
 
-  cd auxprogs/bam2hints
-
-  sed -i -e "s;/home/mario/tools/bamtools;$MAALI_BAMTOOLS_HOME;g" Makefile
-  sed -i -e "s;/include;/include/bamtools;g" Makefile
-  sed -i -e "s;/lib/libbamtools.a;/lib/bamtools/libbamtools.a;g" Makefile
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bam2hints $MAALI_INSTALL_DIR/bin/"
-
-  cd ../bam2wig
-
-  sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
-  sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
-  sed -i -e 's/-lcurses/-lncurses/g' Makefile
-  sed -i -e 's;/home/penat/git/htslib/;'"$MAALI_HTSLIB_HOME"'/lib;g' Makefile
-
-  # needs the source for samtools
-  cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bam2wig $MAALI_INSTALL_DIR/bin/"
-
-  cd ../checkTargetSortedness
+  cd auxprogs/checkTargetSortedness
 
   sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
   sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
@@ -131,20 +117,8 @@ function maali_build {
 
   # needs the source for samtools
   cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
+
   maali_run "make"
   maali_run "install -m 755 checkTargetSortedness $MAALI_INSTALL_DIR/bin/"
 
-  cd ../filterBam
-
-  export BAMTOOLS=$MAALI_BAMTOOLS_HOME
-
-  sed -i -e 's;INCLUDES = -I$(BAMTOOLS)/include;INCLUDES = -I'"$MAALI_BAMTOOLS_HOME"'/include/bamtools;g' src/Makefile
-  sed -i -e 's;$(BAMTOOLS)/src/toolkit;'"$MAALI_BAMTOOLS_HOME"'/src/toolkit;g' src/Makefile
-  sed -i -e 's;LIBS = $(BAMTOOLS)/lib/libbamtools.a;LIBS = '"$MAALI_BAMTOOLS_HOME"'/lib/bamtools/libbamtools.a;g' src/Makefile
-
-  maali_run "make clean"
-  maali_run "make"
-  maali_run "install -m 755 bin/filterBam $MAALI_INSTALL_DIR/bin/"
 }
-
-##############################################################################

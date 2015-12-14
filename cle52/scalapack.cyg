@@ -21,7 +21,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 craype-network-aries"
+MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.2.2 craype-network-aries"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"

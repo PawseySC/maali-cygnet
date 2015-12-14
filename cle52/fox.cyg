@@ -9,7 +9,7 @@ MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.2 gcc/4.9.2 intel/14.0.1.106 cce/8.3.0"
 
 # URL to download the source code from
 MAALI_URL="http://www1.gly.bris.ac.uk/~walker/FoX/source/FoX-$MAALI_TOOL_VERSION.tar.gz"

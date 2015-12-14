@@ -47,6 +47,7 @@ function maali_build {
   sed -i -e 's/g++/CC/g' Makefile
  
   maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin/"
   maali_run "install -m 755 muscle $MAALI_INSTALL_DIR/bin/"
 }
 

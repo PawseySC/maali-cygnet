@@ -27,7 +27,8 @@ MAALI_MODULE_SET_PATH="toplevel"
 
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "mv Evidence_Imager evidence_modeler.pl EvmUtils OtherGeneFinderTrainingGuide PasaUtils PerlLib simple_example TkGFF3_viewer $MAALI_INSTALL_DIR/"
+  maali_run "mv evidence_modeler.pl EvmUtils PerlLib simple_example $MAALI_INSTALL_DIR/"
+
 }
 
 ##############################################################################

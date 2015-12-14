@@ -12,7 +12,11 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/POV-Ray/povray/archive/${MAALI_TOOL_VERSION}-stable.tar.gz"
+if [ $MAALI_TOOL_VERSION == 3.7 ]; then
+  MAALI_URL="https://github.com/POV-Ray/povray/archive/${MAALI_TOOL_VERSION}-stable.tar.gz"
+else
+  MAALI_URL="http://www.povray.org/ftp/pub/povray/Old-Versions/Official-3.62/Unix/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"

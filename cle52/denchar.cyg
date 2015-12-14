@@ -12,7 +12,7 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://departments.icmab.es/leem/siesta/CodeAccess/Code/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
+MAALI_URL="http://departments.icmab.es/leem/siesta/CodeAccess/Code/siesta-$MAALI_TOOL_VERSION.tgz"
 
 # patch files to download
 MAALI_TOOL_PATCHES="001 002"
@@ -25,7 +25,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/siesta-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ="cray-netcdf/4.3.2"
-MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 alps"
+MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 craype-network-aries"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
@@ -40,11 +40,9 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "patch -p1 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
-
   cd "$MAALI_TOOL_BUILD_DIR/Obj"
   maali_run "sh ../Src/obj_setup.sh"
-  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch arch.make"
+  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.002.patch arch.make"
   maali_run "make"
 
   # compile and install Denchar utility

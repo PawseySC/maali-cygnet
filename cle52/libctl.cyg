@@ -32,4 +32,10 @@ MAALI_TOOL_BUILD_PREREQ=""
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--host=x86_64-unknown-linux-gnu --enable-shared'
 
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
 ##############################################################################

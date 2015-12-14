@@ -3,13 +3,13 @@
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+MAALI_TOOL_CRAY_CPU_TARGET="sandybridge"
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.2"
 
 # URL to download the source code from 
 MAALI_URL="http://underworldproject.org/downloads/underworld-${MAALI_TOOL_VERSION}/underworld-${MAALI_TOOL_VERSION}.tar.gz"

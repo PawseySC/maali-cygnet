@@ -24,7 +24,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-tpsl"
+MAALI_TOOL_PREREQ="cray-tpsl/1.5.0 craype-network-aries"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"

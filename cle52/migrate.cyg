@@ -31,7 +31,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/src"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ=""
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -50,7 +50,8 @@ function maali_build {
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
   # Need to Fix Makefile from mpicc
-  sed -i s/mpicc/cc/g Makefile
+  sed -i 's/mpicc/cc/g' Makefile
+  sed -i 's/STDCPLUS	  = /STDCPLUS      = -lstdc++/g' Makefile
 
   maali_run "make"
   maali_run "install -m 755 migrate-n $MAALI_INSTALL_DIR/bin/"
@@ -62,7 +63,8 @@ function maali_build {
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
 
   # Need to Fix Makefile from mpicc
-  sed -i s/mpicc/cc/g Makefile
+  sed -i 's/mpicc/cc/g' Makefile
+  sed -i 's/STDCPLUS	  = /STDCPLUS      = -lstdc++/g' Makefile
 
   maali_run "make mpis"
   maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"

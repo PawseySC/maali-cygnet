@@ -34,32 +34,17 @@ MAALI_MODULE_SET_PATH='exe/Linux-x86-64-intel'
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
-cat << EOF > ${MAALI_TOOL_BUILD_DIR}/makefiles/arch/MAGNUS-gfortran.psmp
-CC       = cc
-CPP      =
-FC       = ftn
-LD       = ftn
-AR       = ar -r
-DFLAGS   = -D__GFORTRAN -D__FFTW3 -D__FFTSG -D__LIBINT \
-           -D__parallel -D__BLACS -D__SCALAPACK -D__HAS_NO_SHARED_GLIBC \
-           -D__STATM_RESIDENT -D__LIBXC2 -D__HAS_smm_dnn -D__HAS_LIBGRID
-CPPFLAGS = -traditional -C $(DFLAGS) -P
-CFLAGS   = $(DFLAGS)
-FCFLAGS  = $(DFLAGS) -O3 -fopenmp -mavx -funroll-loops -ffast-math -ftree-vectorize \
-           -ffree-form -ffree-line-length-512
-LDFLAGS  = $(FCFLAGS)
-LIB_LOC  = $MAALI_TOOL_BUILD_DIR/cp2k/libs
-LMAALI     = -L$(LIB_LOC)/libint/1.1.5/lib -lderiv -lint -lstdc++ \
-           -L$(LIB_LOC)/libgrid -lgrid \
-           -L$(LIB_LOC)/libsmm -lsmm_dnn \
-           -L$(LIB_LOC)/libxc/2.2.0/lib -lxcf90 -lxc \
-           -lfftw3 -lfftw3_threads
-EOF
+  cd tools/build_libsmm
+  maali_run "./generate -c config/cray.intel.mkl -j 0 -t 16 tiny1"
+  maali_run "./generate -c config/cray.intel.mkl tiny2"
+  maali_run "./generate -c config/cray.intel.mkl -j 0 -t 16 small1"
+  maali_run "./generate -c config/cray.intel.mkl -t 16 lib"
+  maali_run "find ."
 
-  cd makefiles
+  cd ../..
 
-  maali_run "make -j $MAALI_CORES ARCH=CRAY-XC30-intel VERSION=sopt"
-  maali_run "make -j $MAALI_CORES ARCH=CRAY-XC30-intel VERSION=popt"
+  maali_run "make ARCH=CRAY-XC30-intel VERSION=sopt"
+  maali_run "make ARCH=CRAY-XC30-intel VERSION=popt"
   
   maali_run "rsync -av --exclude=obj --exclude=CVS --exclude=tests --exclude=src --exclude=arch $MAALI_TOOL_BUILD_DIR/ $MAALI_INSTALL_DIR/"
 }

@@ -18,7 +18,10 @@ MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.5.revision26243-src.
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Nwchem-6.5.revision26243-src.2014-09-10"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Nwchem-6.5"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries dmapp/7.0.1-1.0502.9501.5.219.ari"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -33,9 +36,9 @@ MAALI_MODULE_SET_UGNI_CDM_MDD_DEDICATED='2'
 function maali_build {
   # this is the core function for creating software
 
-  rm -rf "$MAALI_BUILD_DIR/Nwchem-6.5"
-  mv ${MAALI_TOOL_BUILD_DIR} "$MAALI_BUILD_DIR/Nwchem-6.5"
-  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Nwchem-6.5"
+  cd $MAALI_BUILD_DIR
+  mv Nwchem-6.5.revision26243-src.2014-09-10 $MAALI_TOOL_BUILD_DIR
+  cd $MAALI_TOOL_BUILD_DIR
 
   export NWCHEM_TARGET=LINUX64
   export ARMCI_NETWORK=DMAPP
