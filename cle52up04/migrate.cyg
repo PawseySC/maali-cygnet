@@ -1,0 +1,73 @@
+##############################################################################
+# maali cygnet file for migrate
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+  MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.0/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+else
+  if [[ "$MAALI_TOOL_VERSION" == "3.6.11" ]]; then
+    MAALI_URL="http://popgen.sc.fsu.edu/currentversions/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+  elif [[ "$MAALI_TOOL_VERSION" == "3.6.6" ]] || [[ "$MAALI_TOOL_VERSION" == "3.6.8" ]] || [[ "$MAALI_TOOL_VERSION" == "3.6.9" ]] ; then
+    MAALI_URL="http://popgen.sc.fsu.edu/oldversions/3.x/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+  else
+    MAALI_URL="http://popgen.sc.fsu.edu/oldversions/${MAALI_TOOL_MAJOR_VERSION}.x/${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+  fi
+fi
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/src"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH='man'
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/man/man1"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+
+  # Need to Fix Makefile from mpicc
+  sed -i 's/mpicc/cc/g' Makefile
+  sed -i 's/STDCPLUS	  = /STDCPLUS      = -lstdc++/g' Makefile
+
+  maali_run "make"
+  maali_run "install -m 755 migrate-n $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 644 migrate.1 $MAALI_INSTALL_DIR/man/man1/"
+
+  # purge for MPI
+  maali_run "make clean"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+
+  # Need to Fix Makefile from mpicc
+  sed -i 's/mpicc/cc/g' Makefile
+  sed -i 's/STDCPLUS	  = /STDCPLUS      = -lstdc++/g' Makefile
+
+  maali_run "make mpis"
+  maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

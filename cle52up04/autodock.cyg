@@ -1,0 +1,77 @@
+##############################################################################
+# maali cygnet file for Autodock
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+MAALI_TOOL_SHORT_VERSION=`echo "$MAALI_TOOL_VERSION" | sed -e 's/\.//g'`
+
+# URL to download the source code from 
+MAALI_URL="http://autodock.scripps.edu/downloads/previous-releases/autodock-registration/tars/dist${MAALI_TOOL_SHORT_VERSION}/autodocksuite-${MAALI_TOOL_VERSION}-src.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_WHATIS="AutoDock is a suite of automated docking tools. It is designed to predict how small molecules, such as substrates or drug candidates, bind to a receptor of known 3D structure."
+
+##############################################################################
+function maali_build {
+
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    MAALI_TOOL_CONFIGURE='CXXFLAGS=\"-O3\"'
+    export AM_CXXFLAGS=''
+  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    MAALI_TOOL_CONFIGURE='CXXFLAGS=\"-O3 -fopenmp\" ac_cv_func_malloc_0_nonnull=yes'
+  else #GNU
+    MAALI_TOOL_CONFIGURE='CXXFLAGS=\"-O3 -fopenmp\"'
+  fi
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  cd ${MAALI_TOOL_BUILD_DIR}/autodock
+  touch NEWS
+  touch ChangeLog
+
+  # Build autodock
+  cd ${MAALI_TOOL_BUILD_DIR}/autodock
+  mkdir magnus
+  cd magnus
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+      sed -i 's!using namespace std;!//using namespace std;!' ../nonbonds.cc
+  fi
+  maali_run "../configure --prefix=$MAALI_INSTALL_DIR --host=x86_64-unknown-linux-gnu $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make -e"
+  maali_run "make install"
+
+  # Build autogrid
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    export AM_CPPFLAGS='-O3 -I $(srcdir) -I$(srcdir)/../autodock -DUSE_8A_NBCUTOFF -DUSE_DOUBLE'
+  fi
+  cd ${MAALI_TOOL_BUILD_DIR}/autogrid
+  mkdir magnus
+  cd magnus
+  maali_run "../configure --prefix=$MAALI_INSTALL_DIR --host=x86_64-unknown-linux-gnu $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make -e"
+  maali_run "make install"
+
+ 
+}
+
+##############################################################################

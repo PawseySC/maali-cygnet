@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for muscle
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.drive5.com/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME}_src_${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_src_${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_src_${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_unpack {
+  maali_run "mkdir $MAALI_TOOL_BUILD_DIR"
+  maali_run "cd $MAALI_SRC"
+  maali_run "tar -xzf $MAALI_DST -C $MAALI_TOOL_BUILD_DIR"
+}
+
+##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  cd $MAALI_TOOL_BUILD_DIR
+  sed -i -e 's/-O3 -funroll-loops -Winline -DNDEBUG=1/-O3 -DNDEBUG=1/g' Makefile
+  sed -i -e 's/-lm -static/-lm/g' Makefile
+  sed -i -e 's/g++/CC/g' Makefile
+ 
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 755 muscle $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################
