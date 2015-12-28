@@ -37,7 +37,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libcircle-v${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-mpich/7.2.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -83,13 +83,11 @@ function maali_build {
     cd "$MAALI_TOOL_BUILD_DIR"
 
     patch configure < "$MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
-    module load craype-network-aries
 
     maali_run "./configure --prefix $MAALI_INSTALL_DIR CC=cc MPICC=cc"
     maali_run "make"
     maali_run "make install"
 
-    module unload craype-network-aries
 
 }
 
