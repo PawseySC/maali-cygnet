@@ -1,0 +1,71 @@
+##############################################################################
+# maali cygnet file for NumPy
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="http://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.25 gcc/4.8.2 craype-sandybridge cray-libsci/13.0.4"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+
+cd $MAALI_TOOL_BUILD_DIR
+
+# Try to find a matching libsci_gnu library
+GCC_MAJOR_MINOR=`gcc -dumpversion | tr -d '.' | cut -c 1-2`
+LIBSCI_DIR=${CRAY_LIBSCI_BASE_DIR}/gnu/${GCC_MAJOR_MINOR}/${CRAY_CPU_TARGET}
+
+if [ ! -d ${LIBSCI_DIR} ]; then
+    echo "libsci library not found in ${LIBSCI_DIR}"
+    exit 1
+fi
+
+cat <<EOF >site.cfg
+[default]
+libraries = sci_gnu
+library_dirs = ${LIBSCI_DIR}/lib
+include_dirs = ${LIBSCI_DIR}/include
+
+[lapack]
+lapack_libs = sci_gnu
+library_dirs = ${LIBSCI_DIR}/lib
+include_dirs = ${LIBSCI_DIR}/include
+
+[blas]
+blas_libs = sci_gnu
+library_dirs = ${LIBSCI_DIR}/lib
+include_dirs = ${LIBSCI_DIR}/include
+
+[build]
+compiler = unix
+fcompiler = gnu95
+
+[install]
+prefix = ${MAALI_INSTALL_DIR}
+install-lib = ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages
+EOF
+
+maali_run "python setup.py build"
+maali_run "python setup.py install"
+
+}
+
+##############################################################################

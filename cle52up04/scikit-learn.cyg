@@ -1,0 +1,23 @@
+##############################################################################
+# maali cygnet file for scikit-learn
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from ie
+MAALI_URL="http://sourceforge.net/projects/${MAALI_TOOL_NAME}/files/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy/1.10.1 scipy/0.16.1 setuptools/18.4"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

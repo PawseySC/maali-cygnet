@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for faststructure
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/rajanil/fastStructure/archive/master.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/master"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fastStructure-master"
+
+# prerequistes of fastStructure
+MAALI_TOOL_PREREQ="numpy/1.10.1 scipy/0.16.1 cython/0.23.4 gsl/1.16 matplotlib/1.4.3"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE='bio-apps'
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR/lib/python2.6/site-packages'
+  maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/lib/python2.6/site-packages'
+  cd "$MAALI_INSTALL_DIR/lib/python2.6/site-packages"
+    
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ivec/cle52/galaxy/devel/PrgEnv-gnu/5.2.25/gsl/1.15/lib
+  export CFLAGS="-I/ivec/cle52/galaxy/devel/PrgEnv-gnu/5.2.25/gsl/1.15/include/gsl"
+  export LDFLAGS="-L/ivec/cle52/galaxy/devel/PrgEnv-gnu/5.2.25/gsl/1.15/lib"
+
+  cd vars/
+  maali_run 'CC=cc python setup.py build_ext --inplace'
+  cd ../
+  maali_run 'CC=cc python setup.py build_ext --inplace'
+
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR/bin'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/structure.py $MAALI_INSTALL_DIR/bin/'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/distruct.py $MAALI_INSTALL_DIR/bin/'
+  maali_run 'cp $MAALI_INSTALL_DIR/lib/python2.6/site-packages/chooseK.py $MAALI_INSTALL_DIR/bin/'
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/structure.py
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/distruct.py
+  sed -i -e '1s/^/#!\/usr\/bin\/env python\n/' $MAALI_INSTALL_DIR/bin/chooseK.py
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/structure.py "
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/distruct.py "
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/chooseK.py "
+
+}
+
+##############################################################################
