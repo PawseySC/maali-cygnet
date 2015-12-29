@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for Trinity RNA-Seq Assembly
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/8u66 bowtie/1.1.1 samtools/0.1.19 jellyfish/2.2.0 fastool/0.1.4 parafly/r2013-01-21"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="Trinity RNA-Seq Assembly"
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="toplevel"
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "cp Chrysalis/Makefile_icpc Chrysalis/Makefile_crayCC"
+  maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+  maali_run "make TRINITY_COMPILER=intel"
+  cd ./Inchworm/src
+  maali_run "make -f MPI_cray.Makefile" 
+  maali_run "/usr/bin/install -c ./MPIinchworm -D ../bin/MPIinchworm"
+  cd ../../
+  cd trinity-plugins
+  maali_run "make trimmomatic_target"
+  cd ..
+  maali_run "mv * $MAALI_INSTALL_DIR/"
+}
+
+##############################################################################

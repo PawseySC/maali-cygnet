@@ -1,0 +1,397 @@
+--- Chrysalis/Makefile	2015-02-15 03:34:09.000000000 +0800
++++ Chrysalis/Makefile	2015-02-27 07:52:37.882699000 +0800
+@@ -367,6 +367,10 @@
+ include Makefile_icpc
+ endif
+ 
++ifeq ($(COMPILER),CC)
++include Makefile_crayCC
++endif
++
+ # Setup final compilation options:
+ 
+ CPP_OPTIONS	= \
+--- Makefile	2015-02-15 03:34:09.000000000 +0800
++++ Makefile	2015-03-02 08:04:49.490502000 +0800
+@@ -7,14 +7,14 @@
+ #
+ 
+ ifeq ($(TRINITY_COMPILER),intel)
+- INCHWORM_CONFIGURE_FLAGS = CXX=icpc CXXFLAGS="-fast"
+- CHRYSALIS_MAKE_FLAGS = COMPILER=icpc
++ INCHWORM_CONFIGURE_FLAGS = CXX=CC CXXFLAGS="-fast"
++ CHRYSALIS_MAKE_FLAGS = COMPILER=CC
+ else
+  override TRINITY_COMPILER=gnu
+ endif
+ 
+ 
+-all: inchworm_target chrysalis_target trinity_essentials
++all: inchworm_target chrysalis_target
+ 	sh ./util/support_scripts/trinity_install_tests.sh
+ 
+ inchworm_target:
+--- Inchworm/configure	2015-02-15 03:34:09.000000000 +0800
++++ Inchworm/configure	2015-02-27 07:44:22.112818000 +0800
+@@ -3129,6 +3129,8 @@
+  ;;
+   icpc*) AM_CXXFLAGS="-Wall -openmp $AM_CXXFLAGS"
+  ;;
++  CC*) AM_CXXFLAGS="-Wall -openmp $AM_CXXFLAGS"
++ ;;
+ esac
+ 
+ { $as_echo "$as_me:$LINENO: checking for library containing cos" >&5
+--- Trinity.bak	2015-03-05 07:38:10.303722000 +0800
++++ Trinity	2015-03-05 09:11:23.490878000 +0800
+@@ -38,14 +38,51 @@
+ my $INCHWORM_DIR = "$ROOTDIR/Inchworm/bin/";
+ my $CHRYSALIS_DIR = "$ROOTDIR/Chrysalis";
+ my $BUTTERFLY_DIR = "$ROOTDIR/Butterfly";
+-my $JELLYFISH_DIR = "$ROOTDIR/trinity-plugins/jellyfish";
+-my $FASTOOL_DIR = "$ROOTDIR/trinity-plugins/fastool";
+ my $COLLECTL_DIR = "$ROOTDIR/trinity-plugins/collectl/bin";
+ my $COREUTILS_DIR = "$ROOTDIR/trinity-plugins/coreutils/bin";
+-my $PARAFLY = "$ROOTDIR/trinity-plugins/parafly/bin/ParaFly";
+ my $TRIMMOMATIC = "$ROOTDIR/trinity-plugins/Trimmomatic/trimmomatic.jar";
+ my $TRIMMOMATIC_DIR = "$ROOTDIR/trinity-plugins/Trimmomatic";
+ 
++my $JELLYFISH_DIR;
++chomp(my $jellyfish_path = `which jellyfish`);
++if ($jellyfish_path =~ /\w/) {
++    print "Found jellyfish at: $jellyfish_path\n\n";
++    $JELLYFISH_DIR = dirname($jellyfish_path);
++}
++else {
++   die "Error, cannot find path to jellyfish ($jellyfish_path).\n\n";
++}
++
++my $FASTOOL_DIR;
++chomp(my $fastool_path = `which fastool`);
++if ($fastool_path =~ /\w/) {
++    print "Found fastool at: $fastool_path\n\n";
++    $FASTOOL_DIR = dirname($fastool_path);
++}
++else {
++   die "Error, cannot find path to fastool ($fastool_path).\n\n";
++}
++
++chomp(my $PARAFLY = `which ParaFly`);
++if ($PARAFLY =~ /\w/) {
++    print "Found parafly at: $PARAFLY\n\n";
++}
++else {
++   die "Error, cannot find path to parafly ($PARAFLY).\n\n";
++}
++
++#my $TRIMMOMATIC;
++#my $TRIMMOMATIC_DIR;
++#chomp(my $trimmomatic_path = `which trimmomatic`);
++#if ($trimmomatic_path =~ /\w/) {
++#    print "Found trimmomatic at: $trimmomatic_path\n\n";
++#    $TRIMMOMATIC_DIR = dirname($trimmomatic_path);
++#    $TRIMMOMATIC = "$TRIMMOMATIC_DIR/jar/trimmomatic.jar";
++#}
++#else {
++#   die "Error, cannot find path to trimmomatic ($trimmomatic_path).\n\n";
++#}
++
+ 
+ # Site specific setup
+ 
+@@ -110,7 +147,8 @@
+ 
+ my $CPU = 2;
+ my $np = 1;
+-my $mpiexec = "mpiexec";
++my $mpiexec = "aprun";
++my $mpiexec_opt = "-q -b -cc none";
+ my $bflyCPU;
+ my $bflyCalculateCPU = 0;
+ my $bflyGCThreads = 2;
+@@ -1390,7 +1428,7 @@
+             }
+         }
+         else {
+-            my $cmd = "$PARAFLY -c $butterfly_cmds -shuffle -CPU $bflyCPU -failed_cmds failed_butterfly_commands.$$.txt ";  # shuffle them since the first ones are usually the longest-running ones.
++            my $cmd = "$mpiexec $mpiexec_opt -d $bflyCPU $PARAFLY -c $butterfly_cmds -shuffle -CPU $bflyCPU -failed_cmds failed_butterfly_commands.$$.txt ";  # shuffle them since the first ones are usually the longest-running ones.
+             &process_cmd($cmd);
+         }
+         $pm_butterfly_end = `date +%s`;
+@@ -1399,7 +1437,7 @@
+         # my $cmd = 'find ./chrysalis -name "*allProbPaths.fasta" -exec cat {} + > Trinity.fasta.tmp';
+         # no longer scan the file system... we know which files should exist
+         print STDERR "\n\n** Harvesting all assembled transcripts into a single multi-fasta file...\n" unless ($TRINITY_COMPLETE_FLAG);
+-        my $cmd = "$UTILDIR/support_scripts/print_butterfly_assemblies.pl $chrysalis_output_dir/component_base_listing.txt > Trinity.fasta.tmp";
++        my $cmd = "$mpiexec $mpiexec_opt $UTILDIR/support_scripts/print_butterfly_assemblies.pl $chrysalis_output_dir/component_base_listing.txt > Trinity.fasta.tmp";
+         &process_cmd($cmd);
+         
+         
+@@ -1428,12 +1466,12 @@
+         
+         # generate the pair links.
+         my $iworm_min100_fa_file = "$chrysalis_output_dir/" . basename("$inchworm_file.min100");
+-        my $cmd = "$MISCDIR/fasta_filter_by_min_length.pl $inchworm_file 100 > $iworm_min100_fa_file";
++        my $cmd = "$mpiexec $mpiexec_opt $MISCDIR/fasta_filter_by_min_length.pl $inchworm_file 100 > $iworm_min100_fa_file";
+         $pipeliner->add_commands( new Command($cmd, "$iworm_min100_fa_file.ok"));
+         $pipeliner->run();
+         
+         $pipeliner = new Pipeliner(-verbose => $SEE);
+-        $cmd = "bowtie-build -q $iworm_min100_fa_file $iworm_min100_fa_file";
++        $cmd = "$mpiexec $mpiexec_opt bowtie-build -q $iworm_min100_fa_file $iworm_min100_fa_file";
+         unless ($SEE) {
+             $cmd .= " 2>/dev/null";
+         }
+@@ -1441,7 +1479,7 @@
+             $pipeliner->add_commands( new Command($cmd, "$iworm_min100_fa_file.bowtie_build.ok"));
+ 
+             my $bowtie_sam_file = "$chrysalis_output_dir/iworm.bowtie.nameSorted.bam";
+-            $cmd = "bash -c \" set -o pipefail; bowtie -a -m 20 --best --strata --threads $CPU  --chunkmbs 512 -q -S -f $iworm_min100_fa_file $bowtie_reads_fa  | samtools view $PARALLEL_SAMTOOLS_SORT_TOKEN -F4 -Sb - | samtools sort $PARALLEL_SAMTOOLS_SORT_TOKEN -no - - > $bowtie_sam_file\" ";
++            $cmd = "$mpiexec $mpiexec_opt -d $CPU bash -c \" set -o pipefail; bowtie -a -m 20 --best --strata --threads $CPU  --chunkmbs 512 -q -S -f $iworm_min100_fa_file $bowtie_reads_fa  | samtools view $PARALLEL_SAMTOOLS_SORT_TOKEN -F4 -Sb - | samtools sort $PARALLEL_SAMTOOLS_SORT_TOKEN -no - - > $bowtie_sam_file\" ";
+             
+             unless ($SEE) {
+                 $cmd .= " 2>/dev/null";
+@@ -1451,7 +1489,7 @@
+             
+             ## generate the scaffold info
+             my $iworm_scaffolds_file = "$chrysalis_output_dir/iworm_scaffolds.txt";
+-            $cmd = "$UTILDIR/support_scripts/scaffold_iworm_contigs.pl $bowtie_sam_file $inchworm_file > $iworm_scaffolds_file"; # important, must use original inchworm file because positions are indexed for later use by GraphFromFasta
++            $cmd = "$mpiexec $mpiexec_opt $UTILDIR/support_scripts/scaffold_iworm_contigs.pl $bowtie_sam_file $inchworm_file > $iworm_scaffolds_file"; # important, must use original inchworm file because positions are indexed for later use by GraphFromFasta
+             unless ($SEE) {
+                 $cmd .= " 2>/dev/null";
+             }
+@@ -1477,7 +1515,7 @@
+         my $graphFromFasta_cmd = "-i $inchworm_file -r $reads_file -min_contig_length $min_contig_length -min_glue $min_glue -glue_factor $glue_factor -min_iso_ratio $min_iso_ratio -t $CPU -k " . ($KMER_SIZE-1) . " -kk " . 2*($KMER_SIZE-1) . " ";
+         # use MPI if MPI Procs >1
+         if ($np > 1) {
+-            $graphFromFasta_cmd = "$mpiexec -np $np $CHRYSALIS_DIR/GraphFromFasta_MPI $graphFromFasta_cmd"
++            $graphFromFasta_cmd = "$mpiexec $mpiexec_opt -n $np $CHRYSALIS_DIR/GraphFromFasta_MPI $graphFromFasta_cmd"
+         }
+         else {
+             $graphFromFasta_cmd = "$CHRYSALIS_DIR/GraphFromFasta $graphFromFasta_cmd"
+@@ -1509,7 +1547,7 @@
+         ## create iworm bundles
+         
+         
+-        my $cmd = "$CHRYSALIS_DIR/CreateIwormFastaBundle -i $graphFromFasta_outfile -o $iworm_bundles_fasta_file -min $min_contig_length";
++        my $cmd = "$mpiexec $mpiexec_opt $CHRYSALIS_DIR/CreateIwormFastaBundle -i $graphFromFasta_outfile -o $iworm_bundles_fasta_file -min $min_contig_length";
+         
+         unless ($SEE) {
+             $cmd .=  " 2>/dev/null ";
+@@ -1528,8 +1566,14 @@
+         my $cmd = ($BOWTIE_COMP) ? "$CHRYSALIS_DIR/ReadsToComponents.pl" : "$CHRYSALIS_DIR/ReadsToTranscripts";
+         if ("$cmd" eq "$CHRYSALIS_DIR/ReadsToTranscripts" ) {
+             if ($np > 1) {
+-                $cmd = "$mpiexec -np $np $CHRYSALIS_DIR/ReadsToTranscripts_MPI"
++                $cmd = "$mpiexec $mpiexec_opt -n $np " . $cmd . "_MPI"
+             }
++            else {
++                $cmd = "$mpiexec $mpiexec_opt " . $cmd
++            }
++        }
++        else {
++            $cmd = "$mpiexec $mpiexec_opt " . $cmd;
+         }
+ 
+         $cmd .= " -i $reads_file -f $iworm_bundles_fasta_file -o $reads_to_components_output_file -t $CPU -max_mem_reads $max_reads_per_loop ";
+@@ -1579,7 +1623,7 @@
+     {
+         ## write the deBruijn graphs:
+ 
+-        my $cmd = "$INCHWORM_DIR/FastaToDeBruijn --fasta $iworm_bundles_fasta_file -K " . ($KMER_SIZE-1) . " --graph_per_record --threads $CPU";
++        my $cmd = "$mpiexec $mpiexec_opt -d $CPU $INCHWORM_DIR/FastaToDeBruijn --fasta $iworm_bundles_fasta_file -K " . ($KMER_SIZE-1) . " --graph_per_record --threads $CPU";
+         if ($SS_lib_type) {
+             $cmd .= " --SS ";
+         }
+@@ -1607,7 +1651,7 @@
+     
+     my $partitioning_checkpoint_file = "$chrysalis_output_dir/file_partitioning.ok";
+ 
+-    my $cmd = "$UTILDIR/support_scripts/partition_chrysalis_graphs_n_reads.pl --deBruijns $chrysalis_output_dir/bundled_iworm_contigs.fasta.deBruijn --componentReads $chrysalis_output_dir/readsToComponents.out.sort -N 1000 -L $min_contig_length ";
++    my $cmd = "$mpiexec $mpiexec_opt $UTILDIR/support_scripts/partition_chrysalis_graphs_n_reads.pl --deBruijns $chrysalis_output_dir/bundled_iworm_contigs.fasta.deBruijn --componentReads $chrysalis_output_dir/readsToComponents.out.sort -N 1000 -L $min_contig_length ";
+     
+     unless ($SEE) {
+         $cmd .= " 2>/dev/null";
+@@ -1664,7 +1708,13 @@
+             { # butterfly command
+                 
+ 
+-                my $bfly_cmd = "java -Xmx$bflyHeapSpaceMax -Xms$bflyHeapSpaceInit ";
++                my $bfly_cmd;
++                if (defined($bflyGCThreads)) {
++                    $bfly_cmd = "$mpiexec $mpiexec_opt -d $bflyGCThreads java -Xmx$bflyHeapSpaceMax -Xms$bflyHeapSpaceInit ";
++                }
++                else {
++                    $bfly_cmd = "$mpiexec $mpiexec_opt java -Xmx$bflyHeapSpaceMax -Xms$bflyHeapSpaceInit ";
++                }
+         
+                 if (defined($bflyGCThreads)) {
+                     $bfly_cmd .= " -XX:ParallelGCThreads=$bflyGCThreads ";
+@@ -1732,7 +1782,7 @@
+         }
+         else {
+             
+-            my $cmd = "$PARAFLY -c $quantify_graph_cmds -CPU $CPU -failed_cmds failed_quantify_graph_commands.$$.txt -shuffle ";
++            my $cmd = "$mpiexec $mpiexec_opt -d $CPU $PARAFLY -c $quantify_graph_cmds -CPU $CPU -failed_cmds failed_quantify_graph_commands.$$.txt -shuffle ";
+             &process_cmd($cmd);
+         }
+         
+@@ -1883,7 +1933,7 @@
+                 $jelly_hash_size = $JELLY_S;
+             }
+             
+-            my $cmd = "$JELLYFISH_DIR/bin/jellyfish count -t $CPU -m $KMER_SIZE -s $jelly_hash_size ";
++            my $cmd = "$mpiexec $mpiexec_opt -d $CPU $JELLYFISH_DIR/jellyfish count -t $CPU -m $KMER_SIZE -s $jelly_hash_size ";
+             
+             unless ($SS_lib_type) {
+                 ## count both strands
+@@ -1905,7 +1955,7 @@
+ 
+             my $jelly_db = "mer_counts.jf";
+             
+-            $cmd = "$JELLYFISH_DIR/bin/jellyfish dump -L $min_kmer_cov $jelly_db > $jelly_kmer_fa_file";
++            $cmd = "$mpiexec $mpiexec_opt $JELLYFISH_DIR/jellyfish dump -L $min_kmer_cov $jelly_db > $jelly_kmer_fa_file";
+             
+             unless ($SEE) {
+                 $cmd .= " 2>/dev/null";
+@@ -1915,7 +1965,7 @@
+         
+             
+             ## write a histogram of the kmer counts.
+-            $cmd = "$JELLYFISH_DIR/bin/jellyfish histo -t $CPU -o $jelly_kmer_fa_file.histo $jelly_db";
++            $cmd = "$mpiexec $mpiexec_opt -d $CPU $JELLYFISH_DIR/jellyfish histo -t $CPU -o $jelly_kmer_fa_file.histo $jelly_db";
+             
+             unless ($SEE) {
+                 $cmd .= " 2>/dev/null";
+@@ -2037,8 +2087,8 @@
+     if ($seqType eq "fq") {
+         # make fasta
+         foreach my $f (@initial_files){
+-            my $perlcmd = "$UTILDIR/support_scripts/fastQ_to_fastA.pl -I $f ";
+-            my $fastool_cmd = "$FASTOOL_DIR/fastool";
++            my $perlcmd = "$mpiexec $mpiexec_opt $UTILDIR/support_scripts/fastQ_to_fastA.pl -I $f ";
++            my $fastool_cmd = "$mpiexec $mpiexec_opt $FASTOOL_DIR/fastool";
+             if ($SS_lib_type && $SS_lib_type eq "R") {
+                 $perlcmd .= " --rev ";
+                 $fastool_cmd .= " --rev ";
+@@ -2060,7 +2110,7 @@
+         }else {
+             #if ($SS_lib_type && $SS_lib_type eq "R") {
+             foreach my $f (@initial_files){
+-                my $cmd = "$UTILDIR/support_scripts/revcomp_fasta.pl $f >> $file_prefix.fa";
++                my $cmd = "$mpiexec $mpiexec_opt $UTILDIR/support_scripts/revcomp_fasta.pl $f >> $file_prefix.fa";
+                 &process_cmd($cmd);
+           	}
+         }
+@@ -2131,7 +2181,7 @@
+         return($output_file);
+     }
+     
+-    my $cmd = "$UTILDIR/support_scripts/inchworm_transcript_splitter.pl --iworm $inchworm_file "
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU $UTILDIR/support_scripts/inchworm_transcript_splitter.pl --iworm $inchworm_file "
+         . " --left " . join(",", @$left_files_aref) . " --right " . join(",", @$right_files_aref) . "  --seqType $seqType --CPU $CPU ";
+     
+     if ($SS_lib_type) {
+@@ -2160,7 +2210,7 @@
+         return($output_file);
+     }
+     
+-    my $cmd = "$UTILDIR/support_scripts/inchworm_transcript_splitter.pl --iworm $inchworm_file "
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU $UTILDIR/support_scripts/inchworm_transcript_splitter.pl --iworm $inchworm_file "
+         . " --single_but_really_paired " . join(",", @$single_files_aref) . " --seqType $seqType --CPU $CPU ";
+     
+     if ($SS_lib_type) {
+@@ -2192,7 +2242,7 @@
+     }
+     
+ 
+-    my $cmd = "java -Xmx64m -jar $UTILDIR/support_scripts/ExitTester.jar 0";
++    my $cmd = "$mpiexec $mpiexec_opt java -Xmx64m -jar $UTILDIR/support_scripts/ExitTester.jar 0";
+     eval {
+         &process_cmd($cmd);
+     };
+@@ -2204,7 +2254,7 @@
+         
+     }
+     
+-    $cmd = "java -Xmx64m -jar $UTILDIR/support_scripts/ExitTester.jar 1";
++    $cmd = "$mpiexec $mpiexec_opt java -Xmx64m -jar $UTILDIR/support_scripts/ExitTester.jar 1";
+     eval {
+         &process_cmd($cmd);
+     };
+@@ -2230,7 +2280,7 @@
+ 
+     my $extracted_reads_file = "$trinity_target_fa." . $min_percent_read_containing_kmers . "pcnt.iworm_extracted";
+ 
+-    my $cmd = "$INCHWORM_DIR/pull_reads_with_kmers "
++    my $cmd = "$mpiexec $mpiexec_opt $INCHWORM_DIR/pull_reads_with_kmers "
+         . "--target $inchworm_file "
+         . "--reads $trinity_target_fa "
+         . "--min_percent_read_containing_kmers $min_percent_read_containing_kmers ";
+@@ -2474,7 +2524,7 @@
+     }
+         
+ 
+-    my $cmd = "java -jar $TRIMMOMATIC PE -threads $CPU -phred33 "
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU java -jar $TRIMMOMATIC PE -threads $CPU -phred33 "
+             . " $left_fq_file $right_fq_file "
+             . " $trimmed_left_file_base.P.qtrim $trimmed_left_file_base.U.qtrim "
+             . " $trimmed_right_file_base.P.qtrim $trimmed_right_file_base.U.qtrim "
+@@ -2522,7 +2572,7 @@
+         return($trimmed_fq);
+     }
+     
+-    my $cmd = "java -jar $TRIMMOMATIC SE -threads $CPU -phred33 "
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU java -jar $TRIMMOMATIC SE -threads $CPU -phred33 "
+         . " $single_fq "
+         . " $trimmed_fq "
+         . " $trimmomatic_params ";
+@@ -2598,7 +2648,7 @@
+     
+     
+ 
+-    my $cmd = "$UTILDIR/insilico_read_normalization.pl --seqType $seqType --JM $max_memory "
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU $UTILDIR/insilico_read_normalization.pl --seqType $seqType --JM $max_memory "
+         . " --max_cov $max_read_coverage --CPU $CPU --output $normalize_outdir";
+     
+     if ($SS_lib_type) {
+@@ -2665,7 +2715,7 @@
+ sub run_genome_guided_Trinity {
+     ## partition the reads according to coverage piles:
+     
+-    my $cmd = "$UTILDIR/support_scripts/prep_rnaseq_alignments_for_genome_assisted_assembly.pl --coord_sorted_SAM $genome_guided_bam -I $genome_guided_max_intron --sort_buffer $max_memory --CPU $CPU ";
++    my $cmd = "$mpiexec $mpiexec_opt -d $CPU $UTILDIR/support_scripts/prep_rnaseq_alignments_for_genome_assisted_assembly.pl --coord_sorted_SAM $genome_guided_bam -I $genome_guided_max_intron --sort_buffer $max_memory --CPU $CPU ";
+     
+     if ($SS_lib_type) {
+         $cmd .= " --SS_lib_type $SS_lib_type ";
+@@ -2742,7 +2792,7 @@
+         
+     }
+     else {
+-        my $cmd = "$PARAFLY -c $cmds_file -CPU $CPU -v ";
++        my $cmd = "$mpiexec $mpiexec_opt -d $CPU $PARAFLY -c $cmds_file -CPU $CPU -v ";
+         &process_cmd($cmd);
+     }
+ 
+@@ -2758,7 +2808,7 @@
+     ## write Trinity assembly commands for partitions:
+     ##################################################
+ 
+-    my $cmd = "$UTILDIR/support_scripts/GG_write_trinity_cmds.pl --reads_list_file $reads_list_file --CPU $grid_node_CPU --max_memory $grid_node_max_memory ";
++    my $cmd = "$mpiexec $mpiexec_opt -d $grid_node_CPU $UTILDIR/support_scripts/GG_write_trinity_cmds.pl --reads_list_file $reads_list_file --CPU $grid_node_CPU --max_memory $grid_node_max_memory ";
+     if ($run_as_paired_flag) {
+         $cmd .= " --run_as_paired ";
+     }
+--- Chrysalis/Makefile_crayCC	2015-02-15 03:34:09.000000000 +0800
++++ Chrysalis/Makefile_crayCC	2015-03-02 11:35:06.151869000 +0800
+@@ -1,8 +1,8 @@
+ # disable parallel make; problem with linking
+ .NOTPARALLEL:
+ 
+-CPLUSPLUS	= icpc
+-CC		= icc
++CPLUSPLUS	= CC
++CC		= cc
+ AR      = xiar # needed for ipo (e.g., if SYS_OPT=-fast)
+ ARFLAGS = qc   # xiar doesn't recognize "-qc"
+ 
