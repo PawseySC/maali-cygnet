@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for bowtie
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/bowtie-bio/files/bowtie/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src.zip/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "make" 
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+
+  for file in bowtie bowtie-inspect bowtie-build bowtie-build-s bowtie-build-l bowtie-align-s bowtie-align-l bowtie-inspect-s bowtie-inspect-l
+  do
+    if [ -f $file ]; then
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    fi
+  done
+}
+
+##############################################################################

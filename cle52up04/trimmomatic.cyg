@@ -1,0 +1,37 @@
+##############################################################################
+# maali cygnet file for Trimmomatic 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.usadellab.org/cms/uploads/supplementary/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-Src-$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="apache"
+
+## These are boolean options set to 1 to add to module
+MAALI_MODULE_SET_TRIMMOMATIC_LIB='${MAALI_INSTALL_DIR}/dist/jar/trimmomatic-0.33.jar'
+MAALI_MODULE_SET_TRIMMOMATIC_ADAPTER='${MAALI_INSTALL_DIR}/adapters'
+MAALI_MODULE_WHATIS="Trimmomatic performs a variety of useful trimming tasks for illumina paired-end and single ended data.The selection of trimming steps and their associated parameters are supplied on the command line."
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "mv ${MAALI_TOOL_BUILD_DIR}/* ${MAALI_INSTALL_DIR}"
+  cd "$MAALI_INSTALL_DIR"
+  maali_run "ant -lib ./lib/jbzip2-0.9.jar"
+}
+
+##############################################################################
