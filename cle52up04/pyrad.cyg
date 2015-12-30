@@ -22,7 +22,7 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-function maali_build {
+function maali_python_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 

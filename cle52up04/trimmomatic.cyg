@@ -20,6 +20,9 @@ MAALI_TOOL_TYPE="bio-apps"
 # tool pre-requisites 
 MAALI_TOOL_PREREQ="java/8u66"
 
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="ant/1.9.6"
+
 ## These are boolean options set to 1 to add to module
 MAALI_MODULE_SET_TRIMMOMATIC_LIB='${MAALI_INSTALL_DIR}/dist/jar/trimmomatic-0.33.jar'
 MAALI_MODULE_SET_TRIMMOMATIC_ADAPTER='${MAALI_INSTALL_DIR}/adapters'
@@ -33,6 +36,8 @@ function maali_build {
   maali_makedir "$MAALI_INSTALL_DIR/jar"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_makedir "$MAALI_INSTALL_DIR/adapters"
+
+  maali_run "ant -lib ./lib/jbzip2-0.9.jar"
 
   for file in adapters/*.fa
   do

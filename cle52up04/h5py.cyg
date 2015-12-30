@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tgz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.10.1 cython/0.23.4 cray-hdf5"
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.82 gcc/4.8.2 craype-sandybridge numpy/1.10.1 cython/0.23.4 pkgconfig/1.1.0 cray-hdf5/1.8.13"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

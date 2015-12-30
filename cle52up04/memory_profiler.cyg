@@ -15,10 +15,10 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="tool"
+MAALI_TOOL_TYPE="python"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ=""
+MAALI_TOOL_PREREQ="setuptools/18.4"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""

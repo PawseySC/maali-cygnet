@@ -14,6 +14,9 @@ MAALI_DST=""
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR=""
 
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
 # this only creates a module file
 MAALI_REMODULE=1
 

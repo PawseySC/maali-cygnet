@@ -88,7 +88,6 @@ function maali_build {
     maali_run "make"
     maali_run "make install"
 
-
 }
 
 ###############################################################################

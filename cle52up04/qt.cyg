@@ -12,7 +12,18 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://download.qt.io/archive/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-everywhere-opensource-src-${MAALI_TOOL_VERSION}.tar.gz"
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
+  MAALI_URL="http://download.qt.io/official_releases/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/qt-everywhere-opensource-src-${MAALI_TOOL_VERSION}.tar.gz"
+else
+  MAALI_URL="http://download.qt.io/official_releases/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/single/$MAALI_TOOL_NAME-everywhere-opensource-src-$MAALI_TOOL_VERSION.tar.xz"
+fi
+
+# location we are downloading the source code to
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-everywhere-opensource-src-$MAALI_TOOL_VERSION.tar.gz"
+else
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-everywhere-opensource-src-$MAALI_TOOL_VERSION.tar.xz"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-everywhere-opensource-src-${MAALI_TOOL_VERSION}.tar.gz"
@@ -27,13 +38,17 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ=""
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="-verbose -opensource -confirm-license -release -shared -stl -system-zlib -system-libtiff -system-libpng -system-libjpeg -opengl -no-javascript-jit -webkit"
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
+  MAALI_TOOL_CONFIGURE="-v -confirm-license -stl -opensource -release -shared -system-zlib -system-libtiff -system-libpng -system-libjpeg -opengl -webkit"
+else
+  MAALI_TOOL_CONFIGURE="-confirm-license -opensource -release -shared -system-zlib -system-libpng -system-libjpeg -opengl -verbose -no-xcb"
+fi
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_SETENV='Qt_ROOT=$MAALI_INSTALL_DIR'
-MAALI_MODULE_SET_SETENV+=',QTDIR=$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_Qt_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_QTDIR='$MAALI_INSTALL_DIR'
 MAALI_MODULE_WHATIS="QT is a cross-platform application framework tool."
 
 ##############################################################################
