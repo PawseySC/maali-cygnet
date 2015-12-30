@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for Oskar 2
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.oerc.ox.ac.uk/~ska/oskar/OSKAR-Source.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/OSKAR-Source.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/OSKAR-$MAALI_TOOL_VERSION-Source/"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="casacore cudatoolkit lapack cfitsio gsl"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module fils
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_OSKAR_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_INCLUDE_PATH=1
+MAALI_MODULE_WHATIS="The OSKAR package consists of a number of open source libraries and applications for the simulation of astronomical radio interferometers. OSKAR 2.x has been designed primarily to produce simulated data from large aperture arrays, such as those envisaged for the SKA."
+
+##############################################################################
+
+function maali_cmake_build {
+
+  # for tools that use cmake
+  cd "$MAALI_TOOL_BUILD_DIR"
+  # cmake likes to build in a director of it's own
+  mkdir "$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_NAME-build"
+  maali_run "CC=cc CXX=CC FC=ftn cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCMAKE_BUILD_TYPE=DEBUG -DCUDA_ARCH=ALL -DCBLAS_LIBRARY=${MAALI_GSL_HOME}/lib/libgslcblas.so -DLAPACK_LIB_DIR=${LAPACK}/lib -DCFITSIO_INC_DIR=${CFITSIO_ROOT}/include -DCFITSIO_LIB_DIR=${CFITSIO_ROOT}/lib -DCASACORE_LIB_DIR=${CASACORE_ROOT}/lib -DCASACORE_INC_DIR=${CASACORE_ROOT}/include -DCUDA_CUDA_LIBRARY=/opt/cray/nvidia/304.47.13-1_1.0500.1123.4.3.ari/lib64 .."
+  maali_run "make VERBOSE=1"
+  maali_run "make install"
+}
+
+##############################################################################

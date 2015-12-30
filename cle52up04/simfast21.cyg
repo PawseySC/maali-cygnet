@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for Simfast21 package 
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://centra.tecnico.ulisboa.pt/~msantos/fp-content/attachs/${MAALI_TOOL_NAME}.tar"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.tar"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="fftw/3.3.4.0 gsl/1.16"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_WHATIS="This program generates a simulation of the cosmological 21cm signal"
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  sed -i "s;gcc;cc;g" ./makefile
+  sed -i "s;-lgsl;-L \${MAALI_GSL_HOME}/lib -lgsl;g" ./makefile
+  sed -i "s;./;\${MAALI_SIMFAST21_HOME}/;g" ./simfast21
+  sed -i '1 i\#!\/bin\/bash -l' ./simfast21
+  maali_run "make"  
+  cp -r * ${MAALI_INSTALL_DIR}
+  
+  if [ ! -d ${MAALI_INSTALL_DIR}/bin ]; then
+     mkdir ${MAALI_INSTALL_DIR}/bin
+  fi
+  mv ${MAALI_INSTALL_DIR}/simfast21 ${MAALI_INSTALL_DIR}/bin/simfast21
+}
+
+##############################################################################

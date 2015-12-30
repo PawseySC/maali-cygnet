@@ -1,0 +1,57 @@
+##############################################################################
+# maali cygnet file for 21cmfast
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://homepage.sns.it/mesinger/Download_files/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}_v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="fftw/3.3.4.0 gsl/1.16"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# runs in front of the configure line
+export CFLAGS=""
+
+# automodule
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR/Programs
+
+  # configure and compile
+  sed -i 's/gcc/cc/g' Makefile
+  sed -i 's/-lgsl/-L${MAALI_GSL_HOME}\/lib -lgsl/g' Makefile
+  sed -i 's/-lfftw3f_omp/-L${FFTW_DIR} -lfftw3f_threads/g' Makefile
+  sed -i 's/static/\/\/static/g' ../Cosmo_c_files/misc.c
+  sed -i '0,/\/\/static/s//static/' ../Cosmo_c_files/misc.c
+  maali_run "make"
+
+  # make install target missing, manual copy instead
+  # maali_run "make install"
+  mkdir $MAALI_INSTALL_DIR/bin
+  cp `ls --hide=*.c --hide=Makefile --hide=PROGRAM_LIST` $MAALI_INSTALL_DIR/bin/.
+}
+
+##############################################################################

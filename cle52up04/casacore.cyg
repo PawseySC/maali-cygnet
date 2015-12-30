@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for casacore
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="ftp://ftp.atnf.csiro.au/pub/software/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI qt/4.8.7 lapack/3.5.0 cfitsio wcslib/5.11 bison flex readline/5.1 cray-hdf5-parallel fftw/3.3.4.3"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_EXE_LINKER_FLAGS="-dynamic" -DREADLINE_ROOT_DIR=${MAALI_READLINE_HOME} -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=ON -DBLAS_LIBRARIES=${LAPACK}/lib/libblas.so -DLAPACK_LIBRARIES=${LAPACK}/lib/liblapack.so -DCFITSIO_ROOT_DIR=${CFITSIO_ROOT} -DWCSLIB_ROOT_DIR=${WCSLIB_ROOT} -DHDF5_ROOT_DIR=${HDF5_ROOT} -DFFTW3F_THREADS_LIBRARY=${FFTW_DIR}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_DIR}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_DIR}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_DIR}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INC} -DDATA_DIR=/ivec/cle52/Casacore_data/data -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR}'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CASACORE_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_WHATIS="A set of c++ core libraries derived from aips++."
+
+##############################################################################
+
+function maali_cmake_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ -d build ]; then
+    rm -rf build
+  fi
+  mkdir -p build
+  cd "build"
+  maali_run "cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_EXE_LINKER_FLAGS="-dynamic" -DREADLINE_ROOT_DIR=${MAALI_READLINE_HOME} -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=ON -DBLAS_LIBRARIES=${LAPACK}/lib/libblas.so -DLAPACK_LIBRARIES=${LAPACK}/lib/liblapack.so -DCFITSIO_ROOT_DIR=${CFITSIO_ROOT} -DWCSLIB_ROOT_DIR=${WCSLIB_ROOT} -DHDF5_ROOT_DIR=${HDF5_ROOT} -DFFTW3F_THREADS_LIBRARY=${FFTW_DIR}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_DIR}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_DIR}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_DIR}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INC} -DDATA_DIR=/ivec/cle52/Casacore_data/data -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR}  .."
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
