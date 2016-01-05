@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_TOOL_TYPE="python"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="glib/2.42.0 gobject-introspection/1.36.0 cairo/1.10.2 py2cairo/1.10.0 pygobject/2.28.6 numpy/1.6.2"
+MAALI_TOOL_PREREQ="glib/2.47.4 gobject-introspection/1.36.0 cairo/1.10.2 py2cairo/1.10.0 pygobject/2.28.6 numpy/1.6.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

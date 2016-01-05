@@ -16,7 +16,7 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 #  #include HASH_FUN_H                 // for hash<>
 
 # URL to download the source code from
-MAALI_URL="http://sparsehash.googlecode.com/files/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
