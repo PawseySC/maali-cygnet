@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for QIIME
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located - OpenFOAM builds in place
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="blast/2.2.26 python/2.7.6 numpy/1.6.2 pycogent/1.5.3 biom-format/1.3.1 pynast/1.2.2 qcli/0.1.0 emperor/0.9.3 pyqi/0.3.1 matplotlib/1.1.1"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="sphinx/1.2.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_QIIME_CONFIG_FP='$MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config'
+
+##############################################################################
+
+function maali_python_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "python setup.py build"
+  maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+  export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+
+  # we only want to support Python 2.7.6
+  sed -i -e 's;acceptable_version = (2,7,3);acceptable_version = (2,7,6);g' $MAALI_INSTALL_DIR/bin/print_qiime_config.py
+  sed -i -e "s;cluster_jobs_fp;cluster_jobs_fp\t$MAALI_INSTALL_DIR/bin/start_parallel_jobs.py;g" $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+  sed -i -e "s;qiime_scripts_dir;qiime_scripts_dir\t$MAALI_INSTALL_DIR/bin;g" $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+
+  sed -i -e 's;assign_taxonomy_id_to_taxonomy_fp;assign_taxonomy_id_to_taxonomy_fp\t/group/data/qiime/gg_13_8_otus/taxonomy/97_otu_taxonomy.txt;g' $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+  sed -i -e 's;template_alignment_lanemask_fp;template_alignment_lanemask_fp\t/group/data/qiime/lanemask_in_1s_and_0s;g' $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+  sed -i -e 's;assign_taxonomy_reference_seqs_fp;assign_taxonomy_reference_seqs_fp\t/group/data/qiime/gg_13_8_otus/rep_set/97_otus.fasta;g' $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+  sed -i -e 's;pynast_template_alignment_fp;pynast_template_alignment_fp\t/group/data/qiime/core_set_aligned.fasta.imputed;g' $MAALI_INSTALL_DIR/lib/python2.7/site-packages/qiime/support_files/qiime_config
+
+}
+
+##############################################################################

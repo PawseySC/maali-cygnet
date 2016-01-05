@@ -1,0 +1,28 @@
+##############################################################################
+# maali cygnet file for phonopy
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/${MAALI_TOOL_NAME}/files/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_MAJOR_MINOR_VERSION}/$MAALI_TOOL_NAME-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.25 gcc/4.8.2 numpy/1.6.2 matplotlib/1.4.3 pyyaml/3.11"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################

@@ -1,0 +1,28 @@
+##############################################################################
+# maali cygnet file for python wrappings libxml2 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="ftp://xmlsoft.org/libxml2/libxml2-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/libxml2-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libxml2-${MAALI_TOOL_VERSION}/python"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="zlib/1.2.7"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--with-zlib=$MAALI_ZLIB_HOME'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
