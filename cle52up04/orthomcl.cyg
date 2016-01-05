@@ -1,0 +1,36 @@
+##############################################################################
+# maali cygnet file for orthomcl
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.orthomcl.org/common/downloads/software/v${MAALI_TOOL_MAJOR_MINOR_VERSION}/${MAALI_TOOL_NAME}Software-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}Software-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}Software-v${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+# MAALI_WIKI_TOOL_NAME=""
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+   cd $MAALI_TOOL_BUILD_DIR
+   mv * $MAALI_INSTALL_DIR
+}
+
+##############################################################################

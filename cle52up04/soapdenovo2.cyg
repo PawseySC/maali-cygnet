@@ -1,0 +1,48 @@
+##############################################################################
+# maali cygnet file for SOAPdenovo2
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://downloads.sourceforge.net/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME_ORIG}-src-${MAALI_TOOL_VERSION}.tgz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-src-$MAALI_TOOL_VERSION.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-src-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  sed -i -e 's/g++/CC/g' Makefile sparsePregraph/Makefile standardPregraph/Makefile
+  sed -i -e 's/O4/O3/g' Makefile sparsePregraph/Makefile standardPregraph/Makefile
+
+  sed -i -e 's/#include "multi_threads.h"/#include <unistd.h>\n#include "multi_threads.h"/g' sparsePregraph/multi_threads.cpp
+  sed -i -e 's/#include "stdinc.h"/#include <unistd.h>\n#include "stdinc.h"/g' sparsePregraph/build_preArc.cpp
+  sed -i -e 's/#include "global.h"/#include <unistd.h>\n#include "global.h"/g' sparsePregraph/pregraph_sparse.cpp
+  sed -i -e 's/#include "global.h"/#include <getopt.h>\n#include "global.h"/g' sparsePregraph/pregraph_sparse.cpp
+
+  maali_run "make"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 SOAPdenovo-127mer $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 755 SOAPdenovo-63mer $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

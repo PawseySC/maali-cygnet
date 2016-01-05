@@ -1,0 +1,72 @@
+##############################################################################
+# maali cygnet file for ABySS
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://github.com/bcgsc/$MAALI_TOOL_NAME/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI sparsehash/2.0.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+#
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  # Sparsehash is optional but reduce memory footprint using 2.0.2
+  export CPPFLAGS="-I$MAALI_SPAREHASH_HOME/include"
+  export CFLAGS="-DMPI_NO_CPPBIND"
+  export CXXFLAGS="-DMPI_NO_CPPBIND"
+
+  # need our own copy of boost to compile
+  if [ ! -f "$MAALI_SRC/boost_1_49_0.tar.bz2" ]; then
+    wget -O "$MAALI_SRC/boost_1_49_0.tar.bz2" -q http://downloads.sourceforge.net/project/boost/boost/1.49.0/boost_1_49_0.tar.bz2
+  fi
+
+  cp "$MAALI_SRC/boost_1_49_0.tar.bz2" .
+  tar jxf boost_1_49_0.tar.bz2
+  ln -s boost_1_49_0/boost boost
+
+  # Builds ABYSS is serial ABYSS-P is parallel with -p
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-mpich --with-mpi=$MPICH_DIR"
+
+  find $MAALI_TOOL_BUILD_DIR -name Makefile | xargs -n1 -i sed -i -e 's/-Wall -Wextra -Werror/-Wall -Wextra/g' {}
+
+  maali_run "make"
+  maali_run "make install"
+
+  # abyss-pe is a wrapper script which spawns mpi or aprun process. You have to mangle it
+  cp $MAALI_INSTALL_DIR/bin/abyss-pe $MAALI_INSTALL_DIR/bin/abyss-pe.backup
+
+  sed -i s/"mpirun?=\$(shell which mpirun)"/"mpirun=aprun"/g $MAALI_INSTALL_DIR/bin/abyss-pe
+  sed -i s/"mpirun=mpirun"/"mpirun=aprun"/g $MAALI_INSTALL_DIR/bin/abyss-pe
+  sed -i s/"(mpirun) -np \$(np)"/"(mpirun) -B"/g $MAALI_INSTALL_DIR/bin/abyss-pe
+
+  # ABYPSS-PE it the only multi node process, abyss-pe runs a post process ie
+  sed -i s/"ABYSS \$(abyssopt)"/"\$(mpirun) -n 1 ABYSS \$(abyssopt)"/g $MAALI_INSTALL_DIR/bin/abyss-pe
+
+}
+
+##############################################################################
