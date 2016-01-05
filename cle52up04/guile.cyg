@@ -1,9 +1,9 @@
 ##############################################################################
-# maali cygnet file for gperftools
+# maali cygnet file for guile
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -12,7 +12,7 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://googledrive.com/host/0B6NtGsLhIcf7MWxMMF9JdTN3UVk/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://ftp.gnu.org/pub/gnu/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -24,31 +24,39 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="libunwind/1.1"
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
 
 # for auto-building module files
+MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
-MAALI_MODULE_SET_C_INCLUDE_PATH=1
-MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 ##############################################################################
 
 function maali_build {
-  # this is the core function for creating software
-
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  export LDFLAGS="-L$MAALI_LIBUNWIND_HOME/lib"
-  export CPPFLAGS="-I$MAALI_LIBUNWIND_HOME/include"
-
   cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    maali_run "./configure CC=cc --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    maali_run "./configure CC=cc --disable-error-on-warning --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  else
+    echo "Only gcc and intel are supported"
+    exit 1;
+  fi
+
   maali_run "make"
   maali_run "make install"
 }
 
 ##############################################################################
-
-

@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for gperftools
+# maali cygnet file for plplot
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
@@ -12,7 +12,7 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://googledrive.com/host/0B6NtGsLhIcf7MWxMMF9JdTN3UVk/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://downloads.sourceforge.net/project/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION%20Source/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -23,32 +23,26 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="libunwind/1.1"
+# tool build pre-requisites
+MAALI_TOOL_BUILD_PREREQ="cmake/3.3.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_CPATH=1
-MAALI_MODULE_SET_C_INCLUDE_PATH=1
-MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PKGCONFIG=1
 
 ##############################################################################
 
-function maali_build {
-  # this is the core function for creating software
+function maali_cmake_build {
 
-  # allows late evaluation
-  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+    cd "$MAALI_TOOL_BUILD_DIR"
+    mkdir build
+    cd build
 
-  export LDFLAGS="-L$MAALI_LIBUNWIND_HOME/lib"
-  export CPPFLAGS="-I$MAALI_LIBUNWIND_HOME/include"
-
-  cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
-  maali_run "make"
-  maali_run "make install"
+    export CRAYPE_LINK_TYPE=dynamic
+    maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCMAKE_Fortran_COMPILER=ftn .."
+    maali_run "make"
+    maali_run "make install"
 }
 
 ##############################################################################
-
-

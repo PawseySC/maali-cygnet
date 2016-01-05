@@ -15,9 +15,9 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="markupsafe/0.18"
+MAALI_TOOL_PREREQ="markupsafe/0.23"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/1.1.6"
+MAALI_TOOL_BUILD_PREREQ="setuptools/18.4"
 
 ##############################################################################

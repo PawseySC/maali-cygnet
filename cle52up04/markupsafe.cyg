@@ -18,6 +18,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/1.1.6"
+MAALI_TOOL_BUILD_PREREQ="setuptools/18.4"
 
 ##############################################################################

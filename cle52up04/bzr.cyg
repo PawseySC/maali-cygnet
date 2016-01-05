@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="paramiko/1.15.2 pycrypto/2.6.1"
+MAALI_TOOL_PREREQ="paramiko/1.16.0 pycrypto/2.6.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
