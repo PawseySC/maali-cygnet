@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fdmnes"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries cray-tpsl lapack"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-tpsl lapack/3.5.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

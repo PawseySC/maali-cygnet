@@ -24,7 +24,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="boost/1.57.0 gsl/1.15 casacore/1.7.0 fftw/3.3.4.3 lapack/3.4.2"
+MAALI_TOOL_PREREQ="boost/1.57.0 gsl/1.16 casacore/1.7.0 fftw/3.3.4.3 lapack/3.5.0"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"

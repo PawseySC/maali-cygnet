@@ -28,7 +28,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="netcdf python"
+MAALI_TOOL_PREREQ="netcdf/4.3.0 python/2.6.9"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='-noX11 -crayxt5 -nomtkpp --with-netcdf $NETCDF_DIR intel'
@@ -46,7 +46,7 @@ function maali_build {
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  if [ "$MAALI_COMPILER_NAME" == "PrgEnv-intel" ]; then
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export MKL_HOME=$MKLROOT
     export AMBERBUILDFLAGS="-I${MKLROOT}/include/fftw"
   fi

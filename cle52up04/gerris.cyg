@@ -18,7 +18,7 @@ MAALI_URL="http://gerris.dalembert.upmc.fr/gerris/$MAALI_TOOL_NAME-snapshot.tar.
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-snapshot.tar.gz"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries fftw cray-netcdf gsl gts cray-mpich/7.2.2 craype-network-aries glib cray-tpsl"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.4.0 cray-netcdf/4.3.2 gsl/1.16 gts/120708 glib/2.47.4 cray-tpsl"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-snapshot-$MAALI_TOOL_VERSION"

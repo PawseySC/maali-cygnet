@@ -20,7 +20,7 @@ MAALI_DST="$MAALI_SRC/NAMD_${MAALI_TOOL_VERSION}_Source.tar.gz"
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/NAMD_""$MAALI_TOOL_VERSION""_Source"
 
-MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries rca fftw craype-hugepages8M tcl"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI rca fftw craype-hugepages8M tcl"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"

@@ -25,7 +25,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/siesta-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ="cray-netcdf/4.3.2"
-MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 craype-network-aries"
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"

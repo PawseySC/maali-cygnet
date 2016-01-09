@@ -24,7 +24,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Underworld-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-mpich cray-petsc cray-hdf5 libxml2 python numpy"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-petsc cray-hdf5 libxml2 python numpy"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="mercurial"

@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_PREREQ="cray-netcdf/4.3.2"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cray-mpich/7.0.0 craype-network-aries alps"
+MAALI_TOOL_BUILD_PREREQ="4MAALI_DEFAULT_MPI alps"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"

@@ -1,0 +1,36 @@
+#INFO#
+#INFO# Configuration to build a parallel MPI/OMP executable for a linux HPC
+#INFO# with OpenMP version 3.0 or later and having a version of Intel Fortran
+#INFO# Compiler 12.0 or later.
+#INFO# WARNING: The clause "collapse(n)" may not work in old compilers and
+#INFO#          is known to have troubles on the Fujitsu compiler (K-computer
+#INFO#          and Fujitsu FX10 machine) and Intel Fortran Compiler version
+#INFO#          11 and former ones. Since ifort v.12.0.3 bugs have been fixed.
+#INFO#          Please, refer to the discussion you see in
+#INFO#          http://openmp.org/forum/viewtopic.php?f=3&t=1023&start=10
+#INFO#          and check carefully your compiler and OS.
+#INFO# For optimal performance you should use a specifically tuned BLAS/LAPACK
+#INFO# library as in this specific configuration file (IPCMS-University of Tokyo).
+#INFO#
+     IRAT=2
+     CFLAGS='-O2 -Wall -m64'
+     CPP='/lib/cpp -P -C -traditional'
+     CPPFLAGS='-D__Linux -D__PGI -DFFT_DEFAULT -DPOINTER8 -DLINUX_IFC \
+               -DMALLOC8 -DPARALLEL -D__WITH_OMP3'
+     FFLAGS='-c -pc64 -O2 -unroll -heap-arrays 64 -openmp'
+#     LFLAGS='-mkl -L/opt/intel/composer_xe_2013.5.192/mkl/lib/intel64 \
+#         -lmkl_lapack95_lp64 \
+#         -lmkl_blas95_lp64 \
+#         -lm -lpthread -liomp5 -openmp'
+     LFLAGS='-L${CRAY_LIBSCI_PREFIX_DIR} -lm -lpthread -liomp5 -openmp'
+     FFLAGS_GROMOS='-Dgood_luck $(FFLAGS)'
+     if [ $debug ]; then
+       FC='ftn -g'
+       CC='cc -g'
+       LD='ftn -g'
+     else
+       FC='ftn '
+       CC='cc'
+       LD='ftn -static-intel'
+     fi
+ 
