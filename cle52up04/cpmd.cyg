@@ -1,0 +1,64 @@
+##############################################################################
+# maali cygnet file for cpmd
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
+# consistant naming schemes are a myth
+MAALI_CPMD_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`;
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_CPMD_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/CPMD"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "pwd"
+
+  maali_run "cp $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch CONFIGURE/CRAY-XC-INTEL-MPI"
+ 
+  maali_run "./mkconfig.sh CRAY-XC-INTEL-MPI > Makefile"
+
+  maali_run "make -j$MAALI_CORES"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR"
+  maali_run "chmod 750 $MAALI_INSTALL_DIR"
+  maali_run "chgrp cpmd $MAALI_INSTALL_DIR"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "chmod 750 $MAALI_INSTALL_DIR/bin"
+  maali_run "chgrp cpmd $MAALI_INSTALL_DIR/bin"
+
+  maali_run "mv cpmd.x $MAALI_INSTALL_DIR/bin"
+  maali_run "chmod 750 $MAALI_INSTALL_DIR/bin/cpmd.x"
+  maali_run "chgrp cpmd $MAALI_INSTALL_DIR/bin/cpmd.x"
+}
+
+##############################################################################

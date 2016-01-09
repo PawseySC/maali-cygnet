@@ -1,0 +1,52 @@
+##############################################################################
+# maali cygnet file for cp2k
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/cp2k/files/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="fftw"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='exe/Linux-x86-64-intel'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cd tools/build_libsmm
+  maali_run "./generate -c config/cray.intel.mkl -j 0 -t 16 tiny1"
+  maali_run "./generate -c config/cray.intel.mkl tiny2"
+  maali_run "./generate -c config/cray.intel.mkl -j 0 -t 16 small1"
+  maali_run "./generate -c config/cray.intel.mkl -t 16 lib"
+  maali_run "find ."
+
+  cd ../..
+
+  maali_run "make ARCH=CRAY-XC30-intel VERSION=sopt"
+  maali_run "make ARCH=CRAY-XC30-intel VERSION=popt"
+  
+  maali_run "rsync -av --exclude=obj --exclude=CVS --exclude=tests --exclude=src --exclude=arch $MAALI_TOOL_BUILD_DIR/ $MAALI_INSTALL_DIR/"
+}
+
+##############################################################################

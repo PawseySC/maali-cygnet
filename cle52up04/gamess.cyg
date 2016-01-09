@@ -1,0 +1,165 @@
+##############################################################################
+# maali cygnet file for gamess
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-current.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich/7.2.2 craype-network-aries"
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking Gamess source as it builds in place"
+}
+
+##############################################################################
+
+function maali_build {
+
+    GMS_MPI_LIB=mpich2
+    GMS_MPI_PATH=$MPICH_DIR
+
+    cd "$MAALI_INSTALL_DIR"
+    maali_wiki ".. moving to $MAALI_INSTALL_DIR"
+
+    maali_run "tar --strip-components=1 -xzf $MAALI_TMP_DST"
+
+    cd tools
+    maali_run "cp actvte.code actvte.f"
+    maali_run "sed -i -e 's/*UNX/    /g' actvte.f"
+    maali_run "$FC -o actvte.x actvte.f"
+    maali_run "rm actvte.f"
+
+    cd ..
+
+  # Manually create the install.info file, instead of running the config script.
+    cat <<EOF >install.info
+#!/bin/csh
+setenv GMS_PATH            $MAALI_INSTALL_DIR
+setenv GMS_BUILD_DIR       $MAALI_INSTALL_DIR
+setenv GMS_TARGET          linux64
+setenv GMS_FORTRAN         $FC
+setenv GMS_XT_COMP         intel
+setenv GMS_IFORT_VERNO     12
+setenv GMS_MATHLIB         mkl
+setenv GMS_MKL_VERNO       12
+setenv GMS_MATHLIB_PATH    $MKLROOT/lib/intel64
+setenv GMS_DDI_COMM        mpi
+setenv GMS_MPI_LIB         $GMS_MPI_LIB
+setenv GMS_MPI_PATH        $GMS_MPI_PATH
+setenv GMS_LIBCCHEM        false
+EOF
+
+  cd ddi
+  # Fix up compddi, then compile ddi
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    maali_run "sed -i -e 's/set MAXCPUS  = 16/set MAXCPUS  = 24/g' compddi"
+    maali_run "sed -i -e 's/set MAXNODES = 256/set MAXNODES = 1024/g' compddi"
+    maali_run "sed -i -e \"s!set MPI_INCLUDE_PATH = ''!set MPI_INCLUDE_PATH = \"$MPICH_DIR/include\"!g\" compddi"
+    maali_run "sed -i -e 's/ifort/ftn/g' compddi"
+  else
+    maali_run "sed -i -e 's/set MAXCPUS  = 16/set MAXCPUS  = 12/g' compddi"
+    maali_run "sed -i -e 's/set MAXNODES = 256/set MAXNODES = 800/g' compddi"
+    maali_run "sed -i -e \"s!set MPI_INCLUDE_PATH = ''!set MPI_INCLUDE_PATH = '${MPI_HOME}/include'!g\" compddi"
+  fi
+  maali_run "./compddi"
+
+  cd ..
+
+  # Fix and run compile/link scripts
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    maali_run "sed -i -e 's/ifort/ftn/g' comp"
+    maali_run "sed -i -e 's/ifort/ftn/g' lked"
+  fi
+  maali_run "./compall"
+  maali_run "./lked"
+
+  RUN_JOB='aprun -B ${GMSPATH}/gamess.00.x ${JOB}'
+
+  # Write our own rungms on magnus.
+  cat <<EOF > rungms
+#!/bin/csh
+set SCR=\$PWD
+set USERSCR=\$SCR
+set GMSPATH=$MAALI_INSTALL_DIR
+set JOB=\$1      # name of the input file xxx.inp, give only the xxx part
+echo "----- GAMESS execution script 'rungms' -----"
+echo This job is running on host \`hostname\`
+echo under operating system \`uname\` at \`date\`
+if (\$JOB:r.inp == \$JOB) set JOB=\$JOB:r      # strip off possible .inp
+echo "Copying input file \$JOB.inp to your run's scratch directory..."
+if (-e \$JOB.inp) then
+   set echo
+   cp  \$JOB.inp  \$SCR/\$JOB.F05
+   unset echo
+else
+   if (-e tests/standard/\$JOB.inp) then
+      set echo
+      cp  tests/standard/\$JOB.inp  \$SCR/\$JOB.F05
+      unset echo
+   else
+      if (-e tests/\$JOB.inp) then
+         set echo
+         cp  tests/\$JOB.inp  \$SCR/\$JOB.F05
+         unset echo
+      else
+         echo "Input file \$JOB.inp does not exist."
+         echo "This job expected the input file to be in directory \`pwd\`"
+         echo "Please fix your file name problem, and resubmit."
+         exit 4
+      endif
+   endif
+endif
+source \$GMSPATH/gms-files.csh
+if (-e \$HOME/.gmsrc) then
+   echo "reading your own \$HOME/.gmsrc"
+   source \$HOME/.gmsrc
+endif
+set ngddi=\`grep -i '^ \\\$GDDI' \$SCR/\$JOB.F05 | grep -iv 'NGROUP=0 ' | wc -l\`
+if (\$ngddi > 0) then
+   set GDDIjob=true
+   echo "This is a GDDI run, keeping various output files on local disks"
+   set echo
+   setenv  OUTPUT \$SCR/\$JOB.F06
+   setenv   PUNCH \$SCR/\$JOB.F07
+   unset echo
+else
+   set GDDIjob=false
+endif
+if ((-e \$PUNCH) || (-e \$MAKEFP) || (-e \$TRAJECT) || (-e \$RESTART) ) then
+   echo "Please save, rename, or erase these files from a previous run:"
+   echo "     \$PUNCH,"
+   echo "     \$TRAJECT,"
+   echo "     \$RESTART, and/or"
+   echo "     \$MAKEFP,"
+   echo "and then resubmit this computation."
+   exit 4
+endif
+$RUN_JOB
+date
+time
+EOF
+
+}
+
+##############################################################################
