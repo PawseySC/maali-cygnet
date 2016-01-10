@@ -1,0 +1,97 @@
+diff -rupN SuiteSparse.orig//CHOLMOD/Partition/cholmod_metis.c SuiteSparse//CHOLMOD/Partition/cholmod_metis.c
+--- SuiteSparse.orig//CHOLMOD/Partition/cholmod_metis.c	2015-08-28 15:59:16.137235000 +0800
++++ SuiteSparse//CHOLMOD/Partition/cholmod_metis.c	2015-08-28 16:09:42.793604000 +0800
+@@ -49,6 +49,7 @@
+ #undef ASSERT
+ 
+ #include "metis.h"
++typedef idx_t idxtype;
+ /* METIS has its own ASSERT that it reveals to the user, so remove it here: */
+ #undef ASSERT
+ 
+@@ -369,7 +370,7 @@ SuiteSparse_long CHOLMOD(metis_bisector)
+ #endif
+ 
+     nn = n ;
+-    METIS_NodeComputeSeparator (&nn, Mp, Mi, Mnw, Mew, Opt, &csp, Mpart) ;
++    METIS_ComputeVertexSeparator (&nn, Mp, Mi, Mew, Opt, &csp, Mpart) ;
+     n = nn ;
+     csep = csp ;
+ 
+diff -rupN SuiteSparse.orig//SuiteSparse_config/SuiteSparse_config.mk SuiteSparse//SuiteSparse_config/SuiteSparse_config.mk
+--- SuiteSparse.orig//SuiteSparse_config/SuiteSparse_config.mk	2015-08-28 15:59:19.981072000 +0800
++++ SuiteSparse//SuiteSparse_config/SuiteSparse_config.mk	2015-08-28 16:46:06.431509000 +0800
+@@ -57,11 +57,12 @@
+ # You can redefine them here, but by default they are used from the
+ # default make environment.
+ 
++CC = cc
++CXX = CC
+ # To use OpenMP add -openmp to the CFLAGS
+ # If OpenMP is used, it is recommended to define CHOLMOD_OMP_NUM_THREADS
+ # as the number of cores per socket on the machine being used to maximize
+ # memory performance
+-  CFLAGS = 
+ # CFLAGS = -g
+ # for the icc compiler and OpenMP:
+ # CFLAGS = -openmp
+@@ -69,7 +70,7 @@
+ # C and C++ compiler flags.  The first three are standard for *.c and *.cpp
+ # Add -DNTIMER if you do use any timing routines (otherwise -lrt is required).
+ # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -DNTIMER
+-  CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC
++  CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH)
+ # for the MKL BLAS:
+ # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3 -fexceptions -fPIC -I$(MKLROOT)/include -D_GNU_SOURCE
+ # with no optimization:
+@@ -85,8 +86,8 @@ CP = cp -f
+ MV = mv -f
+ 
+ # Fortran compiler (not required for 'make' or 'make library')
+-F77 = gfortran
+-F77FLAGS = $(FFLAGS) -O
++F77 = ftn
++F77FLAGS = $(FFLAGS) -O3
+ F77LIB =
+ 
+ # C and Fortran libraries.  Remove -lrt if you don't have it.
+@@ -95,8 +96,8 @@ F77LIB =
+ # LIB = -lm
+ 
+ # For "make install"
+-INSTALL_LIB = /usr/local/lib
+-INSTALL_INCLUDE = /usr/local/include
++INSTALL_LIB = $(IBS_INSTALL_DIR)/lib
++INSTALL_INCLUDE = $(IBS_INSTALL_DIR)/include
+ 
+ # Which version of MAKE you are using (default is "make")
+ # MAKE = make
+@@ -120,7 +121,7 @@ INSTALL_INCLUDE = /usr/local/include
+ 
+ # This is probably slow ... it might connect to the Standard Reference BLAS:
+ # BLAS = -lblas -lgfortran
+-  LAPACK = -llapack
++  LAPACK =
+ 
+ # MKL 
+ # BLAS = -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_intel_thread.a -Wl,--end-group -lpthread -lm
+@@ -131,7 +132,7 @@ INSTALL_INCLUDE = /usr/local/include
+ # LAPACK =
+ 
+ # OpenBLAS
+-  BLAS = -lopenblas
++  BLAS =
+ # LAPACK = 
+ 
+ # NOTE: this next option for the "Goto BLAS" has nothing to do with a "goto"
+@@ -212,8 +213,8 @@ XERBLA =
+ # The path is relative to where it is used, in CHOLMOD/Lib, CHOLMOD/MATLAB, etc.
+ # You may wish to use an absolute path.  METIS is optional.  Compile
+ # CHOLMOD with -DNPARTITION if you do not wish to use METIS.
+-METIS_PATH = ../../metis-4.0
+-METIS = ../../metis-4.0/libmetis.a
++METIS_PATH = $(CRAY_TPSL_PREFIX_DIR)
++METIS = $(CRAY_TPSL_PREFIX_DIR)/lib/libmetis.so
+ 
+ #------------------------------------------------------------------------------
+ # UMFPACK configuration:
