@@ -12,7 +12,7 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://departments.icmab.es/leem/siesta/CodeAccess/Code/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
+MAALI_URL="https://dl.dropbox.com/u/20267285/SIESTA-DOWNLOADS/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 
 # patch files to download
 MAALI_TOOL_PATCHES="001 002"
