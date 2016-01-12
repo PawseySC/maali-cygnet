@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
-MAALI_URL="http://gstreamer.freedesktop.org/src/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://gstreamer.freedesktop.org/src/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
@@ -21,7 +21,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ="glib/2.47.4 gstreamer/1.7.1 gst-plugins-base/1.7.1"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=''
+MAALI_TOOL_CONFIGURE='--disable-fatal-warnings'
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

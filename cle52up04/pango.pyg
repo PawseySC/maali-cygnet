@@ -1,12 +1,12 @@
 ##############################################################################
-# maali cygnet file for gst-plugins-ugly
+# maali cygnet file for pango
 ##############################################################################
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
-MAALI_URL="http://gstreamer.freedesktop.org/src/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
+MAALI_URL="http://ftp.gnome.org/pub/GNOME/sources/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="glib/2.47.4 gstreamer/1.7.1 gst-plugins-base/1.7.1"
+MAALI_TOOL_PREREQ="glib/2.47.4 cairo/1.14.6"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--disable-fatal-warnings'

@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.10.1"
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.82 gcc/4.8.2 numpy/1.10.1 setuptools/18.4"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

@@ -22,6 +22,7 @@ MAALI_TOOL_PREREQ="java/8u66"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_ANT_HOME='$MAALI_APP_HOME'
 
 ##############################################################################
 

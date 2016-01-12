@@ -46,16 +46,14 @@ function maali_build {
 
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+  cd "$MAALI_TOOL_BUILD_DIR"
 
   if [ $MAALI_TOOL_MAJOR_VERSION -gt 1 ]; then
     MAALI_TOOL_CONFIGURE_EVAL="-enable-static --disable-shared"
     export LDFLAGS="-lpthread -all-static"
     export AM_CPPFLAGS="-Wall -Wnon-virtual-dtor -I\"`pwd`\"/include"
-  else
-    sed -i -e 's/-Werror //g' configure.ac
   fi
-
-  cd "$MAALI_TOOL_BUILD_DIR"
+ 
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make"
   maali_run "make install"

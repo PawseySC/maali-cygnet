@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/8u66 bowtie/1.1.1 samtools/0.1.19 jellyfish/2.2.0 fastool/0.1.4 parafly/r2013-01-21"
+MAALI_TOOL_PREREQ="java/8u66 bowtie/1.1.1 samtools/0.1.19 jellyfish/2.2.0 fastool/0.1.4 parafly/2013-01-21"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""

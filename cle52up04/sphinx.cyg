@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="distribute/0.6.49 docutils/0.11 jinja2/2.7.1 pygments/1.6"
+MAALI_TOOL_PREREQ="distribute/0.6.49 docutils/0.12 jinja2/2.8 pygments/2.0.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

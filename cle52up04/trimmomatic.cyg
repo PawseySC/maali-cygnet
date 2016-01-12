@@ -44,12 +44,12 @@ function maali_build {
     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/adapters/"
   done
 
-  maali_run "install -m 644 $MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar $MAALI_INSTALL_DIR/jar"
+  maali_run "install -m 644 dist/jar/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar $MAALI_INSTALL_DIR/jar"
 
   cat <<EOF >"$MAALI_INSTALL_DIR/bin/$MAALI_TOOL_NAME"
 #!/bin/bash
 
-java -Xmx1g -jar \$MAALI_TRIMMOMATIC_HOME/jar/$jar \$*
+java -Xmx1g -jar \$MAALI_TRIMMOMATIC_HOME/jar/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar \$*
 EOF
 }
 

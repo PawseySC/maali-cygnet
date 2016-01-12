@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.82 gcc/4.8.2 craype-sandybridge setuptools/18.4 mock/1.3.0 nose/1.3.7 six/1.10.0 distribute/0.6.49 python-dateutil/2.4.2 pytz/2015.7 numpy/1.10.1"
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.82 gcc/4.8.2 setuptools/18.4 mock/1.3.0 nose/1.3.7 six/1.10.0 distribute/0.6.49 python-dateutil/2.4.2 pytz/2015.7 numpy/1.10.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

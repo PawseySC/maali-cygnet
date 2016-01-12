@@ -81,6 +81,10 @@ EOF
 function maali_build {
 
     cd "$MAALI_TOOL_BUILD_DIR"
+    cd hpc-libcircle-*
+    mv * ..
+    cd ..
+    rmdir hpc-libcircle-*
 
     patch configure < "$MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
 

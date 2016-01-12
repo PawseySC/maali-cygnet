@@ -33,18 +33,6 @@ MAALI_MODULE_SET_BEAGLE_LIB_DIR='$MAALI_APP_HOME'
 
 ##############################################################################
 
-function maali_download {
-  maali_wiki ".. supressing downloading as beagle-lib has no downloads"
-}
-
-##############################################################################
-
-function maali_unpack {
-  maali_wiki ".. supressing unpacking as beagle-lib has no downloads"
-}
-
-##############################################################################
-
 function maali_build {
   cd "$MAALI_BUILD_DIR"
 
