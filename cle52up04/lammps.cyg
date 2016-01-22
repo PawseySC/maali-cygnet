@@ -67,13 +67,51 @@ function maali_build {
 
   cd "$MAALI_INSTALL_DIR/src"	
   maali_wiki " ... make packages"
-
-  maali_run  "make -e -j $MAALI_CORES yes-class2"
-  maali_run  "make -e -j $MAALI_CORES yes-kspace"
-  maali_run "make -e -j $MAALI_CORES yes-rigid"
-  maali_run "make -e -j $MAALI_CORES yes-mpiio"
-  maali_run "make -e -j $MAALI_CORES mpi"
+  
+#Download Eigen required for USER-SMD package
+        cd ../lib/smd
+        wget http://bitbucket.org/eigen/eigen/get/3.2.7.tar.gz
+        tar -zxvf *.tar.gz
+        ln -s eigen* includelink
+        cd ../../src
+        
+  #maali_run  "make -e -j $MAALI_CORES yes-class2"
+  #maali_run  "make -e -j $MAALI_CORES yes-kspace"
+  #maali_run "make -e -j $MAALI_CORES yes-rigid"
+  #maali_run "make -e -j $MAALI_CORES yes-mpiio"
+  #maali_run "make -e -j $MAALI_CORES mpi"
  
+        maali_run "make -e -j $IBS_CORES yes-all"
+        maali_run "make no-gpu"
+        maali_run "make no-omp"
+        maali_run "make no-kim"
+        maali_run "make no-kokkos"
+        maali_run "make no-user-cuda"
+        maali_run "make no-user-intel"
+        maali_run "make no-user-omp"
+        maali_run "make no-meam"
+        maali_run "make no-reax"
+        maali_run "make no-poems"
+        maali_run "make -e -j $IBS_CORES yes-user-all"
+        maali_run "make no-user-qmmm"
+        maali_run "make no-user-molfile"
+        maali_run "make no-user-quip"
+        maali_run "make no-user-opt"
+        maali_run "make no-user-atc"
+        maali_run "make no-user-awpmd"
+        maali_run "make no-user-colvars"
+        maali_run "make no-user-phonon"
+        maali_run "make no-user-eff"
+        maali_run "make yes-coreshell"
+        maali_run "make yes-python"
+        maali_run  "make -e -j $MAALI_CORES yes-class2"
+        maali_run  "make -e -j $MAALI_CORES yes-kspace"
+        maali_run "make -e -j $MAALI_CORES yes-rigid"
+        maali_run "make -e -j $MAALI_CORES yes-mpiio"
+        maali_run "make -e -j $IBS_CORES no-voronoi"
+        maali_run "make -e -j $IBS_CORES no-user-h5md"
+
+        maali_run "make -e -j $IBS_CORES mpi"
 }
 
 ##############################################################################
