@@ -27,26 +27,26 @@ MAALI_TOOL_CONFIGURE="--enable-R-shlib"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="atp/1.8.2"
+#MAALI_TOOL_PREREQ="atp/1.8.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-function maali_build {
+#function maali_build {
   # this is the core function for creating software
 
   # allows late evaluation
-  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+#  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  export F77=ftn
-  export LDFLAGS="-L/opt/cray/atp/1.8.2/libApp"
+# export F77=ftn
+#  export LDFLAGS="-L/opt/cray/atp/1.8.2/libApp"
 
-  cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
-  maali_run "make"
-  maali_run "make install"
-}
+#  cd "$MAALI_TOOL_BUILD_DIR"
+#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+#  maali_run "make"
+#  maali_run "make install"
+#}
 
 ##############################################################################
