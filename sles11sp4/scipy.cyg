@@ -24,7 +24,8 @@ function maali_python_build {
   # change to build directory
   cd $MAALI_TOOL_BUILD_DIR
 
-  export F77FLAGS=-ff2c
+  unset F77
+
   maali_run "python setup.py build"
   maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
 }
