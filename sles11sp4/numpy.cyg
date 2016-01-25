@@ -32,8 +32,8 @@ cat <<EOF >site.cfg
 [mkl]
 library_dirs = $MKL_HOME/lib/intel64
 include_dirs = $MKL_HOME/include
-mkl_libs = mkl_def, mkl_intel_lp64, mkl_gnu_thread, mkl_core, mkl_mc
-lapack_libs = mkl_lapack95_lp64
+mkl_libs = mkl_rt
+lapack_libs =
 EOF
 
 export LDFLAGS='-lgomp'
