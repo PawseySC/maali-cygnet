@@ -3,8 +3,7 @@
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
-#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -94,25 +93,28 @@ function maali_build {
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export FFLAGS='-FR -names lowercase -assume byterecl -align array32byte -align dcommons -align rec32byte '
 
-    export OFLAG='-O2 -ip -fno-alias -unroll-aggressive -opt-prefetch -use-intel-optimized-headers -no-prec-div'
-    export OFLAG_HIGH='-O3 -ip -fno-alias -unroll-aggressive -opt-prefetch -use-intel-optimized-headers -no-prec-div'
-#    export CPP_='cpp -P -C'
+    export OFLAG='-O2 -ip'
+    export OFLAG_HIGH='-O3 -ip'
     export CPP_='./preprocess <$*.F | /usr/bin/cpp -P -C -traditional >$*$(SUFFIX)'
-    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=32000 -DPGF90 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
+    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -DPGF90 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
 
     # Intel MKL
     export FFTW_INC='$(MKLROOT)/include/fftw'
-    export BLAS=''
-    export LAPACK='-mkl=sequential'
-#    export SCALAPACK='-lmkl_scalapack_lp64 -lmkl_blacs_intelmpi_lp64'
-    export SCALAPACK='-lmkl_scalapack_lp64 -lmkl_blacs_lp64'
+    export BLAS='-mkl=sequential'
+    export LAPACK=''
+    export SCALAPACK='-lmkl_scalapack_lp64 -lmkl_blacs_intelmpi_lp64'
 
 # radial.F needs to be compiled with low optimisation with Intel 14.
+# nonl.F does not like -fno-alias with Intel 14.
 cat <<EOF >> $makefile
 
 radial.o : radial.F
 	\$(CPP)
 	\$(FC) \$(FFLAGS) -O1 -prec-div -c \$*\$(SUFFIX)
+
+nonl.o : nonl.F
+	\$(CPP)
+	\$(FC) \$(FFLAGS) -O2 -ip -unroll-aggressive -opt-prefetch -use-intel-optimized-headers -no-prec-div -c \$*\$(SUFFIX)
 
 EOF
   elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
@@ -120,7 +122,7 @@ EOF
     export CPP_='./preprocess <$*.F | /usr/bin/cpp -P -C -traditional >$*$(SUFFIX)'
     export OFLAG='-O2'
     export FC='ftn -ffree-line-length-none'
-    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=32000 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
+    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
 
     # Cray libsci
     export BLAS=''
