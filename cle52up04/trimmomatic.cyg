@@ -24,8 +24,8 @@ MAALI_TOOL_PREREQ="java/8u66"
 MAALI_TOOL_BUILD_PREREQ="ant/1.9.6"
 
 ## These are boolean options set to 1 to add to module
-MAALI_MODULE_SET_TRIMMOMATIC_LIB='${MAALI_INSTALL_DIR}/dist/jar/trimmomatic-0.33.jar'
-MAALI_MODULE_SET_TRIMMOMATIC_ADAPTER='${MAALI_INSTALL_DIR}/adapters'
+MAALI_MODULE_SET_TRIMMOMATIC_LIB='${MAALI_APP_HOME}/jar/trimmomatic-0.35.jar'
+MAALI_MODULE_SET_TRIMMOMATIC_ADAPTER='${MAALI_APP_HOME}/adapters'
 MAALI_MODULE_WHATIS="Trimmomatic performs a variety of useful trimming tasks for illumina paired-end and single ended data.The selection of trimming steps and their associated parameters are supplied on the command line."
 
 ##############################################################################
