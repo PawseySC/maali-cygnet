@@ -26,7 +26,7 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.4.3 libxml2/2.9.3 boost/1.57.0 lapack/3.5.0"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=' -DCMAKE_C_COMPILER=cc -DCMAKE_CXX_COMPILER=CC -DGMX_SIMD=AVX2_256 -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INC  -DCMAKE_PREFIX_PATH=$FFTW_DIR -DFFTW3_LIBRARIES=$FFTW_DIR -DFFTW3F_LIBRARIES=$FFTW_DIR -DFFTW3F_INCLUDE_DIR=$FFTW_INC -DFFTW3_INCLUDE_DIR=$FFTW_INC  -DGMX_BUILD_UNITTESTS=OFF'
+MAALI_TOOL_CONFIGURE=' -DCMAKE_C_COMPILER=cc -DCMAKE_CXX_COMPILER=CC -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INC  -DCMAKE_PREFIX_PATH=$FFTW_DIR -DFFTW3_LIBRARIES=$FFTW_DIR -DFFTW3F_LIBRARIES=$FFTW_DIR -DFFTW3F_INCLUDE_DIR=$FFTW_INC -DFFTW3_INCLUDE_DIR=$FFTW_INC  -DGMX_BUILD_UNITTESTS=OFF'
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake"
@@ -65,108 +65,87 @@ function maali_cmake_build {
 
   # maali defaults to dynamic
   export CRAYPE_LINK_TYPE=dynamic
+
+  # Only use AVX2_256 hardware acceleration when appropriate
+  if [ ${CRAY_CPU_TARGET} == "haswell" ] && [ $MAALI_TOOL_MAJOR_VERSION -ge 5 ]; then
+    MAALI_TOOL_CONFIGURE_SIMD="$MAALI_TOOL_CONFIGURE -DGMX_SIMD=AVX2_256"
+  else
+    MAALI_TOOL_CONFIGURE_SIMD="$MAALI_TOOL_CONFIGURE"
+  fi
+
  
-if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
-
-  	# cmake likes to build in a directory of it's own.  single-precision, no MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-
-  	para_make=20
-  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make VERBOSE=TRUE"
-  	else
-  	  maali_run "make -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	# cmake likes to build in a directory of it's own. double-precision, no MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-
-  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	## cmake likes to build in a directory of it's own.  single-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-
-  	maali_run "cmake -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make mdrun -j $para_make "
-  	fi
-  	maali_run "make install-mdrun"
-
-  	# cmake likes to build in a directory of it's own. double-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-
-  	maali_run "cmake -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make mdrun -j $para_make "
-  	fi
-  	maali_run "make install-mdrun"
-
-elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
-  	# cmake likes to build in a directory of it's own.  single-precision, no MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-
-  	para_make=20
-  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make VERBOSE=TRUE"
-  	else
-  	  maali_run "make -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	# cmake likes to build in a directory of it's own. double-precision, no MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-
-  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make  -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	# cmake likes to build in a directory of it's own.  single-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-
-  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make  -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	# cmake likes to build in a directory of it's own. double-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-
-  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make  -j $para_make "
-  	fi
-  	maali_run "make install"
-fi
+  if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
+  
+    	# cmake likes to build in a directory of it's own.  single-precision, no MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  
+    	para_make=20
+    	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make -j $para_make VERBOSE=TRUE"
+    	else
+    	  maali_run "make -j $para_make "
+    	fi
+    	maali_run "make install"
+  
+    	# cmake likes to build in a directory of it's own. double-precision, no MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  
+    	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make -j $para_make "
+    	fi
+    	maali_run "make install"
+  
+    	## cmake likes to build in a directory of it's own.  single-precision, MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  
+    	maali_run "cmake -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make mdrun -j $para_make "
+    	fi
+    	maali_run "make install-mdrun"
+  
+    	# cmake likes to build in a directory of it's own. double-precision, MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+    	if [ $DEBUG ]; then
+    	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make  -j $para_make "
+    	fi
+    	maali_run "make install"
+  
+    	# cmake likes to build in a directory of it's own.  single-precision, MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  
+    	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make  -j $para_make "
+    	fi
+    	maali_run "make install"
+  
+    	# cmake likes to build in a directory of it's own. double-precision, MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+  
+    	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make  -j $para_make "
+    	fi
+    	maali_run "make install"
+  fi
 }
 
 ##############################################################################
