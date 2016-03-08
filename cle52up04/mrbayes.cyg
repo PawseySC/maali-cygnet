@@ -18,7 +18,11 @@ MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NA
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}"
+if [ "$MAALI_TOOL_VERSION" == "3.2.6" ]; then
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+else
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}"
+fi
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
