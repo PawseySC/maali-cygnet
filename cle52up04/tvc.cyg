@@ -1,0 +1,82 @@
+##############################################################################
+# maali cygnet file for IonTorrent-VariantCaller 
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/domibel/IonTorrent-VariantCaller/archive/master.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/master"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/IonTorrent-VariantCaller-master"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="armadillo/6.400.3 boost/1.49.0"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="-DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH="lib/$MAALI_TOOL_NAME"
+
+##############################################################################
+
+function maali_cmake_build {
+
+  cd "$MAALI_BUILD_DIR"
+  mv IonTorrent-VariantCaller-master/ tvc-5.0.0/ 
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/tvc-5.0.0"
+
+
+  # TVC requires a particlar version of bamtools which has SetNumber(threads) in BamWrite class; 
+  # the currently installed bamtools/2.4.0 on the system doesn't 
+  cd "$MAALI_TOOL_BUILD_DIR"
+  wget --no-clobber updates.iontorrent.com/updates/software/external/bamtools-2.4.0.20150702+git15eadb925f.tar.gz
+  tar xvzf bamtools-2.4.0.20150702+git15eadb925f.tar.gz
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/bamtools-2.4.0.20150702+git15eadb925f-build"
+  cd bamtools-2.4.0.20150702+git15eadb925f-build
+  maali_run "cmake ../bamtools-2.4.0.20150702+git15eadb925f -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DCMAKE_CXX_FLAGS=-dynamic -DCMAKE_INSTALL_PREFIX=${MAALI_TOOL_BUILD_DIR}/bamtools-2.4.0.20150702+git15eadb925f-build"
+  maali_run "make -j10"
+
+  #sed -i -e 's;set(ION_BAMTOOLS_DIR  ${PROJECT_BINARY_DIR}/../bamtools-2.4.0.20150702+git15eadb925f);set(ION_BAMTOOLS_DIR '${MAALI_BAMTOOLS_HOME}');g' CMakeLists.txt
+  #sed -i -e 's;set(ION_BAMTOOLS_LIBS ${PROJECT_BINARY_DIR}/../bamtools-2.4.0.20150702+git15eadb925f-build/lib/libbamtools.a);set(ION_BAMTOOLS_LIBS '${MAALI_BAMTOOLS_HOME}'/lib/bamtools/libbamtools.so);g' CMakeLists.txt
+  #sed -i -e 's;include_directories("${ION_BAMTOOLS_DIR}/src");include_directories("${ION_BAMTOOLS_DIR}/include/bamtools");g' CMakeLists.txt
+
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  sed -i -e 's;set(ION_ARMADILLO_DIR ${PROJECT_BINARY_DIR}/../armadillo-4.600.1);set(ION_ARMADILLO_DIR '${MAALI_ARMADILLO_HOME}');g' CMakeLists.txt
+  sed -i -e 's;target_link_libraries(tvc ${ION_BAMTOOLS_LIBS} z pthread blas lapack);target_link_libraries(tvc ${ION_BAMTOOLS_LIBS} z pthread '${MAALI_LAPACK_HOME}'/lib/libblas.so '${MAALI_LAPACK_HOME}'/lib/liblapack.so '${MAALI_ARMADILLO_HOME}'/lib/libarmadillo.so);g' CMakeLists.txt
+
+  # cmake likes to build in a director of it's own
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DCMAKE_CXX_FLAGS=-dynamic $MAALI_CMAKE_PATH"
+  if [ $DEBUG ]; then
+    maali_run "make -j10 VERBOSE=TRUE"
+  else
+    maali_run "make -j10 "
+  fi
+  maali_run "make install"
+
+
+}
+
+##############################################################################
