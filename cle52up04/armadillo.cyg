@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV "
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -24,7 +24,8 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="lapack/3.5.0 cray-hdf5/1.8.13"
+#MAALI_TOOL_PREREQ="lapack/3.5.0 cray-hdf5/1.8.13"
+MAALI_TOOL_PREREQ="cray-hdf5/1.8.13"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
@@ -36,8 +37,10 @@ MAALI_WIKI_TOOL_NAME="Armadillo"
 # MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
+MAALI_MODULE_SET_INCLUDE_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_MANPATH=1
+
 
 ##############################################################################
 
@@ -46,9 +49,15 @@ function maali_cmake_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  sed -i -e 's;PATHS ;PATHS # ;g' $MAALI_TOOL_BUILD_DIR/cmake_aux/Modules/ARMA_FindMKL.cmake
-  sed -i -e 's;PATHS ;PATHS '$LAPACK'/lib ;g' $MAALI_TOOL_BUILD_DIR/cmake_aux/Modules/ARMA_FindBLAS.cmake
-  sed -i -e 's;PATHS ;PATHS '$LAPACK'/lib ;g' $MAALI_TOOL_BUILD_DIR/cmake_aux/Modules/ARMA_FindLAPACK.cmake
+  # use lapack when it's GNU compilers; armadillo can find MKL when it's intel
+  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+        module load lapack/3.5.0
+	#MAALI_TOOL_PREREQ="lapack/3.5.0 cray-hdf5/1.8.13"
+        sed -i -e 's;include(ARMA_FindMKL);#include(ARMA_FindMKL);g' $MAALI_TOOL_BUILD_DIR/CMakeLists.txt
+        sed -i -e 's;PATHS;PATHS '$MAALI_LAPACK_HOME'/lib ;g' $MAALI_TOOL_BUILD_DIR/cmake_aux/Modules/ARMA_FindBLAS.cmake
+        sed -i -e 's;PATHS;PATHS '$MAALI_LAPACK_HOME'/lib ;g' $MAALI_TOOL_BUILD_DIR/cmake_aux/Modules/ARMA_FindLAPACK.cmake
+  fi
+
   # cmake likes to build in a director of it's own
   mkdir "$MAALI_TOOL_NAME-build"
   cd "$MAALI_TOOL_NAME-build"
@@ -60,6 +69,9 @@ function maali_cmake_build {
     maali_run "make"
   fi
   maali_run "make install"
+  
+  sed -i -e 's;setenv COMPILER_VER        $env(GCC_VERSION);setenv COMPILER_VER        $env(GCC_VERSION) \n  module load lapack/3.5.0;g' /pawsey/cle52up04/modulefiles/devel/armadillo/6.400.3
+
 }
 
 ##############################################################################
