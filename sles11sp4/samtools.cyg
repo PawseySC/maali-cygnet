@@ -32,8 +32,26 @@ MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites modules needed to install this new tool/package
 if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} >= 1) 1 else 0" | bc) -eq 1 ]]; then
-MAALI_TOOL_PREREQ="htslib/1.2.1"
+        #SAMTOOLS earlier then 1 doesn't use htslib
+        #Samtools version 1+ needs matching version htslib (htslib->samtools->bcftools)
+        MINOR_VERSION=$(echo $MAALI_TOOL_VERSION | cut -d . -f 2)
+
+        #echo $MINOR_VERSION
+        if [ "$MINOR_VERSION" == "2" ];
+                then
+                MAALI_TOOL_PREREQ="htslib/1.2.1"
+        else
+                MAALI_TOOL_PREREQ="htslib/1.3"
+        fi
+
 fi
+
+#Variable is needed to SRC HTSLIB_VERSION when you load a HTSLIBRARY
+#1 or earlier has no htslib
+#1.2 uses 1.2 or 1.2.1?
+#1.3 uses 1.3 
+
+PREREQ_HTSLIB_VERSION=`echo $MAALI_HTSLIB_HOME | rev | cut -d "/" -f 1 | rev`
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -51,6 +69,8 @@ function maali_build {
   # fix for SLES11
   sed -i -e 's/lcurses/lncurses/g' Makefile
 
+  cp Makefile Makefile.backup
+
   if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} >= 1) 1 else 0" | bc) -eq 1 ]]; then
       if [ "$MAALI_TOOL_VERSION" != "1.1" ]; then
         # this should already be installed
@@ -62,19 +82,33 @@ function maali_build {
       fi
 
       if [ "$MAALI_TOOL_VERSION" == "1.1" ]; then
+        cp Makefile Makefile.backup
         sed -i -e 's!HTSDIR = ../htslib!HTSDIR = '$MAALI_HTSLIB_HOME'/include!g' Makefile
-        sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
-        sed -i -e 's!HTSLIB = $(HTSDIR)/libhts.a!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/libhts.a!g' Makefile
+        #sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
+        sed -i -e 's!include $(HTSDIR)/htslib.mk!#include '$MAALI_HTSLIB_HOME'/htslib.mk!g' Makefile
+	sed -i -e 's!HTSLIB = $(HTSDIR)/libhts.a!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/libhts.a!g' Makefile
         sed -i -e 's!BGZIP  = $(HTSDIR)/bgzip!BGZIP  = '$MAALI_HTSLIB_HOME'/bin/bgzip!g' Makefile
-      else
+      elif [ "$MAALI_TOOL_VERSION" == "1.2" ]; then
+        cp Makefile Makefile.backup
         sed -i -e 's!HTSDIR = htslib-1.2.1!HTSDIR = '$MAALI_HTSLIB_HOME'/include!g' Makefile
-        sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
+        #sed -i -e 's!include $(HTSDIR)/htslib.mk!#include $(HTSDIR)/htslib.mk!g' Makefile
         sed -i -e 's!HTSLIB = $(HTSDIR)/!HTSLIB = '$MAALI_HTSLIB_HOME'/lib/!g' Makefile
         sed -i -e 's!BGZIP  = $(HTSDIR)/bgzip!BGZIP  = '$MAALI_HTSLIB_HOME'/bin/bgzip!g' Makefile
+      else
+	# As of 1.3 it now has a configure
+	./configure --with-htslib=$MAALI_HTSLIB_HOME
       fi
 
       maali_run "make"
       maali_run "make prefix=$MAALI_INSTALL_DIR install"
+      
+      # as of 1.2 / 1.3 it doesn't copy the libpam.a
+      # Missing Header files
+      mkdir -p ${MAALI_INSTALL_DIR}/lib
+      cp libbam.a ${MAALI_INSTALL_DIR}/lib
+      mkdir -p ${MAALI_INSTALL_DIR}/include/bam
+      cp *.h ${MAALI_INSTALL_DIR}/include/bam	
+
   else
       if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
           sed -i -e 's!gcc!icc!g' Makefile
@@ -99,11 +133,15 @@ function maali_build {
         fi
 
         maali_makedir "$MAALI_INSTALL_DIR/lib"
-        maali_run "mv libbam.a $MAALI_INSTALL_DIR/lib"
+        maali_run "cp libbam.a $MAALI_INSTALL_DIR/lib"
         maali_makedir "$MAALI_INSTALL_DIR/include/bam"
-        maali_run "mv *.h $MAALI_INSTALL_DIR/include/bam"
+        maali_run "cp *.h $MAALI_INSTALL_DIR/include/bam"
     fi
 
+    #Make a copy of tbe Code Base needed for other things like Augusta Auxillary tools which complians
+    #samtools / libhts / bcftools are interlinked badly
+    mkdir -p ${MAALI_INSTALL_DIR}/src
+    cp -R ${MAALI_TOOL_BUILD_DIR}/* ${MAALI_INSTALL_DIR}/src/
 }
 
 ##############################################################################
