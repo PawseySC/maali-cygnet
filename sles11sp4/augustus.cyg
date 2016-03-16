@@ -15,7 +15,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="boost/1.49.0 bamtools/2.4.0 samtools/0.1.19"
+MAALI_TOOL_PREREQ="boost/1.49.0 bamtools/2.4.0 samtools/0.1.19 htslib/1.2.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -32,12 +32,18 @@ MAALI_MODULE_SET_AUGUSTUS_CONFIG_PATH='$MAALI_APP_HOME/config'
 
 function maali_build {
   cd $MAALI_BUILD_DIR
+  
+  #Get the version of samtools on the prereq module which we need later on
+  SAMTOOL_PREREQ_VER=`echo $MAALI_SAMTOOLS_HOME | rev | cut -d "/" -f 1 | rev`
 
-  # requires samtools/0.1.19 so should be already downloaded
-  if [ -f "$MAALI_SRC/samtools-0.1.19.tar.bz2" ]; then
-    maali_run "tar jxf $MAALI_SRC/samtools-0.1.19.tar.bz2"
+  # requires samtools/XXX ie 0.1.19 so should be already downloaded
+
+  if [ -d "${MAALI_SAMTOOLS_HOME}/src" ]; then
+    # You need the existing SAMTOOLS src / build installed to compiled the auxtools
+    cd $MAALI_BUILD_DIR
+    maali_run "tar jxvf $MAALI_SRC/samtools-${SAMTOOL_PREREQ_VER}.tar.bz2"
   else
-    echo "Please compile samtools 0.1.19"
+    echo "Please compile Samtools ${SAMTOOL_PREREQ_VER}" 
     exit
   fi
 
@@ -122,14 +128,33 @@ function maali_build {
     fi
   done
 
-  cd auxprogs/checkTargetSortedness
+  #Fix aux tools bamwig
+  cd auxprogs/bam2wig
+  cp Makefile Makefile.backup
 
+  # 3.2.x Specific Templates fix
+  #SAMTOOLS refers to the build area where SAMTOOLS was built
+  sed -i -e "s^SAMTOOLS=\$(TOOLDIR)/samtools^SAMTOOLS=$MAALI_SAMTOOLS_HOME/src^g" Makefile
+  sed -i -e "s^LIBS=\$(SAMTOOLS)/libbam.a \$(HTSLIB)/libhts.a -lcurses -lm -lz -lpthread^LIBS=$MAALI_SAMTOOLS_HOME/lib/libbam.a $MAALI_HTSLIB_HOME/lib/libhts.a -lncurses -lm -lz -lpthread^g" Makefile
+
+  #3.0.x Specific Templates fix
+  sed -i -e "s^SAMTOOLS=/fs1.cm/katharina/tools/samtools/^SAMTOOLS=$MAALI_SAMTOOLS_HOME/src^g" Makefile 
+  sed -i -e "s^LIBS=\$(SAMTOOLS)/libbam.a -lcurses -lm -lz -lpthread^LIBS=$MAALI_SAMTOOLS_HOME/lib/libbam.a -lncurses -lm -lz -lpthread^g" Makefile 
+
+  #They have a precompiled bam2wig binary prepackaged which is broken
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "install -m 755 bam2wig $MAALI_INSTALL_DIR/bin/"
+  cd ../..
+
+  #Fix aux tools checkTargetSortedness 
+  cd auxprogs/checkTargetSortedness
   sed -i -e 's;INCLUDES=-I$(SAMTOOLS) -I.;INCLUDES=-I'"$BAM_ROOT"'/include/bam -I.;' Makefile
   sed -i -e 's;LIBS=$(SAMTOOLS)/libbam.a;LIBS='"$BAM_ROOT"'/lib/libbam.a;' Makefile
   sed -i -e's/-lcurses/-lncurses/g' Makefile
 
-  # needs the source for samtools
-  cp $MAALI_BUILD_DIR/samtools-0.1.19/bam_index.c .
+  # needs the source for samtools ie 0.1.19
+  cp $MAALI_BUILD_DIR/samtools-${SAMTOOL_PREREQ_VER}/bam_index.c .
 
   maali_run "make"
   maali_run "install -m 755 checkTargetSortedness $MAALI_INSTALL_DIR/bin/"
