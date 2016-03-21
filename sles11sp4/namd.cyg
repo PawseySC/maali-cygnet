@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for NAMD
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/NAMD_${MAALI_TOOL_VERSION}_Source.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/NAMD_""$MAALI_TOOL_VERSION""_Source"
+
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw cuda"
+#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run 'tar xf charm-6.6.1.tar'
+  cd charm-6.6.1
+
+  maali_run './build charm++ multicore-linux64 icc -O -DCMK_OPTIMIZE=1'
+ 
+  echo "Charm built"
+ 
+  cd "$MAALI_TOOL_BUILD_DIR"
+ 
+  maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
+  #maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_INCLUDE'
+
+  cd Linux-x86_64-icc
+  maali_run 'make'
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  ln -s Linux-x86_64-icc bin
+  
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR'
+  maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
+
+}
+
+##############################################################################
