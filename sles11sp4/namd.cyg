@@ -41,9 +41,10 @@ function maali_build {
  
   cd "$MAALI_TOOL_BUILD_DIR"
  
-  maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_INCLUDE'
+  maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
+  #maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_INCLUDE'
 
-  cd CRAY-XC-intel
+  cd Linux-x86_64-icc
   maali_run 'make'
 
   cd "$MAALI_TOOL_BUILD_DIR"
