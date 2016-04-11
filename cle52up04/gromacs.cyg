@@ -115,6 +115,35 @@ function maali_cmake_build {
   
     	# cmake likes to build in a directory of it's own. double-precision, MPI
     	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+  
+    	maali_run "cmake -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
+    	else
+    	  maali_run "make mdrun -j $para_make "
+    	fi
+    	maali_run "make install-mdrun"
+  
+  elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
+    	# cmake likes to build in a directory of it's own.  single-precision, no MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  
+    	para_make=20
+    	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+    	if [ $DEBUG ]; then
+    	  maali_run "make -j $para_make VERBOSE=TRUE"
+    	else
+    	  maali_run "make -j $para_make "
+    	fi
+    	maali_run "make install"
+  
+    	# cmake likes to build in a directory of it's own. double-precision, no MPI
+    	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+    	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  
+    	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
     	if [ $DEBUG ]; then
     	  maali_run "make  -j $para_make  VERBOSE=TRUE"
     	else
