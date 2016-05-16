@@ -1,0 +1,41 @@
+##############################################################################
+# maali cygnet file for Platanus 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+#MAALI_URL="http://platanus.bio.titech.ac.jp/?ddownload=150"
+# has to be predownloaded from 
+# http://platanus.bio.titech.ac.jp/platanus/?page_id=14
+
+# location we are downloading the source code to
+#MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_v$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/Platanus_v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}_v$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Platanus_v$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# tool pre-requisites
+#MAALI_TOOL_PREREQ="samtools/1.2 htslib/1.2.1 root/5.34.34"
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "mv platanus $MAALI_INSTALL_DIR/bin"
+}
