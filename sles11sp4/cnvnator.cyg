@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for CNVnator
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/abyzovlab/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+#MAALI_URL="https://github.com/abyzovlab/CNVnator/archive/v0.3.2.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/CNVnator-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="samtools/1.2 htslib/1.2.1 root/5.34.34"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  sed -i -e "s;SAMDIR = samtools;SAMDIR =${MAALI_SAMTOOLS_HOME};g" Makefile
+  sed -i -e 's;-I$(SAMDIR);;g' Makefile
+  sed -i -e $'s;SAMLIB = $(SAMDIR)/libbam.a;SAMLIB = $(SAMDIR)/lib/libbam.a\\\nINC   += -I$(SAMDIR)/include/bam;g' Makefile
+  sed -i -e "s;HTSDIR = \$(wildcard \$(SAMDIR)/htslib-\*);HTSDIR = ${MAALI_HTSLIB_HOME};g" Makefile
+  sed -i -e 's;SAMLIB += $(HTSDIR)/libhts.a;SAMLIB += $(HTSDIR)/lib/libhts.a;g' Makefile
+  sed -i -e 's;INC    += -I$(HTSDIR);INC    += -I$(HTSDIR)/include;g' Makefile 
+
+  export LD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$LD_LIBRARY_PATH
+  maali_run "make VERBOSE=1"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "cp cnvnator cnvnator2VCF.pl $MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/share/man"
+  maali_run "cp README CITATION license.rtf $MAALI_INSTALL_DIR/share/man"
+}
