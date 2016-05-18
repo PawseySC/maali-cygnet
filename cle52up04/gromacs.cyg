@@ -125,7 +125,7 @@ function maali_cmake_build {
     	fi
     	maali_run "make install-mdrun"
   
-  elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
+  elif [ $MAALI_TOOL_VERSION == 5.1.1 ] || [ $MAALI_TOOL_VERSION == 5.0.5 ]; then
     	# cmake likes to build in a directory of it's own.  single-precision, no MPI
     	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
     	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
