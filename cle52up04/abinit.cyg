@@ -1,0 +1,52 @@
+##############################################################################
+# maali cygnet file for abinit 
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="sandybridge haswell"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://ftp.abinit.org/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-netcdf fftw python"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="--enable-mpi=yes --enable-mpi-io=yes --enable-openmp=yes --enable-gw-dpc=yes --enable-64bit-flags=yes --enable-optim=aggressive --with-fft-flavor=fftw3"
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_ABINIT_ROOT='$MAALI_APP_HOME'
+MAALI_MODULE_WHATIS="ABINIT is a package whose main program allows one to find the total energy, charge density and electronic structure of systems made of electrons and nuclei (molecules and periodic solids) within Density Functional Theory (DFT), using pseudopotentials and a planewave or wavelet basis."
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ "$PE_ENV" == "INTEL" ]; then
+	module unload cray-libsci
+	#Link with MKL 
+	maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-linalg-flavor=mkl" 
+ elif [ "$PE_ENV" == "GNU" ]; then
+	#Link with Cray-libsci
+	maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-linalg-flavor=custom"  
+  fi
+  maali_run "make mj8"
+  maali_run "make install"
+}
+
+#############################################################################
