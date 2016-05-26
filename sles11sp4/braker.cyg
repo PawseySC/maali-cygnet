@@ -1,0 +1,117 @@
+##############################################################################
+# maali cygnet file for BRAKER1 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="augustus/3.2.1 samtools/1.2 bamtools/2.4.0 genemark-et/4.32"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PERLLIB="$MAALI_INSTALL_DIR/bin $MAALI_INSTALL_DIR/lib/perl5 $MAALI_INSTALL_DIR/lib/perl5/x86_64-linux-thread-multi"
+
+##############################################################################
+function maali_build {
+
+  mkdir "$MAALI_INSTALL_DIR/bin"
+  cd "$MAALI_INSTALL_DIR/bin"
+  maali_run "wget http://exon.gatech.edu/genemark/Braker/BRAKER1.tar.gz "
+  maali_run "tar xvf BRAKER1.tar.gz "
+  maali_run "mv BRAKER1/* ."
+  maali_run "rm -rf BRAKER1.tar.gz BRAKER1/"
+  maali_run "sed -i 's/use File::Path qw(make_path rmtree);/use File::Path qw(mkpath rmtree);/g' braker.pl"
+
+# the below modules are the dependencies 
+  mkdir "$MAALI_INSTALL_DIR/dep"
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/R/RJ/RJBS/PathTools-3.62.tar.gz"
+  maali_run "tar xvf PathTools-3.62.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/PathTools-3.62/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/R/RE/REHSACK/Hash-Merge-0.200.tar.gz"
+  maali_run "tar xvf Hash-Merge-0.200.tar.gz"
+  cd "$MAALI_INSTALL_DIR/dep/Hash-Merge-0.200/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/P/PE/PEVANS/Scalar-List-Utils-1.45.tar.gz"
+  maali_run "tar xvf Scalar-List-Utils-1.45.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/Scalar-List-Utils-1.45/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make "
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/T/TS/TSTANLEY/Logger-Simple-2.0.tar.gz"
+  maali_run "tar xvf Logger-Simple-2.0.tar.gz"
+  cd "$MAALI_INSTALL_DIR/dep/Logger-Simple-2.0/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/B/BI/BINGOS/Module-Load-Conditional-0.64.tar.gz"
+  maali_run "tar xvf Module-Load-Conditional-0.64.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/Module-Load-Conditional-0.64/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR/"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/Y/YA/YANICK/Parallel-ForkManager-1.18.tar.gz"
+  maali_run "tar xvf Parallel-ForkManager-1.18.tar.gz"
+  cd "$MAALI_INSTALL_DIR/dep/Parallel-ForkManager-1.18/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/C/CH/CHOCOLATE/Scalar-Util-Numeric-0.40.tar.gz"
+  maali_run "tar xvf Scalar-Util-Numeric-0.40.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/Scalar-Util-Numeric-0.40/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/I/IN/INGY/YAML-1.15.tar.gz"
+  maali_run "tar xvf YAML-1.15.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/YAML-1.15/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  #maali_run "wget http://search.cpan.org/CPAN/authors/id/R/RJ/RJBS/perl-5.24.0.tar.gz"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Module-Metadata-1.000027.tar.gz"
+  maali_run "tar xvf Module-Metadata-1.000027.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/Module-Metadata-1.000027/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/dep"
+  maali_run "wget http://search.cpan.org/CPAN/authors/id/J/JP/JPEACOCK/version-0.9916.tar.gz"
+  maali_run "tar xvf version-0.9916.tar.gz "
+  cd "$MAALI_INSTALL_DIR/dep/version-0.9916/"
+  maali_run "perl Makefile.PL INSTALL_BASE=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+
+
+}
