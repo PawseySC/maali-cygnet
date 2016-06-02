@@ -1,0 +1,66 @@
+##############################################################################
+# maali cygnet file for CUDA
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# Major Minor Version
+MAALI_CUDA_MAJOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 1`
+MAALI_CUDA_MINOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 2`
+
+# URL to download the source code from
+MAALI_URL="https://sourceforge.net/projects/lmod/files/Lmod-${MAALI_TOOL_VERSION}.tar.bz2/download"
+# http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
+MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_CUDA_MAJOR_VERSION}.${MAALI_CUDA_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.run"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Lmod-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ=''
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin ${MAALI_INSTALL_DIR}samples/bin/x86_64/linux/release"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64 ${MAALI_INSTALL_DIR}lib"
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
+MAALI_MODULE_SET_NVIDIA_CUDA_HOME="${MAALI_INSTALL_DIR}"
+MAALI_MODULE_SET_NVIDIA_CUDA_TOOLKIT="${MAALI_INSTALL_DIR}"
+MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}doc/man"
+
+function maali_unpack {
+  echo "Place Holder Function"
+  echo "CUDA Installation is just a binary"
+}
+
+##############################################################################
+
+function maali_build {
+
+  echo $MAALI_INSTALL_DIR
+  echo "CUDA Binary Build"
+  maali_run "sh $MAALI_DST --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --samples --samplespath=${MAALI_INSTALL_DIR}/samples"
+
+  echo "Building CUDA Samples"
+  cd ${MAALI_INSTALL_DIR}/samples
+  pwd
+  ls -al
+  make -j8
+}
+
+##############################################################################
+
