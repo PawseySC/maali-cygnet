@@ -18,7 +18,7 @@ MAALI_URL=""
 if [ $MAALI_TOOL_VERSION == "12" ]; then
   MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools13.tar.bz2"
 elif [ $MAALI_TOOL_VERSION == "14" ]; then
-  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools14.tar.bz2"
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools15.tar.bz2"
 fi
 
 # where the unpacked source code is located
