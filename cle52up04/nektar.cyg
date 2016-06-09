@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for Nektar++ 
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.nektar.info/downloads/file/nektar-4-3-1-tar-bz2/" #http://www.${MAALI_TOOL_NAME}.info/downloads/2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG++-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME++-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="boost lapack fftw"
+
+# add additional configure options
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+##############################################################################
+
+function maali_cmake_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  mkdir build
+  cd "build"
+  export CC=cc
+  export CXX=CC
+  export FC=ftn
+  maali_run "cmake .. -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCMAKE_CXX_FLAGS=\"-dynamic\" -DNEKTAR_USE_SYSTEM_BLAS_LAPACK=1 -DNEKTAR_USE_MKL=ON -DMKL_INCLUDE_DIR=/opt/intel/composer_xe_2013_sp1.1.106/mkl/include -DMKL_CORE=/opt/intel/composer_xe_2013_sp1.1.106/mkl/lib/intel64/libmkl_core.so -DMKL_INTEL=/opt/intel/composer_xe_2013_sp1.1.106/mkl/lib/intel64/libmkl_intel_lp64.so -DMKL_SEQUENTIAL=/opt/intel/composer_xe_2013_sp1.1.106/mkl/lib/intel64/libmkl_sequential.so -DBoost_INCLUDE_DIR=$MAALI_BOOST_HOME/include -DNEKTAR_USE_MPI=ON -DCMAKE_EXE_LINKER_FLAGS=\"-L /opt/cray/mpt/7.0.0/gni/mpich2-gnu/49/lib  -lmpich\" "
+  
+  maali_run "make VERBOSE=1"
+  maali_run "make install"
+}
