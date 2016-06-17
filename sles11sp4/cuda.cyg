@@ -1,0 +1,107 @@
+##############################################################################
+# maali cygnet file for CUDA
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# Major Minor Version
+MAALI_CUDA_MAJOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 1`
+MAALI_CUDA_MINOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 2`
+
+# URL to download the source code from
+# http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
+# Version "cuda_7.5.18_linux.run" -> cudnn-7.5-linux-x64-v5.0-ga.tgz -> cudnn-sample-v5.tgz
+
+MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_CUDA_MAJOR_VERSION}.${MAALI_CUDA_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.run"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Lmod-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ=''
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin ${MAALI_INSTALL_DIR}samples/bin/x86_64/linux/release"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64 ${MAALI_INSTALL_DIR}lib"
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
+MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_NVIDIA_CUDA_TOOLKIT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}doc/man"
+
+function maali_unpack {
+  echo "Place Holder Function"
+  echo "CUDA Installation is just a binary"
+  echo "If matching cudnn / cudnn samples are found it wil be installed"	
+}
+
+##############################################################################
+
+function maali_build {
+
+  echo $MAALI_INSTALL_DIR
+  echo "CUDA Binary Build"
+  maali_run "sh $MAALI_DST --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --samples --samplespath=${MAALI_INSTALL_DIR}/samples"
+
+  echo "Building CUDA SDK Samples"
+  cd ${MAALI_INSTALL_DIR}/samples
+  make -j8
+
+  if [ "$MAALI_TOOL_VERSION" == "7.5.18" ]; then
+	if [ -f $MAALI_SRC/cudnn-${MAALI_CUDA_MAJOR_VERSION}.${MAALI_CUDA_MINOR_VERSION}-linux-x64-v5.0-ga.tgz ]; then
+		echo "Matching cudnn detected -> Installing"
+		cd $MAALI_INSTALL_DIR
+		export PATH=$PATH:${MAALI_INSTALL_DIR}/bin:${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release
+		export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_INSTALL_DIR}/lib64:${MAALI_INSTALL_DIR}/lib
+		export FPATH=$FPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
+		export CPATH=$CPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
+		export NVIDIA_CUDA_HOME=${MAALI_INSTALL_DIR}
+		export NVIDIA_CUDA_TOOLKIT=${MAALI_INSTALL_DIR}
+		cd ${MAALI_INSTALL_DIR}
+		tar xf $MAALI_SRC/cudnn-7.5-linux-x64-v5.0-ga.tgz
+		mv cuda/include/* include
+		mv cuda/lib64/* lib64
+		rmdir cuda/include
+		rmdir cuda/lib64
+		rmdir cuda
+
+		if [ -f $MAALI_SRC/cudnn-sample-v5.tgz ]; then
+			echo "Matching cudnn samples detected -> Installing"
+			mkdir -p ${MAALI_INSTALL_DIR}/samples.dnn 	
+			cd ${MAALI_INSTALL_DIR}/samples.dnn
+			tar xf $MAALI_SRC/cudnn-sample-v5.tgz
+
+			#Compliling Samples
+			cd RNN
+			sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
+			maali_run "make -j4"
+			cd ..
+
+			cd mnistCUDNN
+  			sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
+			maali_run "make -j4"
+			cd ..
+
+		fi
+
+	fi
+  fi
+
+}
+
+##############################################################################
+
