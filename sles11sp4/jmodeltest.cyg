@@ -1,0 +1,70 @@
+##############################################################################
+# maali cygnet file for jmodeltest
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+#https://github.com/ddarriba/jmodeltest2/archive/v2.1.10r20160303.tar.gz
+MAALI_URL="https://github.com/ddarriba/${MAALI_TOOL_NAME}2/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}2-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="cmake mpt java ant mpj"
+
+# packages that need to be installed in the operating system for this build to work
+#MAALI_SYSTEM_PACKAGES_PREREQ='java ant'
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_build {
+	PHYML_VERSION=3.1
+
+	if [ -f $MAALI_SRC/PhyML-${PHYML_VERSION}.zip ]
+	then
+		echo "PhyML is Present"
+	else
+		echo "PhyML is missing, downloading"
+		cd $MAALI_SRC
+		maali_run "wget http://www.atgc-montpellier.fr/download/binaries/phyml/PhyML-${PHYML_VERSION}.zip"
+	fi
+
+	cd "$MAALI_TOOL_BUILD_DIR"
+	maali_run "ant jar"
+
+	ln -s dist bin
+	cd dist/exe
+	rm -rf $MAALI_TOOL_BUILD_DIR/dist/exe/phyml
+	unzip $MAALI_SRC/PhyML-${PHYML_VERSION}.zip
+	ln -s PhyML-${PHYML_VERSION} PhyML-3.1_linux64
+	ln -s PhyML-${PHYML_VERSION} phyml
+	cd PhyML-${PHYML_VERSION}
+	ln -s PhyML-${PHYML_VERSION}_linux64 PhyML_3.0_linux64
+	#Fix Hard Coded Paths, as MPJ is seperated from package
+	cd "$MAALI_TOOL_BUILD_DIR"/dist
+	sed -i s^"export MPJ_HOME=\$PWD/mpj"^"#export MPJ_HOME=\$PWD/mpj"^g runjmodeltest-cluster.sh
+	sed -i s^"jModelTest.jar"^"\$MAALI_JMODELTEST_HOME/dist/jModelTest.jar"^g runjmodeltest-cluster.sh
+	
+	mkdir -p ${MAALI_INSTALL_DIR}
+	mv $MAALI_TOOL_BUILD_DIR/* ${MAALI_INSTALL_DIR}
+}
+
+##############################################################################
+

@@ -41,18 +41,6 @@ function maali_build {
 	export MPJ_HOME=$MAALI_TOOL_BUILD_DIR
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MAALI_TOOL_BUILD_DIR/lib
 
-	#If it doesn't play nice with the mpi
-	#Needs passwordless ssh keys between nodes
-	#Machine list done ie "scontrol show hostnames $SLURM_JOB_NODELIST > machines"
-	#You need to invoke mpjboot / mpjhalt (Essentially ssh to start daemons)
-	#It means the ssh shell invocation needs to be aware of java, mpt, mpj at the very start
-
-	#So the modules has to be be loaded when you spawn the shell ie ~/.bashrc
-	#module load java
-	#module load ant
-	#module load mpt
-	#module load mpj
-
 	cd "$MAALI_TOOL_BUILD_DIR"
 	maali_run "ant"
 	cd "$MAALI_TOOL_BUILD_DIR/src/mpjdev/natmpjdev/lib"
