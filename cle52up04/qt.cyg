@@ -25,9 +25,6 @@ else
   MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-everywhere-opensource-src-$MAALI_TOOL_VERSION.tar.xz"
 fi
 
-# location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-everywhere-opensource-src-${MAALI_TOOL_VERSION}.tar.gz"
-
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-everywhere-opensource-src-${MAALI_TOOL_VERSION}"
 
