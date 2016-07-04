@@ -17,12 +17,42 @@ MAALI_TOOL_BUILD_DIR=""
 # this only creates a module file
 MAALI_REMODULE=1
 
-if [ -d /pawsey/pgi/14.7 ]; then
-  MAALI_TOOL_VERSION='14.7'
-  MAALI_INSTALL_DIR='/pawsey/pgi/14.7'
-elif [ -d /ivec/pgi/14.7 ]; then
-  MAALI_TOOL_VERSION='14.7'
-  MAALI_INSTALL_DIR='/ivec/pgi/14.7'
+# We only have 14.7 and 16.5
+if [ "$MAALI_TOOL_VERSION" == "14.7" ]; then
+	if [ -d /pawsey/pgi/14.7 ]; then
+	  MAALI_TOOL_VERSION='14.7'
+	  MAALI_INSTALL_DIR='/pawsey/pgi/14.7'
+	elif [ -d /ivec/pgi/14.7 ]; then
+	  MAALI_TOOL_VERSION='14.7'
+	  MAALI_INSTALL_DIR='/ivec/pgi/14.7'
+	fi
+
+	touch ${MAALI_INSTALL_DIR}/linux86-64/14.7/bin/test.txt
+	if [ $? -eq 0 ]; then
+		chmod u+rwx ${MAALI_INSTALL_DIR}/linux86-64/14.7/bin
+		chmod u+rwx ${MAALI_INSTALL_DIR}/linux86/14.7
+		chmod u+rw ${MAALI_INSTALL_DIR}/linux86-64/14.7/bin/pgnvdrc
+		chmod u+rw ${MAALI_INSTALL_DIR}/linux86/14.7/bin/pgnvdrc
+		sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86-64/14.7/bin/pgnvdrc
+		sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86/14.7/bin/pgnvdrc
+		rm ${MAALI_INSTALL_DIR}/linux86-64/14.7/bin/test.txt
+	else
+		"Patching Failed, can't edit files / directories ${MAALI_INSTALL_DIR}"
+		"Make sure it is readable / writeable by Maali"
+		exit
+	fi
+
+elif  "$MAALI_TOOL_VERSION" == "16.5" ]; then
+        if [ -d /pawsey/pgi/14.7 ]; then
+          MAALI_TOOL_VERSION='16.5'
+          MAALI_INSTALL_DIR='/pawsey/pgi/16.5'
+        elif [ -d /ivec/pgi/14.7 ]; then
+          MAALI_TOOL_VERSION='14.7'
+          MAALI_INSTALL_DIR='/ivec/pgi/16.5'
+        fi
+else
+	echo "Unsupported Version"
+	exit
 fi
 
 # this is evil, do not try this at home
