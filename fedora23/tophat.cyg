@@ -45,7 +45,7 @@ function maali_build {
 #  fi
 #
 
-  export LMAALI="-lpthread"
+  export LIBS="-lpthread"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make"
   maali_run "make install"
