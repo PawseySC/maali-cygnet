@@ -64,7 +64,7 @@ install-lib = ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-pa
 EOF
 
 maali_run "python setup.py build"
-maali_run "python setup.py install"
+maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
 
 }
 
