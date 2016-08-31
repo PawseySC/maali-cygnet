@@ -25,7 +25,8 @@ MAALI_MODULE_SET_PATH=1
 function maali_python_build {
 
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run "python configure.py"
+  #Has No single prefix directory install option
+  maali_run "python configure.py -b $MAALI_INSTALL_DIR/bin -d $MAALI_INSTALL_DIR/lib/python$MAALI_PYTHON_LIB_VERSION/site-packages -e $MAALI_INSTALL_DIR/include/python$MAALI_PYTHON_LIB_VERSION -v $MAALI_INSTALL_DIR/share/sip"
   maali_run "make"
   maali_run "make install"
 
