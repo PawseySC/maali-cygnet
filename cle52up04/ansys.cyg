@@ -9,7 +9,7 @@ MAALI_TOOL_COMPILERS="binary"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="craype cray-mpich"
+MAALI_TOOL_PREREQ="cray-mpich"
 
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
@@ -19,11 +19,17 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 function maali_unpack {
   mkdir $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
-  maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  else
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  fi
 }
 
 ##############################################################################
@@ -31,8 +37,7 @@ function maali_unpack {
 function maali_build {
   mkdir -p ${MAALI_INSTALL_DIR}
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run "chmod 750 $MAALI_INSTALL_DIR"
-  maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+  maali_run "chmod u+x INSTALL"
   maali_run './INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -disablerss'
 
   # Cray fixes.
@@ -49,6 +54,7 @@ function maali_build {
   done
   sed -i -e 's!ansinstalldir=/ansys_inc/v\$revn/!ansdir=\$ANSYS_DIR!g' "${MAALI_INSTALL_DIR}/v${MAALI_TOOL_SHORT_VERSION}/ansys/bin/xansadmin.tcl"
 
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 17.0 ]; then
 patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
 --- ansys150.bak        2015-03-24 13:50:19.343883000 +0800
 +++ ansys150    2015-03-24 14:24:45.259096000 +0800
@@ -61,44 +67,72 @@ patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TO
                    echo "Running... \$command"
                 fi
 EOF
+  else
+patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
+--- ansys172.bak        2016-08-30 16:10:03.712540000 +0800
++++ ansys172    2016-08-30 16:11:30.953923000 +0800
+@@ -302,6 +302,7 @@
+             fi
+             command="\${distcmd} -prun \${ANS_HPMPI_PRUN_OPTIONS} \${dansys_script} \${ansysargs}"
+          fi
++         command="\${distcmd} -n \${mpinp} \${dansysscript} \${ansysargs}"
+          if [ ! -z "\${ANS_SEE_RUN_COMMAND}" ]; then
+             printf "\\n Running... \${command} \\n"
+EOF
+  fi
 
   # Intel MPI / Cray MPI ABI compatability.
   MPILIBDIR=/opt/cray/mpt/7.0.0/gni/mpich2-intel/140/lib
-  cd $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/commonfiles/MPI/Intel/4.1/linx64/lib
-  echo $CRAY_MPICH2_DIR
-  echo $MPILIBDIR
-  mkdir old
-  mv libmpi.so* old
-  mv libmpi_mt.so* old
-  mv libmpigc4.so* old
-  mv libmpigf.so* old
-  ln -s $MPILIBDIR/libmpich_intel.so.3 libmpi.so.4
-  ln -s libmpi.so.4 libmpi.so
-  ln -s libmpi.so.4 libmpi.so.3.1
-  ln -s libmpi.so.4 libmpi.so.3.2
-  ln -s libmpi.so.4 libmpi.so.4.0
-  ln -s libmpi.so.4 libmpi.so.4.1
-  ln -s libmpi.so.4 libmpi_mt.so
-  ln -s libmpi.so.4 libmpi_mt.so.4
-  ln -s libmpi.so.4 libmpi_mt.so.3.1
-  ln -s libmpi.so.4 libmpi_mt.so.3.2
-  ln -s libmpi.so.4 libmpi_mt.so.4.0
-  ln -s libmpi.so.4 libmpi_mt.so.4.1
-  ln -s $MPILIBDIR/libmpichcxx_intel.so.3 libmpigc4.so.4
-  ln -s libmpigc4.so.4 libmpigc4.so
-  ln -s libmpigc4.so.4 libmpigc4.so.3.1
-  ln -s libmpigc4.so.4 libmpigc4.so.3.2
-  ln -s libmpigc4.so.4 libmpigc4.so.4.0
-  ln -s libmpigc4.so.4 libmpigc4.so.4.1
-  ln -s $MPILIBDIR/libmpichf90_intel.so.3 libmpigf.so.4
-  ln -s libmpigf.so.4 libmpigf.so
-  ln -s libmpigf.so.4 libmpigf.so.3.1
-  ln -s libmpigf.so.4 libmpigf.so.3.2
-  ln -s libmpigf.so.4 libmpigf.so.4.0
-  ln -s libmpigf.so.4 libmpigf.so.4.1
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 17.0 ]; then
+    cd $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/commonfiles/MPI/Intel/4.1/linx64/lib
+  else
+    cd $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/commonfiles/MPI/Intel/5.0.3.048/linx64/lib
+  fi
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 17.0 ]; then
+    mkdir old
+    mv libmpi.so* old
+    mv libmpi_mt.so* old
+    mv libmpigc4.so* old
+    mv libmpigf.so* old
+    ln -s $MPILIBDIR/libmpich_intel.so.3 libmpi.so.4
+    ln -s libmpi.so.4 libmpi.so
+    ln -s libmpi.so.4 libmpi.so.3.1
+    ln -s libmpi.so.4 libmpi.so.3.2
+    ln -s libmpi.so.4 libmpi.so.4.0
+    ln -s libmpi.so.4 libmpi.so.4.1
+    ln -s libmpi.so.4 libmpi_mt.so
+    ln -s libmpi.so.4 libmpi_mt.so.4
+    ln -s libmpi.so.4 libmpi_mt.so.3.1
+    ln -s libmpi.so.4 libmpi_mt.so.3.2
+    ln -s libmpi.so.4 libmpi_mt.so.4.0
+    ln -s libmpi.so.4 libmpi_mt.so.4.1
+    ln -s $MPILIBDIR/libmpichcxx_intel.so.3 libmpigc4.so.4
+    ln -s libmpigc4.so.4 libmpigc4.so
+    ln -s libmpigc4.so.4 libmpigc4.so.3.1
+    ln -s libmpigc4.so.4 libmpigc4.so.3.2
+    ln -s libmpigc4.so.4 libmpigc4.so.4.0
+    ln -s libmpigc4.so.4 libmpigc4.so.4.1
+    ln -s $MPILIBDIR/libmpichf90_intel.so.3 libmpigf.so.4
+    ln -s libmpigf.so.4 libmpigf.so
+    ln -s libmpigf.so.4 libmpigf.so.3.1
+    ln -s libmpigf.so.4 libmpigf.so.3.2
+    ln -s libmpigf.so.4 libmpigf.so.4.0
+    ln -s libmpigf.so.4 libmpigf.so.4.1
+  else
+    mkdir old
+    mv libmpicxx.so.12 old
+    mv libmpifort.so.12 old
+    mv release_mt/libmpi.so.12 old
+    ln -s $MPILIBDIR/libmpich_intel.so.3 release_mt/libmpi.so.12
+    ln -s $MPILIBDIR/libmpichcxx_intel.so.3 libmpicxx.so.12
+    ln -s $MPILIBDIR/libmpichf90_intel.so.3 libmpifort.so.12
+  fi
 
-  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
-  maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  fi
 }
 
 ##############################################################################
