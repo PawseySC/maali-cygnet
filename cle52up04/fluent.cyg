@@ -14,16 +14,24 @@ MAALI_TOOL_PREREQ="cray-mpich"
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not honour group sticky bit, so non-system builds may fail with quota issues.
+
 ##############################################################################
 # This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
 function maali_unpack {
   mkdir $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
-  maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  else
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  fi
 }
 
 ##############################################################################
@@ -31,11 +39,13 @@ function maali_unpack {
 function maali_build {
   mkdir -p ${MAALI_INSTALL_DIR}
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run "chmod 750 $MAALI_INSTALL_DIR"
-  maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+  maali_run "chmod u+x INSTALL"
   maali_run './INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -disablerss -fluent'
-  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
-  maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  fi
 }
 
 ##############################################################################
