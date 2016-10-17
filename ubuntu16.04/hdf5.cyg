@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="zlib/1.2.7 szip/2.1"
+MAALI_TOOL_PREREQ="zlib/1.2.8 szip/2.1"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-zlib=$MAALI_ZLIB_HOME --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-cxx --enable-production --with-default-api-version=v16'
@@ -38,14 +38,14 @@ MAALI_MODULE_WHATIS="HDF5 is a data model, library, and file format for storing 
 
 ##############################################################################
 
-function maali_build {
-  cd "$MAALI_TOOL_BUILD_DIR"
-  
-  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
-  maali_run "make -j $MAALI_CORES" 
-  maali_run "make test"
-  maali_run "make install"
-}
+#function maali_build {
+#  cd "$MAALI_TOOL_BUILD_DIR"
+#  
+#  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+#  maali_run "make -j $MAALI_CORES" 
+#  maali_run "make test"
+#  maali_run "make install"
+#}
 
 ##############################################################################
