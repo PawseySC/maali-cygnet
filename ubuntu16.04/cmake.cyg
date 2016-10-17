@@ -5,8 +5,11 @@
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
+# Define the RELEASE verison for use in the MAALI_URL variable.
+RELEASE_VER=`echo $MAALI_TOOL_VERSION | cut -d "." -f 1-2`
+
 # URL to download the source code from
-MAALI_URL="http://www.cmake.org/files/v3.2/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://cmake.org/files/v{RELEASE_VER}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -18,8 +21,9 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
 
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_WHATIS="CMake is an extensible, open-source system that manages the build process in an operating system and in a compiler-independent manner. "
 ##############################################################################
 
 function maali_build {
