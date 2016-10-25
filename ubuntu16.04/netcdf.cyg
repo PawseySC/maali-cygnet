@@ -6,8 +6,8 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
-
+#MAALI_URL="http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://ftp.unidata.ucar.edu/pub/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
@@ -21,18 +21,17 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_CONFIGURE='--enable-netcdf-4'
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="szip/2.1 zlib/1.2.7 hdf5/1.8.12"
+MAALI_TOOL_PREREQ="szip zlib hdf5"
 
 # runs in front of the configure line
 # separate c++ and fortran wrappers
-MAALI_TOOL_VERSION_C=`echo $MAALI_TOOL_VERSION | cut -d '.' -f1,2`
-MAALI_TOOL_VERSION_CXX="4.2"
-MAALI_TOOL_VERSION_FC="4.2"
+MAALI_TOOL_VERSION_C=`echo $MAALI_TOOL_VERSION | cut -d '.' -f2`
+MAALI_TOOL_VERSION_CXX="4.3.0"
+MAALI_TOOL_VERSION_FC="4.4.4"
 
 # for auto-building module files
 
-MAALI_MODULE_SET_NETCDF=''
-#MAALI_MODULE_SET_SETENV="NETCDF=$MAALI_INSTALL_DIR"
+MAALI_MODULE_SET_NETCDF='$MAALI_APP_HOME'
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1 
@@ -49,8 +48,9 @@ function maali_build {
 
   export CFLAGS="-fPIC -I$MAALI_HDF5_HOME/include -I$MAALI_ZLIB_HOME/include -I$MAALI_SZIP_HOME/include -L$MAALI_HDF5_HOME/lib -L$MAALI_ZLIB_HOME/lib -L$MAALI_SZIP_HOME/lib"
   export LDFLAGS="-L$MAALI_HDF5_HOME/lib -L$MAALI_ZLIB_HOME/lib -L$MAALI_SZIP_HOME/lib"
-
-  if [ "$MAALI_TOOL_VERSION_C" == "4.2" ]; then
+  echo " c version $MAALI_TOOL_VERSION_C " 
+  if [[ $(($MAALI_TOOL_VERSION_C)) -ge 2 ]]; then
+    echo " in the right place"
     # C library
     cd "$MAALI_TOOL_BUILD_DIR"
     maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
@@ -58,12 +58,12 @@ function maali_build {
     maali_run "make install"
 
     # C++ library
-    if [ ! -f "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz" ]; then
-      wget -O "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz" -q "http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz"
+    if [ ! -f "$MAALI_SRC/v$MAALI_TOOL_VERSION_CXX.tar.gz" ]; then
+      wget -O "$MAALI_SRC/v$MAALI_TOOL_VERSION_CXX.tar.gz" -q "https://github.com/Unidata/netcdf-cxx4/archive/v4.3.0.tar.gz"
     fi
 
     cd ..
-    tar zxf "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz"
+    tar zxf "$MAALI_SRC/v${MAALI_TOOL_VERSION_CXX}.tar.gz"
     cd "$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX"
 
     export CFLAGS=""
@@ -76,7 +76,7 @@ function maali_build {
 
     # fortran library
     if [ ! -f "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz" ]; then
-      wget -O "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz" -q "http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz"
+      wget -O "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz" -q "ftp://ftp.unidata.ucar.edu/pub/netcdf/${MAALI_TOOL_NAME}-fortran-$MAALI_TOOL_VERSION_FC.tar.gz"
     fi
 
     export CFLAGS=""
@@ -93,6 +93,7 @@ function maali_build {
     maali_run "make"
     maali_run "make install"
   else
+    echo "build only netcdf $MAALI_TOOL_VERSION "
     # all in one
     cd "$MAALI_TOOL_BUILD_DIR"
     maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
