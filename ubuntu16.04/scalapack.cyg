@@ -1,5 +1,5 @@
-##############################################################################
-# maali config file for ScaLAPACK/BLACS
+a##############################################################################
+4 maali config file for ScaLAPACK/BLACS
 ##############################################################################
 
 # specify which compilers we want to build the tool with
@@ -18,10 +18,10 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI lapack/3.4.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI lapack/3.6.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/3.2.3"
+MAALI_TOOL_BUILD_PREREQ="cmake"
 
 # Configuration flags for make/cmake.
 MAALI_TOOL_CONFIGURE='-DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_BUILD_TYPE:STRING=Release -DBLAS_LIBRARIES:PATH=${LAPACK}/lib/libblas.so -DLAPACK_LIBRARIES:PATH=${LAPACK}/lib/liblapack.so'
