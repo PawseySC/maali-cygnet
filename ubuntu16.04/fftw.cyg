@@ -36,7 +36,6 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_FFTW_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_FFTW_INCLUDE='$MAALI_APP_HOME/include'
 MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
-#MAALI_MODULE_SET_SETENV='FFTW_HOME=$MAALI_APP_HOME FFTW_INCLUDE=$MAALI_APP_HOME/include FFTW_LIB=$MAALI_APP_HOME/lib'
 MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
 
 ##############################################################################
