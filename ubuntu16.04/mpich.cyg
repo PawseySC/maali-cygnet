@@ -1,0 +1,39 @@
+##############################################################################
+# maali config file for MPICH
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.mpich.org/static/downloads/${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# add addition configure options
+MAALI_TOOL_CONFIGURE=' '
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+#MAALI_MODULE_SET_MPI_HOME='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_CC='mpicc'
+MAALI_MODULE_SET_CXX='mpic++'
+MAALI_MODULE_SET_FC='mpif90'
+MAALI_MODULE_SET_F77='mpif77'
+
+MAALI_MODULE_SET_MPICC='mpicc'
+MAALI_MODULE_SET_MPICXX='mpic++'
+MAALI_MODULE_SET_MPIFC='mpifort'
+
+MAALI_MODULE_WHATIS="MPICH is a high-performance and widely portable implementation of the Message Passing Interface - MPI standards MPI-1, MPI-2 and MPI-3."
+##############################################################################
