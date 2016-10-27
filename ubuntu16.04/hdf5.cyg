@@ -21,12 +21,11 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ="zlib/1.2.8 szip/2.1"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--with-zlib=$MAALI_ZLIB_HOME --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-cxx --enable-production --with-default-api-version=v16'
+MAALI_TOOL_CONFIGURE='--with-zlib=$MAALI_ZLIB_HOME --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-fortran2003 --enable-cxx --enable-production --with-default-api-version=v16'
 
 # for auto-building module files
 
-MAALI_MODULE_SET_HDF5_DIR=''
-#MAALI_MODULE_SET_SETENV="HDF5_DIR=$MAALI_INSTALL_DIR"
+MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1 
