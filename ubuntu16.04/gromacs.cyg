@@ -21,13 +21,15 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.4 libxml2/2.9.3 boost/1.49.0 lapack/3.5.0"
+# uses fttw/3.3.4+ boost/1.49.0 lapack/3.5.0+  
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw lapack"
 
 # supports building CUDA version
-MAALI_CUDA_SUPPORT=1
+MAALI_CUDA_SUPPORT=0
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=' -DGMX_GPU=OFF -DGMX_SIMD=AVX2_256 -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INCLUDE  -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME -DFFTW3_LIBRARIES=$FFTW_LIB -DFFTW3F_LIBRARIES=$FFTW_LIB -DFFTW3F_INCLUDE_DIR=$FFTW_INCLUDE -DFFTW3_INCLUDE_DIR=$FFTW_INCLUDE  -DGMX_BUILD_UNITTESTS=OFF'
+# -DGMX_SIMD=AVX2_256
+MAALI_TOOL_CONFIGURE=' -DGMX_GPU=OFF -DGMX_SIMD=AVX_128_FMA -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INCLUDE  -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME -DFFTW3_LIBRARIES=$FFTW_LIB -DFFTW3F_LIBRARIES=$FFTW_LIB -DFFTW3F_INCLUDE_DIR=$FFTW_INCLUDE -DFFTW3_INCLUDE_DIR=$FFTW_INCLUDE  -DGMX_BUILD_UNITTESTS=OFF'
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake"
@@ -66,12 +68,12 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
   	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
 
-        para_make=20
+        
   	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make VERBOSE=TRUE"
+  	  maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
   	else
-  	  maali_run "make -j $para_make "
+  	  maali_run "make -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -81,9 +83,9 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
   	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make -j $para_make "
+  	  maali_run "make -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -96,9 +98,9 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
   	maali_run "cmake -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make mdrun -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make mdrun -j $para_make "
+  	  maali_run "make mdrun -j $MAALI_CORES "
   	fi
   	maali_run "make install-mdrun"
 
@@ -108,9 +110,9 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
   	maali_run "cmake -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make mdrun -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make mdrun -j $para_make "
+  	  maali_run "make mdrun -j $MAALI_CORES "
   	fi
   	maali_run "make install-mdrun"
 
@@ -123,9 +125,9 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
   	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DGMX_GPU=ON -DGMX_DEFAULT_SUFFIX=OFF -DGMX_BINARY_SUFFIX=\"_cuda\" -DGMX_LIBS_SUFFIX=\"_cuda\" $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make mdrun -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make mdrun -j $para_make "
+  	  maali_run "make mdrun -j $MAALI_CORES "
   	fi
   	maali_run "make install-mdrun"
 
@@ -137,12 +139,11 @@ elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
   	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
 
-  	para_make=20
   	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make VERBOSE=TRUE"
+  	  maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
   	else
-  	  maali_run "make -j $para_make "
+  	  maali_run "make -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -152,9 +153,9 @@ elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
 
   	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make  -j $para_make "
+  	  maali_run "make  -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -174,9 +175,9 @@ elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
 
   	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make  -j $para_make "
+  	  maali_run "make  -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -186,9 +187,9 @@ elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
 
   	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make  -j $para_make "
+  	  maali_run "make  -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
@@ -201,9 +202,9 @@ elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
 
   	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DGMX_GPU=ON -DGMX_DEFAULT_SUFFIX=OFF -DGMX_BINARY_SUFFIX=\"_cuda\" -DGMX_LIBS_SUFFIX=\"_cuda\" $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make  VERBOSE=TRUE"
+  	  maali_run "make -j $MAALI_CORES  VERBOSE=TRUE"
   	else
-  	  maali_run "make -j $para_make "
+  	  maali_run "make -j $MAALI_CORES "
   	fi
   	maali_run "make install"
 
