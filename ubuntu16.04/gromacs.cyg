@@ -22,7 +22,7 @@ MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
 # uses fttw/3.3.4+ boost/1.49.0 lapack/3.5.0+  
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw lapack"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.5 lapack/3.6.0"
 
 # supports building CUDA version
 MAALI_CUDA_SUPPORT=0
