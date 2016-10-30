@@ -6,14 +6,13 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-#MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.5.revision26243-src.2014-09-10.tar.gz"
 MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.6.revision27746-src.2015-10-20.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="${MAALI_SRC}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/nwchem-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI lapack/3.6.1"
@@ -32,8 +31,8 @@ function maali_build {
   # this is the core function for creating software
 
   cd $MAALI_BUILD_DIR
-#  mv Nwchem-6.5.revision26243-src.2014-09-10 $MAALI_TOOL_BUILD_DIR
-  mv Nwchem-6.6.revision27746-src.2015-10-20 $MAALI_TOOL_BUILD_DIR
+  ls -al 
+  #mv Nwchem-6.6.revision27746-src.2015-10-20 $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
 
   export NWCHEM_TARGET=LINUX64
