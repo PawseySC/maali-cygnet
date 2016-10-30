@@ -2,26 +2,21 @@
 # maali cygnet file for nwchem
 ##############################################################################
 
-# specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
-
-# specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
-
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.5.revision26243-src.2014-09-10.tar.gz"
+#MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.5.revision26243-src.2014-09-10.tar.gz"
+MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.6.revision27746-src.2015-10-20.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.revision*-src.2015-*-*.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Nwchem-6.5"
+MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI dmapp/7.0.1-1.0502.9501.5.219.ari"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI lapack/3.6.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -37,20 +32,27 @@ function maali_build {
   # this is the core function for creating software
 
   cd $MAALI_BUILD_DIR
-  mv Nwchem-6.5.revision26243-src.2014-09-10 $MAALI_TOOL_BUILD_DIR
+#  mv Nwchem-6.5.revision26243-src.2014-09-10 $MAALI_TOOL_BUILD_DIR
+  mv Nwchem-6.6.revision27746-src.2015-10-20 $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
 
   export NWCHEM_TARGET=LINUX64
-  export ARMCI_NETWORK=DMAPP
-  export DMAPP_INCLUDE="${CRAY_DMAPP_INCLUDE_OPTS}"
-  export DMAPP_LIB="${CRAY_DMAPP_POST_LINK_OPTS} -ldmapp"
-  export LIBMPI=" "
-  export GA_DIR="ga-cray"
+  export USE_PYTHONCONFIG=y
+  export PYTHONVERSION=2.7
+  export PYTHONHOME=/usr
+  export BLASOPT="-L${MAALI_LAPACK_HOME}/lib -lblas"
+  export BLAS_SIZE=4
+  export USE_64TO32=y
+#  expor
+#  export DMAPP_INCLUDE="${CRAY_DMAPP_INCLUDE_OPTS}"
+#  export DMAPP_LIB="${CRAY_DMAPP_POST_LINK_OPTS} -ldmapp"
+#  export LIBMPI=" "
+#  export GA_DIR="ga-cray"
 
   export NWCHEM_TOP=${MAALI_TOOL_BUILD_DIR}
   export NWCHEM_MODULES="all"
 
-  export MPI_LOC=${MPICH_DIR}
+  export MPI_LOC=${MPI_HOME}
 
   export USE_MPI=y
   export USE_MPIF=y
@@ -62,7 +64,7 @@ function maali_build {
   maali_run 'make realclean'
   maali_run 'make nwchem_config'
 
-  maali_run "make _FC=ifort FC=ftn -j$MAALI_CORES"
+  maali_run "make _FC=gfortran FC=mpif90 -j$MAALI_CORES"
 
   export NWCHEM=$MAALI_INSTALL_DIR
 
