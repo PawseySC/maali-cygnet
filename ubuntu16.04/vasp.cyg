@@ -2,12 +2,6 @@
 # maali cygnet file for VASP
 ##############################################################################
 
-# specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
-
-# specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
-
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -18,17 +12,13 @@ MAALI_URL=""
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_MINOR_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="fftw"
-#vasp does not like craype-hugepages2M
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cray-mpich cray-libsci"
+MAALI_TOOL_PREREQ="fftw/3.3.5 lapack/3.6.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -40,7 +30,7 @@ MAALI_MODULE_RESTRICT_GROUP='vasp'
 
 function maali_build {
 
-  makefile=makefile.linux_ifc_P4
+  $makefile=makefile.linux_gfortran
 
   # Unload for Intel MKL
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
@@ -48,36 +38,36 @@ function maali_build {
   fi
 
   cd "$MAALI_TOOL_BUILD_DIR"
+  pwd
+#  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
-
-  # Compile VASP lib
-  tar xf "$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_VERSION.lib.tar.gz"
-  cd "$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_VERSION.lib"
-
-  export FC='ftn'
-  export CFLAGS='-Os'
-  export CPP='gcc -E -P -C -DLONGCHAR $*.F >$*.f'
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export FFLAGS='-Os -FI'
   elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    cp arch/makefile.include.linux_gfortran makefile.include
+    sed -i -e 's/IFC91_ompi/Nectar/g' makefile.include
+    sed -i -e 's/\/data1\/gf01\/libs\//\/usr\/lib/g' makefile.include
+    sed -i -e 's/\-lrefblas/\-latlas \-lf77blas \-lcblas/g' makefile.include
+    sed -i -e 's/\/data1\/gf01\/fftw\-3.3.4\/lib\/libfftw3.a/\$\{FFTW\_LIB\}\/libfftw3.a/g' makefile.include
+    sed -i -e 's/\/data1\/gf01\/fftw-3.3.4\/include/\-I\$\{FFTW\_INCLUDE\}/g' makefile.include 
+
     export FFLAGS='-O1'
-    export FREE='-ffree-form -ffree-line-length-none -FR -lowercase'
-    export NOFREE='-ffixed-form'
+    sed -i -e 's/\-ffree\-form \-ffree\-line\-length\-none/\-ffree\-form \-ffree\-line\-length\-none \-FR \-lowercase/g' makefile.include
+#    export NOFREE='-ffixed-form'
   fi
+  pwd
+  maali_run "make "
 
-  maali_run "make -e -f $makefile"
-
-  cd ..
-
+#  cd ..
+  cd "$MAALI_TOOL_BUILD_DIR"
   # Fix buggy file.  5.3.2
-  sed -i -e '/INTEGER IP, LMBASE, ISPIRAL, ISPINOR, NLIIND, NIS, NT, LMMAXC, NI, INDMAX, L, IND/ s/L, IND/L, LM, IND/' nonlr.F
+#  sed -i -e '/INTEGER IP, LMBASE, ISPIRAL, ISPINOR, NLIIND, NIS, NT, LMMAXC, NI, INDMAX, L, IND/ s/L, IND/L, LM, IND/' nonlr.F
 
   # Fix buggy file.  5.3.3
-  sed -i -e '/do_dbg/ s/3I)/3I5)/' spinsym.F
-  sed -i -e "/'Hf','Ta','W'/ s/W/W /" vdwforcefield.F
-  sed -i -e '/WRITE (APP  , / s/I)/I5)/' finite_diff.F
-  sed -i -e '/write(7,/ s/(I,/(I5,/' fcidump.F
+#  sed -i -e '/do_dbg/ s/3I)/3I5)/' spinsym.F
+#  sed -i -e "/'Hf','Ta','W'/ s/W/W /" vdwforcefield.F
+#  sed -i -e '/WRITE (APP  , / s/I)/I5)/' finite_diff.F
+#  sed -i -e '/write(7,/ s/(I,/(I5,/' fcidump.F
 
   if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
     sed -i -e '/USE us/ s/USE us/USE us, only : setdij_, augmentation_charge/' us.F
@@ -87,7 +77,7 @@ function maali_build {
 
   ##################################################
 
-  export FC='ftn'
+  export FC='mpif90'
   # -heap-arrays used to be needed to stop runing out of memory.
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
@@ -122,12 +112,13 @@ EOF
     export CPP_='./preprocess <$*.F | /usr/bin/cpp -P -C -traditional >$*$(SUFFIX)'
     export OFLAG='-O2'
     export FC='ftn -ffree-line-length-none'
-    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
+    export CPP_PAWSEY='$(CPP_) -DMPI -DHOST=\"Nectar\" -DIFC -DCACHE_SIZE=4000 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
 
+    cp arch/makefile.include.linux_gfortran makefile.include
     # Cray libsci
-    export BLAS=''
-    export LAPACK=''
-    export SCALAPACK=''
+#    export BLAS=''
+#    export LAPACK=''
+#    export SCALAPACK=''
   fi
   # End of compiler-specific options.
   ##################################################
@@ -141,8 +132,8 @@ EOF
 
   export CPP='$(CPP_PAWSEY) -DNGZhalf'
 
-  maali_run "make -f $makefile clean"
-  maali_run "make -e -f $makefile"
+  maali_run "make veryclean"
+  maali_run "make -e "
   maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin"
 
   ##################################################
@@ -150,8 +141,8 @@ EOF
 
   export CPP='$(CPP_PAWSEY)'
 
-  maali_run "make -f $makefile clean"
-  maali_run "make -e -f $makefile"
+  maali_run "make veryclean"
+  maali_run "make -e "
   maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin/vasp-nf1"
 
   ##################################################
@@ -159,8 +150,8 @@ EOF
 
   export CPP='$(CPP_PAWSEY) -DTBDYN -DNGZhalf'
 
-  maali_run "make -f $makefile clean"
-  maali_run "make -e -f $makefile"
+  maali_run "make veryclean"
+  maali_run "make -e "
   maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin/vasp-tbdyn"
 
   ##################################################
@@ -181,7 +172,7 @@ EOF
 
   export CPP='$(CPP_PAWSEY) -DNGZhalf'
 
-  maali_run "make -f $makefile.vtst clean"
+  maali_run "make -f $makefile.vtst veryclean"
   maali_run "make -e -f $makefile.vtst"
   maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin/vasp-tst"
 
@@ -229,7 +220,7 @@ EOF
 
   export CPP='$(CPP_PAWSEY) -DNGZhalf'
 
-  maali_run "make -f $makefile.vtst clean"
+  maali_run "make -f $makefile.vtst veryclean"
   maali_run "make -e -f $makefile.vtst"
   maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin/vasp-tst-xy"
 
