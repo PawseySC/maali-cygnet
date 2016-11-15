@@ -21,3 +21,32 @@ MAALI_TOOL_PREREQ="distribute/0.6.49 numpy/1.10.1"
 MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
+
+function maali_python_build {
+
+# change to build directory
+cd $MAALI_TOOL_BUILD_DIR
+
+# Chicken and Egg Workaround
+mkdir -p $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages
+MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
+export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+
+#Fix for 1.1 for gcc 4.3.4
+if [ "$MAALI_TOOL_VERSION" == 1.1 ];
+    #gcc 4.3.4 works in 1.06 but broken in 1.1, these values were nvr set in 1.06 but is fixed in post 1.1
+    then
+    cp astropy/wcs/setup_package.py astropy/wcs/setup_package.py.backup
+    sed -i s^"'-Wno-unused-but-set-variable'])"^""^g astropy/wcs/setup_package.py
+    sed -i s^"'-Wno-uninitialized',"^"'-Wno-uninitialized'])"^g astropy/wcs/setup_package.py
+
+    cp io/fits/setup_package.py io/fits/setup_package.py.backup
+    sed -i s^", '-Wno-unused-result'"^""^g astropy/io/fits/setup_package.py
+fi
+
+maali_run "python setup.py config"
+maali_run "python setup.py build"
+maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+}
+
+##############################################################################
