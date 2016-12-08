@@ -48,12 +48,12 @@ SHELL = /bin/sh
 # specify flags and libraries needed for your compiler
 
 CC =		mpic++
-CCFLAGS =	-O3 -funroll-loops # -Wunused
+CCFLAGS =	-O3 -funroll-loops -fopenmp# -Wunused
 SHFLAGS =	-fPIC
 DEPFLAGS =	-M
 
 LINK =		mpic++
-LINKFLAGS =	-O3
+LINKFLAGS =	-O3 -fopenmp
 LIB = 
 SIZE =		size
 
@@ -173,6 +173,10 @@ EOF
 # compile the standard packages
   maali_run "make yes-standard"
 
+  maali_run "make yes-user-omp"
+#  maali_run "make mpi"
+
+
 # compile additional packages
   cd "$MAALI_INSTALL_DIR/lib/reax"
   make -f Makefile.gfortran  
@@ -183,7 +187,7 @@ EOF
     
 # update packges
    cd "$MAALI_INSTALL_DIR/src"	
-$   maali_run "make yes-standard"
+#   maali_run "make yes-standard"
    maali_run "make no-kim"
    maali_run "make no-kokkos"
    maali_run "make no-gpu"
