@@ -1,0 +1,45 @@
+##############################################################################
+# maali config file for Open MPI
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# need to sub the major/minor version
+MAALI_TOOL_MAJOR_MINOR_VERSION=`echo "$MAALI_TOOL_VERSION" | cut -d '.' -f 1,2`
+
+# URL to download the source code from
+MAALI_URL="http://www.open-mpi.org/software/ompi/v$MAALI_TOOL_MAJOR_MINOR_VERSION/downloads/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_MPI_HOME='$MAALI_APP_HOME'
+
+MAALI_MODULE_SET_CC='mpicc'
+MAALI_MODULE_SET_CXX='mpic++'
+MAALI_MODULE_SET_FC='mpif90'
+MAALI_MODULE_SET_F77='mpif77'
+MAALI_MODULE_SET_F90='mpif90'
+
+MAALI_MODULE_SET_MPICC='mpicc'
+MAALI_MODULE_SET_MPICXX='mpic++'
+MAALI_MODULE_SET_MPIFC='mpifort'
+#MAALI_MODULE_SET_INTEL_INC_PATH=''
+#MAALI_MODULE_SET_MPI_ARCH_PATH=''
+
+MAALI_MODULE_WHATIS="The Open MPI Project is an open source Message Passing Interface implementation that is developed and maintained by a consortium of academic, research, and industry partners."
+##############################################################################
+
+
