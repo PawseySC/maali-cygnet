@@ -1,0 +1,56 @@
+##############################################################################
+#
+# maali cygnet file for libarchive
+#
+#  Multi-format archive and compression library.  Built for mpi file tools
+#
+#  See http://www.libarchive.org for examples and more information.
+#
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from, and to...
+MAALI_URL="http://www.libarchive.org/downloads/libarchive-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/libarchive-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libarchive-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="mpich/3.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libarchive is an ANSI C library providing multiformat archive and 
+compression operations.
+
+For further information see, e.g., http://www.libarchive.org/
+
+EOF
+
+##############################################################################
+
+function maali_build {
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+    maali_run "./configure --prefix $MAALI_INSTALL_DIR CC=gcc MPICC=mpicc"
+    maali_run "make"
+    maali_run "make install"
+
+}
+
+###############################################################################

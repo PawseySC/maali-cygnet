@@ -1,0 +1,80 @@
+##############################################################################
+#
+# maali cygnet file for mpifileutils
+#
+#  mpiFileUtils is a suite of MPI-based tools to manage large datasets, which 
+#  may vary from large directory trees to large files. High-performance 
+#  computing users often generate large datasets with parallel applications 
+#  that run with many processes (millions in some cases). However those users 
+#  are then stuck with single-process tools like cp and rm to manage their 
+#  datasets. This suite provides MPI-based tools to handle typical jobs like 
+#  copy, remove, and compare for such datasets, providing speedups of up to 
+#  20-30x.
+#
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from, and to...
+MAALI_URL="https://github.com/hpc/mpifileutils/archive/master.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/mpifileutils-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/mpifileutils-v${MAALI_TOOL_VERSION}"
+
+# patch files to download
+MAALI_TOOL_PATCHES="001"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="mpich/3.2 libcircle/0.2.1-rc.1 dtcmp/1.0.3 lwgrp/1.0.2 libarchive/3.2.2"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="autoconf/2.69"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+# create the directory before untarring
+MAALI_UNPACK_MKDIR=1
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+mpifileutils are a collection of mpi enabled file utils for managing large datasets.
+
+For further information see, e.g., http://github.com/hpc/mpifileutils/
+
+EOF
+
+##############################################################################
+
+function maali_build {
+    echo $MAALI_FILES_PATH
+    cd "$MAALI_TOOL_BUILD_DIR"
+    cd mpifileutils-*
+    mv * ..
+    cd ..
+    rmdir mpifileutils-*
+
+    patch m4/lx_find_mpi.m4 < "$MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+
+    ./autogen.sh
+
+    # hack to get things to build after common library
+    export CFLAGS="-I${topdir}/src/common -DDCOPY_USE_XATTRS"
+    export LDFLAGS="-Wl,-rpath,${topdir}/install/lib -L${topdir}/install/lib -L$MAALI_LIBCIRCLE_HOME/lib -lcircle"
+
+    maali_run "./configure --enable-lustre --prefix $MAALI_INSTALL_DIR --with-dtcmp=$MAALI_DTCMP_HOME MPICC=mpicc"
+    maali_run "make"
+    maali_run "make install"
+
+}
+
+##############################################################################

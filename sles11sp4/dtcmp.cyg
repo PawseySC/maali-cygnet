@@ -1,0 +1,69 @@
+##############################################################################
+#
+# maali cygnet file for dtcmp
+#
+#  The Datatype Comparison (DTCMP) Library provides pre-defined and
+#  user-defined comparison operations to compare the values of two items
+#  which can be arbitrary MPI datatypes.  Using these comparison
+#  operations, the library provides various routines for manipulating
+#  data, which may be distributed over the processes of an MPI
+#  communicator
+#
+#  See e.g., https://github.com/hpc/dtcmp/
+#
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from, and to...
+MAALI_URL="https://github.com/LLNL/dtcmp/releases/download/v${MAALI_TOOL_VERSION}/dtcmp-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/dtcmp-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/dtcmp-v${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="mpich/3.2 lwgrp/1.0.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+# create the directory before untarring
+MAALI_UNPACK_MKDIR=1
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+dtcmp is an ANSI C library providing comparison operations to 
+compare the values of two items which can be arbitrary MPI datatypes. 
+
+For further information see, e.g., http://github.com/hpc/dtcmp/
+
+EOF
+
+##############################################################################
+#
+###############################################################################
+
+function maali_build {
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+    cd dtcmp-*
+    mv * ..
+    cd ..
+    rmdir dtcmp-*
+
+    maali_run "./configure --prefix $MAALI_INSTALL_DIR --with-lwgrp=$MAALI_LWGRP_HOME CC=cc MPICC=cc"
+    maali_run "make"
+    maali_run "make install"
+
+}
+
+###############################################################################
