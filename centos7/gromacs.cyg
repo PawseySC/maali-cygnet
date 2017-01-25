@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
 
 # specify which cuda versions we want to build the tool with
 MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
@@ -22,14 +22,14 @@ MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
 # uses fttw/3.3.4+ boost/1.49.0 lapack/3.5.0+  
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.5 boost/1.62.0 lapack/3.6.1"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_INTEL_COMPILERS boost/1.62.0"
 
 # supports building CUDA version
 MAALI_CUDA_SUPPORT=0
 
 # add additional configure options
 # -DGMX_SIMD=AVX2_256
-MAALI_TOOL_CONFIGURE=' -DGMX_GPU=OFF -DGMX_SIMD=AVX_128_FMA -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INCLUDE  -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME -DFFTW3_LIBRARIES=$FFTW_LIB -DFFTW3F_LIBRARIES=$FFTW_LIB -DFFTW3F_INCLUDE_DIR=$FFTW_INCLUDE -DFFTW3_INCLUDE_DIR=$FFTW_INCLUDE  -DGMX_BUILD_UNITTESTS=OFF -DGMX_USE_RDTSCP=OFF '
+MAALI_TOOL_CONFIGURE=' -DGMX_GPU=OFF -DGMX_SIMD=AVX_512_KNL -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=mkl -DMKL_LIBRARIES="${MKLROOT}/lib/mic" -DMKL_INCLUDE_DIR="${MKLROOT}/include" -DGMX_BUILD_UNITTESTS=ON -DGMX_USE_RDTSCP=OFF '
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake"
@@ -60,7 +60,7 @@ function maali_cmake_build {
 
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-
+  MAALI_TOOL_MAJOR_VERSION=`echo "$MAALI_TOOL_VERSION" | cut -d . -f 1`
 
 if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
@@ -209,7 +209,31 @@ elif [ $MAALI_TOOL_VERSION == 5.1.4 ]; then
   	maali_run "make install"
 
     fi
+elif [[ $MAALI_TOOL_MAJOR_VERSION == 2016 ]]; then
 
+  	# cmake likes to build in a directory of it's own.  single-precision, no MPI
+  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+#  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+#  	if [ $DEBUG ]; then
+#  	  maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+#  	else
+#  	  maali_run "make -j $MAALI_CORES "
+#  	fi
+#  	maali_run "make install"
+
+  	# cmake likes to build in a directory of it's own. double-precision, no MPI
+  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+
+  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  	if [ $DEBUG ]; then
+  	  maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
+  	else
+  	  maali_run "make  -j $MAALI_CORES "
+  	fi
+  	maali_run "make install"
 fi
 }
 
