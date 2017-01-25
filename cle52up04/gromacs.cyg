@@ -19,7 +19,7 @@ For further information see http://www.gromacs.org/
 EOF
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -60,7 +60,7 @@ if [ $MAALI_TOOL_MAJOR_VERSION -le 4 ]; then
   LIB=lib
   MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
   MAALI_MODULE_SET_LD_LIBRARY_PATH=1                                                                                                                     
-elif [ $MAALI_TOOL_MAJOR_VERSION -ge 5 ]; then
+elif [ $MAALI_TOOL_MAJOR_VERSION -ge 5 ] || [ $MAALI_TOOL_MAJOR_VERSION == 2016 ]; then
   LIB=lib64
   MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
   MAALI_MODULE_SET_LD_LIBRARY_PATH="$LIB"
@@ -72,6 +72,8 @@ function maali_cmake_build {
 
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+  echo "tool major version is $MAALI_TOOL_MAJOR_VERSION "
+#  MAALI_TOOL_MAJOR_VERSION=`echo "$MAALI_TOOL_VERSION" | cut -d . -f 1`
 
   # Work around Cray not setting up pkg-config for user applications.
   target="PE_FFTW_TARGET_${CRAY_CPU_TARGET}"
@@ -198,6 +200,32 @@ $MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
     	  maali_run "make  -j $para_make "
     	fi
     	maali_run "make install"
+elif [[ $MAALI_TOOL_MAJOR_VERSION == 2016 ]]; then
+
+  	# cmake likes to build in a directory of it's own.  single-precision, with MPI
+  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+#  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+#  	if [ $DEBUG ]; then
+#  	  maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+#  	else
+#  	  maali_run "make -j $MAALI_CORES "
+#  	fi
+#  	maali_run "make install"
+
+  	# cmake likes to build in a directory of it's own. double-precision,with MPI
+  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+
+  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  	if [ $DEBUG ]; then
+  	  maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
+  	else
+  	  maali_run "make  -j $MAALI_CORES "
+  	fi
+  	maali_run "make install"
+	
   fi
 }
 
