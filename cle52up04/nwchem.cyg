@@ -77,7 +77,9 @@ function maali_build {
   maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/TM $NWCHEM/data/'
   maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/HGH_LDA $NWCHEM/data/'
   maali_run 'find $NWCHEM -perm 750 -exec chmod 755 {} \;'
+  maali_run 'find $NWCHEM -perm 730 -exec chmod 733 {} \;'
   maali_run 'find $NWCHEM -perm 640 -exec chmod 644 {} \;'
+  maali_run 'find $NWCHEM -perm 620 -exec chmod 622 {} \;'
 }
 
 ##############################################################################
