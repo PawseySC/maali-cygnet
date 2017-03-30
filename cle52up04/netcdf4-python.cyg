@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for netcdf4-python 
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/Unidata/netcdf4-python.git"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/netcdf4-python"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="python/2.7.10 PrgEnv-gnu/5.2.82 gcc/4.8.2 numpy/1.10.1 cython/0.23.4 cray-netcdf/4.3.2"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_download {
+  cd $MAALI_SRC
+  git clone $MAALI_URL
+}
+
+function maali_unpack {
+  cd $MAALI_BUILD_DIR
+  
+  cp -r $MAALI_DST .
+}
+
+function maali_python_build {
+
+cd $MAALI_TOOL_BUILD_DIR
+
+maali_run "python setup.py build"
+maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+}
+
+##############################################################################
