@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for rsem
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+# MAALI_URL="http://bioinf.uni-greifswald.de/augustus/binaries/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://deweylab.biostat.wisc.edu/$MAALI_TOOL_NAME/src/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="ncurses"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PERLLIB=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+
+  #Fix curse to ncurse
+  sed -i -e 's/lcurses/lncurses/g' sam/Makefile
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  MAALI_INSTALL_FILES="extract-transcript-to-gene-map-from-trinity rsem-calculate-expression rsem-control-fdr rsem-generate-data-matrix rsem-generate-ngvector rsem-plot-model rsem-plot-transcript-wiggles rsem-prepare-reference rsem-run-ebseq rsem-build-read-index rsem-extract-reference-transcripts rsem-parse-alignments rsem-preref rsem-run-em rsem-synthesis-reference-transcripts rsem-tbam2gbam"
+
+  #for file in "extract-transcript-to-gene-map-from-trinity rsem-calculate-expression rsem-control-fdr rsem-generate-data-matrix rsem-generate-ngvector rsem-plot-model rsem-plot-transcript-wiggles rsem-prepare-reference rsem-run-ebseq"
+  for file in $MAALI_INSTALL_FILES
+  do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  for file in `ls *.pm`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin/sam"
+  maali_run "install -m 755 sam/samtools $MAALI_INSTALL_DIR/bin/sam/"
+  maali_run "install -m 644 sam/libbam.a $MAALI_INSTALL_DIR/bin/sam/"
+}
+
+##############################################################################

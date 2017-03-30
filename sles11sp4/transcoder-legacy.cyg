@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for transdecoder-legacy
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://sourceforge.net/projects/transdecoder/files/OLDER/transdecoder_r${MAALI_TOOL_VERSION}.tgz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/transdecoder_r${MAALI_TOOL_VERSION}.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/transdecoder_r${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="toplevel"
+MAALI_MODULE_SET_PERLLIB=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+
+  for file in `ls *.pl`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/util"
+  for file in `ls util/*.pl`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/util/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  for file in `ls PerlLib/*.pm`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  done
+}
+
+##############################################################################
