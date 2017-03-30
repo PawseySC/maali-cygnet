@@ -1,0 +1,150 @@
+##############################################################################
+# maali cygnet file for Trinity RNA-Seq Assembly
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://sourceforge.net/projects/trinityrnaseq/files/PREV_CONTENTS/previous_releases/trinityrnaseq_${MAALI_TOOL_VERSION}.tar.gz/download --no-check-certificate"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/trinityrnaseq-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/trinityrnaseq_${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/7u79 bowtie/1.1.2 samtools/0.1.19 parafly/2013-01-21"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="Trinity RNA-Seq Assembly"
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PERLLIB=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH="$(MAALI_INSTALL_DIR)bin/trinity-plugins/jellyfish/.libs"
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+	
+  maali_run "make clean"
+  maali_run "make all"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "cp -R trinity-plugins/ $MAALI_INSTALL_DIR/bin"
+
+  #Fix Hidden Jelly wish LIBRARY Wrapper ie .libs directory which is hardcoded to jellyfish
+  #trinityrnaseq-legacy/r20140413p1/bin/trinity-plugins/jellyfish/.libs	
+
+  cd Inchworm
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make all"
+  maali_run "make install"
+  cd ..
+
+  # cd Chrysalis
+  # maali_run "make"
+
+  # cd $MAALI_TOOL_BUILD_DIR
+  # maali_run "mv * $MAALI_INSTALL_DIR/"
+
+	echo "!! TEST 1 !!"
+
+  find PerlLib
+
+  maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+
+  for file in `ls PerlLib/*.pm`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/"
+  done
+
+	echo "!! TEST 2 !!"
+
+  for dir in CDNA HPC KmerGraphLib Simulate CanvasXpress HTC
+  do
+    maali_makedir "$MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/$dir/"
+
+    for file in `ls PerlLib/$dir/*.pm`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/lib/perl5/site_perl/5.10.1/$dir/"
+    done
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/share/util"
+  for file in `ls util/*.pl`
+  do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/share/util/"
+  done
+
+  for dir in support_scripts
+  do
+    maali_makedir "$MAALI_INSTALL_DIR/share/util/$dir"
+
+    for file in `ls util/$dir/*.pl`
+    do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/share/util/$dir/"
+    done
+
+    for file in `ls util/$dir/*.jar`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/share/util/$dir/"
+    done
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 Trinity $MAALI_INSTALL_DIR/bin/"
+
+  sed -i -e 's;$ROOTDIR/util;'$MAALI_INSTALL_DIR'/share/util;g' $MAALI_INSTALL_DIR/bin/Trinity
+  sed -i -e 's;"$ROOTDIR/trinity-plugins/parafly/bin/ParaFly";$ENV{"MAALI_PARAFLY_HOME"} . "/bin/ParaFly";g' $MAALI_INSTALL_DIR/bin/Trinity
+  sed -i -e 's;$FindBin::Bin/../../Trinity;'$MAALI_INSTALL_DIR'/bin/Trinity;g' $MAALI_INSTALL_DIR/share/util/support_scripts/write_partitioned_trinity_cmds.pl
+
+  #Need to Fix for Analysis, Chrysalis, Inchworm & Butterfly
+  maali_run "cp -R Inchworm $MAALI_INSTALL_DIR/bin"	
+  maali_run "cp -R Analysis $MAALI_INSTALL_DIR/bin"
+  maali_run "cp -R Chrysalis $MAALI_INSTALL_DIR/bin"
+  maali_run "cp -R Inchworm $MAALI_INSTALL_DIR/bin"
+  maali_run "cp -R Butterfly $MAALI_INSTALL_DIR/bin"
+  maali_run "cp -R util $MAALI_INSTALL_DIR/bin"
+
+  #Not Packaged Missing? 
+#  cd "$MAALI_INSTALL_DIR/bin"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/transcripts_to_best_scoring_ORFs.pl"
+#  maali_run "chmod 755 transcripts_to_best_scoring_ORFs.pl"
+#	 transcripts_to_best_scoring_ORFs.pl -> Generates gen best_candidates.eclipsed_orfs_removed.pep -> PArt of transcoder-legacy/2012-08-15
+
+
+#  cd "$MAALI_INSTALL_DIR/bin/util"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/randomize_sequences.pl"
+#  maali_run "chmod 755 randomize_sequences.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/gene_list_to_gff.pl"
+#  maali_run "chmod 755 gene_list_to_gff.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/get_top_longest_fasta_entries.pl"
+#  maali_run "chmod 755 get_top_longest_fasta_entries.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/gff3_file_to_bed.pl"
+#  maali_run "chmod 755 gff3_file_to_bed.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/gff3_file_to_proteins.pl"
+#  maali_run "chmod 755 gff3_file_to_proteins.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/index_gff3_files_by_isoform.pl"
+#  maali_run "chmod 755 index_gff3_files_by_isoform.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/score_CDS_liklihood_all_6_frames.pl"
+#  maali_run "chmod 755 score_CDS_liklihood_all_6_frames.pl"
+#  maali_run "wget https://raw.githubusercontent.com/genome-vendor/trinity/master/Analysis/Coding/util/seq_n_background_to_logliklihood_vals.pl"
+#  maali_run "chmod 755 seq_n_background_to_logliklihood_vals.pl"
+
+  #Expects $MAALI_INSTALL_DIR/bin/util/get_top_longest_fasta_entries.pl but its in $MAALI_INSTALL_DIR/bin/trinity-plugins/TransDecoder_r20131110/util
+  maali_run "cp -R $MAALI_INSTALL_DIR/bin/trinity-plugins/TransDecoder_r20131110/util/* $MAALI_INSTALL_DIR/bin/util"
+
+}
+
+##############################################################################

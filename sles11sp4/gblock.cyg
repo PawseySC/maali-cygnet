@@ -1,0 +1,39 @@
+##############################################################################
+# maali cygnet file for gblock
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+# MAALI_URL="http://bioinf.uni-greifswald.de/augustus/binaries/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://molevol.cmima.csic.es/castresana/Gblocks/Gblocks_Linux64_${MAALI_TOOL_VERSION}.tar.Z"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Gblocks_$MAALI_TOOL_VERSION"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_BUILD_DIR
+
+  mkdir -p $MAALI_INSTALL_DIR/bin
+  cp -Rv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/bin
+}
+
+##############################################################################
