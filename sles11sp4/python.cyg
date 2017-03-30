@@ -1,20 +1,22 @@
 ##############################################################################
 # maali cygnet file for python
+# maali -t Python
 ##############################################################################
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
-MAALI_URL="http://www.python.org/ftp/python/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.xz"
+# Python prior to 3.X was distributed in .tar.xz format.  This is not the case any longer.
+MAALI_URL="http://www.python.org/ftp/python/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tgz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.xz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tgz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
-# for creating the modul
+# for creating the module
 MAALI_PYTHON_LIB_VERSION=`echo "$MAALI_TOOL_VERSION" | cut -d '.' -f 1,2`
 
 # for auto-building module files
