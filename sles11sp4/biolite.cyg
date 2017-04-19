@@ -1,0 +1,27 @@
+##############################################################################
+# maali cygnet file for biolite
+##############################################################################
+
+# specify which compilers we want to build the tool with
+# Python Dependency of networks which required python 2.7+
+MAALI_TOOL_COMPILERS="python/2.7.10"
+
+# URL to download the source code from
+#MAALI_URL="http://downloads.sourceforge.net/project/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://bitbucket.org/caseywdunn/${MAALI_TOOL_NAME}/downloads/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy setuptools cython pylibxml2 matplotlib"
+
+# for auto-building module files
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+

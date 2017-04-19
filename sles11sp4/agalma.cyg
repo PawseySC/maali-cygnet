@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for biolite
+##############################################################################
+
+# specify which compilers we want to build the tool with
+# Python Dependency of networks which required python 2.7+
+MAALI_TOOL_COMPILERS="python/2.7.10"
+
+# Preliminary Build Based on algama 0.5
+# It tied to specific version of tools
+
+#Possinle Erros
+
+# Missing transcripts_to_best_scoring_ORFs.pl
+# transcripts_to_best_scoring_ORFs.pl -> Generates best_candidates.eclipsed_orfs_removed.pep -> Part of transcoder-legacy/2012-08-15
+
+# TypeError: Unrecognized or unsupported arguments: {'stream': <open file u'/home/achew/agalma-test-phylogeny-qff/AllByAllTest/13/raxml-trees/RAxML_bestTree.homologs_12_0', mode 'r' at 0x7fffebd9c6f0>, 'schema': 'newick'}
+# Need Dendropy version 3.12.0 (Not Version 4x)
+
+# It needs trinity r20140413p1 -> Newer Version has issues big syntax changes
+
+# Bowtie2 has to be 2.1.0 -> Binaries has change to have s and l suffixes
+
+# rsem needs the orignal samtools build with it in the subdirectory
+
+# URL to download the source code from
+MAALI_URL="https://bitbucket.org/caseywdunn/${MAALI_TOOL_NAME}/downloads/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+#MAALI_TOOL_PREREQ="biolite blast bowtie bowtie2 fastqc gblock mafft mcl parallel raxml rsem transcoder sra-tools trinityrnaseq"
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gcc/4.8.5 biolite/0.5.0 biolite-tools/0.4.0 blast+/2.2.31 bowtie bowtie2/2.1.0 fastqc/0.11.4 gblock/0.91b mafft/7.222 mcl/14-137 parallel/20151022 raxml/8.2.9 rsem/1.2.9 transcoder-legacy/2012-08-15 sra-tools/2.5.4 trinityrnaseq-legacy/r20140413p1 dendropy/3.12.0"
+
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools"
+
+
+# for auto-building module files
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
