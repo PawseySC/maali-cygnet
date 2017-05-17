@@ -122,12 +122,12 @@ function maali_build {
     rmdir cuda/lib64
     rmdir cuda
 
-		# You Need to be a Registered Nvidia Developer
+    # You Need to be a Registered Nvidia Developer
     if [ -f $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz ]; then
       echo "Matching cudnn samples detected -> Installing"
       cd ${MAALI_INSTALL_DIR}
-			tar xpfzv $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz --strip-components=1
-			# There is no seperate sample packages for CUDNN for version v6.0
+      tar xpfzv $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz --strip-components=1
+      # There is no seperate sample packages for CUDNN for version v6.0
     fi
 
   fi
