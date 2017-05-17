@@ -12,6 +12,7 @@ MAALI_CUDA_MINOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d '.' -f 2`
 # URL to download the source code from
 # http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
 # Version "cuda_7.5.18_linux.run" -> cudnn-7.5-linux-x64-v5.0-ga.tgz -> cudnn-sample-v5.tgz
+# Version "cuda_8.0.61_375.26_linux.run" -> cudnn-8.0-linux-x64-v6.0.tgz
 
 MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_CUDA_MAJOR_VERSION}.${MAALI_CUDA_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
 
@@ -36,7 +37,8 @@ MAALI_TOOL_CONFIGURE=""
 # for auto-building module files
 
 MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin ${MAALI_INSTALL_DIR}samples/bin/x86_64/linux/release"
-MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64 ${MAALI_INSTALL_DIR}lib"
+#MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64 ${MAALI_INSTALL_DIR}lib"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="$(MAALI_INSTALL_DIR)lib"
 MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
 MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}include ${MAALI_INSTALL_DIR}include/cl"
 MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
@@ -79,6 +81,7 @@ function maali_build {
 		rmdir cuda/lib64
 		rmdir cuda
 
+		# You Need to be a Registered Nvidia Developer
 		if [ -f $MAALI_SRC/cudnn-sample-v5.tgz ]; then
 			echo "Matching cudnn samples detected -> Installing"
 			mkdir -p ${MAALI_INSTALL_DIR}/samples.dnn 	
@@ -99,6 +102,35 @@ function maali_build {
 		fi
 
 	fi
+  fi
+
+  if [ "$MAALI_TOOL_VERSION" == "8.0.61_375.26" ]; then
+  if [ -f $MAALI_SRC/cudnn-${MAALI_CUDA_MAJOR_VERSION}.${MAALI_CUDA_MINOR_VERSION}-linux-x64-v6.0.tgz ]; then
+    echo "Matching cudnn detected -> Installing"
+    cd $MAALI_INSTALL_DIR
+    export PATH=$PATH:${MAALI_INSTALL_DIR}/bin:${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_INSTALL_DIR}/lib64:${MAALI_INSTALL_DIR}/lib
+    export FPATH=$FPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
+    export CPATH=$CPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
+    export NVIDIA_CUDA_HOME=${MAALI_INSTALL_DIR}
+    export NVIDIA_CUDA_TOOLKIT=${MAALI_INSTALL_DIR}
+    cd ${MAALI_INSTALL_DIR}
+    tar xf $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz
+    mv cuda/include/* include
+    mv cuda/lib64/* lib64
+    rmdir cuda/include
+    rmdir cuda/lib64
+    rmdir cuda
+
+		# You Need to be a Registered Nvidia Developer
+    if [ -f $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz ]; then
+      echo "Matching cudnn samples detected -> Installing"
+      cd ${MAALI_INSTALL_DIR}
+			tar xpfzv $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz --strip-components=1
+			# There is no seperate sample packages for CUDNN for version v6.0
+    fi
+
+  fi
   fi
 
 }
