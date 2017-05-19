@@ -19,6 +19,8 @@ if [ $MAALI_TOOL_VERSION == "12" ]; then
   MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools13.tar.bz2"
 elif [ $MAALI_TOOL_VERSION == "14" ]; then
   MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools15.tar.bz2"
+elif [ $MAALI_TOOL_VERSION == "16" ]; then
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools17.tar.bz2"
 fi
 
 # where the unpacked source code is located
@@ -28,11 +30,15 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-netcdf python"
+MAALI_TOOL_PREREQ="cray-netcdf cray-hdf5 python/2.7.10"
 MAALI_TOOL_BUILD_PREREQ="cray-mpich"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--no-updates -noX11 -crayxt5 -nomtkpp --with-netcdf $NETCDF_DIR intel'
+if [ $MAALI_TOOL_VERSION \< "16" ]; then
+  MAALI_TOOL_CONFIGURE='--no-updates -noX11 -crayxt5 -nomtkpp --with-netcdf ${NETCDF_DIR} intel'
+else
+  MAALI_TOOL_CONFIGURE='--no-updates -noX11 -nofftw3 --with-python python2.7 --with-netcdf ${NETCDF_DIR} intel'
+fi
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -47,6 +53,9 @@ MAALI_MODULE_WHATIS='AMBER is a commercial molecular dynamics program'
 
 function maali_build {
   export AMBERHOME=$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION
+  export CC=cc CXX=CC FC=ftn MPICC=cc MPICXX=CC MPIF90=ftn
+
+  export CRAYPE_LINK_TYPE=dynamic
 
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
@@ -66,6 +75,13 @@ function maali_build {
   # The configure script from AmberTools forces -xHost.
   maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/cphstats/configure"
   maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/configure2"
+
+  # Sigh they hard code it.
+  if [ "$MAALI_TOOL_VERSION" == "16" ]; then
+    maali_run "sed -i -e 's/CC=mpicc/CC=cc/g' ./AmberTools/src/cpptraj/configure"
+    maali_run "sed -i -e 's/CXX=mpicxx/CXX=CC/g' ./AmberTools/src/cpptraj/configure"
+    maali_run "sed -i -e 's/FC=mpif90/FC=ftn/g' ./AmberTools/src/cpptraj/configure"
+  fi
 
   # Serial
   maali_run "./configure $MAALI_TOOL_CONFIGURE_EVAL"
