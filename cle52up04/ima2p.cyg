@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file IMa2p - https://bio.cst.temple.edu/~hey/software/software.htm
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/arunsethuraman/ima2p/archive/master.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/master.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-master"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="--with-mpi --host=x86_64-unknown-linux-gnu MPICXX=CC CXX=CC CC=cc"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+###############################################################################
+
+function maali_build {
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  chmod +x ./configure # Yes it's not executable
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+
+  maali_run 'make'
+  maali_run "make install"
+}
+#
+##############################################################################
