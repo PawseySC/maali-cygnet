@@ -125,7 +125,7 @@ function maali_cmake_build {
     	fi
     	maali_run "make install-mdrun"
   
-  elif [ $MAALI_TOOL_VERSION == 5.1.2 ] || [ $MAALI_TOOL_VERSION == 5.1.1 ] || [ $MAALI_TOOL_VERSION == 5.0.5 ]; then
+  elif [ $MAALI_TOOL_VERSION == 5.1.2 ] || [ $MAALI_TOOL_VERSION == 5.1.1 ] || [ $MAALI_TOOL_VERSION \> 5.0.0 ]; then
 
         # see bug http://redmine.gromacs.org/issues/1848 
         # and bug fix http://redmine.gromacs.org/projects/gromacs/repository/revisions/318ed3bb35b5e54aa71ed14600a17d35ede7a92c
