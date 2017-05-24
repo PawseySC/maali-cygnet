@@ -131,7 +131,15 @@ if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
 
     fi
 
-elif [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
+  elif [ $MAALI_TOOL_VERSION == 5.1.2 ] || [ $MAALI_TOOL_VERSION == 5.1.1 ] || [ $MAALI_TOOL_VERSION \> 5.0.0 ]; then
+
+        # see bug http://redmine.gromacs.org/issues/1848
+        # and bug fix http://redmine.gromacs.org/projects/gromacs/repository/revisions/318ed3bb35b5e54aa71ed14600a17d35ede7a92c
+        # this only appears in 5.1.1; versions 5.0.5 and 5.1.2 are fine
+        if [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
+          sed -i -e 's/gmx_bcast(eglsNR\*sizeof(gs->mpiBuffer), gs->mpiBuffer, cr);/gmx_bcast(eglsNR*sizeof(gs->mpiBuffer[0]), gs->mpiBuffer, cr);/g'
+$MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
+        fi
 
   	# cmake likes to build in a directory of it's own.  single-precision, no MPI
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
