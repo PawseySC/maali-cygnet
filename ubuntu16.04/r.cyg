@@ -1,6 +1,5 @@
-r##############################################################################
 ##############################################################################
-# maali config file for R
+# maali cygnet file for R
 ##############################################################################
 
 # specify which compilers we want to build the tool with
@@ -13,12 +12,36 @@ MAALI_URL="http://cran.csiro.au/src/base/R-$MAALI_TOOL_MAJOR_VERSION/$MAALI_TOOL
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/R-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ='cairo-devel libpng-devel libtiff-devel libjpeg-devel'
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="bzip2/1.0.6 xz/5.2.3 pcre/8.40 curl/7.54.0 zlib/1.2.8 intel-mkl/11.2.4"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="--enable-R-shlib --enable-R-profiling --enable-memory-profile --with-blas --with-lapack --with-x"
-
+MAALI_TOOL_CONFIGURE="--with-x=no"
+# --with-lapack --with-blas"
+#="-fopenmp -I$MKL_HOME/include -L$MKL_HOME/lib/intel64 -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lpthread -lm"'
+#MAALI_TOOL_CONFIGURE='--enable-R-shlib --with-x=no --with-lapack --with-blas="-fopenmp -I$MKL_HOME/include -L$MKL_HOME/lib/intel64 -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lpthread -lm"'
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_R_VERSION=$MAALI_TOOL_VERSION
 
 ##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  export LDFLAGS="-L${MAALI_BZIP2_HOME}/lib -L${MAALI_XZ_HOME}/lib"
+  export MKL_NUM_THREAD=15
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make"
+  maali_run "make check"
+  maali_run "make install"
+}
