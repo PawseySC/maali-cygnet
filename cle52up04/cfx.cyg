@@ -14,7 +14,8 @@ MAALI_TOOL_PREREQ="cray-mpich"
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 
-#The ANSYS installer does its own unpacking of tgz files, and it seems to not honour group sticky bit, so non-system builds may fail with quota issues.
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not
+#honour group sticky bit, so non-system builds may fail with quota issues.
 
 ##############################################################################
 # This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar

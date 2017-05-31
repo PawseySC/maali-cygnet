@@ -19,11 +19,17 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 function maali_unpack {
   mkdir $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
-  maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
-  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  else
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  fi
 }
 
 ##############################################################################
@@ -31,8 +37,7 @@ function maali_unpack {
 function maali_build {
   mkdir -p ${MAALI_INSTALL_DIR}
   cd $MAALI_TOOL_BUILD_DIR
-  maali_run "chmod 750 $MAALI_INSTALL_DIR"
-  maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+  maali_run "chmod u+x INSTALL"
   maali_run './INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -disablerss'
 
   # Cray fixes.
@@ -49,6 +54,7 @@ function maali_build {
   done
   sed -i -e 's!ansinstalldir=/ansys_inc/v\$revn/!ansdir=\$ANSYS_DIR!g' "${MAALI_INSTALL_DIR}/v${MAALI_TOOL_SHORT_VERSION}/ansys/bin/xansadmin.tcl"
 
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 17.0 ]; then
 patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
 --- ansys150.bak        2015-03-24 13:50:19.343883000 +0800
 +++ ansys150    2015-03-24 14:24:45.259096000 +0800
@@ -61,9 +67,25 @@ patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TO
                    echo "Running... \$command"
                 fi
 EOF
+  else
+patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
+--- ansys172.bak        2016-08-30 16:10:03.712540000 +0800
++++ ansys172    2016-08-30 16:11:30.953923000 +0800
+@@ -302,6 +302,7 @@
+             fi
+             command="\${distcmd} -prun \${ANS_HPMPI_PRUN_OPTIONS} \${dansys_script} \${ansysargs}"
+          fi
++         command="\${distcmd} -n \${mpinp} \${dansysscript} \${ansysargs}"
+          if [ ! -z "\${ANS_SEE_RUN_COMMAND}" ]; then
+             printf "\\n Running... \${command} \\n"
+EOF
+  fi
 
-  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
-  maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  fi
 }
 
 ##############################################################################
@@ -71,8 +93,8 @@ EOF
 # Get v150 from 15.0.7, v140 from 14.0.
 MAALI_TOOL_SHORT_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
 
-MAALI_MODULE_SET_PATH="v$MAALI_TOOL_SHORT_VERSION/ansys/bin v$MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64"
-MAALI_MODULE_SET_LD_LIBRARY_PATH="v$MAALI_TOOL_SHORT_VERSION/ansys/lib/linx64"
+MAALI_MODULE_SET_PATH="v$MAALI_TOOL_SHORT_VERSION/ansys/bin v$MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64 v$MAALI_TOOL_SHORT_VERSION/icemcfd/linux64_amd/bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="v$MAALI_TOOL_SHORT_VERSION/ansys/lib/linx64 v$MAALI_TOOL_SHORT_VERSION/icemcfd/linux64_amd/lib"
 
 MAALI_MODULE_RESTRICT_GROUP='ansys'
 MAALI_MODULE_SET_ANSYS_DIR='$MAALI_APP_HOME'
