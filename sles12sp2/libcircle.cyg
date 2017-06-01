@@ -1,0 +1,56 @@
+##############################################################################
+#
+# maali cygnet file for libcircle
+#
+#  libcricle is a C library providing a distributed queue implementation
+#  under MPI. It can be used on its own, and I have build it here with
+#  the express purpose of providing libcircle support in mpibash.
+#
+#  Notes on configure/build appear below. KS 23/6/2015
+#
+#  See e.g., https://github.com/hpc/libcircle
+#
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from, and to...
+MAALI_URL="https://github.com/hpc/libcircle/releases/download/${MAALI_TOOL_VERSION}/libcircle-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/libcircle-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libcircle-${MAALI_TOOL_VERSION}/libcircle-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="mpich/3.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libcircle is an ANSI C library providing an implementation of a distributed
+queue (a circle queue). The implementation uses the message passing interface
+(MPI). 
+
+For further information see, e.g., http://hpc.github.io/libcircle/
+
+EOF
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='MPICC=mpicc'
+
+##############################################################################
+function maali_unpack {
+  mkdir $MAALI_TOOL_BUILD_DIR
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run 'tar -xz --strip-components=1 -f $MAALI_DST'
+}
