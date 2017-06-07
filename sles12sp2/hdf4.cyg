@@ -2,6 +2,19 @@
 # maali cygnet file for hdf4
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HDF4 is a library and multi-object file format for storing and managing data
+between machines. HDF4 is a very different technology than HDF5.
+
+NASA maintains a network of Earth Observing Satellites that transmit huge
+volumes of new imagery data daily in HDF4.  As a result, HDF4 is used
+extensively in the Earth Sciences.
+
+For further information see https://www.hdfgroup.org/hdf4/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -35,17 +48,3 @@ MAALI_MODULE_SET_HDF4_ROOT='$MAALI_APP_HOME'
 
 ##############################################################################
 
-#function maali_build {
-#  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-#
-#  cd "$MAALI_TOOL_BUILD_DIR"
-#
-##  export CFLAGS="-fPIC"
-#
-##  maali_run "patch -p0 <$MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
-#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
-#  maali_run "make"
-#  maali_run "make install"
-#}
-
-##############################################################################

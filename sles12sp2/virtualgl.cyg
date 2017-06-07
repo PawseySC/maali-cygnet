@@ -2,6 +2,26 @@
 # maali cygnet file for VirtualGL
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+VirtualGL is an open source toolkit that gives any Unix or Linux remote display
+software the ability to run OpenGL applications with full 3D hardware
+acceleration.
+
+With VirtualGL, the OpenGL commands and 3D data are instead redirected to a 3D
+graphics accelerator (AKA "graphics processing unit" or "GPU") in the
+application server, and only the rendered 3D images are sent to the client
+machine. VirtualGL thus "virtualizes" 3D graphics hardware, allowing it to be
+co-located in the "cold room" with compute and storage resources. VirtualGL
+eliminates the workstation and the network as barriers to data size. Users can
+now visualize huge amounts of data in real time without needing to copy any of
+the data over the network or sit in front of the machine that is rendering the
+data.
+
+For further information see http://www.virtualgl.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

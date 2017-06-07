@@ -2,6 +2,16 @@
 # maali cygnet file for netcdf
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NetCDF is a set of software libraries and self-describing, machine-independent
+data formats that support the creation, access, and sharing of array-oriented
+scientific data.
+
+For further information see https://www.unidata.ucar.edu/software/netcdf/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -21,7 +31,6 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_CONFIGURE='--enable-netcdf-4'
 
 # tool pre-requisites
-#SLES12 zlib is fine.
 MAALI_TOOL_PREREQ="szip/2.1.1 hdf5/1.10.1"
 
 # runs in front of the configure line
@@ -46,8 +55,6 @@ MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_NETCDF='$MAALI_APP_HOME'
-#MAALI_MODULE_SET_SETENV='NETCDF=$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS="NetCDF is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data."
 
 ###############################################################################
 

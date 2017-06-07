@@ -2,6 +2,18 @@
 # maali cygnet file for TurboVNC
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+TurboVNC is a derivative of VNC (Virtual Network Computing) that is tuned to provide peak performance for 3D and video workloads.
+
+All VNC implementations, including TurboVNC, use the RFB (remote framebuffer)
+protocol to send “framebuffer updates” from the VNC server to any connected
+"viewers."
+
+For further information see http://www.turbovnc.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

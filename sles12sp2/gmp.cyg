@@ -2,6 +2,18 @@
 # maali cygnet file for gmp
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GMP is a free library for arbitrary precision arithmetic, operating on signed
+integers, rational numbers, and floating-point numbers. There is no practical
+limit to the precision except the ones implied by the available memory in the
+machine GMP runs on. GMP has a rich set of functions, and the functions have a
+regular interface.
+
+For further information see https://gmplib.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

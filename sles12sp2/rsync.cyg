@@ -2,6 +2,15 @@
 # maali cygnet file for rsync
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+rsync is an open source utility that provides fast incremental file transfer.
+rsync is freely available under the GNU General Public License.
+
+For further information see https://rsync.samba.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

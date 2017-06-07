@@ -2,6 +2,21 @@
 # maali cygnet file for lapack 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+LAPACK is written in Fortran 90 and provides routines for solving systems of
+simultaneous linear equations, least-squares solutions of linear systems of
+equations, eigenvalue problems, and singular value problems. The associated
+matrix factorizations (LU, Cholesky, QR, SVD, Schur, generalized Schur) are
+also provided, as are related computations such as reordering of the Schur
+factorizations and estimating condition numbers. Dense and banded matrices are
+handled, but not general sparse matrices. In all areas, similar functionality
+is provided for real and complex matrices, in both single and double precision.
+
+For further information see http://www.netlib.org/lapack/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -31,8 +46,5 @@ MAALI_TOOL_CONFIGURE='-DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_BUILD_TYPE:STRING=Rele
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_LAPACK='$MAALI_INSTALL_DIR'
-
-# currently not implemented
-MAALI_MODULE_WHATIS="LAPACK libs"
 
 ##############################################################################

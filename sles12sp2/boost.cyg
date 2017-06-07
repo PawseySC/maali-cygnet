@@ -2,6 +2,20 @@
 # maali cygnet file for Boost
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Boost provides free peer-reviewed portable C++ source libraries.
+
+We emphasize libraries that work well with the C++ Standard Library. Boost
+libraries are intended to be widely useful, and usable across a broad spectrum
+of applications. The Boost license encourages both commercial and
+non-commercial use.
+
+For further information see http://www.boost.org/
+
+EOF
+
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -29,7 +43,6 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_C_INCLUDE_PATH=1
 MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
 MAALI_MODULE_SET_BOOST_ROOT='$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS='Boost are peer reviewed portable C++ source libraries.'
 
 ##############################################################################
 

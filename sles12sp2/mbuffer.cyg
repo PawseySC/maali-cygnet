@@ -2,6 +2,14 @@
 # maali cygnet file for mbuffer
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+mbuffer is a tool for buffering data streams with a large set of unique features.
+
+For further information see http://www.maier-komor.de/mbuffer.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
