@@ -1,0 +1,70 @@
+##############################################################################
+# maali cygnet file for eigen
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Eigen is a C++ template library for linear algebra: matrices, vectors,
+numerical solvers, and related algorithms.
+
+For further information see http://eigen.tuxfamily.org
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from - need to register
+MAALI_URL="http://bitbucket.org/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/get/$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="sparsehash/2.0.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
+
+MAALI_CMAKE_TOOL=1
+
+# Have to rewrite this function because of the hash directory name in the tarball.  Something like eigen-eigen-67e894c6cd8f/
+# Renaming eigen-eigen-67e894c6cd8f to eigen-3.3.3.
+function maali_unpack {
+  cd $MAALI_BUILD_DIR
+
+  if [ ! -f "$MAALI_DST" ]; then
+    echo "$MAALI_DST does not exit"
+    exit 1
+  fi
+
+  MAALI_DST_FILESIZE=$(stat -c%s "$MAALI_DST")
+  if [ $MAALI_DST_FILESIZE -eq 0 ]; then
+    echo "$MAALI_DST is 0 bytes big"
+    exit 1
+  fi
+
+  tar -x -j --transform=s,eigen-eigen-[a-zA-Z0-9]\*/,eigen-${MAALI_TOOL_VERSION}/, -f ${MAALI_DST}
+
+  if [ $MAALI_UNPACK_MKDIR ]; then
+    maali_makedir "$MAALI_TOOL_BUILD_DIR"
+    cd "$MAALI_TOOL_BUILD_DIR"
+  fi
+
+  if [ -d "$MAALI_TOOL_BUILD_DIR" ]; then
+    if [ "$PAWSEY_PROJECT" != "" ]; then
+      # this is only needed for /group
+      find $MAALI_TOOL_BUILD_DIR -type d -exec chmod g+s {} \;
+    fi
+  fi
+}
+
+##############################################################################

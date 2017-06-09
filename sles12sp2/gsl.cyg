@@ -5,6 +5,19 @@
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The GNU Scientific Library (GSL) is a numerical library for C and C++
+programmers. It is free software under the GNU General Public License.
+
+The library provides a wide range of mathematical routines such as random
+number generators, special functions and least-squares fitting. There are over
+1000 functions in total with an extensive test suite.
+
+For further information see https://www.gnu.org/software/gsl/
+
+EOF
+
 # URL to download the source code from
 MAALI_URL="http://mirror.aarnet.edu.au/pub/gnu/gsl/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
@@ -29,6 +42,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-MAALI_MODULE_WHATIS="The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers."
 
 ##############################################################################

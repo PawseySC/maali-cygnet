@@ -1,0 +1,40 @@
+##############################################################################
+# maali cygnet file for TurboVNC
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+TurboVNC is a derivative of VNC (Virtual Network Computing) that is tuned to provide peak performance for 3D and video workloads.
+
+All VNC implementations, including TurboVNC, use the RFB (remote framebuffer)
+protocol to send “framebuffer updates” from the VNC server to any connected
+"viewers."
+
+For further information see http://www.turbovnc.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='-G "Unix Makefiles" -DTVNC_BUILDJAVA=0'
+
+MAALI_CMAKE_TOOL=1
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH='man'
+

@@ -2,6 +2,19 @@
 # maali cygnet file for fftw
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FFTW is a C subroutine library for computing the discrete Fourier transform
+(DFT) in one or more dimensions, of arbitrary input size, and of both real and
+complex data (as well as of even/odd data, i.e. the discrete cosine/sine
+transforms or DCT/DST).
+
+For further information see http://www.fftw.org/
+
+EOF
+
+MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -41,7 +54,6 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_FFTW_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_FFTW_INCLUDE='$MAALI_APP_HOME/include'
 MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
-MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
 
 ##############################################################################
 

@@ -2,6 +2,19 @@
 # maali cygnet file for hdf5
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HDF5 is a data model, library, and file format for storing and managing data.
+It supports an unlimited variety of datatypes, and is designed for flexible and
+efficient I/O and for high volume and complex data. HDF5 is portable and is
+extensible, allowing applications to evolve in their use of HDF5. The HDF5
+Technology suite includes tools and applications for managing, manipulating,
+viewing, and analyzing data in the HDF5 format.
+
+For further information see https://www.hdfgroup.org/hdf5/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -42,7 +55,6 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
 MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS="HDF5 is a data model, library, and file format for storing and managing data. It supports an unlimited variety of datatypes, and is designed for flexible and efficient I/O and for high volume and complex data. HDF5 is portable and is extensible, allowing applications to evolve in their use of HDF5. The HDF5 Technology suite includes tools and applications for managing, manipulating, viewing, and analyzing data in the HDF5 format."
 
 ##############################################################################
 
