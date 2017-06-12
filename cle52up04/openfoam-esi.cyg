@@ -1,6 +1,6 @@
 ##############################################################################
 # maali cygnet file for OpenFOAM+ released by ESI.
-# Tested with v1606+ and v1612+ 
+# Tested with v1606+ and v1612+.
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
