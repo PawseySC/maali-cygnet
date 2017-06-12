@@ -1,15 +1,16 @@
 ##############################################################################
-# maali cygnet file for OpenFOAM
+# maali cygnet file for OpenFOAM+ released by ESI.
+# Tested with v1606+ and v1612+.
 ##############################################################################
 
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/4.8.2"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/OpenFOAM-${MAALI_TOOL_VERSION}.tgz;https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/ThirdParty-${MAALI_TOOL_VERSION}.tgz"
@@ -21,7 +22,7 @@ MAALI_URL="https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERS
 MAALI_TOOL_BUILD_DIR=""
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-libsci slurm alps boost/1.57.0 cgal/4.8.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-libsci slurm alps boost/1.57.0 cgal/4.8.2 bison/2.7.1 flex/2.6.4"
 
 # for auto-building module files
 MAALI_MODULE_WHATIS="Provides the environment for the CFD package OpenFOAM."
@@ -59,7 +60,11 @@ MAALI_MODULE_SET_WM_LABEL_OPTION='Int\$env\(WM_LABEL_SIZE\)'
 MAALI_MODULE_SET_WM_OPTIONS='\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_LABEL_OPTION\)\$env\(WM_COMPILE_OPTION\)'
 MAALI_MODULE_SET_FOAM_APPBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
 MAALI_MODULE_SET_FOAM_LIBBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
-MAALI_MODULE_SET_FOAM_EXT_LIBBIN='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_LABEL_OPTION\)\$env\(WM_COMPILE_OPTION)/lib'
+	if [ "${MAALI_TOOL_VERSION}" = "v1606+" ]; then
+	MAALI_MODULE_SET_FOAM_EXT_LIBBIN='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_LABEL_OPTION\)\$env\(WM_COMPILE_OPTION\)/lib'
+	else 
+MAALI_MODULE_SET_FOAM_EXT_LIBBIN='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_LABEL_OPTION\)/lib'
+	fi
 MAALI_MODULE_SET_FOAM_SITE_APPBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/bin'
 MAALI_MODULE_SET_FOAM_SITE_LIBBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/lib'
 MAALI_MODULE_SET_FOAM_USER_APPBIN='\$env\(WM_PROJECT_USER_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
@@ -82,7 +87,7 @@ MAALI_MODULE_SET_PV_PLUGIN_PATH='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPT
 MAALI_MODULE_SET_BOOST_ARCH_PATH='\$env\(BOOST_ROOT\)'
 MAALI_MODULE_SET_CGAL_ARCH_PATH='\$env\(MAALI_CGAL_HOME\)'
 MAALI_MODULE_SET_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/gperftools-svn/bin \$env\(ParaView_DIR\)/bin \$env\(FOAM_USER_APPBIN\) \$env\(FOAM_SITE_APPBIN\) \$env\(FOAM_APPBIN\) \$env\(WM_PROJECT_DIR\)/bin \$env\(WM_DIR\)'
-MAALI_MODULE_SET_LD_LIBRARY_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/gperftools-svn/lib \$env\(CGAL_ARCH_PATH\)/lib \$env\(ParaView_LIB_DIR\) \$env\(FOAM_MPI_LIBBIN\) \$env\(FOAM_EXT_LIBBIN\)/\$env\(FOAM_MPI\) \$env\(FOAM_USER_LIBBIN\) \$env\(FOAM_SITE_LIBBIN\) \$env\(FOAM_LIBBIN\) \$env\(FOAM_EXT_LIBBIN\)'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/gperftools-svn/lib \$env\(CGAL_ARCH_PATH\)/lib \$env\(ParaView_LIB_DIR\) \$env\(FOAM_MPI_LIBBIN\) \$env\(FOAM_EXT_LIBBIN\) \$env\(FOAM_EXT_LIBBIN\)/mpich2 \$env\(FOAM_USER_LIBBIN\) \$env\(FOAM_SITE_LIBBIN\) \$env\(FOAM_LIBBIN\)'
 MAALI_MODULE_SET_LD_LIBRARY_PATH_APPEND='\$env\(FOAM_LIBBIN\)/dummy'
 # don't prepend the path with stuff
 MAALI_MODULE_PREPEND_PATH=off
@@ -95,9 +100,14 @@ MAALI_MODULE_LIST_WM_CXXFLAGS=off
 function maali_download {
 	maali_wiki "Downloading OpenFOAM-${MAALI_TOOL_VERSION} and ThridParty-${MAALI_TOOL_VERSION} from as tarball from openFOAM.com"
 	cd $MAALI_SRC
+	if [ !-d "OpenFOAM-${MAALI_TOOL_VERSION}.tgz" ] ; then 
 	maali_run "wget --no-check-certificate https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/OpenFOAM-${MAALI_TOOL_VERSION}.tgz "
+	fi 
+	
+	if [ !-d "ThirdParty-${MAALI_TOOL_VERSION}.tgz" ] ; then
 	maali_run "wget --no-check-certificate https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/ThirdParty-${MAALI_TOOL_VERSION}.tgz"
-}
+	fi
+}	
 function maali_unpack {
 	maali_wiki ".. Supressing untar as it will be run as part of the build"
 	
@@ -112,8 +122,8 @@ function maali_build {
 	cd "$MAALI_INSTALL_DIR"
 	tar zxvf $MAALI_SRC/OpenFOAM-${MAALI_TOOL_VERSION}.tgz
 	tar zxvf $MAALI_SRC/ThirdParty-${MAALI_TOOL_VERSION}.tgz
-#	mv OpenFOAM-4.x-version-v1606+ OpenFOAM-v1606+ 
-#	mv ThirdParty-4.x-version-v1606+ ThirdParty-v1606+ 
+#	mv OpenFOAM-4.x-version-${MAALI_TOOL_VERSION} OpenFOAM-${MAALI_TOOL_VERSION} 
+#	mv ThirdParty-4.x-version-${MAALI_TOOL_VERSION} ThirdParty-${MAALI_TOOL_VERSION} 
 
 
 # Set OpenFOAM install dir
@@ -124,33 +134,33 @@ function maali_build {
 		export BOOST_ARCH_PATH=$BOOST_ROOT
 		export CGAL_ARCH_PATH=$MAALI_CGAL_HOME
 		export CRAYPE_LINK_TYPE=dynamic
-			
-maali_run "sed -i 's/boost_version=boost_1_61_0/boost_version=boost-system/g' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/CGAL"
-maali_run "sed -i 's/cgal_version=CGAL-4.8/cgal_version=cgal-system/g' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/CGAL"
-maali_run "sed -i 's/export\ BOOST_ARCH_PATH/#export\ BOOST_ARCH_PATH/g' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/CGAL" 
-maali_run "sed -i 's/export\ CGAL_ARCH_PATH/#export\ CGAL_ARCH_PATH/g' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/CGAL" 
+		echo " The Maali tool name is $MAALI_TOOL_NAME and version is $MAALI_TOOL_VERSION"
+maali_run "sed -i 's/boost_version=boost_.*/boost_version=boost-system/g' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/CGAL"
+maali_run "sed -i 's/cgal_version=CGAL-.*/cgal_version=cgal-system/g' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/CGAL"
+maali_run "sed -i 's/export\ BOOST_ARCH_PATH/#export\ BOOST_ARCH_PATH/g' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/CGAL" 
+maali_run "sed -i 's/export\ CGAL_ARCH_PATH/#export\ CGAL_ARCH_PATH/g' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/CGAL" 
 # Env. variables for building 
 		export WM_64=ON                  # 64-bit build
-		export WM_NCOMPPROCS=1           # Multi-core build
+		export WM_NCOMPPROCS=24          # Multi-core build
 
 # Include cray specific build environment in /etc/config.sh
-	maali_run "sed -i '/x86_64)/{N;s/$/\n\tcray)\n\texport WM_ARCH=crayxc\n\texport WM_COMPILER_LIB_ARCH=64\n\texport WM_CC='\'cc\''\n\texport WM_CXX='\'CC\''\n\texport WM_CFLAGS='\'-fPIC\''\n\texport WM_CXXFLAGS='\'-fPIC\''\n\t;;\n/}' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/settings"
-	maali_run "sed -i '/MPICH)/ i MPICH2)\n\texport FOAM_MPI=mpich2\n\texport FOAM_MPI_LIBBIN=\$FOAM_LIBBIN\/mpich2\n\texport MPI_ARCH_PATH=\$MPICH_DIR\n\t;;\n' $FOAM_INST_DIR/OpenFOAM-v1606+/etc/config.sh/mpi"
+	maali_run "sed -i '/x86_64)/{N;s/$/\n\tcray)\n\texport WM_ARCH=crayxc\n\texport WM_COMPILER_LIB_ARCH=64\n\texport WM_CC='\'cc\''\n\texport WM_CXX='\'CC\''\n\texport WM_CFLAGS='\'-fPIC\''\n\texport WM_CXXFLAGS='\'-fPIC\''\n\t;;\n/}' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/settings"
+	maali_run "sed -i '/MPICH)/ i MPICH2)\n\texport FOAM_MPI=mpich2\n\texport FOAM_MPI_LIBBIN=\$FOAM_LIBBIN\/mpich2\n\texport MPI_ARCH_PATH=\$MPICH_DIR\n\t;;\n' $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/config.sh/mpi"
 # Write wmake rules for crayxc build
-	mkdir -p $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/c
+	mkdir -p $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/c
 SUFFIXES += .c
 cWARN = -Wall
 cc = cc -m64
 include \$(DEFAULT_RULES)/c\$(WM_COMPILE_OPTION)
-cFLAGS = \$(GFLAGS) \$(cWARN) \$(cOPT) \$(cDBUG) \$(LIB_HEADER_DIRS) -fPIC -craype-verbose -g
+cFLAGS = \$(GFLAGS) \$(cWARN) \$(cOPT) \$(cDBUG) \$(LIB_HEADER_DIRS) -fPIC -craype-verbose -g -I${MAALI_FLEX_HOME}/include
 ctoo = \$(WM_SCHEDULER) \$(cc) \$(cFLAGS) -c \$< -o \$@
 LINK_LIBS = \$(cDBUG)
 LINKLIBSO   = \$(cc) -shared
 LINKEXE     = \$(cc) -Xlinker --add-needed -Xlinker -z -Xlinker nodefs
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/c++
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/c++
 SUFFIXES += .C
 c++WARN = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof
 # Suppress some warnings for flex++ and CGAL
@@ -158,7 +168,7 @@ c++LESSWARN = -Wno-old-style-cast -Wno-unused-local-typedefs -Wno-array-bounds
 CC = CC -std=c++0x -m64
 include \$(DEFAULT_RULES)/c++\$(WM_COMPILE_OPTION) 
 ptFLAGS     = -DNoRepository -ftemplate-depth-100
-c++FLAGS    = \$(GFLAGS) \$(c++WARN) \$(c++OPT) \$(c++DBUG) \$(ptFLAGS) \$(LIB_HEADER_DIRS) -fPIC -g -craype-verbose
+c++FLAGS    = \$(GFLAGS) \$(c++WARN) \$(c++OPT) \$(c++DBUG) \$(ptFLAGS) \$(LIB_HEADER_DIRS) -fPIC -g -craype-verbose -I${MAALI_FLEX_HOME}/include
 Ctoo        = \$(WM_SCHEDULER) \$(CC) \$(c++FLAGS) -c \$< -o \$@
 cxxtoo      = \$(Ctoo)
 cctoo       = \$(Ctoo)
@@ -168,37 +178,37 @@ LINKLIBSO   = \$(CC) \$(c++FLAGS) -shared -Xlinker --add-needed -Xlinker --no-as
 LINKEXE     = \$(CC) \$(c++FLAGS) -Xlinker --add-needed -Xlinker --no-as-needed
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/cDebug
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/cDebug
 cDBUG       = -ggdb -DFULLDEBUG
 cOPT        = -O1 -fdefault-inline -finline-functions
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/c++Debug
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/c++Debug
 c++DBUG = -ggdb3 -DFULLDEBUG
 c++OPT = -O0 -fdefault-inline
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/cOpt
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/cOpt
 cDBUG =
 cOPT = -O3
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/c++Opt
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/c++Opt
 c++DBUG =
 c++OPT = -O3
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/cProf
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/cProf
 cDBUG = -pg
 cOPT = -O2
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/c++Prof
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/c++Prof
 c++DBUG = -pg
 c++OPT = -O2
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/general
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/general
 CPP        = cpp -traditional-cpp \$(GFLAGS)
 PROJECT_LIBS = -l\$(WM_PROJECT) -ldl
 include \$(GENERAL_RULES)/standard
@@ -206,14 +216,14 @@ include \$(DEFAULT_RULES)/c
 include \$(DEFAULT_RULES)/c++
 EOF
 
-cat << EOF > $FOAM_INST_DIR/OpenFOAM-v1606+/wmake/rules/crayxcGcc/mplibMPICH2
+cat << EOF > $FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/wmake/rules/crayxcGcc/mplibMPICH2
 PFLAGS = -DMPICH_SKIP_MPICXX
 PINC =
 PLIBS =
 EOF
 
 # Modifying ThirdParty files
-cat << EOF > $FOAM_INST_DIR/ThirdParty-v1606+/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-crayInt32
+cat << EOF > $FOAM_INST_DIR/ThirdParty-${MAALI_TOOL_VERSION}/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-crayInt32
 EXE =
 LIB = .so
 OBJ = .o
@@ -236,7 +246,7 @@ RANLIB = echo
 YACC = bison -pscotchyy -y -b y
 EOF
 
-cat << EOF > $FOAM_INST_DIR/ThirdParty-v1606+/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-crayInt64
+cat << EOF > $FOAM_INST_DIR/ThirdParty-${MAALI_TOOL_VERSION}/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-crayInt64
 EXE =
 LIB = .so
 OBJ = .o
@@ -258,13 +268,18 @@ MV = mv
 RANLIB = echo
 YACC = bison -pscotchyy -y -b y
 EOF
+
+# Modifying ThirdParty Allwmake to point to the new Makefile**crayIntXX (32 | 64) 
+	if [ "${MAALI_TOOL_VERSION}" != "v1606+" ]; then
+	maali_run "sed -i 's;Makefile.inc.i686_pc_linux2.shlib-OpenFOAM;Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-crayInt32;g;' $FOAM_INST_DIR/ThirdParty-${MAALI_TOOL_VERSION}/Allwmake"
+	fi
 # Modifying ThridParty scotch Makefile to run the unit test successfully on a compute node
-	maali_run "sed -i 's/\.\/dummysizes\$(EXE)/aprun\ -q\ \.\/dummysizes\$(EXE)/g' $FOAM_INST_DIR/ThirdParty-v1606+/scotch_6.0.3/src/libscotch/Makefile"
-	maali_run "sed -i 's/\.\/ptdummysizes\$(EXE)/aprun\ -q\ \.\/ptdummysizes\$(EXE)/g' $FOAM_INST_DIR/ThirdParty-v1606+/scotch_6.0.3/src/libscotch/Makefile"
+	maali_run "sed -i 's/\.\/dummysizes\$(EXE)/aprun\ -q\ \.\/dummysizes\$(EXE)/g' $FOAM_INST_DIR/ThirdParty-${MAALI_TOOL_VERSION}/scotch_6.0.3/src/libscotch/Makefile"
+	maali_run "sed -i 's/\.\/ptdummysizes\$(EXE)/aprun\ -q\ \.\/ptdummysizes\$(EXE)/g' $FOAM_INST_DIR/ThirdParty-${MAALI_TOOL_VERSION}/scotch_6.0.3/src/libscotch/Makefile"
 
 
 # Set up OpenFOAM environment
-		foamDotFile=$FOAM_INST_DIR/OpenFOAM-v1606+/etc/bashrc
+		foamDotFile=$FOAM_INST_DIR/OpenFOAM-${MAALI_TOOL_VERSION}/etc/bashrc
 		maali_run "sed -i 's;FOAM_INST_DIR=\$HOME\/\$WM_PROJECT;FOAM_INST_DIR=${FOAM_INST_DIR}\/\$WM_PROJECT;g' $foamDotFile"
 		maali_run "sed -i 's;WM_ARCH_OPTION=64;WM_ARCH_OPTION=cray;g' $foamDotFile"
 		maali_run "sed -i 's;WM_MPLIB=SYSTEMOPENMPI;WM_MPLIB=MPICH2;g' $foamDotFile"
@@ -273,7 +288,7 @@ EOF
 
 		cd $WM_PROJECT_DIR
 		maali_wiki "Changing directory to $WM_PROJECT_DIR"
-		maali_run "wclean"
+		maali_run "wclean all"
 		maali_run "wcleanLnIncludeAll"
 		maali_run "wcleanPlatform"
 		maali_run "./Allwmake"
