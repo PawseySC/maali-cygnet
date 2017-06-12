@@ -27,10 +27,14 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="sparsehash/2.0.3"
+MAALI_TOOL_PREREQ="sparsehash/2.0.3 boost/1.64.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+#MAALI_TAR_EXTRA=--transform=s,eigen-eigen-[a-zA-Z0-9]\*/,eigen-${MAALI_TOOL_VERSION}/,
+
+MAALI_TOOL_CONFIGURE="-DGOOGLEHASH_INCLUDES=\$MAALI_SPARSEHASH_HOME/include -DGOOGLEHASH_LIBRARIES=\$MAALI_SPARSEHASH_HOME/lib"
 
 ##############################################################################
 
