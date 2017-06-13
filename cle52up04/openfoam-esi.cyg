@@ -100,11 +100,11 @@ MAALI_MODULE_LIST_WM_CXXFLAGS=off
 function maali_download {
 	maali_wiki "Downloading OpenFOAM-${MAALI_TOOL_VERSION} and ThridParty-${MAALI_TOOL_VERSION} from as tarball from openFOAM.com"
 	cd $MAALI_SRC
-	if [ !-d "OpenFOAM-${MAALI_TOOL_VERSION}.tgz" ] ; then 
+	if [ ! -d "OpenFOAM-${MAALI_TOOL_VERSION}.tgz" ]; then 
 	maali_run "wget --no-check-certificate https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/OpenFOAM-${MAALI_TOOL_VERSION}.tgz "
 	fi 
 	
-	if [ !-d "ThirdParty-${MAALI_TOOL_VERSION}.tgz" ] ; then
+	if [ ! -d "ThirdParty-${MAALI_TOOL_VERSION}.tgz" ] ; then
 	maali_run "wget --no-check-certificate https://sourceforge.net/projects/openfoamplus/files/${MAALI_TOOL_VERSION}/ThirdParty-${MAALI_TOOL_VERSION}.tgz"
 	fi
 }	
