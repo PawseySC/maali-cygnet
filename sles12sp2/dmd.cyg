@@ -16,10 +16,11 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://downloads.dlang.org/releases/2015/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.zip"
+#MAALI_URL="http://downloads.dlang.org/releases/2015/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.zip"
+MAALI_URL="http://downloads.dlang.org/releases/2.x/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.linux.tar.xz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.zip"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.linux.tar.xz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/dmd2"
@@ -43,6 +44,10 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   cd src/dmd
+
+  # Required for gcc/6
+  sed -i -e '/BACK_FLAGS :=/ s/$/ -std=gnu++98/' posix.mak
+
   maali_run "make -f posix.mak AUTO_BOOTSTRAP=1"
   maali_makedir "$MAALI_INSTALL_DIR/bin"
   maali_run "install -m 755 dmd $MAALI_INSTALL_DIR/bin/"
