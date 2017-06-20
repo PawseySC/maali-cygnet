@@ -2,6 +2,17 @@
 # maali cygnet file IMa2p - https://bio.cst.temple.edu/~hey/software/software.htm
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+IMa2 is a progam ( writen with Sang Chul Choi and Rasmus Nielsen) that extends
+the method of Hey and Nielsen (2007) to two or more populations.   IMa2 has
+many additions and improvements over previous programs.  Arun Sethuraman has
+developed a parallel version of the IMa2 program.
+
+For further information see https://bio.cst.temple.edu/~hey/software/software.htm
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
