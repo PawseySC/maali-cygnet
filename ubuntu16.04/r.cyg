@@ -18,7 +18,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_SYSTEM_PACKAGES_PREREQ='cairo-devel libpng-devel libtiff-devel libjpeg-devel'
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="bzip2/1.0.6 xz/5.2.3 pcre/8.40 curl/7.54.0 zlib/1.2.8 intel-mkl/11.2.4"
+MAALI_TOOL_PREREQ="bzip2/1.0.6 xz/5.2.3 pcre/8.40 curl/7.54.0 zlib/1.2.8"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE="--with-x=no"
@@ -37,11 +37,12 @@ function maali_build {
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  export LDFLAGS="-L${MAALI_BZIP2_HOME}/lib -L${MAALI_XZ_HOME}/lib"
+  export LDFLAGS="-L${MAALI_BZIP2_HOME}/lib -L${MAALI_XZ_HOME}/lib -L${MAALI_ZLIB_HOME}/lib -L${MAALI_PCRE_HOME}/lib -L${MAALI_CURL_HOME}/lib"
   export MKL_NUM_THREAD=15
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make"
   maali_run "make check"
   maali_run "make install"
+
 }
