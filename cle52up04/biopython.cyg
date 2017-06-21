@@ -2,6 +2,21 @@
 # maali cygnet file for biopython
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Biopython is a set of freely available tools for biological computation written
+in Python by an international team of developers.
+
+It is a distributed collaborative effort to develop Python libraries and
+applications which address the needs of current and future work in
+bioinformatics. The source code is made available under the Biopython License,
+which is extremely liberal and compatible with almost every license in the
+world.
+
+For further information see http://biopython.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

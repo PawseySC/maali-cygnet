@@ -2,6 +2,17 @@
 # maali cygnet file for abinit 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ABINIT is a package whose main program allows one to find the total energy,
+charge density and electronic structure of systems made of electrons and nuclei
+(molecules and periodic solids) within Density Functional Theory (DFT), using
+pseudopotentials and a planewave or wavelet basis.
+
+For further information see http://www.abinit.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -31,7 +42,6 @@ MAALI_TOOL_CONFIGURE="--enable-mpi=yes --enable-mpi-io=yes --enable-openmp=yes -
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_ABINIT_ROOT='$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS="ABINIT is a package whose main program allows one to find the total energy, charge density and electronic structure of systems made of electrons and nuclei (molecules and periodic solids) within Density Functional Theory (DFT), using pseudopotentials and a planewave or wavelet basis."
 
 ##############################################################################
 

@@ -2,6 +2,16 @@
 # maali cygnet file for bcftools
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BCFtools is a set of utilities that manipulate variant calls in the Variant
+Call Format (VCF) and its binary counterpart BCF. All commands work
+transparently with both VCFs and BCFs, both uncompressed and BGZF-compressed.
+
+For further information see https://samtools.github.io/bcftools/bcftools.html
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

@@ -2,6 +2,16 @@
 # maali cygnet file for cpmd
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The CPMD code is a parallelized plane wave / pseudopotential implementation of
+Density Functional Theory, particularly designed for ab-initio molecular
+dynamics.
+
+For further information see http://www.cpmd.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for 21cmfast
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Semi-numerical, cosmological simulation code 21cmFAST (Mesinger & Furlanetto
+2007; Mesinger et al. 2011).
+
+For further information see http://homepage.sns.it/mesinger/DexM___21cmFAST.html
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

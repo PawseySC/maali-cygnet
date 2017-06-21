@@ -2,6 +2,18 @@
 # maali cygnet file for cp2k
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CP2K is a quantum chemistry and solid state physics software package that can
+perform atomistic simulations of solid state, liquid, molecular, periodic,
+material, crystal, and biological systems. CP2K provides a general framework
+for different modeling methods such as DFT using the mixed Gaussian and plane
+waves approaches GPW and GAPW.
+
+For further information see https://www.cp2k.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
