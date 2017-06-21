@@ -1,17 +1,18 @@
 ##############################################################################
-#
 # maali cygnet file for dtcmp
-#
-#  The Datatype Comparison (DTCMP) Library provides pre-defined and
-#  user-defined comparison operations to compare the values of two items
-#  which can be arbitrary MPI datatypes.  Using these comparison
-#  operations, the library provides various routines for manipulating
-#  data, which may be distributed over the processes of an MPI
-#  communicator
-#
-#  See e.g., https://github.com/hpc/dtcmp/
-#
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Datatype Comparison (DTCMP) Library provides pre-defined and user-defined
+comparison operations to compare the values of two items which can be arbitrary
+MPI datatypes.  Using these comparison operations, the library provides various
+routines for manipulating data, which may be distributed over the processes of
+an MPI communicator
+
+For further information see http://github.com/hpc/dtcmp/
+
+EOF
 
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
@@ -44,15 +45,6 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 # create the directory before untarring
 MAALI_UNPACK_MKDIR=1
-
-read -r -d '' MAALI_MODULE_WHATIS << EOF
-
-dtcmp is an ANSI C library providing comparison operations to 
-compare the values of two items which can be arbitrary MPI datatypes. 
-
-For further information see, e.g., http://github.com/hpc/dtcmp/
-
-EOF
 
 ##############################################################################
 #

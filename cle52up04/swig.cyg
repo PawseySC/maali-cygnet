@@ -2,6 +2,20 @@
 # maali cygnet file for SWIG
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SWIG is a software development tool that connects programs written in C and C++
+with a variety of high-level programming languages. SWIG is used with different
+types of target languages including common scripting languages such as
+Javascript, Perl, PHP, Python, Tcl and Ruby. The list of supported languages
+also includes non-scripting languages such as C#, Common Lisp (CLISP, Allegro
+CL, CFFI, UFFI), D, Go language, Java including Android, Lua, Modula-3, OCAML,
+Octave, Scilab and R.
+
+For further information see http://www.swig.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for eigen
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Eigen is a C++ template library for linear algebra: matrices, vectors,
+numerical solvers, and related algorithms.
+
+For further information see http://eigen.tuxfamily.org
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
