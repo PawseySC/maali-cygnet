@@ -48,7 +48,6 @@ MAALI_TOOL_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="AutoDock is a suite of automated docking tools. It is designed to predict how small molecules, such as substrates or drug candidates, bind to a receptor of known 3D structure."
 
 ##############################################################################
 function maali_build {

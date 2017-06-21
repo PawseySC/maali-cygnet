@@ -44,6 +44,5 @@ MAALI_TOOL_CONFIGURE=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_WCSLIB_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS=""
 
 ##############################################################################
