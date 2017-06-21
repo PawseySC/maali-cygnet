@@ -2,6 +2,15 @@
 # maali cygnet file for pygobject
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyGObject is a Python extension module that gives clean and consistent access
+to the entire GNOME software platform through the use of GObject Introspection.
+
+For further information see https://wiki.gnome.org/PyGObject
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

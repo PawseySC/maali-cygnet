@@ -2,6 +2,16 @@
 # maali cygnet file for Pygments
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is the home of Pygments. It is a generic syntax highlighter suitable for
+use in code hosting, forums, wikis or other applications that need to prettify
+source code.
+
+For further information see http://pygments.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

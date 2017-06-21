@@ -2,6 +2,16 @@
 # maali cygnet file for pyqi
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pyqi (canonically pronounced pie chee) is a Python framework designed to
+support wrapping general commands in multiple types of interfaces, including at
+the command line, HTML, and API levels.
+
+For further information see https://pypi.python.org/pypi/pyqi/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
 

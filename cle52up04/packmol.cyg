@@ -2,6 +2,16 @@
 # maali cygnet file for packmol 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PACKMOL creates an initial point for molecular dynamics simulations by packing
+molecules in defined regions of space. The packing guarantees that short range
+repulsive interactions do not disrupt the simulations. 
+
+For further information see http://www.ime.unicamp.br/~martinez/packmol/home.shtml
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

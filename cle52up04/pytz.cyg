@@ -2,6 +2,14 @@
 # maali cygnet file for pytz
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+World timezone definitions, modern and historical
+
+For further information see https://pypi.python.org/pypi/pytz
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

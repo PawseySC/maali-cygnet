@@ -2,6 +2,14 @@
 # maali cygnet file for ProbABEL
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Tool for genome-wide association analysis of imputed genetic data.
+
+For further information see http://www.genabel.org/packages/ProbABEL
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -31,12 +39,6 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-eigen-include-path=$MAALI_EIGEN_HOME/include/eigen3'
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-#MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

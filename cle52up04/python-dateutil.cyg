@@ -2,6 +2,15 @@
 # maali cygnet file for python-dateutil
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The dateutil module provides powerful extensions to the standard datetime
+module, available in Python.
+
+For further information see https://dateutil.readthedocs.io/en/stable/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

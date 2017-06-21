@@ -1,6 +1,14 @@
 ##############################################################################
-# maali cygnet file for pyfits
+# maali cygnet file for requests
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Requests is the only Non-GMO HTTP library for Python, safe for human consumption.
+
+For further information see https://pypi.python.org/pypi/requests
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

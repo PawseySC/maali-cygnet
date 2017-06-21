@@ -2,6 +2,14 @@
 # maali cygnet file for pip
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The PyPA recommended tool for installing Python packages.
+
+For further information see https://pypi.python.org/pypi/pip
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
