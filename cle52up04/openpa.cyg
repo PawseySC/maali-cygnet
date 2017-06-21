@@ -2,6 +2,16 @@
 # maali cygnet file for openpa
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Welcome to the homepage for the OpenPA project. The goal of this project is to
+provide an open source, highly-portable library that provides atomic primitives
+(and related constructs) for high performance, concurrent software.
+
+For further information see https://trac.mpich.org/projects/openpa/wiki
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
 
@@ -33,6 +43,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-MAALI_MODULE_WHATIS="Mpich OpenPA"
 
 ##############################################################################

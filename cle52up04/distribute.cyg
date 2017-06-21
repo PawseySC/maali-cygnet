@@ -2,6 +2,19 @@
 # maali cygnet file for distribute
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Distribute is a now deprecated fork of the Setuptools project.
+
+Distribute was intended to replace Setuptools as the standard method
+for working with Python module distributions. The code has since been merged
+back into the parent project as is being maintained by the community at large.
+
+
+For further information see https://pypi.python.org/pypi/distribute
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

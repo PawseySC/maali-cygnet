@@ -2,6 +2,17 @@
 # maali cygnet file for docutils
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Docutils is an open-source text processing system for processing plaintext
+documentation into useful formats, such as HTML, LaTeX, man-pages,
+open-document or XML. It includes reStructuredText, the easy to read, easy to
+use, what-you-see-is-what-you-get plaintext markup language.
+
+For further information see http://docutils.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

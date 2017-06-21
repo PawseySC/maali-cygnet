@@ -2,6 +2,15 @@
 # maali cygnet file for gerris  
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Gerris is a Free Software program for the solution of the partial differential equations describing fluid flow.
+
+For further information see http://gfs.sourceforge.net/wiki/index.php/Main_Page
+
+EOF
+
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -29,8 +38,7 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-MAALI_MODULE_WHATIS="Gerris is a Free Software program for the solution of the partial differential equations describing fluid flow."
-                                                                                                                                                                 64,1          Bot
+
 ##############################################################################
 
 function maali_build {

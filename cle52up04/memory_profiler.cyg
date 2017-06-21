@@ -2,6 +2,17 @@
 # maali cygnet file for memory_profiler
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is a python module for monitoring memory consumption of a process as well
+as line-by-line analysis of memory consumption for python programs. It is a
+pure python module and has the psutil module as optional (but highly
+recommended) dependencies.
+
+For further information see https://pypi.python.org/pypi/memory_profiler
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
@@ -25,6 +36,5 @@ MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="Python memory profiler."
 
 ##############################################################################

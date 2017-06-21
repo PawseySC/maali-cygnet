@@ -2,6 +2,18 @@
 # maali cygnet file for NumPy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NumPy is the fundamental package for scientific computing with Python. It contains among other things:
+- a powerful N-dimensional array object
+- sophisticated (broadcasting) functions
+- tools for integrating C/C++ and Fortran code
+- useful linear algebra, Fourier transform, and random number capabilities
+
+For further information see http://www.numpy.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

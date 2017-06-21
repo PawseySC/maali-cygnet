@@ -2,6 +2,15 @@
 # maali cygnet file for GDK-Pixbuf library, a dependency of GTK+
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GdkPixbuf is a library for image loading and manipulation. The GdkPixbuf
+documentation contains both the programmer's guide and the API reference.
+
+For further information see https://developer.gnome.org/gdk-pixbuf/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

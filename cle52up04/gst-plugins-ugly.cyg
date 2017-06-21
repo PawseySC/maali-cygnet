@@ -2,6 +2,17 @@
 # maali cygnet file for gst-plugins-ugly
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GStreamer Ugly Plug-ins is a set of plug-ins that have good quality and correct
+functionality, but distributing them might pose problems. The license on either
+the plug-ins or the supporting libraries might not be how we'd like. The code
+might be widely known to present patent problems.
+
+For further information see https://gstreamer.freedesktop.org/modules/gst-plugins-ugly.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

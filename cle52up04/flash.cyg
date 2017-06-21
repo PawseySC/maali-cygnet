@@ -2,6 +2,17 @@
 # maali cygnet file for FLASH
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FLASH, Fast Length Adjustment of SHort reads, is a very accurate fast tool to
+merge paired-end reads from fragments that are shorter than twice the length of
+reads. The extended length of reads has a significant positive impact on
+improvement of genome assemblies.
+
+For further information see https://sourceforge.net/projects/flashpage/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

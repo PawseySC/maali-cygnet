@@ -2,6 +2,14 @@
 # maali cygnet file for GNU flex package 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Flex is a fast lexical analyser generator. It is a tool for generating programs that perform pattern-matching on text.
+
+For further information see https://www.gnu.org/software/flex/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -27,6 +35,5 @@ MAALI_TOOL_CONFIGURE=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_FLEX_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS="Flex is a fast lexical analyser generator. It is a tool for generating programs that perform pattern-matching on text."
 
 ##############################################################################

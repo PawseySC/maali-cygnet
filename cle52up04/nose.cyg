@@ -2,6 +2,18 @@
 # maali cygnet file for nose
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+nose extends unittest to make testing easier.
+
+Nose has been in maintenance mode for the past several years and will likely
+cease without a new person/team to take over maintainership. New projects
+should consider using Nose2, py.test, or just plain unittest/unittest2.
+
+For further information see http://nose.readthedocs.io/en/latest/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

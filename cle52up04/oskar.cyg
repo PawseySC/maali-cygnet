@@ -2,6 +2,18 @@
 # maali cygnet file for Oskar 2
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The OSKAR package consists of a number of open source libraries and
+applications for the simulation of astronomical radio interferometers. OSKAR
+2.x has been designed primarily to produce simulated data from large aperture
+arrays, such as those envisaged for the SKA.
+
+For further information see http://www.oerc.ox.ac.uk/~ska/oskar2/
+
+EOF
+
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -43,7 +55,6 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_OSKAR_ROOT='$MAALI_INSTALL_DIR'
 MAALI_MODULE_SET_INCLUDE_PATH=1
-MAALI_MODULE_WHATIS="The OSKAR package consists of a number of open source libraries and applications for the simulation of astronomical radio interferometers. OSKAR 2.x has been designed primarily to produce simulated data from large aperture arrays, such as those envisaged for the SKA."
 
 ##############################################################################
 
