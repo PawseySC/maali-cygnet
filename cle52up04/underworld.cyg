@@ -2,6 +2,22 @@
 # maali cygnet file for Underworld
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Underworld2 is an open-source, particle-in-cell finite element code tuned for
+large-scale geodynamics simulations. The numerical algorithms allow the
+tracking of history information through the high-strain deformation associated
+with fluid flow (for example, transport of the stress tensor in a viscoelastic,
+convecting medium, or the advection of fine-scale damage parameters by the
+large-scale flow). The finite element mesh can be static or dynamic, but it is
+not constrained to move in lock-step with the evolving geometry of the fluid.
+This hybrid approach is very well suited to complex fluids which is how the
+solid Earth behaves on a geological timescale.
+
+For further information see http://www.underworldcode.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -31,7 +47,6 @@ MAALI_TOOL_BUILD_PREREQ="mercurial"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="Underworld is a 3D-parallel geodynamic modelling framework capable of deriving viscous / viscoplastic thermal, chemical and thermochemical models consistent with tectonic processes, such as mantle convection and lithospheric deformation over long time scales."
 
 ##############################################################################
 

@@ -2,6 +2,16 @@
 # maali cygnet file for SIP
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SIP is a tool that makes it very easy to create Python bindings for C and C++
+libraries. It was originally developed to create PyQt, the Python bindings for
+the Qt toolkit, but can be used to create bindings for any C or C++ library. 
+
+For further information see https://www.riverbankcomputing.com/software/sip/intro
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

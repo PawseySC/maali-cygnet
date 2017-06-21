@@ -2,6 +2,16 @@
 # maali cygnet file for scalapack
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ScaLAPACK is a library of high-performance linear algebra routines for parallel
+distributed memory machines. ScaLAPACK solves dense and banded linear systems,
+least squares problems, eigenvalue problems, and singular value problems.
+
+For further information see http://www.netlib.org/scalapack/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

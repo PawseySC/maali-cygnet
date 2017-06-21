@@ -2,6 +2,18 @@
 # maali cygnet file for VSEARCH
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+VSEARCH supports de novo and reference based chimera detection, clustering,
+full-length and prefix dereplication, rereplication, reverse complementation,
+masking, all-vs-all pairwise global alignment, exact and global alignment
+searching, shuffling, subsampling and sorting. It also supports FASTQ file
+analysis, filtering, conversion and merging of paired-end reads.
+
+For further information see https://github.com/torognes/vsearch
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

@@ -2,6 +2,14 @@
 # maali cygnet file for SuiteSparse
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SuiteSparse is a suite of sparse matrix algorithms.
+
+For further information see http://faculty.cse.tamu.edu/davis/suitesparse.html
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
 
