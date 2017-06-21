@@ -1,0 +1,51 @@
+##############################################################################
+# maali cygnet file for mvapich
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MVAPICH is a high-performance implemenation of the MPI standard.  It's designed
+to exploit novel networking architectures, such as Infiniband, OmniPath, and
+RoCE.
+
+For further information see https://www.mvapich.cse.ohio-state.edu/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://mvapich.cse.ohio-state.edu/downloads/$MAALI_TOOL_NAME/mv2/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="automake/1.15"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+#
+#### NOTE ####
+# These configure options are only for getting a functional build on f001
+# They need to be changed for Athena and more performant options chosen
+##############
+MAALI_TOOL_CONFIGURE='F90= F90FLAGS= --with-pm=slurm --disable-mcast'
+#MAALI_TOOL_CONFIGURE='--with-pmi=pmi2 --with-pm=slurm --with-device=ch3:psm --with-psm2-include=path --with-psm2-lib=path'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_MVAPICH2_HOME='$MAALI_APP_HOME'
+
+##############################################################################
