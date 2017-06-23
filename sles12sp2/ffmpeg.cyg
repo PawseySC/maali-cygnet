@@ -41,9 +41,6 @@ MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX'
 # used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
 MAALI_WIKI_TOOL_NAME="FFmpeg"
 
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
