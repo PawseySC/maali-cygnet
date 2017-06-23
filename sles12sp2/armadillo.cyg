@@ -2,6 +2,15 @@
 # maali cygnet file for Armadillo
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Armadillo is a high quality linear algebra library (matrix maths) for the C++
+language, aiming towards a good balance between speed and ease of use.
+
+For further information see http://arma.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
