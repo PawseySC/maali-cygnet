@@ -2,6 +2,15 @@
 # maali cygnet file for GeneMark-ET 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GeneMark-ET is a gene prediction tool that incorporates RNA-Seq data into
+unsupervised training and subsequently generates ab initio gene predictions.
+
+For further information see http://exon.gatech.edu/GeneMark/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

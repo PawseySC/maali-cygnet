@@ -2,6 +2,20 @@
 # maali cygnet file for rsem
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RSEM is a software package for estimating gene and isoform expression levels
+from RNA-Seq data. The RSEM package provides an user-friendly interface,
+supports threads for parallel computation of the EM algorithm, single-end and
+paired-end read data, quality scores, variable-length reads and RSPD
+estimation. In addition, it provides posterior mean and 95% credibility
+interval estimates for expression levels. For visualization, It can generate
+BAM and Wiggle files in both transcript-coordinate and genomic-coordinate.
+
+For further information see https://deweylab.github.io/RSEM/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

@@ -2,6 +2,17 @@
 # maali cygnet file for pyfits
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyFITS provides an interface to FITS formatted files in the Python scripting
+language and PyRAF, the Python-based interface to IRAF. It is useful both for
+interactive data analysis and for writing analysis scripts in Python using FITS
+files as either input or output.
+
+For further information see http://www.stsci.edu/institute/software_hardware/pyfits
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

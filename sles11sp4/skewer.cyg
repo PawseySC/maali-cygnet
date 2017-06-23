@@ -2,6 +2,14 @@
 # maali cygnet file for skewer
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A fast and sensitive adapter trimmer for illumina paired-end sequences.
+
+For further information see https://sourceforge.net/p/skewer/wiki/Home/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

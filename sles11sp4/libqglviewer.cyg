@@ -2,6 +2,15 @@
 # maali cygnet file for libQGLViewer
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libQGLViewer is a C++ library based on Qt that eases the creation of OpenGL 3D
+viewers.
+
+For further information see http://libqglviewer.com/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

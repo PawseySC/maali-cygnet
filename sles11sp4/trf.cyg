@@ -2,6 +2,17 @@
 # maali cygnet file for trf
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Tandem Repeats Finder is a program to locate and display tandem repeats in DNA
+sequences. In order to use the program, the user submits a sequence in FASTA
+format. There is no need to specify the pattern, the size of the pattern or any
+other parameter.
+
+For further information see https://tandem.bu.edu/trf/trf.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

@@ -2,6 +2,19 @@
 # maali cygnet file for OOMMF (tested with version 12a6_20150930)
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+OOMMF is a project in the Applied and Computational Mathematics Division (ACMD)
+of ITL/NIST, in close cooperation with µMAG, aimed at developing portable,
+extensible public domain programs and tools for micromagnetics. This code forms
+a completely functional micromagnetics package, with the additional capability
+to be extended by other programmers so that people developing new code can
+build on the OOMMF foundation.
+
+For further information see http://math.nist.gov/oommf/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 # URL to download the source code from
@@ -24,7 +37,6 @@ MAALI_TOOL_CONFIGURE=""
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_WHATIS="OMMF (Object Oriented MicroMagnetic Framework) project"
 
 ##############################################################################
 

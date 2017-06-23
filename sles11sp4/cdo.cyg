@@ -2,6 +2,16 @@
 # maali cygnet file for CDO
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CDO is a collection of command line Operators to manipulate and analyse Climate and NWP model Data.
+Supported data formats are GRIB 1/2, netCDF 3/4, SERVICE, EXTRA and IEG. There
+are more than 600 operators available.
+
+For further information see https://code.mpimet.mpg.de/projects/cdo
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for transdecoder-legacy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Stream transcoder will be designed for use in relaying and converting streaming
+audio between various formats.
+
+For further information see http://www.oddsock.org/tools/streamTranscoder
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

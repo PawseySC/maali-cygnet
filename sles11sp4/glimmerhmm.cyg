@@ -2,6 +2,20 @@
 # maali cygnet file for GlimmerHMM
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GlimmerHMM is a new gene finder based on a Generalized Hidden Markov Model
+(GHMM). Although the gene finder conforms to the overall mathematical framework
+of a GHMM, additionally it incorporates splice site models adapted from the
+GeneSplicer program and a decision tree adapted from GlimmerM. It also utilizes
+Interpolated Markov Models for the coding and noncoding models . Currently,
+GlimmerHMM's GHMM structure includes introns of each phase, intergenic regions,
+and four types of exons (initial, internal, final, and single).
+
+For further information see https://ccb.jhu.edu/software/glimmerhmm/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

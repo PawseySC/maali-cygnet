@@ -2,6 +2,17 @@
 # maali cygnet file for Qt
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Qt is a cross-platform application framework that is used for developing
+application software that can be run on various software and hardware platforms
+with little or no change in the underlying codebase, while still being a native
+application with native capabilities and speed.
+
+For further information see https://www.qt.io/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -39,7 +50,6 @@ fi
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_Qt_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS="QT is a cross-platform application framework tool."
 
 ##############################################################################
 

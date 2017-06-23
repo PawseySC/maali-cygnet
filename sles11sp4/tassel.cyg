@@ -2,6 +2,15 @@
 # maali cygnet file for TASSEL
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+TASSEL project is a Java platform designed for the optimized analysis of crop
+genomic diversity.
+
+For further information see https://bitbucket.org/tasseladmin/tassel-5-standalone
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

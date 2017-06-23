@@ -1,12 +1,15 @@
 ##############################################################################
-#
 # maali cygnet file for libarchive
-#
-#  Multi-format archive and compression library.  Built for mpi file tools
-#
-#  See http://www.libarchive.org for examples and more information.
-#
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libarchive is an ANSI C library providing multiformat archive and
+compression operations.
+
+For further information see http://www.libarchive.org/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
@@ -31,15 +34,6 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_C_INCLUDE_PATH=1
-
-read -r -d '' MAALI_MODULE_WHATIS << EOF
-
-libarchive is an ANSI C library providing multiformat archive and 
-compression operations.
-
-For further information see, e.g., http://www.libarchive.org/
-
-EOF
 
 ##############################################################################
 

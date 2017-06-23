@@ -2,6 +2,15 @@
 # maali cygnet file for networkx
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NetworkX is a Python language software package for the creation, manipulation,
+and study of the structure, dynamics, and functions of complex networks.
+
+For further information see https://www.gnu.org/software/ncurses/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
 
@@ -22,12 +31,6 @@ MAALI_TOOL_PREREQ="setuptools/18.4 decorator/4.0.11"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

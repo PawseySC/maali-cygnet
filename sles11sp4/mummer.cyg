@@ -2,6 +2,23 @@
 # maali cygnet file for mummer
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MUMmer is a system for rapidly aligning entire genomes, whether in complete or
+draft form. For example, MUMmer 3.0 can find all 20-basepair or longer exact
+matches between a pair of 5-megabase genomes in 13.7 seconds, using 78 MB of
+memory, on a 2.4 GHz Linux desktop computer. MUMmer can also align incomplete
+genomes; it can easily handle the 100s or 1000s of contigs from a shotgun
+sequencing project, and will align them to another set of contigs or a genome
+using the NUCmer program included with the system. If the species are too
+divergent for a DNA sequence alignment to detect similarity, then the PROmer
+program can generate alignments based upon the six-frame translations of both
+input sequences.
+
+For further information see http://mummer.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -16,12 +33,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_PATH=1

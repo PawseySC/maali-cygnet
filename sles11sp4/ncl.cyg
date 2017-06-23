@@ -3,6 +3,15 @@
 # from http://www.ncl.ucar.edu/Download/ and place in the MAALI_BUILD_DIR 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NCL is an interpreted language designed specifically for scientific data
+analysis and visualisation.
+
+For further information see https://www.ncl.ucar.edu/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

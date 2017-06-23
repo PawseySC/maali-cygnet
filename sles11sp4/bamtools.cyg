@@ -1,6 +1,15 @@
 ##############################################################################
-# maali cygnet file for augustus
+# maali cygnet file for bamtools
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BamTools is a project that provides both a C++ API and a command-line toolkit
+for reading, writing, and manipulating BAM (genome alignment) files.
+
+For further information see https://github.com/pezmaster31/bamtools
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"

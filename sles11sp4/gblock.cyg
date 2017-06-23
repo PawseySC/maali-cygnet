@@ -2,6 +2,15 @@
 # maali cygnet file for gblock
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Gblocks eliminates poorly aligned positions and divergent regions of a DNA or
+protein alignment so that it becomes more suitable for phylogenetic analysis.
+
+For further information see http://molevol.cmima.csic.es/castresana/Gblocks_server.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for gmap
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GMAP: A Genomic Mapping and Alignment Program for mRNA and EST Sequences, and
+GSNAP: Genomic Short-read Nucleotide Alignment Program
+
+For further information see http://research-pub.gene.com/gmap/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

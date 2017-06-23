@@ -2,6 +2,17 @@
 # maali cygnet file for wise
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Wise2 package is now a rather stately bioinformatics package that has be
+around for a while. Its key programs are genewise, a program for aligning
+proteins or protein HMMs to DNA, and dynamite a rather cranky macro language
+which automates the production of dynamic programming.
+
+For further information see http://www.ebi.ac.uk/~birney/wise2/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -20,12 +31,6 @@ MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="GeneWise"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

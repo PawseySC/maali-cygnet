@@ -2,6 +2,15 @@
 # maali cygnet file for AUGUSTUS
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+AUGUSTUS is a program that predicts genes in eukaryotic genomic sequences. It
+can be run on a web server or be downloaded and run locally. It is open source.
+
+For further information see http://bioinf.uni-greifswald.de/augustus/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

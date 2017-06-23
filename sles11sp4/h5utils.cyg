@@ -2,6 +2,15 @@
 # maali cygnet file for h5utils
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+h5utils is a set of utilities for visualization and conversion of scientific
+data in the free, portable HDF5 format
+
+For further information see http://ab-initio.mit.edu/wiki/index.php/H5utils
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

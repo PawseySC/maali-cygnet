@@ -2,6 +2,14 @@
 # maali cygnet file for STAR
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Spliced Transcripts Alignment to a Reference
+
+For further information see https://github.com/alexdobin/STAR
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

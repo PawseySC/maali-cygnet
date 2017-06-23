@@ -2,6 +2,15 @@
 # maali cygnet file for CNVnator
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CNVnator: an approach to discover, genotype, and characterize typical and
+atypical CNVs from family and population genome sequencing
+
+For further information see https://github.com/abyzovlab/CNVnator
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

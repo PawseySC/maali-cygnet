@@ -2,6 +2,16 @@
 # maali cygnet file for DMD
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+D is a systems programming language with C-like syntax and static typing. It
+combines efficiency, control and modeling power with safety and programmer
+productivity.
+
+For further information see https://dlang.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

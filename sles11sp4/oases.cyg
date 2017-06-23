@@ -2,6 +2,14 @@
 # maali config file for Oases
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+De novo transcriptome assembler for very short reads
+
+For further information see https://www.ebi.ac.uk/~zerbino/oases/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

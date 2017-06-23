@@ -2,6 +2,17 @@
 # maali cygnet file for tRNAscan-SE
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+tRNAscan-SE detects ~99% of eukaryotic nuclear or prokaryotic tRNA genes, with
+a false positive rate of less than one per 15 gigabases, and with a search
+speed of about 30 kb/second. It was implemented for large-scale human genome
+sequence analysis, but is applicable to other DNAs as well.
+
+For further information see http://eddylab.org/software.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -26,12 +37,6 @@ MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

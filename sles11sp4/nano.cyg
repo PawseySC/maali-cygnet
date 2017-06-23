@@ -2,6 +2,18 @@
 # maali cygnet file for nano
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GNU nano is a small and friendly text editor. Besides basic text editing, nano
+offers many extra features, such as an interactive search-and-replace,
+undo/redo, syntax coloring, smooth scrolling, auto-indentation,
+go-to-line-and-column-number, feature toggles, file locking, backup files, and
+internationalization support.
+
+For further information see https://www.nano-editor.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

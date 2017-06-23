@@ -2,6 +2,17 @@
 # maali cygnet file for rmblast
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RMBlast is a RepeatMasker compatible version of the standard NCBI blastn
+program. The primary difference between this distribution and the NCBI
+distribution is the addition of a new program rmblastn for use with
+RepeatMasker and RepeatModeler.
+
+For further information see http://www.repeatmasker.org/RMBlast.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

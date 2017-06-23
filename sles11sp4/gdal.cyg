@@ -2,6 +2,19 @@
 # maali cygnet file for gdal
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GDAL is a translator library for raster and vector geospatial data formats that
+is released under an X/MIT style Open Source license by the Open Source
+Geospatial Foundation. As a library, it presents a single raster abstract data
+model and single vector abstract data model to the calling application for all
+supported formats. It also comes with a variety of useful command line
+utilities for data translation and processing.
+
+For further information see http://www.gdal.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

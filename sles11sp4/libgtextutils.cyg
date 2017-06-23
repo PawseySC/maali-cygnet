@@ -2,6 +2,14 @@
 # maali cygnet file for libgtextutils
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Gordon's Text utils Library
+
+For further information see https://github.com/agordon/libgtextutils
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

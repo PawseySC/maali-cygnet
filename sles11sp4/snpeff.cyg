@@ -2,6 +2,15 @@
 # maali cygnet file for SnpEff
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Genetic variant annotation and effect prediction toolbox. It annotates and
+predicts the effects of variants on genes (such as amino acid changes).
+
+For further information see http://snpeff.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
@@ -24,12 +33,6 @@ MAALI_TOOL_PREREQ="java/8u66"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="SnpEff"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH="scripts"

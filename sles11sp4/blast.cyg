@@ -2,6 +2,16 @@
 # maali cygnet file for BLAST
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BLAST finds regions of similarity between biological sequences. The program
+compares nucleotide or protein sequences to sequence databases and calculates
+the statistical significance.
+
+For further information see https://blast.ncbi.nlm.nih.gov/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

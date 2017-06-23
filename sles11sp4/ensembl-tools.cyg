@@ -2,6 +2,14 @@
 # maali cygnet file for ensembl-tools
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Programmatic access to all Ensembl data using simple Perl scripts
+
+For further information see http://plants.ensembl.org/tools.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

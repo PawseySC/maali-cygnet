@@ -2,6 +2,14 @@
 # maali cygnet file for pdsh
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A high performance, parallel remote shell utility
+
+For further information see https://github.com/grondo/pdsh
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
