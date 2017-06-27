@@ -2,6 +2,24 @@
 # maali cygnet file for Autodock
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+AutoDock is a suite of automated docking tools. It is designed to predict how
+small molecules, such as substrates or drug candidates, bind to a receptor of
+known 3D structure.
+
+AutoDock 4 actually consists of two main programs: autodock performs the
+docking of the ligand to a set of grids describing the target protein; autogrid
+pre-calculates these grids.
+
+AutoDock 4 is free and is available under the GNU General Public License.
+AutoDock Vina is available under the Apache license, allowing commercial and
+non-commercial use and redistribution.
+
+For further information see http://autodock.scripps.edu/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -30,7 +48,6 @@ MAALI_TOOL_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="AutoDock is a suite of automated docking tools. It is designed to predict how small molecules, such as substrates or drug candidates, bind to a receptor of known 3D structure."
 
 ##############################################################################
 function maali_build {

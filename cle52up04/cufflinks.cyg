@@ -2,6 +2,19 @@
 # maali cygnet file for cufflinks
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Cufflinks assembles transcripts, estimates their abundances, and tests for
+differential expression and regulation in RNA-Seq samples. It accepts aligned
+RNA-Seq reads and assembles the alignments into a parsimonious set of
+transcripts. Cufflinks then estimates the relative abundances of these
+transcripts based on how many reads support each one, taking into account
+biases in library preparation protocols.
+
+For further information see http://cole-trapnell-lab.github.io/cufflinks/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

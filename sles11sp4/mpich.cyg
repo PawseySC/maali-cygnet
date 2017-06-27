@@ -2,6 +2,19 @@
 # maali cygnet file for mpich
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MPICH is a high performance and widely portable implementation of the Message
+Passing Interface (MPI) standard.
+
+MPICH and its derivatives form the most widely used implementations of MPI in
+the world. They are used exclusively on nine of the top 10 supercomputers (June
+2016 ranking), including the worlds fastest supercomputer.
+
+For further information see https://www.mpich.org
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -22,12 +35,6 @@ MAALI_TOOL_PREREQ=""
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=''
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-#MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

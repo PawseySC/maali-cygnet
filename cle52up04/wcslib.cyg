@@ -2,6 +2,17 @@
 # maali cygnet file for wcslib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+WCSLIB is a C library, supplied with a full set of Fortran wrappers, that
+implements the World Coordinate System (WCS) standard in FITS (Flexible Image
+Transport System). It also includes a PGPLOT-based routine, PGSBOX, for drawing
+general curvilinear coordinate graticules and a number of utility programs.
+
+For further information see http://www.atnf.csiro.au/people/mcalabre/WCS/wcslib/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -33,6 +44,5 @@ MAALI_TOOL_CONFIGURE=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_WCSLIB_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS=""
 
 ##############################################################################

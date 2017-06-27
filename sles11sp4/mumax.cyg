@@ -2,6 +2,15 @@
 # maali cygnet file for mumax
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+mumax3 is a GPU-accelerated micromagnetic simulation program developed at the
+DyNaMat group of Prof. Van Waeyenberge at Ghent University.
+
+For further information see http://mumax.github.io/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

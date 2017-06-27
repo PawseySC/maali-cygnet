@@ -2,6 +2,16 @@
 # maali cygnet file for ParaView (amended by mshaikh dated 13 Jan 2016)
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ParaView is an open-source, multi-platform data analysis and visualization
+application. ParaView users can quickly build visualizations to analyze their
+data using qualitative and quantitative techniques.
+
+For further information see https://www.paraview.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -26,9 +36,6 @@ MAALI_TOOL_CONFIGURE='-DBUILD_EXAMPLES:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DCMA
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LIBGL_ALWAYS_INDIRECT='y'
-
-# Descriptions of what the package/tool is.
-MAALI_MODULE_WHATIS="ParaView is an open-source, multi-platform data analysis and visualization application. ParaView users can quickly build visualizations to analyze their data using qualitative and quantitative techniques."
 
 ##############################################################################
 

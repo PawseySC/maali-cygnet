@@ -2,6 +2,15 @@
 # maali cygnet file for exabayes 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ExaBayes is a software package for Bayesian tree inference. It is particularly
+suitable for large-scale analyses on computer clusters.
+
+For further information see https://sco.h-its.org/exelixis/web/software/exabayes/index.html
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for healpy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Healpy provides a python package to manipulate healpix maps. It is based on the
+standard numeric and visualisation tools for Python, Numpy and matplotlib.
+
+For further information see://github.com/healpy/healpy 
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

@@ -2,6 +2,14 @@
 # maali cygnet file for libyaml
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A C library for parsing and emitting YAML.
+
+For further information see https://github.com/yaml/libyaml
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -18,7 +26,6 @@ MAALI_TOOL_TYPE="devel"
 
 # for auto-building module files
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_WHATIS="LibYAML is a YAML 1.1 parser and emitter written in C."
 
 ################################################################################
 

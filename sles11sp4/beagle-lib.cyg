@@ -2,6 +2,17 @@
 # maali cygnet file for beagle-lib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BEAGLE is a high-performance library that can perform the core calculations at
+the heart of most Bayesian and Maximum Likelihood phylogenetics packages. It
+can make use of highly-parallel processors such as those in graphics cards
+(GPUs) found in many PCs.
+
+For further information see http://ant.apache.org://github.com/beagle-dev/beagle-lib
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

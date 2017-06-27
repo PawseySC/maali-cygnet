@@ -2,6 +2,16 @@
 # maali cygnet file for pywcs
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pywcs is a set of routines for handling the FITS World Coordinate System (WCS)
+standard. It is a thin wrapper around the high- and mid-level interfaces of Dr.
+Mark Calabrettas WCSLIB
+
+For further information see https://pypi.python.org/pypi/pywcs
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

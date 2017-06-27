@@ -2,6 +2,21 @@
 # maali cygnet file for ffmpeg 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FFmpeg is the leading multimedia framework, able to decode, encode, transcode,
+mux, demux, stream, filter and play pretty much anything that humans and
+machines have created. It supports the most obscure ancient formats up to the
+cutting edge. No matter if they were designed by some standards committee, the
+community or a corporation. It is also highly portable: FFmpeg compiles, runs,
+and passes our testing infrastructure FATE across Linux, Mac OS X, Microsoft
+Windows, the BSDs, Solaris, etc. under a wide variety of build environments,
+machine architectures, and configurations.
+
+For further information see, https://ffmpeg.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -22,12 +37,6 @@ MAALI_TOOL_PREREQ="yasm/1.3.0"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX'
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="FFmpeg"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

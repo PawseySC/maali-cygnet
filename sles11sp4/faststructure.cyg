@@ -2,6 +2,18 @@
 # maali cygnet file for structure
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+fastStructure is an algorithm for inferring population structure from large SNP
+genotype data. It is based on a variational Bayesian framework for posterior
+inference and is written in Python2.x. Here, we summarize how to setup this
+software package, compile the C and Cython scripts and run the algorithm on a
+test simulated genotype dataset.
+
+For further information see https://rajanil.github.io/fastStructure/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

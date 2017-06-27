@@ -2,6 +2,18 @@
 # maali cygnet file for pcre
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The PCRE library is a set of functions that implement regular expression
+pattern matching using the same syntax and semantics as Perl 5. PCRE has its
+own native API, as well as a set of wrapper functions that correspond to the
+POSIX regular expression API. The PCRE library is free, even for building
+proprietary software.
+
+For further information see http://www.pcre.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

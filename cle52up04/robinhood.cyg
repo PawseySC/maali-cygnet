@@ -4,6 +4,19 @@
 # Andrew Elwell 2013-09
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Robinhood Policy Engine is a versatile tool to manage contents of large file
+systems. It maintains a replicate of filesystem medatada in a database that can
+be queried at will. It makes it possible to schedule mass action on filesystem
+entries by defining attribute-based policies, provides fast find and du
+enhanced clones, gives to administrators an overall view of filesystem contents
+through its web UI and command line tools.
+
+For further information see https://github.com/cea-hpc/robinhood/wiki
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

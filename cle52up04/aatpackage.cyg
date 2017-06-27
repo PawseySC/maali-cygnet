@@ -2,6 +2,25 @@
 # maali cygnet file for AATpackage
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+AAT is a tool for analyzing and annotating large genomic sequences containing
+introns. The analysis and annotation tool (AAT) includes two sets of programs,
+one for comparing the query sequence with a protein database and the other for
+comparing the query with a cDNA database. Each set contains a fast database
+search program and a rigorous alignment program. The database search program
+quickly identifies regions of the query sequence that are similar to a database
+sequence. Then the alignment program constructs an optimal alignment for each
+region and the database sequence. The alignment program also reports the
+coordinates of exons in the query sequence. Pairwise alignments of the query
+sequence with protein and cDNA database sequences are combined into multiple
+sequence alignments, which provide a view of all protein and cDNA sequences
+matching a query region.
+
+For further information see http://aatpackage.sourceforge.net/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

@@ -2,6 +2,18 @@
 # maali cygnet file for Jellyfish
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Jellyfish is a tool for fast, memory-efficient counting of k-mers in DNA. A
+k-mer is a substring of length k, and counting the occurrences of all such
+substrings is a central step in many analyses of DNA sequence. JELLYFISH can
+count k-mers quickly by using an efficient encoding of a hash table and by
+exploiting the compare-and-swap CPU instruction to increase parallelism.
+
+For further information see http://www.genome.umd.edu/jellyfish.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

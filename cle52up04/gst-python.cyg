@@ -2,6 +2,14 @@
 # maali cygnet file for gst-python
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GStreamer python overrides for the gobject-introspection-based pygst bindings.
+
+For further information see https://gstreamer.freedesktop.org/modules/gst-python.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

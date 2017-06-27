@@ -2,6 +2,16 @@
 # maali cygnet file for Trimmomatic
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Trimmomatic performs a variety of useful trimming tasks for illumina paired-end
+and single ended data.The selection of trimming steps and their associated
+parameters are supplied on the command line.
+
+For further information see http://www.usadellab.org/cms/?page=trimmomatic
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
@@ -22,12 +32,6 @@ MAALI_TOOL_PREREQ="java/8u66"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

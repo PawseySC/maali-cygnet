@@ -2,6 +2,15 @@
 # maali cygnet file for go
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Go is an open source programming language that makes it easy to build simple,
+reliable, and efficient software.
+
+For further information see https://golang.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

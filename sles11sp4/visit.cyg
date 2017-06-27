@@ -2,6 +2,18 @@
 # maali cygnet file for visit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+VisIt is a point-and-click 3D scientific visualization application that
+supports common visualization techniques (e.g., iso-contouring and volume
+rendering) on structured and unstructured grids. Due to its distributed and
+parallel architecture, VisIt is able to handle very large datasets
+interactively.
+
+For further information see http://www.nersc.gov/users/data-analytics/data-visualization/visit-2/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

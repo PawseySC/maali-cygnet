@@ -2,6 +2,17 @@
 # maali cygnet file for ROOT
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A modular scientific software framework. It provides all the functionalities
+needed to deal with big data processing, statistical analysis, visualisation
+and storage. It is mainly written in C++ but integrated with other languages
+such as Python and R.
+
+For further information see https://root.cern.ch/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

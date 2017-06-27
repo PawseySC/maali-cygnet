@@ -1,6 +1,14 @@
 ##############################################################################
-# maali cygnet file for pango
+# maali cygnet file for fontconfig
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Fontconfig is a library for configuring and customizing font access.
+
+For further information see https://www.freedesktop.org/wiki/Software/fontconfig/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"

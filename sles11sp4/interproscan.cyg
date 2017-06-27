@@ -2,6 +2,17 @@
 # maali cygnet file for InterProScan
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+InterProScan is the software package that allows sequences (protein and
+nucleic) to be scanned against InterPro's signatures. Signatures are predictive
+models, provided by several different databases, that make up the InterPro
+consortium.
+
+For further information see http://www.ebi.ac.uk/interpro/interproscan.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
@@ -23,12 +34,6 @@ MAALI_TOOL_PREREQ="java/7u79"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="InterProScan"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH="toplevel"

@@ -2,6 +2,19 @@
 # maali cygnet file for ngs
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NGS is a new, domain-specific API for accessing reads, alignments and pileups
+produced from Next Generation Sequencing. The API itself is independent from
+any particular back-end implementation, and supports use of multiple back-ends
+simultaneously. It also provides a library for building new back-end "engines".
+The engine for accessing SRA data is contained within the sister repository
+ncbi-vdb.
+
+For further information see https://github.com/ncbi/ngs
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -22,12 +35,6 @@ MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="NGS Language Bindings"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

@@ -2,6 +2,15 @@
 # maali cygnet file for ncurses
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ncurses is a programming library providing an API, allowing the programmer to
+write text user interfaces in a terminal-independent manner.
+
+For further information see https://www.gnu.org/software/ncurses/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -27,8 +36,6 @@ MAALI_TOOL_PREREQ=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-# Description of what the package/tool is.
-MAALI_MODULE_WHATIS="ncurses is a programming library providing an API, allowing the programmer to write text user interfaces in a terminal-independent manner."
 
 ##############################################################################
 

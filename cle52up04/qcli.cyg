@@ -2,6 +2,14 @@
 # maali cygnet file for qcli
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Python interface to QIIME
+
+For further information see https://pypi.python.org/pypi/qcli
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

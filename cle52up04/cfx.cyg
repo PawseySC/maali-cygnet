@@ -2,6 +2,16 @@
 # maali cygnet file for CFX
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ANSYS CFX is a high-performance computational fluid dynamics (CFD) software
+tool that delivers reliable and accurate solutions quickly and robustly across
+a wide range of CFD and multi-physics applications.
+
+For further information see http://www.ansys.com/Products/Fluids/ANSYS-CFX
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

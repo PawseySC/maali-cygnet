@@ -2,6 +2,16 @@
 # maali cygnet file for pixman
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Pixman is a low-level software library for pixel manipulation, providing
+features such as image compositing and trapezoid rasterization. Important users
+of pixman are the cairo graphics library and the X server.
+
+For further information see http://www.pixman.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

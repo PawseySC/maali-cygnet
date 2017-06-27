@@ -2,6 +2,16 @@
 # maali cygnet file for HMMER
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HMMER is used for searching sequence databases for sequence homologs, and for
+making sequence alignments. It implements methods using probabilistic models
+called profile hidden Markov models (profile HMMs).
+
+For further information see http://hmmer.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

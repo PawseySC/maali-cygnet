@@ -2,6 +2,16 @@
 # maali cygnet file for pycrypto
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is a collection of both secure hash functions (such as SHA256 and
+RIPEMD160), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
+The package is structured to make adding new modules easy.
+
+For further information see https://pypi.python.org/pypi/pycrypto
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

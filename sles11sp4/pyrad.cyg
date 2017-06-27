@@ -2,6 +2,19 @@
 # maali cygnet file for pyRAD
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The benefit of pyRAD over most alternative methods for analyzing RADseq-like
+data comes in its use of an alignment-clustering method (vsearch) that allows
+for the inclusion of indel variation which improves identification of homology
+across highly divergent samples. For this reason pyRAD is commonly employed for
+RADseq studies at deeper phylogenetic scales, however, it works equally well at
+shallow scales.
+
+For further information see http://dereneaton.com/software/pyrad/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

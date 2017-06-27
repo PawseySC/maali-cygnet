@@ -2,6 +2,16 @@
 # maali cygnet file for libxml2 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but
+usable outside of the Gnome platform), it is free software available under the
+MIT License.
+
+For further information see http://xmlsoft.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -29,6 +39,5 @@ MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_INCLUDE_PATH=1
-MAALI_MODULE_WHATIS="Libxml2 is the XML C parser and toolkit developed for the Gnome project (but usable outside of the Gnome platform), it is free software available under the MIT License."
 
 ##############################################################################

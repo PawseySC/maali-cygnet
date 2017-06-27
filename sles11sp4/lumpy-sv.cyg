@@ -1,8 +1,16 @@
 ##############################################################################
-# maali cygnet file for freebayes
+# maali cygnet file for lumpy-sv
 ##############################################################################
 
 # specify which compilers we want to build the tool with
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A general probabilistic framework for structural variant discovery.
+
+For further information see https://github.com/arq5x/lumpy-sv
+
+EOF
+
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from

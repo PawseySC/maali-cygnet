@@ -2,6 +2,19 @@
 # maali cygnet file for GNU Bison package 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bison is a general-purpose parser generator that converts an annotated
+context-free grammar into a deterministic LR or generalized LR (GLR) parser
+employing LALR(1) parser tables. As an experimental feature, Bison can also
+generate IELR(1) or canonical LR(1) parser tables. Once you are proficient with
+Bison, you can use it to develop a wide range of language parsers, from those
+used in simple desk calculators to complex programming languages.
+
+For further information see https://www.gnu.org/software/bison/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -30,6 +43,5 @@ MAALI_TOOL_CONFIGURE=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_BISON_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS="Bison is a general-purpose parser generator that converts an annotated context-free grammar into a deterministic LR or generalized LR (GLR) parser employing LALR(1) parser tables."
 
 ##############################################################################

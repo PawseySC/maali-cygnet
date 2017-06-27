@@ -2,6 +2,14 @@
 # maali cygnet file for GNU m4
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GNU m4 is an implementation of the traditional Unix macro processor.
+
+For further information see https://www.gnu.org/software/m4/m4.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -27,6 +35,5 @@ MAALI_TOOL_CONFIGURE=""
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_M4_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS="GNU m4 is an implementation of the traditional Unix macro processor."
 
 ##############################################################################

@@ -2,6 +2,20 @@
 # maali cygnet file for eval
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Eval is a flexible tool for analyzing the performance of gene annotation
+systems. It provides summaries and graphical distributions for many descriptive
+statistics about any set of annotations, regardless of their source. It also
+compares sets of predictions to standard annotations and to one another. Input
+is in the standard Gene Transfer Format (GTF). Eval can be run interactively or
+via the command line, in which case output options include easily parsable
+tab-delimited files.
+
+For further information see http://mblab.wustl.edu/software.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

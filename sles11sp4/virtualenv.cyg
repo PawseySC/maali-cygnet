@@ -2,6 +2,14 @@
 # maali cygnet file for virtualenv
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+virtualenv is a tool to create isolated Python environments.
+
+For further information see https://virtualenv.pypa.io/en/stable/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

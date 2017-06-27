@@ -2,6 +2,15 @@
 # maali cygnet file for SPAdes
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SPAdes - St. Petersburg genome assembler - is an assembly toolkit containing
+various assembly pipelines.
+
+For further information see http://cab.spbu.ru/software/spades/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

@@ -1,6 +1,21 @@
 ##############################################################################
-# maali cygnet file for python wrappings libxml2 
+# maali cygnet file for pylibxml2 
 ##############################################################################
+
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but
+usable outside of the Gnome platform), it is free software available under the
+MIT License. XML itself is a metalanguage to design markup languages, i.e. text
+language where semantic and structure are added to the content using extra
+markup information enclosed between angle brackets. HTML is the most well-known
+markup language. Though the library is written in C a variety of language
+bindings make it available in other environments.
+
+For further information see http://xmlsoft.org/python.html
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

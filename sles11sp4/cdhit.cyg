@@ -2,6 +2,20 @@
 # maali cygnet file for cd-hit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CD-HIT is a very widely used program for clustering and comparing protein or
+nucleotide sequences.
+
+CD-HIT is very fast and can handle extremely large databases. CD-HIT helps to
+significantly reduce the computational and manual efforts in many sequence
+analysis tasks and aids in understanding the data structure and correct the
+bias within a dataset.
+
+For further information see http://weizhongli-lab.org/cd-hit/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

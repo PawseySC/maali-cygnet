@@ -2,6 +2,19 @@
 # maali cygnet file for harfbuzz
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HarfBuzz is an OpenType text shaping engine.
+
+The current HarfBuzz codebase, formerly known as harfbuzz-ng, is versioned
+1.x.x and is stable and under active maintenance. This is what is used in
+latest versions of Firefox, GNOME, ChromeOS, Chrome, LibreOffice, XeTeX,
+Android, and KDE, among other places.
+
+For further information see https://www.freedesktop.org/wiki/Software/HarfBuzz/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

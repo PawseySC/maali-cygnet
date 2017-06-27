@@ -2,6 +2,17 @@
 # maali cygnet file for Amber
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Amber refers to two things: a set of molecular mechanical force fields for
+the simulation of biomolecules (which are in the public domain, and are used in
+a variety of simulation programs); and a package of molecular simulation
+programs which includes source code and demos.
+
+For further information see http://ambermd.org/
+
+EOF
+
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
 
 # URL to download the source code from
@@ -33,7 +44,6 @@ MAALI_MODULE_SET_AMBER_DAT='$MAALI_APP_HOME/dat'
 MAALI_MODULE_SET_OMP_NUM_THREADS='1'
 MAALI_MODULE_SET_PYTHONPATH='bin'
 MAALI_MODULE_RESTRICT_GROUP=amber
-MAALI_MODULE_WHATIS='AMBER is a commercial molecular dynamics program'
 
 ##############################################################################
 

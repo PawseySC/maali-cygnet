@@ -1,6 +1,21 @@
 ##############################################################################
-# maali cygnet file for cairo
+# maali cygnet file for py2cairo
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Cairo is a 2D graphics library with support for multiple output devices.
+Currently supported output targets include the X Window System (via both Xlib
+and XCB), Quartz, Win32, image buffers, PostScript, PDF, and SVG file output.
+
+Pycairo is a set of Python 2 & 3 bindings for the cairo graphics library.
+
+Since version 1.11.0 pycairo has moved to GitHub and pycairo and py2cairo have
+been merged back into one project.
+
+For further information see https://cairographics.org/pycairo/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

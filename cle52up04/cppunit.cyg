@@ -2,6 +2,16 @@
 # maali cygnet file for cppunit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CppUnit is the C++ port of the famous JUnit framework for unit testing.  Test
+output is in XML or text format for automatic testing and GUI based for
+supervised tests.
+
+For further information see https://sourceforge.net/projects/cppunit/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

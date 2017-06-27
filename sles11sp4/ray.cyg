@@ -2,6 +2,14 @@
 # maali cygnet file for Ray
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Parallel genome assemblies for parallel DNA sequencing
+
+For further information see http://denovoassembler.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

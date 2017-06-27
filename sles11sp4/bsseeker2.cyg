@@ -2,6 +2,15 @@
 # maali cygnet file for BSseeker2
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BS Seeker 2 is a seamless and versatile pipeline for accurately and fast
+mapping the bisulfite-treated short reads.
+
+For further information see http://pellegrini.mcdb.ucla.edu/BS_Seeker2/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
@@ -22,12 +31,6 @@ MAALI_TOOL_PREREQ="pysam/0.8.3"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-MAALI_WIKI_CATEGORY="Bioinformatics"
 
 ##############################################################################
 

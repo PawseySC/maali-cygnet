@@ -2,6 +2,16 @@
 # maali cygnet file for clusterflow
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Cluster Flow is workflow manager designed to run bioinformatics pipelines. It
+is operated through a single command cf, which can be used to launch,
+configure, monitor and cancel pipelines.
+
+For further information see http://clusterflow.io/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

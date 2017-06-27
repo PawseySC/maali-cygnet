@@ -2,6 +2,22 @@
 # maali cygnet file for Trinity RNA-Seq Assembly
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Trinity, developed at the Broad Institute and the [Hebrew University of
+Jerusalem] (http://www.cs.huji.ac.il), represents a novel method for the
+efficient and robust de novo reconstruction of transcriptomes from RNA-seq
+data. Trinity combines three independent software modules: Inchworm, Chrysalis,
+and Butterfly, applied sequentially to process large volumes of RNA-seq reads.
+Trinity partitions the sequence data into many individual de Bruijn graphs,
+each representing the transcriptional complexity at a given gene or locus, and
+then processes each graph independently to extract full-length splicing
+isoforms and to tease apart transcripts derived from paralogous genes.
+
+For further information see Ahttps://github.com/trinityrnaseq/trinityrnaseq/wiki
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -22,12 +38,6 @@ MAALI_TOOL_PREREQ="java/8u66 bowtie/1.1.2 samtools/0.1.19 parafly/2013-01-21"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="Trinity RNA-Seq Assembly"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

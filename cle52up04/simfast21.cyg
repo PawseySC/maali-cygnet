@@ -2,6 +2,14 @@
 # maali cygnet file for Simfast21 package 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This program generates a simulation of the cosmological 21cm signal.
+
+For further information see http://www.simfast21.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -31,7 +39,6 @@ MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="This program generates a simulation of the cosmological 21cm signal"
 
 ##############################################################################
 

@@ -2,6 +2,15 @@
 # maali cygnet file for psutil
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+psutil is a cross-platform library for retrieving information onrunning
+processes and system utilization (CPU, memory, disks, network) in Python
+
+For further information see https://pypi.python.org/pypi/psutil
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
@@ -22,6 +31,5 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="psutil is a cross-platform library for retrieving information onrunning processes and system utilization (CPU, memory, disks, network)in Python."
 
 ##############################################################################

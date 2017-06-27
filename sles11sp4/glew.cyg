@@ -2,6 +2,16 @@
 # maali cygnet file for GLEW
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The OpenGL Extension Wrangler Library (GLEW) is a cross-platform open-source
+C/C++ extension loading library. GLEW provides efficient run-time mechanisms
+for determining which OpenGL extensions are supported on the target platform.
+
+For further information see http://glew.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

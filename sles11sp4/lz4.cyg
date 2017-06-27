@@ -1,6 +1,17 @@
 ##############################################################################
-# maali cygnet file for Togl
+# maali cygnet file for lz4
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+LZ4 is lossless compression algorithm, providing compression speed at 400 MB/s
+per core, scalable with multi-cores CPU. It features an extremely fast decoder,
+with speed in multiple GB/s per core, typically reaching RAM speed limits on
+multi-core systems.
+
+For further information see https://github.com/lz4/lz4
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
@@ -25,12 +36,6 @@ MAALI_SYSTEM_PACKAGES_PREREQ=''
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1

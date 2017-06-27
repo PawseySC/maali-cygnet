@@ -2,10 +2,19 @@
 # maali cygnet file for CAP3
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CAP3 is DNA Sequence Assembly Program
+
+For further information see http://seq.cs.iastate.edu/cap3.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
+# They only distribute binaries
 MAALI_URL="http://seq.cs.iastate.edu/CAP3/cap3.linux.x86_64.tar"
 
 # location we are downloading the source code to

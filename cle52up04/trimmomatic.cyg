@@ -2,6 +2,16 @@
 # maali cygnet file for Trimmomatic 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Trimmomatic performs a variety of useful trimming tasks for illumina paired-end
+and single ended data.The selection of trimming steps and their associated
+parameters are supplied on the command line.
+
+For further information see http://www.usadellab.org/cms/?page=trimmomatic
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
@@ -26,7 +36,6 @@ MAALI_TOOL_BUILD_PREREQ="ant/1.9.6"
 ## These are boolean options set to 1 to add to module
 MAALI_MODULE_SET_TRIMMOMATIC_LIB='${MAALI_APP_HOME}/jar/trimmomatic-0.35.jar'
 MAALI_MODULE_SET_TRIMMOMATIC_ADAPTER='${MAALI_APP_HOME}/adapters'
-MAALI_MODULE_WHATIS="Trimmomatic performs a variety of useful trimming tasks for illumina paired-end and single ended data.The selection of trimming steps and their associated parameters are supplied on the command line."
 
 ##############################################################################
 

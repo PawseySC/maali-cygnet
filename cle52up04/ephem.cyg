@@ -1,6 +1,21 @@
 ##############################################################################
-# maali cygnet file for pyephem
+# maali cygnet file for ephem
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyEphem provides basic astronomical computations for the Python programming
+language. Given a date and location on the Earths surface, it can compute
+the positions of the Sun and Moon, of the planets and their moons, and of any
+asteroids, comets, or earth satellites whose orbital elements the user can
+provide. Additional functions are provided to compute the angular separation
+between two objects in the sky, to determine the constellation in which an
+object lies, and to find the times at which an object rises, transits, and sets
+on a particular day.
+
+For further information see http://rhodesmill.org/pyephem/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

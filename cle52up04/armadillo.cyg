@@ -2,6 +2,15 @@
 # maali cygnet file for Armadillo
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Armadillo is a high quality linear algebra library (matrix maths) for the C++
+language, aiming towards a good balance between speed and ease of use.
+
+For further information see http://arma.sourceforge.net/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV "
 
@@ -29,12 +38,6 @@ MAALI_TOOL_PREREQ="cray-hdf5/1.8.13"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake/2.8.12.2"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="Armadillo"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_INCLUDE_PATH=1

@@ -2,6 +2,22 @@
 # maali cygnet file for gromacs
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the
+Newtonian equations of motion for systems with hundreds to millions of
+particles.
+
+It is primarily designed for biochemical molecules like proteins, lipids and
+nucleic acids that have a lot of complicated bonded interactions, but since
+GROMACS is extremely fast at calculating the nonbonded interactions (that
+usually dominate simulations) many groups are also using it for research on
+non-biological systems, e.g. polymers.
+
+For further information see http://www.gromacs.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -34,7 +50,6 @@ MAALI_TOOL_BUILD_PREREQ="cmake"
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_MANPATH=1
-MAALI_MODULE_WHATIS='GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.'
 MAALI_MODULE_SET_GMXLIB='$MAALI_APP_HOME/share/gromacs/top'
 MAALI_MODULE_SET_GMXBIN='$MAALI_APP_HOME/bin'
 MAALI_MODULE_SET_GMXDATA='$MAALI_APP_HOME/share'

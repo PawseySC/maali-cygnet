@@ -2,6 +2,18 @@
 # maali cygnet file for gst-plugins-base
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GStreamer Base Plug-ins is a well-groomed and well-maintained collection of
+GStreamer plug-ins and elements, spanning the range of possible types of
+elements one would want to write for GStreamer. It also contains helper
+libraries and base classes useful for writing elements. A wide range of video
+and audio decoders, encoders, and filters are included. 
+
+For further information see https://gstreamer.freedesktop.org/modules/gst-plugins-base.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

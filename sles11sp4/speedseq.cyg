@@ -2,6 +2,14 @@
 # maali cygnet file for speedseq
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A flexible framework for rapid genome analysis and interpretation
+
+For further information see https://github.com/hall-lab/speedseq
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

@@ -2,6 +2,15 @@
 # maali cygnet file for readline
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The GNU Readline library provides a set of functions for use by applications
+that allow users to edit command lines as they are typed in.
+
+For further information see https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

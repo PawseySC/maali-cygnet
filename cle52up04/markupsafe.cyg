@@ -2,6 +2,17 @@
 # maali cygnet file for MarkupSafe
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MarkupSafe is a library for Python that implements a unicode string that is
+aware of HTML escaping rules and can be used to implement automatic string
+escaping. It is used by Jinja 2, the Mako templating engine, the Pylons web
+framework and many more.
+
+For further information see http://www.pocoo.org/projects/markupsafe/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

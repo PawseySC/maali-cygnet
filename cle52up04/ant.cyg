@@ -2,11 +2,28 @@
 # maali cygnet file for ant
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Apache Ant is a Java library and command-line tool whose mission is to drive
+processes described in build files as targets and extension points dependent
+upon each other. The main known usage of Ant is the build of Java applications.
+Ant supplies a number of built-in tasks allowing to compile, assemble, test and
+run Java applications. Ant can also be used effectively to build non Java
+applications, for instance C or C++ applications. More generally, Ant can be
+used to pilot any type of process which can be described in terms of targets
+and tasks.
+
+For further information see http://ant.apache.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-MAALI_URL="http://mirror.ventraip.net.au/apache/$MAALI_TOOL_NAME/binaries/apache-$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-bin.tar.gz"
+#mirrors don't have all the versions.
+#MAALI_URL="http://mirror.ventraip.net.au/apache/$MAALI_TOOL_NAME/binaries/apache-$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-bin.tar.gz"
+MAALI_URL="http://archive.apache.org/dist/ant/binaries/apache-ant-$MAALI_TOOL_VERSION-bin.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/apache-$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-bin.tar.gz"
@@ -18,11 +35,10 @@ MAALI_TOOL_BUILD_DIR=""
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/8u66"
+MAALI_TOOL_PREREQ="java/8u131"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_ANT_HOME='$MAALI_APP_HOME'
 
 ##############################################################################
 

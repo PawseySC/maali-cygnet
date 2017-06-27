@@ -2,6 +2,16 @@
 # maali cygnet file for libctl
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libctl is a free Guile-based library implementing flexible control files for
+scientific simulations. It was written to support our MIT Photonic Bands and
+Meep software, but has proven useful in other programs too.
+
+For further information see http://ab-initio.mit.edu/wiki/index.php/Libctl
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

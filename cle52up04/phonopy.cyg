@@ -2,6 +2,14 @@
 # maali cygnet file for phonopy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Phonopy is an open source package for phonon calculations at harmonic and quasi-harmonic levels.
+
+For further information see https://atztogo.github.io/phonopy/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

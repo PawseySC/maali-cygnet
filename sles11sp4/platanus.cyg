@@ -2,6 +2,14 @@
 # maali cygnet file for Platanus 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PLATform for Assembling NUcleotide Sequences
+
+For further information see http://platanus.bio.titech.ac.jp/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

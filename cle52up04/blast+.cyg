@@ -2,6 +2,17 @@
 # maali cygnet file for blast+
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BLAST+ is a suite of command-line tools to run BLAST. For details, please see
+the BLAST+ user manual, the BLAST Help manual, the BLAST releases notes, and
+the article in BMC Bioinformatics (PubMed link). BLAST+ is the most current
+version of BLAST and is the only supported version.
+
+For further information see https://blast.ncbi.nlm.nih.gov/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

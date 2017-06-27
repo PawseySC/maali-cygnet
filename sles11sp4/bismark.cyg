@@ -2,6 +2,14 @@
 # maali cygnet file for bismark
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A tool to map bisulfite converted sequence reads and determine cytosine methylation states
+
+For further information see https://www.bioinformatics.babraham.ac.uk/projects/bismark/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

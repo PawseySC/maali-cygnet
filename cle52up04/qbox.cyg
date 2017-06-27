@@ -2,6 +2,16 @@
 # maali cygnet file for qbox
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Qbox is a C++/MPI scalable parallel implementation of first-principles
+molecular dynamics (FPMD) based on the plane-wave, pseudopotential formalism.
+Qbox is designed for operation on large parallel computers
+
+For further information see http://qboxcode.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -27,7 +37,6 @@ MAALI_TOOL_TYPE="apps"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_WHATIS="Qbox is a C++/MPI scalable parallel implementation of first-principles molecular dynamics (FPMD) based on the plane-wave, pseudopotential formalism. Qbox is designed for operation on large parallel computers"
 
 ##############################################################################
 

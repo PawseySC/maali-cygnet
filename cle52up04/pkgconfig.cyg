@@ -2,6 +2,14 @@
 # maali cygnet file for pkgconfig
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pkgconfig is a Python module to interface with the pkg-config command line tool.
+
+For further information see https://pypi.python.org/pypi/pkgconfig
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

@@ -1,6 +1,16 @@
 ##############################################################################
-# maali cygnet file for creating module file for system gcc
+# maali cygnet file for creating module file for system Intel MKL
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® Math Kernel Library (Intel® MKL) optimizes code with minimal effort
+for future generations of Intel® processors. It is compatible with your choice
+of compilers, languages, operating systems, and linking and threading models.
+
+For further information see https://software.intel.com/en-us/mkl
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"

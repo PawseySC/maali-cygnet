@@ -2,6 +2,25 @@
 # maali cygnet file for orthomcl
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+OrthoMCL is a genome-scale algorithm for grouping orthologous protein
+sequences. It provides not only groups shared by two or more species/genomes,
+but also groups representing species-specific gene expansion families. So it
+serves as an important utility for automated eukaryotic genome annotation.
+OrthoMCL starts with reciprocal best hits within each genome as potential
+in-paralog/recent paralog pairs and reciprocal best hits across any two genomes
+as potential ortholog pairs. Related proteins are interlinked in a similarity
+graph. Then MCL (Markov Clustering algorithm,Van Dongen 2000;
+www.micans.org/mcl) is invoked to split mega-clusters. This process is
+analogous to the manual review in COG construction. MCL clustering is based on
+weights between each pair of proteins, so to correct for differences in
+evolutionary distance the weights are normalized before running MCL.
+
+For further information see http://orthomcl.org/orthomcl/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
@@ -16,12 +35,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}Software-v${MAALI_TOOL_
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
