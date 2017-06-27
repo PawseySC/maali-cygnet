@@ -13,8 +13,6 @@ For further information see http://www.fftw.org/
 
 EOF
 
-MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
-
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -36,12 +34,6 @@ MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-sse2 --enable-av
 # runs in front of the configure line
 export CFLAGS="-fPIC"
 export FFLAGS="-fPIC"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="FFTW"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-MAALI_WIKI_CATEGORY="Math Libraries"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
