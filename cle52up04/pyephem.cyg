@@ -2,7 +2,6 @@
 # maali cygnet file for pyephem
 ##############################################################################
 
-# specify which compilers we want to build the tool with
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 PyEphem provides basic astronomical computations for the Python programming
@@ -18,6 +17,7 @@ For further information see http://rhodesmill.org/pyephem/
 
 EOF
 
+# specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
