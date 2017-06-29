@@ -17,6 +17,8 @@ MAALI_TOOL_TYPE="devel"
 # for auto-building module files
 MAALI_MODULE_SET_CPU_TARGET='broadwell'
 
+MAALI_MODULE_CONFLICT='sandybridge knl'
+
 ##############################################################################
 
 function maali_unpack {
