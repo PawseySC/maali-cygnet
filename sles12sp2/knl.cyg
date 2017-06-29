@@ -1,0 +1,32 @@
+##############################################################################
+# maali cygnet file for KNL
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sets environment variables for the Intel Xeon Phi KNL architecture.
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_CPU_TARGET='knl'
+
+##############################################################################
+
+function maali_unpack {
+  echo ".. nothing to unpack"
+}
+
+##############################################################################
+
+function maali_build {
+  echo ".. nothing to build"
+}
+
+##############################################################################
