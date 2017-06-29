@@ -6,10 +6,10 @@ read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 Fast Light Toolkit.
 
-FLTK (pronounced fulltick) is a cross-platform C++ GUI toolkit for
-UNIX®/Linux® (X11), Microsoft® Windows®, and MacOS® X. FLTK provides
-modern GUI functionality without the bloat and supports 3D graphics via
-OpenGL® and its built-in GLUT emulation.
+FLTK (pronounced fulltick) is a cross-platform C++ GUI toolkit for UNIX/Linux
+(X11), Microsoft Windows, and MacOS X. FLTK provides modern GUI functionality
+without the bloat and supports 3D graphics via OpenGL and its built-in GLUT
+emulation.
 
 For further information see http://www.fltk.org/
 
