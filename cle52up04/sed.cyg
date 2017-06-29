@@ -2,6 +2,14 @@
 # Maali cygnet file for sed
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+sed (stream editor) is a non-interactive command-line text editor.
+
+For further information see https://www.gnu.org/software/sed/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

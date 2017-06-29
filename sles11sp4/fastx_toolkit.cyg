@@ -2,6 +2,15 @@
 # maali cygnet file for FASTX-Toolkit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The FASTX-Toolkit is a collection of command line tools for Short-Reads
+FASTA/FASTQ files preprocessing.
+
+For further information see http://hannonlab.cshl.edu/fastx_toolkit/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

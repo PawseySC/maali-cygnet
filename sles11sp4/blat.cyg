@@ -2,6 +2,22 @@
 # maali cygnet file for blat
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Blat is an alignment tool like BLAST, but it is structured differently. On DNA,
+Blat works by keeping an index of an entire genome in memory. Thus, the target
+database of BLAT is not a set of GenBank sequences, but instead an index
+derived from the assembly of the entire genome. By default, the index consists
+of all non-overlapping 11-mers except for those heavily involved in repeats,
+and it uses less than a gigabyte of RAM. This smaller size means that Blat is
+far more easily mirrored than BLAST. Blat of DNA is designed to quickly find
+sequences of 95% and greater similarity of length 40 bases or more. It may miss
+more divergent or shorter sequence alignments.
+
+For further information see https://genome.ucsc.edu/cgi-bin/hgBlat
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

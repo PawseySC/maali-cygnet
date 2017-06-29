@@ -1,6 +1,14 @@
 ##############################################################################
-# maali cygnet file for creating module file for system gcc
+# maali cygnet file for creating module file for Intel compiler
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® C++ and Fortran Compiler
+
+For further information see https://software.intel.com/en-us/intel-compilers
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"

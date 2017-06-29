@@ -1,17 +1,20 @@
 ##############################################################################
-#
 # maali cygnet file for mpifileutils
-#
-#  mpiFileUtils is a suite of MPI-based tools to manage large datasets, which 
-#  may vary from large directory trees to large files. High-performance 
-#  computing users often generate large datasets with parallel applications 
-#  that run with many processes (millions in some cases). However those users 
-#  are then stuck with single-process tools like cp and rm to manage their 
-#  datasets. This suite provides MPI-based tools to handle typical jobs like 
-#  copy, remove, and compare for such datasets, providing speedups of up to 
-#  20-30x.
-#
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+mpiFileUtils is a suite of MPI-based tools to manage large datasets, which may
+vary from large directory trees to large files. High-performance computing
+users often generate large datasets with parallel applications that run with
+many processes (millions in some cases). However those users are then stuck
+with single-process tools like cp and rm to manage their datasets. This suite
+provides MPI-based tools to handle typical jobs like copy, remove, and compare
+for such datasets, providing speedups of up to 20-30x.
+
+For further information see http://github.com/hpc/mpifileutils/
+
+EOF
 
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
@@ -48,14 +51,6 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 # create the directory before untarring
 MAALI_UNPACK_MKDIR=1
-
-read -r -d '' MAALI_MODULE_WHATIS << EOF
-
-mpifileutils are a collection of mpi enabled file utils for managing large datasets.
-
-For further information see, e.g., http://github.com/hpc/mpifileutils/
-
-EOF
 
 ##############################################################################
 #

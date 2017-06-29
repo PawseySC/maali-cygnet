@@ -2,6 +2,14 @@
 # maali cygnet file for bamkit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Tools for common BAM file manipulations
+
+For further information see https://github.com/hall-lab/bamkit
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

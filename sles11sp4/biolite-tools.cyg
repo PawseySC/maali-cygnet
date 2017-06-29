@@ -2,6 +2,19 @@
 # maali cygnet file for biolite
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BioLite is a bioinformatics framework written in Python/C++ that automates the
+collection and reporting of diagnostics, tracks provenance, and provides
+lightweight tools for building out customized analysis pipelines.
+
+BioLite provides generalized components aimed at developers of NGS analyses
+workflows.
+
+For further information see https://bitbucket.org/caseywdunn/biolite
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

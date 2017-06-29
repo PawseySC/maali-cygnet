@@ -2,6 +2,15 @@
 # maali cygnet file for gperftools
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+gperftools is a collection of a high-performance multi-threaded malloc()
+implementation, plus some pretty nifty performance analysis tools.
+
+For further information see https://github.com/gperftools/gperftools
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

@@ -2,6 +2,17 @@
 # maali cygnet file for zlib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+zlib is designed to be a free, general-purpose, legally unencumbered -- that
+is, not covered by any patents -- lossless data-compression library for use on
+virtually any computer hardware and operating system. The zlib data format is
+itself portable across platforms. 
+
+For further information see https://zlib.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

@@ -2,6 +2,14 @@
 # maali cygnet file for munlink
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A Lustre-specific command that will simply delete a file without performing a stat() operation
+
+For further information see https://github.com/hpc/lustre
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

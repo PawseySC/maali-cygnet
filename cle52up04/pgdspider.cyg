@@ -2,6 +2,25 @@
 # maali cygnet file for PGDspider 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PGDSpider is a powerful automated data conversion tool for population genetic
+and genomics programs. It facilitates the data exchange possibilities between
+programs for a vast range of data types (e.g. DNA, RNA, NGS, microsatellite,
+SNP, RFLP, AFLP, multi-allelic data, allele frequency or genetic distances).
+Besides the conventional population genetics formats, PGDSpider integrates
+population genomics data formats commonly used to store and handle
+next-generation sequencing (NGS) data. Currently, PGDSpider is not meant to
+convert very large NGS files as it loads into memory the whole input file,
+whose size may exceed available RAM. However, since PGDSpider allows one to
+convert specific subsets of these NGS files into any other format, one could
+use this feature to calculate parameters or statistics for specific regions,
+and thus perform sliding window analysis over large genomic regions.
+
+For further information see http://www.cmpg.unibe.ch/software/PGDSpider/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

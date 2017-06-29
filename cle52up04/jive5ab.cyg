@@ -2,6 +2,19 @@
 # maali cygnet file for jive5ab
 #################################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The program offers a limited set of DIM services on Mark5B DOM systems and hardware 
+agnostic DIM services on regular computer systems, including Mark6 and
+FlexBuff.  In addition to this jive5ab offers non-DIM and (real-time) e-VLBI
+functionality on all systems.  jive5ab is fully compatible with 32- and 64-bit
+operating systems and can be compiled/run on 32- or 64-bit POSIX/Intel® based
+systems, e.g. Linux (Debian, RedHat, Ubuntu) or Mac OSX. 
+
+For further information see http://www.jive.nl/~verkout/evlbi/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -32,7 +45,6 @@ MAALI_TOOL_CONFIGURE=""
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_WHATIS=""
 
 ##############################################################################
 

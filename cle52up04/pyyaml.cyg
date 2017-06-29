@@ -2,6 +2,18 @@
 # maali cygnet file for PyYAML
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+YAML parser and emitter for Python
+
+YAML is a data serialization format designed for human readability and
+interaction with scripting languages. PyYAML is a YAML parser and emitter for
+Python.
+
+For further information see https://pypi.python.org/pypi/PyYAML
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

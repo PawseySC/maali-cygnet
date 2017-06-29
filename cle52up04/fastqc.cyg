@@ -2,6 +2,14 @@
 # maali cygnet file for FastQC
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A quality control tool for high throughput sequence data.
+
+For further information see https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

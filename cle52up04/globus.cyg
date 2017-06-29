@@ -2,6 +2,19 @@
 # maali cygnet file for globus
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The open source Globus® Toolkit is a fundamental enabling technology for the
+Grid, letting people share computing power, databases, and other tools securely
+online across corporate, institutional, and geographic boundaries without
+sacrificing local autonomy. The toolkit includes software services and
+libraries for resource monitoring, discovery, and management, plus security and
+file management.
+
+For further information see http://toolkit.globus.org/toolkit/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

@@ -2,6 +2,16 @@
 # maali cygnet file for fastq-screen
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FastQ Screen allows you to screen a library of sequences in FastQ format
+against a set of sequence databases so you can see if the composition of the
+library matches with what you expect.
+
+For further information see https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

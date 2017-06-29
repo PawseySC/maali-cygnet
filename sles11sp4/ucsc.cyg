@@ -2,6 +2,17 @@
 # maali cygnet file for ucsc
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Genome Browser and Blat application binaries built for standalone
+command-line use on various supported Linux and UNIX platforms.
+
+The UCSC Genome Browser and Blat software are free for academic, nonprofit, and personal use.
+
+For further information see http://hgdownload.soe.ucsc.edu/admin/exe/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

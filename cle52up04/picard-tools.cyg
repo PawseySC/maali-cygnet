@@ -2,6 +2,17 @@
 # maali cygnet file for Picard Tools
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Picard is a set of command line tools for manipulating high-throughput
+sequencing (HTS) data and formats such as SAM/BAM/CRAM and VCF. These file
+formats are defined in the Hts-specs repository. See especially the SAM
+specification and the VCF specification.
+
+For further information see https://broadinstitute.github.io/picard/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

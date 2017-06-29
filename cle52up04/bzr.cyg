@@ -2,6 +2,18 @@
 # maali cygnet file for bzr
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bazaar is a version control system that helps you track project history over
+time and to collaborate easily with others. Whether youre a single developer, a
+co-located team or a community of developers scattered across the world, Bazaar
+scales and adapts to meet your needs. Part of the GNU Project, Bazaar is free
+software sponsored by Canonical
+
+For further information see http://bazaar.canonical.com/en/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

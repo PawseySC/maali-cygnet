@@ -2,6 +2,21 @@
 # maali cygnet file for plplot
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PLplot is a cross-platform software package for creating scientific plots whose
+(UTF-8) plot symbols and text are limited in practice only by what
+Unicode-aware system fonts are installed on a user's computer. The PLplot
+software, which is primarily licensed under the LGPL, has a clean architecture
+that is organized as a core C library, separate language bindings for that
+library, and separate device drivers that are dynamically loaded by the core
+library which control how the plots are presented in noninteractive and
+interactive plotting contexts.
+
+For further information see http://plplot.sourceforge.net/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

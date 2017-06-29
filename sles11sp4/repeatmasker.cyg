@@ -2,6 +2,18 @@
 # maali cygnet file for RepeatMasker
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RepeatMasker is a program that screens DNA sequences for interspersed repeats
+and low complexity DNA sequences. The output of the program is a detailed
+annotation of the repeats that are present in the query sequence as well as a
+modified version of the query sequence in which all the annotated repeats have
+been masked (default: replaced by Ns).
+
+For further information see http://www.repeatmasker.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

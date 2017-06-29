@@ -3,6 +3,15 @@
 # maali -t Python
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Python is a clear and powerful object-oriented programming language, comparable
+to Perl, Ruby, Scheme, or Java.
+
+For further information see https://www.python.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

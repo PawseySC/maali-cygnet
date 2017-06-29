@@ -2,6 +2,17 @@
 # maali cygnet file for wgs
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Celera Assembler : scientific software for biological research. Celera
+Assembler is a de novo whole-genome shotgun (WGS) DNA sequence assembler. It
+reconstructs long sequences of genomic DNA from fragmentary data produced by
+whole-genome shotgun sequencing.
+
+For further information see http://wgs-assembler.sourceforge.net/wiki/index.php?title=Main_Page
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

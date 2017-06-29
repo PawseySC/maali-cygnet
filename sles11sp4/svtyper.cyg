@@ -1,6 +1,14 @@
 ##############################################################################
-# maali cygnet file for bamkit
+# maali cygnet file for svtyper
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bayesian genotyper for structural variants.
+
+For further information see https://github.com/hall-lab/svtyper
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

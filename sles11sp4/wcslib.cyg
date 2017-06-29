@@ -2,6 +2,17 @@
 # maali cygnet file for wcslib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+WCSLIB is a C library, supplied with a full set of Fortran wrappers, that
+implements the World Coordinate System (WCS) standard in FITS (Flexible Image
+Transport System). It also includes a PGPLOT-based routine, PGSBOX, for drawing
+general curvilinear coordinate graticules and a number of utility programs.
+
+For further information see http://www.atnf.csiro.au/people/mcalabre/WCS/wcslib/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -25,12 +36,6 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-cfitsiolib=$MAALI_CFITSIO_HOME/lib --with-cfitsioinc=$MAALI_CFITSIO_HOME/include'
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="WCSLIB"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-MAALI_WIKI_CATEGORY="File Formats & Data Management"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

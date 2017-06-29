@@ -2,6 +2,17 @@
 # maali cygnet file for lxml
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The lxml XML toolkit is a Pythonic binding for the C libraries libxml2 and
+libxslt. It is unique in that it combines the speed and XML feature
+completeness of these libraries with the simplicity of a native Python API,
+mostly compatible but superior to the well-known ElementTree API.
+
+For further information see http://lxml.de/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

@@ -2,6 +2,14 @@
 # maali cygnet file for yasm
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Yasm is a complete rewrite of the NASM assembler under the BSD License
+
+For further information see http://yasm.tortall.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

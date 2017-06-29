@@ -2,6 +2,14 @@
 # maali cygnet file for bz2file
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bz2file is a Python library for reading and writing bzip2-compressed files.
+
+For further information see https://pypi.python.org/pypi/bz2file
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

@@ -2,6 +2,20 @@
 # maali cygnet file for sparehash
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sparsehash contains several hash-map implementations, similar in API to SGI's
+hash_map class, but with different performance characteristics.
+sparse_hash_map uses very little space overhead, 1-2 bits per entry.
+dense_hash_map is very fast, particulary on lookup.  (sparse_hash_set and
+dense_hash_set are the set versions of these routines.)  On the other hand,
+these classes have requirements that may not make them appropriate for all
+applications.
+
+For further information see https://github.com/sparsehash/sparsehash
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

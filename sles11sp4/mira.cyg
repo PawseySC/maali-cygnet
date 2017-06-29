@@ -2,6 +2,19 @@
 # maali cygnet file for mira
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MIRA is a whole genome shotgun and EST sequence assembler for Sanger, 454,
+Solexa (Illumina), IonTorrent data and PacBio (the later at the moment only CCS
+and error-corrected CLR reads). It can be seen as a Swiss army knife of
+sequence assembly developed and used in the past 16 years to get assembly jobs
+done efficiently - and especially accurately. That is, without actually putting
+too much manual work into finishing the assembly.
+
+For further information see https://sourceforge.net/p/mira-assembler/wiki/Home/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

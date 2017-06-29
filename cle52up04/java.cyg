@@ -2,6 +2,18 @@
 # maali cygnet file for Java
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Java is a general-purpose computer programming language that is concurrent,
+class-based, object-oriented, and specifically designed to have as few
+implementation dependencies as possible. It is intended to let application
+developers write once, run anywhere (WORA), meaning that compiled Java code can
+run on all platforms that support Java without the need for recompilation.
+
+For further information see https://www.java.com/en/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

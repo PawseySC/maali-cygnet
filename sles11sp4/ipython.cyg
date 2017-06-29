@@ -2,6 +2,15 @@
 # maali cygnet file for ipython
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+IPython provides a rich toolkit to help you make the most of using Python
+interactively.
+
+For further information see https://ipython.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
 

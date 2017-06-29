@@ -2,6 +2,22 @@
 # maali cygnet file for argtable
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Argtable is an ANSI C library for parsing GNU style command line options with a
+minimum of fuss. It enables a program's command line syntax to be defined in
+the source code as an array of argtable structs. The command line is then
+parsed according to that specification and the resulting values are returned in
+those same structs where they are accessible to the main program. Both tagged
+(-v, --verbose, --foo=bar) and untagged arguments are supported, as are
+multiple instances of each argument. Syntax error handling is automatic and the
+library also provides the means for generating a textual description of the
+command line syntax.
+
+For further information see http://argtable.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

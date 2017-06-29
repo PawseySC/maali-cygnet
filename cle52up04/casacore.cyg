@@ -2,6 +2,16 @@
 # maali cygnet file for casacore
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The casacore package contains the core libraries of the old AIPS++/CASA
+package. This split was made to get a better separation of core libraries and
+applications. CASA is now built on top of casacore.
+
+For further information see http://casacore.github.io/casacore/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -39,7 +49,6 @@ MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_EXE_LINKER_FLAGS="-dynami
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CASACORE_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS="A set of c++ core libraries derived from aips++."
 
 ##############################################################################
 

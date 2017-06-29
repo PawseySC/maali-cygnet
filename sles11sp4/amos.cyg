@@ -2,6 +2,23 @@
 # maali cygnet file for AMOS
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The AMOS consortium is committed to the development of open-source whole genome
+assembly software. The project acronym (AMOS) represents our primary goal -- to
+produce A Modular, Open-Source whole genome assembler. Open-source so that
+everyone is welcome to contribute and help build outstanding assembly tools,
+and modular in nature so that new contributions can be easily inserted into an
+existing assembly pipeline. This modular design will foster the development of
+new assembly algorithms and allow the AMOS project to continually grow and
+improve in hopes of eventually becoming a widely accepted and deployed assembly
+infrastructure. In this sense, AMOS is both a design philosophy and a software
+system.
+
+For further information see http://amos.sourceforge.net/wiki/index.php/AMOS
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

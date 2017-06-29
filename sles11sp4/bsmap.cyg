@@ -2,6 +2,18 @@
 # maali cygnet file for BSMAP
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BSMAP is a short reads mapping software for bisulfite sequencing reads.
+Bisulfite treatment converts unmethylated Cytosines into Uracils (sequenced as
+Thymine) and leave methylated Cytosines unchanged, hence provides a way to
+study DNA cytosine methylation at single nucleotide resolution. BSMAP aligns
+the Ts in the reads to both Cs and Ts in the reference.
+
+For further information see https://code.google.com/archive/p/bsmap/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

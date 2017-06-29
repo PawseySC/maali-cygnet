@@ -2,6 +2,17 @@
 # maali cygnet file for mpj
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MPJ Express is an implementation of an MPI-like API-standardized by the Java
+Grande forum-used to write parallel Java applications, which can execute on a
+variety of parallel platforms ranging from multicore processors to compute
+clusters/clouds.
+
+For further information see http://mpj-express.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

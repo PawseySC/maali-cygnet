@@ -2,6 +2,15 @@
 # maali cygnet file for eigen
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Eigen is a C++ template library for linear algebra: matrices, vectors,
+numerical solvers, and related algorithms.
+
+For further information see http://eigen.tuxfamily.org
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

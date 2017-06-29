@@ -2,9 +2,20 @@
 # Maali cygnet file for ds9
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SAOImage DS9 is an astronomical imaging and data visualization application. DS9
+supports FITS images and binary tables, multiple frame buffers, region
+manipulation, and many scale algorithms and colormaps. It provides for easy
+communication with external analysis tasks and is highly configurable and
+extensible via XPA and SAMP.
+
+For further information see http://ds9.si.edu/site/Home.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-
 
 # URL to download the source code from
 MAALI_URL="http://ds9.si.edu/download/source/ds9.${MAALI_TOOL_VERSION}.tar.gz"

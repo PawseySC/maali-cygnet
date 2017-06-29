@@ -2,6 +2,18 @@
 # maali cygnet file for Jellyfish
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Jellyfish is a tool for fast, memory-efficient counting of k-mers in DNA. A
+k-mer is a substring of length k, and counting the occurrences of all such
+substrings is a central step in many analyses of DNA sequence. JELLYFISH can
+count k-mers quickly by using an efficient encoding of a hash table and by
+exploiting the compare-and-swap CPU instruction to increase parallelism.
+
+For further information see http://www.genome.umd.edu/jellyfish.html
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -26,12 +38,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

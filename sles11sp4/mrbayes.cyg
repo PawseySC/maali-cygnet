@@ -2,6 +2,17 @@
 # maali cygnet file for MrBayes
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MrBayes is a program for Bayesian inference and model choice across a wide
+range of phylogenetic and evolutionary models. MrBayes uses Markov chain Monte
+Carlo (MCMC) methods to estimate the posterior distribution of model
+parameters.
+
+For further information see http://mrbayes.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

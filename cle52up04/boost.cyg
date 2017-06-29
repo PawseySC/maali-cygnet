@@ -2,6 +2,19 @@
 # maali cygnet file for Boost
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Boost provides free peer-reviewed portable C++ source libraries.
+
+We emphasize libraries that work well with the C++ Standard Library. Boost
+libraries are intended to be widely useful, and usable across a broad spectrum
+of applications. The Boost license encourages both commercial and
+non-commercial use.
+
+For further information see http://www.boost.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

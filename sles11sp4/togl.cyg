@@ -2,6 +2,15 @@
 # maali cygnet file for Togl
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Togl is a Tk widget for OpenGL rendering. Togl was originally based on OGLTK,
+written by Benjamin Bederson at the University of New Mexico.
+
+For further information see http://togl.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -25,12 +34,6 @@ MAALI_SYSTEM_PACKAGES_PREREQ='tcl-devel tk-devel'
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE="--with-tcl=/usr/lib64/tclConfig.sh --with-tk=/usr/lib64/tkConfig.sh"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1

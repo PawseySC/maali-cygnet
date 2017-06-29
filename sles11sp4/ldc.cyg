@@ -2,6 +2,18 @@
 # maali cygnet file for LDC
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The LDC project aims to provide a portable D programming language compiler with
+modern optimization and code generation capabilities.
+
+The compiler uses the official DMD frontends to support the latest version of
+D2, and relies on the LLVM Core libraries for code generation.
+
+For further information see https://github.com/ldc-developers/ldc
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

@@ -2,6 +2,14 @@
 # maali cygnet file for attr
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Commands for Manipulating Filesystem Extended Attributes.
+
+For further information see http://savannah.nongnu.org/projects/attr
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

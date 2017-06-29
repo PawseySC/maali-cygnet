@@ -2,6 +2,18 @@
 # maali cygnet file for Fluent
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ANSYS Fluent is the most-powerful computational fluid dynamics (CFD) software
+tool available, empowering you to go further and faster as you optimize your
+products performance. Fluent includes well-validated physical modeling
+capabilities to deliver fast, accurate results across the widest range of CFD
+and multiphysics applications.
+
+For further information see http://www.ansys.com/Products/Fluids/ANSYS-Fluent
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

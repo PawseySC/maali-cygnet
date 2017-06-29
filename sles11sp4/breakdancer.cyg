@@ -2,6 +2,21 @@
 # maali cygnet file for breakdance
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BreakDancer-1.1, released under GPLv3, is a Perl/Cpp package that provides
+genome-wide detection of structural variants from next generation paired-end
+sequencing reads. It includes two complementary programs.
+
+BreakDancerMax predicts five types of structural variants: insertions,
+deletions, inversions, inter- and intra-chromosomal translocations from
+next-generation short paired-end sequencing reads using read pairs that are
+mapped with unexpected separation distances or orientation.
+
+For further information see http://breakdancer.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

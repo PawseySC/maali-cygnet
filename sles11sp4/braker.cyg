@@ -2,6 +2,14 @@
 # maali cygnet file for BRAKER1 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Unsupervised RNA-Seq-based genome annotation with GeneMark-ET and AUGUSTUS
+
+For further information see http://exon.gatech.edu/braker1.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

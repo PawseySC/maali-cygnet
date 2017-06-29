@@ -2,6 +2,19 @@
 # maali cygnet file for GTS  
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is the GTS library. GTS stands for the GNU Triangulated Surface Library.
+It includes a number of useful functions to deal with triangulated surfaces
+including, but not limited to, multi-resolution models, Delaunay and
+Constrained Delaunay triangulations, set operations on surfaces (intersection,
+union etc ...), bounding-boxes trees for efficient collision and intersection
+detection, triangle strips generation for fast rendering.
+
+For further information see http://gts.sourceforge.net/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -38,6 +51,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-MAALI_MODULE_WHATIS="This is the GTS library. GTS stands for the GNU Triangulated Surface Library.  It includes a number of useful functions to deal with triangulated surfaces including, but not limited to, multi-resolution models, Delaunay and Constrained Delaunay triangulations, set operations on surfaces (intersection, union etc ...), bounding-boxes trees for efficient collision and intersection detection, triangle strips generation for fast rendering."
 
 ##############################################################################

@@ -2,6 +2,15 @@
 # maali cygnet file for SciPy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SciPy (pronounced Sigh Pie) is a Python-based ecosystem of open-source software
+for mathematics, science, and engineering.
+
+For further information see https://www.scipy.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

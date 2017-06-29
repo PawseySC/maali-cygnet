@@ -2,6 +2,17 @@
 # maali cygnet file for samblaster
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+samblaster is a fast and flexible program for marking duplicates in read-id
+grouped1 paired-end SAM files. It can also optionally output discordant read
+pairs and/or split read mappings to separate SAM files, and/or unmapped/clipped
+reads to a separate FASTQ file.
+
+For further information see https://github.com/GregoryFaust/samblaster
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

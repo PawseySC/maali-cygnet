@@ -2,6 +2,19 @@
 # maali cygnet file for psycopg2
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Psycopg is the most popular PostgreSQL database adapter for the Python
+programming language. Its main features are the complete implementation of the
+Python DB API 2.0 specification and the thread safety (several threads can
+share the same connection). It was designed for heavily multi-threaded
+applications that create and destroy lots of cursors and make a large number of
+concurrent INSERTs or UPDATEs.
+
+For further information see https://pypi.python.org/pypi/psycopg2
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

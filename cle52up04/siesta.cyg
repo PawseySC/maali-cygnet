@@ -2,6 +2,21 @@
 # maali cygnet file for siesta
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SIESTA is both a method and its computer program implementation, to perform
+efficient electronic structure calculations and ab initio molecular dynamics
+simulations of molecules and solids. SIESTAs efficiency stems from the use of
+strictly localized basis sets and from the implementation of linear-scaling
+algorithms which can be applied to suitable systems. A very important feature
+of the code is that its accuracy and cost can be tuned in a wide range, from
+quick exploratory calculations to highly accurate simulations matching the
+quality of other approaches, such as plane-wave and all-electron methods.
+
+For further information see https://departments.icmab.es/leem/siesta/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

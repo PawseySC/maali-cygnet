@@ -2,6 +2,17 @@
 # maali cygnet file for ParaFly
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ParaFly provides a simple mechanism for running a predefined list of unix
+commands in parallel using multithreading. Failed processes are captured and
+reported. Successfully executed processes are noted. If the process is rerun,
+only those previously incompleted or failed processes will be executed.
+
+For further information see http://parafly.sourceforge.net/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

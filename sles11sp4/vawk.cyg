@@ -2,6 +2,14 @@
 # maali cygnet file for vawk
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+An awk-like VCF parser/
+
+For further information see https://github.com/cc2qe/vawk
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

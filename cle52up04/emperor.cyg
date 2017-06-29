@@ -2,6 +2,14 @@
 # maali cygnet file for emperor
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Emperor: a tool for visualizing high-throughput microbial community data.
+
+For further information see https://pypi.python.org/pypi/emperor
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

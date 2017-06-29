@@ -2,6 +2,18 @@
 # maali cygnet file for treemix
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+TreeMix is a method for inferring the patterns of population splits and
+mixtures in the history of a set of populations. In the underlying model, the
+modern-day populations in a species are related to a common ancestor via a
+graph of ancestral populations. We use the allele frequencies in the modern
+populations to infer the structure of this graph.
+
+For further information see https://bitbucket.org/nygcresearch/treemix/wiki/Home
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

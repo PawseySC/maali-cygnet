@@ -2,6 +2,21 @@
 # maali cygnet file for geneid
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+geneid is a program to predict genes in anonymous genomic sequences designed
+with a hierarchical structure. In the first step, splice sites, start and stop
+codons are predicted and scored along the sequence using Position Weight Arrays
+(PWAs). In the second step, exons are built from the sites. Exons are scored as
+the sum of the scores of the defining sites, plus the the log-likelihood ratio
+of a Markov Model for coding DNA. Finally, from the set of predicted exons, the
+gene structure is assembled, maximizing the sum of the scores of the assembled
+exons.
+
+For further information see http://genome.crg.es/software/geneid/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

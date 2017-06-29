@@ -1,6 +1,21 @@
 ##############################################################################
-# maali cygnet file for biolite
+# maali cygnet file for agalma
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Agalma is a set of analysis pipelines for transcriptome assembly and analysis,
+phylogenetic analysis, expression analysis (including phylogenetic analysis of
+gene expression data). It builds alignments of homologous genes and preliminary
+species trees from genomic and transcriptome data. Agalma includes support for
+transcriptome assembly (paired-end Illumina data), and can also import gene
+predictions from other sources (eg, assembled non-Illumina transcriptomes or
+gene models from annotated genomes). Please carefully read the details on data
+requirements before proceeding with your analyses.
+
+For further information see https://bitbucket.org/caseywdunn/agalma
+
+EOF
 
 # specify which compilers we want to build the tool with
 # Python Dependency of networks which required python 2.7+

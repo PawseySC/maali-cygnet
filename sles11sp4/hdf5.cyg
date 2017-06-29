@@ -2,6 +2,19 @@
 # maali cygnet file for hdf5
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HDF5 is a data model, library, and file format for storing and managing data.
+It supports an unlimited variety of datatypes, and is designed for flexible and
+efficient I/O and for high volume and complex data. HDF5 is portable and is
+extensible, allowing applications to evolve in their use of HDF5. The HDF5
+Technology suite includes tools and applications for managing, manipulating,
+viewing, and analyzing data in the HDF5 format.
+
+For further information see https://www.hdfgroup.org/hdf5/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -26,12 +39,6 @@ MAALI_TOOL_PREREQ="zlib/1.2.8 szip/2.1"
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-zlib=$MAALI_ZLIB_HOME --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-cxx --enable-production --with-default-api-version=v16'
 
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="HDF5"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
@@ -40,7 +47,6 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
 MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS="HDF5 is a data model, library, and file format for storing and managing data. It supports an unlimited variety of datatypes, and is designed for flexible and efficient I/O and for high volume and complex data. HDF5 is portable and is extensible, allowing applications to evolve in their use of HDF5. The HDF5 Technology suite includes tools and applications for managing, manipulating, viewing, and analyzing data in the HDF5 format."
 
 ##############################################################################
 

@@ -2,6 +2,17 @@
 # maali cygnet file for stacks
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Stacks is a software pipeline for building loci from short-read sequences, such
+as those generated on the Illumina platform. Stacks was developed to work with
+restriction enzyme-based data, such as RAD-seq, for the purpose of building
+genetic maps and conducting population genomics and phylogeography.
+
+For further information see http://catchenlab.life.illinois.edu/stacks/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

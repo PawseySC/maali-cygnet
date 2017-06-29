@@ -2,6 +2,16 @@
 # maali cygnet file for Clustal Omega
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Clustal-Omega is a general purpose multiple sequence alignment (MSA) program
+for protein and DNA/RNA. It produces high quality MSAs and is capable of
+handling data-sets of hundreds of thousands of sequences in reasonable time.
+
+For further information see http://www.clustal.org/omega/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 

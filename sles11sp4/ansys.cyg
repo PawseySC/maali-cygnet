@@ -2,6 +2,16 @@
 # maali cygnet file for Ansys
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Ansys publishes engineering analysis software across a range of disciplines
+including finite element analysis, structural analysis, computational fluid
+dynamics, explicit and implicit methods, and heat transfer.
+
+For further information see http://www.ansys.com/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

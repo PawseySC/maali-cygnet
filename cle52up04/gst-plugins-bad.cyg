@@ -2,6 +2,17 @@
 # maali cygnet file for gst-plugins-bad
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GStreamer Bad Plug-ins is a set of plug-ins that arent up to par compared to
+the rest. They might be close to being good quality, but theyre missing
+something - be it a good code review, some documentation, a set of tests, a
+real live maintainer, or some actual wide use. 
+
+For further information see https://gstreamer.freedesktop.org/modules/gst-plugins-bad.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 

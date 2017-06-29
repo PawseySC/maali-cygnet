@@ -2,6 +2,21 @@
 # maali cygnet file for ncview
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Ncview is a visual browser for netCDF format files. Typically you would use
+ncview to get a quick and easy, push-button look at your netCDF files. You can
+view simple movies of the data, view along various dimensions, take a look at
+the actual data values, change color maps, invert the data, etc. It runs on
+UNIX platforms under X11, R4 or higher. For more information, check out the
+README file; you can also see a representative screen image (GIF, 66K) of
+ncview in action. 
+
+For further information see http://meteora.ucsd.edu/~pierce/ncview_home_page.html
+
+EOF
+
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
@@ -32,6 +47,5 @@ MAALI_TOOL_PREREQ="szip/2.1 zlib/1.2.8 cray-hdf5/1.8.11 cray-netcdf/4.3.0 udunit
 # defined environment variable of the basic path  
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_NCVIEW_HOME='$MAALI_APP_HOME'
-MAALI_MODULE_WHATIS='Ncview is a visual browser for netCDF format files'
 
 ##############################################################################

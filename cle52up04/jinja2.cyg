@@ -1,6 +1,16 @@
 ##############################################################################
-# maali cygnet file for Jinga2
+# maali cygnet file for Jinja2
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Jinja2 is a full featured template engine for Python. It has full unicode
+support, an optional integrated sandboxed execution environment, widely used
+and BSD licensed.
+
+For further information see http://jinja.pocoo.org/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"

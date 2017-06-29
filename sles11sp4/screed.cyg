@@ -2,6 +2,15 @@
 # maali cygnet file for screed
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Screed is a biological sequence parsing and storage/retrieval library for DNA
+and protein sequences.
+
+For further information see https://pypi.python.org/pypi/screed
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

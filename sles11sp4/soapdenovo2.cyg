@@ -2,6 +2,22 @@
 # maali cygnet file for SOAPdenovo2
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SOAPdenovo is a novel short-read assembly method that can build a de novo draft
+assembly for the human-sized genomes. The program is specially designed to
+assemble Illumina GA short reads. It creates new opportunities for building
+reference sequences and carrying out accurate analyses of unexplored genomes in
+a cost effective way. Now the new version is available. SOAPdenovo2, which has
+the advantage of a new algorithm design that reduces memory consumption in
+graph construction, resolves more repeat regions in contig assembly, increases
+coverage and length in scaffold construction, improves gap closing, and
+optimizes for large genome.
+
+For further information see http://soap.genomics.org.cn/soapdenovo.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

@@ -2,6 +2,23 @@
 # maali cygnet file for fdmnes 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The aim of the FDMNES project is to supply to the community a user friendly
+code to simulate x-ray spectroscopies, linked to the real absorption (XANES,
+XMCD) or resonant scattering (RXD in bulk or SRXD for surfaces) of the
+synchrotron radiation. This ab initio approach, wants to eliminate all the
+methodological parameters. First mainly mono-electronic, using the functionnal
+density theory (DFT), it includes now multi-electronics advances with the use
+of the time dependant DFT (TD-DFT) for a better taking into account of the
+excited states linked to the photon-matter interaction. It includes also the
+Hubbard correction (LDA+U) for a better description of the so called correlated
+materials.
+
+For further information see http://neel.cnrs.fr/spip.php?rubrique1007&lang=en
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

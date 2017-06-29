@@ -2,6 +2,18 @@
 # maali cygnet file for CGAL
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CGAL is a software project that provides easy access to efficient and reliable
+geometric algorithms in the form of a C++ library. CGAL is used in various
+areas needing geometric computation, such as geographic information systems,
+computer aided design, molecular biology, medical imaging, computer graphics,
+and robotics.
+
+For further information see http://www.cgal.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

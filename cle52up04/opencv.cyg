@@ -2,6 +2,20 @@
 # maali cygnet file for Opencv
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+OpenCV (Open Source Computer Vision Library) is released under a BSD license
+and hence its free for both academic and commercial use. It has C++, C, Python
+and Java interfaces and supports Windows, Linux, Mac OS, iOS and Android.
+OpenCV was designed for computational efficiency and with a strong focus on
+real-time applications. Written in optimized C/C++, the library can take
+advantage of multi-core processing. Enabled with OpenCL, it can take advantage
+of the hardware acceleration of the underlying heterogeneous compute platform.
+
+For further information see http://opencv.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

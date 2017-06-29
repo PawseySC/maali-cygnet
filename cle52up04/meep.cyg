@@ -2,6 +2,16 @@
 # maali cygnet file for meep
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Meep (or MEEP) is a free finite-difference time-domain (FDTD) simulation
+software package developed at MIT to model electromagnetic systems, along with
+our MPB eigenmode package.
+
+For further information see http://ab-initio.mit.edu/wiki/index.php/Meep
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

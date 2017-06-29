@@ -2,6 +2,15 @@
 # maali cygnet file for Nektar++ 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Nektar++ can use high-order polynomial bases on each element to provide faster
+convergence rates compared with linear finite elements.
+
+For further information see http://www.nektar.info/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 

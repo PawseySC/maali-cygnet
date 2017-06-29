@@ -1,6 +1,16 @@
 ##############################################################################
-# maali cygnet file for creating module file for system gcc
+# maali cygnet file for creating module file for system PGI compiler
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PGI optimizing Fortran, C and C++ compilers & tools are for scientists and
+engineers who develop applications for high-performance computing (HPC)
+systems.
+
+For further information see http://www.pgroup.com/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"

@@ -2,6 +2,17 @@
 # maali cygnet file for htslib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HTSlib is an implementation of a unified C library for accessing common file
+formats, such as SAM, CRAM and VCF, used for high-throughput sequencing data,
+and is the core library used by samtools and bcftools. HTSlib only depends on
+zlib. It is known to be compatible with gcc, g++ and clang.
+
+For further information see https://github.com/samtools/htslib
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

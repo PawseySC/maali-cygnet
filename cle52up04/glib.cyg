@@ -2,6 +2,18 @@
 # maali cygnet file for glib
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GLib provides the core application building blocks for libraries and
+applications written in C. It provides the core object system used in GNOME,
+the main loop implementation, and a large set of utility functions for strings
+and common data structures.
+
+For further information see https://developer.gnome.org/glib/
+
+EOF
+
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -29,8 +41,6 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-
-MAALI_MODULE_WHATIS="GLib provides the core application building blocks for libraries and applications written in C. It provides the core object system used in GNOME, the main loop implementation, and a large set of utility functions for strings and common data structures."
 
 ##############################################################################
 

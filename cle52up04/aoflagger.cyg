@@ -2,6 +2,14 @@
 # maali cygnet file for aoflagger
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The AOFlagger is a flagger framework that implements several methods to deal with radio-frequency interference or RFI. 
+
+For further information see https://sourceforge.net/p/aoflagger/wiki/Home/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -36,7 +44,6 @@ MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS="-dyna
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_AOFLAGGER_ROOT='$MAALI_INSTALL_DIR'
-MAALI_MODULE_WHATIS=""
 
 ##############################################################################
 

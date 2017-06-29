@@ -2,6 +2,15 @@
 # maali cygnet file for plink
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PLINK is a whole genome association analysis toolset, designed to perfrom a
+range fo basic, large-scale analyses in a computationally efficient manner.
+
+For further information see http://zzz.bwh.harvard.edu/plink/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -32,7 +41,6 @@ MAALI_TOOL_CONFIGURE=""
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_PATH=1
-MAALI_MODULE_WHATIS="PLINK is a whole genome association analysis toolset, designed to perfrom a range fo basic, large-scale analyses in a computationally efficient manner."
 
 ##############################################################################
 

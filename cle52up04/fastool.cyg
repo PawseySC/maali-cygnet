@@ -2,6 +2,14 @@
 # maali cygnet file for Fastool
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A simple and quick tool to read huge FastQ and FastA files (both normal and gzipped) and manipulate them.
+
+For further information see https://github.com/fstrozzi/Fastool
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -22,12 +30,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Fastool-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-# MAALI_WIKI_TOOL_NAME=""
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

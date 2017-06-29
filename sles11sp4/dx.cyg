@@ -2,6 +2,17 @@
 # maali cygnet file for OpenDX (autoconf versions prior to 4.6)
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+OpenDX is a uniquely powerful, full-featured software package for the
+visualization of scientific, engineering and analytical data: Its open system
+design is built on a standard interface environments. And its sophisticated
+data model provides users with great flexibility in creating visualizations.
+
+For further information see http://www.opendx.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS $MAALI_DEFAULT_INTEL_COMPILERS"
 

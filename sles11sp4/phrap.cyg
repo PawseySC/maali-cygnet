@@ -2,6 +2,21 @@
 # maali cygnet file for phrap
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+phrap is a program for assembling shotgun DNA sequence data. Among other
+features, it allows use of the entire read and not just the trimmed high
+quality part, it uses a combination of user-supplied and internally computed
+data quality information to improve assembly accuracy in the presence of
+repeats, it constructs the contig sequence as a mosaic of the highest quality
+read segments rather than a consensus, it provides extensive assembly
+information to assist in trouble-shooting assembly problems, and it handles
+large datasets.
+
+For further information see http://www.phrap.org/phredphrapconsed.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

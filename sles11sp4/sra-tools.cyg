@@ -2,6 +2,17 @@
 # maali cygnet file for SRA Toolkit
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sequence Read Archive (SRA) makes biological sequence data available to the
+research community to enhance reproducibility and allow for new discoveries by
+comparing data sets. The SRA stores raw sequencing data and alignment
+information from high-throughput sequencing platforms.
+
+For further information see https://www.ncbi.nlm.nih.gov/sra
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -25,12 +36,6 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=''
-
-# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
-MAALI_WIKI_TOOL_NAME="SRA Toolkit"
-
-# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
-# MAALI_WIKI_CATEGORY=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

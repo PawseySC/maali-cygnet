@@ -2,6 +2,21 @@
 # maali cygnet file for glimmer
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Glimmer-MG is a system for finding genes in environmental shotgun DNA
+sequences. Glimmer-MG (Gene Locator and Interpolated Markov ModelER -
+MetaGenomics) uses interpolated Markov models (IMMs) to identify the coding
+regions and distinguish them from noncoding DNA. The IMM approach, described in
+our Nucleic Acids Research paper on Glimmer 1.0 and in our subsequent paper on
+Glimmer 2.0 , uses a combination of Markov models from 1st through 8th-order,
+weighting each model according to its predictive power. Glimmer uses 3-periodic
+nonhomogenous Markov models in its IMMs.
+
+For further information see http://www.cbcb.umd.edu/software/glimmer-mg/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

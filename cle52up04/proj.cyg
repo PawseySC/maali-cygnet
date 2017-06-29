@@ -2,6 +2,17 @@
 # maali cygnet file for proj
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+proj.4 is a standard UNIX filter function which converts geographic longitude
+and latitude coordinates into cartesian coordinates (and vice versa), and it is
+a C API for software developers to include coordinate transformation in their
+own software.
+
+For further information see http://proj4.org/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -35,6 +46,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-MAALI_MODULE_WHATIS='Cartographic projection software'
 
 ##############################################################################

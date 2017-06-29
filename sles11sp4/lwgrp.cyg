@@ -1,19 +1,20 @@
 ##############################################################################
-#
 # maali cygnet file for lwgrp
-#
-#  lwgrp (lightweight group) is a c library that defines data structures and
-#  collective operations to group MPI processes as an ordered set. Such groups are
-#  useful as substitutes for MPI communicators when the overhead of
-#  communicator creation is too costly.  For example, certain sorting
-#  algorithms recursively divide processes into subgroups as the sort
-#  algorithm progresses.  These groups may be different with each
-#  invocation, so that it is inefficient to create and destroy
-#  communicators during the sort routine.
-#
-#  See e.g., https://github.com/hpc/lwgrp/
-#
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+lwgrp (lightweight group) is a c library that defines data structures and
+collective operations to group MPI processes as an ordered set. Such groups are
+useful as substitutes for MPI communicators when the overhead of communicator
+creation is too costly.  For example, certain sorting algorithms recursively
+divide processes into subgroups as the sort algorithm progresses.  These groups
+may be different with each invocation, so that it is inefficient to create and
+destroy communicators during the sort routine.
+
+For further information see, https://github.com/hpc/lwgrp/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
@@ -41,15 +42,6 @@ MAALI_MODULE_SET_C_INCLUDE_PATH=1
 
 # create the directory before untarring
 MAALI_UNPACK_MKDIR=1
-
-read -r -d '' MAALI_MODULE_WHATIS << EOF
-
-lwgrp is an ANSI C library defining data structures and collective
-operations to group MPI processes as an ordered set. 
-
-For further information see, e.g., http://github.com/hpc/lwgrp/
-
-EOF
 
 ##############################################################################
 

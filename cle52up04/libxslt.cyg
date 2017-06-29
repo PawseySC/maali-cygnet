@@ -2,6 +2,14 @@
 # maali cygnet file for libxslt 
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libxslt is the XSLT C library developed for the GNOME project. XSLT itself is a an XML language to define transformation for XML.
+
+For further information see http://xmlsoft.org/XSLT/xsltproc2.html
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
@@ -29,6 +37,5 @@ MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_INCLUDE_PATH=1
-MAALI_MODULE_WHATIS="Libxslt is the XSLT C library developed for the GNOME project. XSLT itself is a an XML language to define transformation for XML."
 
 ##############################################################################

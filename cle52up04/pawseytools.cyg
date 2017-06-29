@@ -2,6 +2,14 @@
 # maali cygnet file for pawseytools
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pawseytools contains a collection of useful utilities provided by Pawsey staff.
+
+For further information see https://support.pawsey.org.au/documentation/display/US/Pawseytools
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 

@@ -2,6 +2,22 @@
 # maali cygnet file for PEAR (tested with 0.9.6)
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PEAR is an ultrafast, memory-efficient and highly accurate pair-end read
+merger. It is fully parallelized and can run with as low as just a few
+kilobytes of memory.
+
+PEAR evaluates all possible paired-end read overlaps and without requiring the
+target fragment size as input. In addition, it implements a statistical test
+for minimizing false-positive results. Together with a highly optimized
+implementation, it can merge millions of paired end reads within a couple of
+minutes on a standard desktop computer.
+
+For further information see https://sco.h-its.org/exelixis/web/software/pear/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 

@@ -2,6 +2,17 @@
 # maali cygnet file for LAMMPS
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale
+Atomic/Molecular Massively Parallel Simulator. LAMMPS has potentials for soft
+materials (biomolecules, polymers) and solid-state materials (metals,
+semiconductors) and coarse-grained or mesoscopic systems.
+
+For further information see http://lammps.sandia.gov/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -29,7 +40,6 @@ MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw"
 # for auto-building module files
 MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
 MAALI_MODULE_SET_PATH='src'
-MAALI_MODULE_WHATIS="LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator. LAMMPS has potentials for soft materials (biomolecules, polymers) and solid-state materials (metals, semiconductors) and coarse-grained or mesoscopic systems."
 
 ##############################################################################
 

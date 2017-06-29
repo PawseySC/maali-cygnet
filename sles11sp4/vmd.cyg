@@ -2,6 +2,15 @@
 # maali cygnet file for VMD
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+VMD is a molecular visualization program for displaying, animating, and
+analyzing large biomolecular systems using 3-D graphics and built-in scripting.
+
+For further information see http://www.ks.uiuc.edu/Research/vmd/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 

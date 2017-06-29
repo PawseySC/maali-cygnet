@@ -2,6 +2,16 @@
 # maali cygnet file for astropy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The astropy package (alternatively known as the core package) contains various
+classes, utilities, and a packaging framework intended to provide commonly-used
+astronomy tools.
+
+For further information see http://www.astropy.org/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 

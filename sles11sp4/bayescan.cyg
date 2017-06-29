@@ -2,6 +2,23 @@
 # maali cygnet file for bayescan
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BayeScan aims at identifying candidate loci under natural selection from
+genetic data, using differences in allele frequencies between populations.
+BayeScan is based on the multinomial-Dirichlet model. One of the simplest
+possible scenarios covered consists of an island model in which subpopulation
+allele frequencies are correlated through a common migrant gene pool from which
+they differ in varying degrees. The difference in allele frequency between this
+common gene pool and each subpopulation is measured by a subpopulation specific
+FST coefficient. Therefore, this formulation can consider realistic ecological
+scenarios where the effective size and the immigration rate may differ among
+subpopulations.
+
+For further information see http://cmpg.unibe.ch/software/BayeScan/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
