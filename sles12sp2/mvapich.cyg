@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for mvapich
+# maali cygnet file for mvapich -- tested with versions 2.2 and 2.3a
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -13,10 +13,11 @@ For further information see https://www.mvapich.cse.ohio-state.edu/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-
+MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
+MAALI_TOOL_CPU_TARGET="knl"
 # URL to download the source code from
-MAALI_URL="http://mvapich.cse.ohio-state.edu/downloads/$MAALI_TOOL_NAME/mv2/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://mvapich.cse.ohio-state.edu/download/$MAALI_TOOL_NAME/mv2/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+#http://mvapich.cse.ohio-state.edu/download/mvapich/osu-shmempmi-slurm-16.05.5.patch
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
@@ -39,8 +40,8 @@ MAALI_TOOL_PREREQ=""
 # These configure options are only for getting a functional build on f001
 # They need to be changed for Athena and more performant options chosen
 ##############
-MAALI_TOOL_CONFIGURE='F90= F90FLAGS= --with-pm=slurm --disable-mcast'
-#MAALI_TOOL_CONFIGURE='--with-pmi=pmi2 --with-pm=slurm --with-device=ch3:psm --with-psm2-include=path --with-psm2-lib=path'
+MAALI_TOOL_CONFIGURE=""
+
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -49,3 +50,22 @@ MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_MVAPICH2_HOME='$MAALI_APP_HOME'
 
 ##############################################################################
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+
+	echo "Building for CPU_TARGET=$MAALI_CPU_TARGET with COMPILER=$COMPILER"
+	echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+	# Checking for CPU target
+	if [ "$MAALI_TOOL_CPU_TARGET" = "knl" ]; then
+		if [ ${COMPILER} = "intel" ]; then
+			MIC_FLAGS="-axMIC-AVX512"
+		elif [ ${COMPILER} = "gcc" ]; then
+			MIC_FLAGS="-march=knl"
+		fi
+		maali_run "./configure --prefix=${MAALI_INSTALL_DIR} FFLAGS='${MIC_FLAGS}' CFLAGS='${MIC_FLAGS}' CXXFLAGS='${MIC_FLAGS}' --with-pm=slurm --with-pmi=pmi2 --with-device=ch3:psm F90= F90FLAGS= --with-psm2-include=/usr/include/slurm"
+	elif [ "$MAALI_TOOL_CPU_TARGET" = "broadwell" ]; then
+		./configure --prefix=${MAALI_INSTALL_DIR} --with-pm=slurm --with-pmi=pmi2 --with-device=ch3:ib F90= F90FLAGS= --with-psm2-include=/usr/include/slurm
+	fi
+	maali_run "make -j 8 VERBOSE=1"
+	maali_run "make install"
+}
