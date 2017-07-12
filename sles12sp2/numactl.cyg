@@ -1,0 +1,65 @@
+##############################################################################
+# maali cygnet file for 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+Simple NUMA policy support. It consists of a numactl program to run
+other programs with a specific NUMA policy and a libnuma shared library 
+NUMA API to set NUMA policy in applications.
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
+
+# specify CPU targets to build for
+MAALI_TOOL_CPU_TARGET="knl"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+#
+#### NOTE ####
+# These configure options are only for getting a functional build on f001
+# They need to be changed for Athena and more performant options chosen
+##############
+MAALI_TOOL_CONFIGURE=""
+
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_MVAPICH2_HOME='$MAALI_APP_HOME'
+
+##############################################################################
+function maali_build {
+
+	cd $MAALI_TOOL_BUILD_DIR
+
+	if [ ${COMPILER} = "intel" ]; then
+		MIC_FLAGS="-axMIC-AVX512"
+	elif [ ${COMPILER} = "gcc" ]; then
+		MIC_FLAGS="-march=knl"
+	fi
+	maali_run "./autogen.sh"
+	maali_run "./configure CFLAGS='$MIC_FLAGS' --prefix=$MAALI_INSTALL_DIR --enable-shared=yes" 
+	maali_run "make -j $MAALI_CORES VERBOSE=1"
+	maali_run "make install"
+
+}
