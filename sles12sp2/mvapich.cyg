@@ -12,9 +12,19 @@ For further information see https://www.mvapich.cse.ohio-state.edu/
 
 EOF
 
-# specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
-MAALI_TOOL_CPU_TARGET="knl"
+# specify which compilers and CPU TARGETS we want to build the tool with
+if [ "${MAALI_CUDA_BUILD}" = "1" ]; then
+        MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.4.0 intel/16.0.4 intel/17.0.4"
+	MAALI_TOOL_CUDA_COMPILERS="cuda/8.0.61_375.26"
+	MAALI_TOOL_CPU_TARGET="broadwell"
+else
+        MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+	MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+fi
+
+
+
+
 # URL to download the source code from
 MAALI_URL="http://mvapich.cse.ohio-state.edu/download/$MAALI_TOOL_NAME/mv2/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
 #http://mvapich.cse.ohio-state.edu/download/mvapich/osu-shmempmi-slurm-16.05.5.patch
@@ -29,7 +39,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="automake/1.15"
+MAALI_TOOL_BUILD_PREREQ=""
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ=""
@@ -40,31 +50,45 @@ MAALI_TOOL_PREREQ=""
 # These configure options are only for getting a functional build on f001
 # They need to be changed for Athena and more performant options chosen
 ##############
-MAALI_TOOL_CONFIGURE=""
+MAALI_TOOL_CONFIGURE="--with-pm=slurm --with-pmi=pmi2 --enable-romio --enable-cxx --enable-fortran-options=yes F90= F90FLAGS= "
 
+# Used on when Maali is invoked with -n option 
+MAALI_CUDA_SUPPORT=1
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_MANPATH=1
-MAALI_MODULE_SET_MVAPICH2_HOME='$MAALI_APP_HOME'
-
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64"
+MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}doc/man"
+MAALI_MODULE_SET_MVAPICH2_HOME="${MAALI_INSTALL_DIR}"
+if [ "${MAALI_CUDA_BUILD}" = "1" ]; then
+ MAALI_MODULE_SET_MV2_USE_CUDA="\1"
+fi
 ##############################################################################
 function maali_build {
 	cd $MAALI_TOOL_BUILD_DIR
 
 	echo "Building for CPU_TARGET=$MAALI_CPU_TARGET with COMPILER=$COMPILER"
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
 	echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 	# Checking for CPU target
 	if [ "$MAALI_TOOL_CPU_TARGET" = "knl" ]; then
-		if [ ${COMPILER} = "intel" ]; then
-			MIC_FLAGS="-axMIC-AVX512"
-		elif [ ${COMPILER} = "gcc" ]; then
-			MIC_FLAGS="-march=knl"
-		fi
-		maali_run "./configure --prefix=${MAALI_INSTALL_DIR} FFLAGS='${MIC_FLAGS}' CFLAGS='${MIC_FLAGS}' CXXFLAGS='${MIC_FLAGS}' --with-pm=slurm --with-pmi=pmi2 --with-device=ch3:psm F90= F90FLAGS= --with-psm2-include=/usr/include/slurm"
+	
+		maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --with-device=ch3:psm --with-psm2-libpath=/usr/lib64 --with-psm2-include=/usr/include"
+	
 	elif [ "$MAALI_TOOL_CPU_TARGET" = "broadwell" ]; then
-		./configure --prefix=${MAALI_INSTALL_DIR} --with-pm=slurm --with-pmi=pmi2 --with-device=ch3:ib F90= F90FLAGS= --with-psm2-include=/usr/include/slurm
+		if [ "${MAALI_CUDA_BUILD}" = "1" ]; then 
+#			echo "Building with CUDA support. Run the maali build on a compute node which has libcuda.so in /usr/lib64, and not available on login nodes or KNL compute nodes."
+			# Prepending relevant configure tests with srun to run on compute nodes of GPU partition of Athena
+
+			echo "MAALI_CUDA_HOME=$MAALI_CUDA_HOME"
+			maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --disable-mcast --enable-cuda --with-cuda-libpath=$MAALI_CUDA_HOME/lib64 --with-cuda-include=$MAALI_CUDA_HOME/include --with-ib-libpath=/usr/lib64" 
+		else
+			echo "Building without CUDA support on $MAALI_TOOL_CPU_TARGET"
+			maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --disable-mcast --with-ib-libpath=/usr/lib64"
+		fi
+	else 
+		echo "Assuming the Network is Infiniband"
+		maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --disable-mcast --with-ib-libpath=/usr/lib64"
 	fi
 	maali_run "make -j 8 VERBOSE=1"
 	maali_run "make install"

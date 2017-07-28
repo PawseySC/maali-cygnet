@@ -6,12 +6,14 @@ read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 User Extensible Heap Manager built on top of jemalloc which enables control of memory characteristics and a partitioning of the heap between kinds of memory.
 
+http://memkind.github.io/memkind/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
-MAALI_TOOL_CPU_TARGET="knl"
+# specify CPU targets to build for
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_TARGET"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/memkind/memkind/archive/v$MAALI_TOOL_VERSION.tar.gz"
