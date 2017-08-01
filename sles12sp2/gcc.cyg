@@ -30,7 +30,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=""
+MAALI_TOOL_CONFIGURE="--enable-languages=c,c++,fortran --enable-shared --enable-threads=posix --disable-multilib --enable-cxa_atexit --with-gmp --with-mpfr --with-mpc"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -50,10 +50,12 @@ MAALI_MODULE_SET_F9X='gfortran'
 
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
   mkdir build-gcc
   cd build-gcc
 
-  maali_run "../configure --prefix=$MAALI_INSTALL_DIR --enable-languages=c,c++,fortran --enable-shared --enable-threads=posix --disable-multilib --enable-cxa_atexit --with-gmp --with-mpfr --with-mpc"
+  maali_run "../configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make"
   maali_run "make install"
 }
