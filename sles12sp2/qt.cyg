@@ -47,17 +47,19 @@ MAALI_MODULE_SET_Qt_ROOT='$MAALI_INSTALL_DIR'
 MAALI_MODULE_WHATIS="QT is a cross-platform application framework tool."
 
 ##############################################################################
+function maali_pre_build {
+  if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
+    echo "QMAKE_CXXFLAGS+=-std=gnu++98" >> $MAALI_TOOL_BUILD_DIR/src/script/script.pro
+  fi
+}
 
+##############################################################################
 function maali_build {
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     MAALI_TOOL_CONFIGURE="-platform linux-icc-64 -no-javascript-jit $MAALI_TOOL_CONFIGURE"
   fi
  
-  if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
-    echo "QMAKE_CXXFLAGS+=-std=gnu++98" >> $MAALI_TOOL_BUILD_DIR/src/script/script.pro
-  fi
-
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "./configure -prefix $MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
   maali_run "make -j $MAALI_CORES"
