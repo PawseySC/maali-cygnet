@@ -40,35 +40,7 @@ MAALI_TOOL_CONFIGURE="-DGOOGLEHASH_INCLUDES=\$MAALI_SPARSEHASH_HOME/include -DGO
 
 MAALI_CMAKE_TOOL=1
 
-# Have to rewrite this function because of the hash directory name in the tarball.  Something like eigen-eigen-67e894c6cd8f/
 # Renaming eigen-eigen-67e894c6cd8f to eigen-3.3.3.
-function maali_unpack {
-  cd $MAALI_BUILD_DIR
-
-  if [ ! -f "$MAALI_DST" ]; then
-    echo "$MAALI_DST does not exit"
-    exit 1
-  fi
-
-  MAALI_DST_FILESIZE=$(stat -c%s "$MAALI_DST")
-  if [ $MAALI_DST_FILESIZE -eq 0 ]; then
-    echo "$MAALI_DST is 0 bytes big"
-    exit 1
-  fi
-
-  tar -x -j --transform=s,eigen-eigen-[a-zA-Z0-9]\*/,eigen-${MAALI_TOOL_VERSION}/, -f ${MAALI_DST}
-
-  if [ $MAALI_UNPACK_MKDIR ]; then
-    maali_makedir "$MAALI_TOOL_BUILD_DIR"
-    cd "$MAALI_TOOL_BUILD_DIR"
-  fi
-
-  if [ -d "$MAALI_TOOL_BUILD_DIR" ]; then
-    if [ "$PAWSEY_PROJECT" != "" ]; then
-      # this is only needed for /group
-      find $MAALI_TOOL_BUILD_DIR -type d -exec chmod g+s {} \;
-    fi
-  fi
-}
+MAALI_TAR_EXTRA="--transform=s,eigen-eigen-[a-zA-Z0-9]*/,eigen-${MAALI_TOOL_VERSION}/,"
 
 ##############################################################################
