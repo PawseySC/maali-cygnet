@@ -119,6 +119,19 @@ function maali_build {
     fi
   fi
 
+  if [ "$MAALI_COMPILER_NAME" == "pgi" ]; then
+    # Cuda 8 and below do not support PGI higher than 16.0
+    if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
+      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+      FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
+      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+    # Cuda 7 and below do not support PGI higher than 15.4
+    elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "15.4" ]; then
+      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+    fi
+  fi
+
   export FILTER_OUT
   log "FILTER_OUT=${FILTER_OUT}"
   maali_run "make -e -j $MAALI_CORES"
