@@ -15,6 +15,9 @@ EOF
 
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
 
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="cuda/7.5.18"
+
 # URL to download the source code from
 MAALI_URL=""
 
@@ -23,19 +26,37 @@ if [ $MAALI_TOOL_VERSION == "12" ]; then
   MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools13.tar.bz2"
 elif [ $MAALI_TOOL_VERSION == "14" ]; then
   MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools14.tar.bz2"
+elif [ $MAALI_TOOL_VERSION == "16" ]; then
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools17.tar.bz2"
+else
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2"
 fi
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION"
 
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="mpt/2.13 cuda/6.0.37 netcdf/4.1.3 python/2.6.9"
+MAALI_TOOL_PREREQ="mpt/2.13 netcdf/4.1.3 python/2.7.10"
+#MAALI_TOOL_PREREQ="mpt/2.13 cuda/6.0.37 netcdf/4.1.3 python/2.6.9"
+#amber/16 needs python 2.7
+
+MAALI_TOOL_CONFIGURE='--no-updates -noX11 --with-netcdf $MAALI_NETCDF_HOME --with-python $PYTHON_DIR/bin/python intel'
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--no-updates -noX11 -cuda -nomtkpp --with-netcdf $MAALI_NETCDF_HOME intel'
+if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+MAALI_TOOL_CONFIGURE=" -cuda ${MAALI_TOOL_CONFIGURE}"
+fi
+
+# add additional configure options
+if [ $MAALI_TOOL_VERSION \< "16" ]; then
+  MAALI_TOOL_CONFIGURE=" -nomtkpp ${MAALI_TOOL_CONFIGURE}"
+fi
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -59,7 +80,14 @@ function maali_build {
     export AMBERBUILDFLAGS="-I${MKLROOT}/include/fftw"
   fi
 
-  export CUDA_HOME=${NVIDIA_CUDA_HOME}
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    export CUDA_HOME=${NVIDIA_CUDA_HOME}
+  fi
+
+  export CC=mpicc
+  export CXX=mpicxx
+  export FC=mpif90
+  export MPI_HOME=$MPI_ROOT
 
   # Bypass the normal configure script, which does an update and then calls configure2.
   # Run twice so can patch itself.
