@@ -83,60 +83,64 @@ function maali_build {
   echo "CUDA Binary Build"
   maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --samples --samplespath=${MAALI_INSTALL_DIR}/samples --tmpdir=${MAALI_TOOL_BUILD_DIR}"
 
-  #Now to compile the samples.
+  # Now to compile the samples.
+  # Only build them system-wide; it takes a while.
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    echo "Building CUDA SDK Samples"
+    cd ${MAALI_INSTALL_DIR}/samples
 
-  echo "Building CUDA SDK Samples"
-  cd ${MAALI_INSTALL_DIR}/samples
+    # Need to skip the cudaDecodeGL example.
+    FILTER_OUT="3_Imaging/cudaDecodeGL/Makefile"
 
-  # Need to skip the cudaDecodeGL example.
-  FILTER_OUT="3_Imaging/cudaDecodeGL/Makefile"
-
-  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
-    # Cuda 8 and below do not support gcc higher than 5.x
-    if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "5.9" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-      FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-      FILTER_OUT+=" 6_Advanced/threadFenceReduction/Makefile"
-    # Cuda 7 and below do not support gcc higher than 4.9.x
-    elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "4.9" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-      sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+    if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      # Cuda 8 and below do not support gcc higher than 5.x
+      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "5.9" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
+        FILTER_OUT+=" 6_Advanced/threadFenceReduction/Makefile"
+      # Cuda 7 and below do not support gcc higher than 4.9.x
+      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "4.9" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
+        sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+      fi
     fi
+
+    if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      # Cuda 8 and below do not support Intel higher than 16.0
+      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
+        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+      # Cuda 7 and below do not support Intel higher than 15.0
+      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "14.9" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+      fi
+    fi
+
+    if [ "$MAALI_COMPILER_NAME" == "pgi" ]; then
+      # Cuda 8 and below do not support PGI higher than 16.0
+      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
+        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+      # Cuda 7 and below do not support PGI higher than 15.4
+      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "15.4" ]; then
+        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
+        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+      fi
+    fi
+
+    export FILTER_OUT
+    log "FILTER_OUT=${FILTER_OUT}"
+    maali_run "make -e -j $MAALI_CORES"
   fi
 
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    # Cuda 8 and below do not support Intel higher than 16.0
-    if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-    # Cuda 7 and below do not support Intel higher than 15.0
-    elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "14.9" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-    fi
-  fi
-
-  if [ "$MAALI_COMPILER_NAME" == "pgi" ]; then
-    # Cuda 8 and below do not support PGI higher than 16.0
-    if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-    # Cuda 7 and below do not support PGI higher than 15.4
-    elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "15.4" ]; then
-      export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-      sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-    fi
-  fi
-
-  export FILTER_OUT
-  log "FILTER_OUT=${FILTER_OUT}"
-  maali_run "make -e -j $MAALI_CORES"
-
-  #Now to compile CUDNN
+  #Now to compile cuDNN
+  #Note that cuDNN licensing means it cannot be installed globally
+  #You Need to be a Registered Nvidia Developer to download it
 
   if [ "$MAALI_TOOL_VERSION" == "7.5.18" ]; then
     if [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v5.0-ga.tgz ]; then
@@ -180,17 +184,18 @@ function maali_build {
   fi
 
   if [ "$MAALI_TOOL_VERSION" == "8.0.61" ]; then
-    if [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v6.0.tgz ]; then
+  # There is no seperate sample packages for CUDNN for version v6.0 or v7
+    if [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v7.tgz ]; then
       echo "Matching cudnn detected -> Installing"
-      cd $MAALI_INSTALL_DIR
-      export PATH=$PATH:${MAALI_INSTALL_DIR}/bin:${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release
-      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_INSTALL_DIR}/lib64:${MAALI_INSTALL_DIR}/lib
-      export LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_INSTALL_DIR}/lib64:${MAALI_INSTALL_DIR}/lib
-      export FPATH=$FPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
-      export CPATH=$CPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
-      export NVIDIA_CUDA_HOME=${MAALI_INSTALL_DIR}
-      export NVIDIA_CUDA_TOOLKIT=${MAALI_INSTALL_DIR}
-
+      cd ${MAALI_INSTALL_DIR}
+      tar xf $MAALI_SRC/cudnn-8.0-linux-x64-v7.tgz
+      mv cuda/include/* include
+      mv cuda/lib64/* lib64
+      rmdir cuda/include
+      rmdir cuda/lib64
+      rmdir cuda
+    elif [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v6.0.tgz ]; then
+      echo "Matching cudnn detected -> Installing"
       cd ${MAALI_INSTALL_DIR}
       tar xf $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz
       mv cuda/include/* include
@@ -198,15 +203,6 @@ function maali_build {
       rmdir cuda/include
       rmdir cuda/lib64
       rmdir cuda
-
-      # You Need to be a Registered Nvidia Developer
-      if [ -f $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz ]; then
-        echo "Matching cudnn samples detected -> Installing"
-        cd ${MAALI_INSTALL_DIR}
-        tar xpfzv $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz --strip-components=1
-        # There is no seperate sample packages for CUDNN for version v6.0
-      fi
-
     fi
   fi
 
