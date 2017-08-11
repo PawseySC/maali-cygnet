@@ -48,7 +48,7 @@ MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_EXE_LINKER_FLAGS="-dynami
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_CASACORE_ROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_CASACORE_ROOT='$MAALI_APP_HOME'
 
 ##############################################################################
 
