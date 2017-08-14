@@ -13,7 +13,8 @@ For further information see https://developer.nvidia.com/cuda-zone
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="binary"
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 # http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
@@ -37,7 +38,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.run"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuda-${MAALI_TOOL_VERSION}"
 
 # No KNL-gpu build
-MAALI_DEFAULT_TOOL_CPU_TARGET="sandybridge broadwell"
+#MAALI_DEFAULT_TOOL_CPU_TARGET="sandybridge broadwell"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
@@ -72,8 +73,7 @@ function maali_unpack {
   maali_makedir "$MAALI_TOOL_BUILD_DIR"
   export TMPDIR=${MAALI_TOOL_BUILD_DIR}
 
-  echo "CUDA Installation is just a binary"
-  echo "If matching cudnn / cudnn samples are found it wil be installed"	
+  echo "If matching cudnn is found it wil be installed"	
 }
 
 ##############################################################################
@@ -85,7 +85,8 @@ function maali_build {
 
   # Now to compile the samples.
   # Only build them system-wide; it takes a while.
-  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+  if [ "$MAALI_COMPILER" != "binary" ]; then
+  #if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
     echo "Building CUDA SDK Samples"
     cd ${MAALI_INSTALL_DIR}/samples
 
@@ -161,23 +162,25 @@ function maali_build {
       rmdir cuda
 
       # You Need to be a Registered Nvidia Developer
-      if [ -f $MAALI_SRC/cudnn-sample-v5.tgz ]; then
-        echo "Matching cudnn samples detected -> Installing"
-        mkdir -p ${MAALI_INSTALL_DIR}/samples.dnn
-        cd ${MAALI_INSTALL_DIR}/samples.dnn
-        tar xf $MAALI_SRC/cudnn-sample-v5.tgz
+      if [ "$MAALI_COMPILER" != "binary" ]; then
+        if [ -f $MAALI_SRC/cudnn-sample-v5.tgz ]; then
+          echo "Matching cudnn samples detected -> Installing"
+          mkdir -p ${MAALI_INSTALL_DIR}/samples.dnn
+          cd ${MAALI_INSTALL_DIR}/samples.dnn
+          tar xf $MAALI_SRC/cudnn-sample-v5.tgz
 
-        #Compliling Samples
-        cd RNN
-        sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
-        maali_run "make -j $MAALI_CORES"
-        cd ..
-
-        cd mnistCUDNN
+          #Compliling Samples
+          cd RNN
           sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
-        maali_run "make -j $MAALI_CORES"
+          maali_run "make -j $MAALI_CORES"
+          cd ..
+
+          cd mnistCUDNN
+          sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
+          maali_run "make -j $MAALI_CORES"
         cd ..
 
+      fi
       fi
 
     fi
