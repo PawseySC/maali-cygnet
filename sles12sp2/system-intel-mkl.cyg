@@ -1,0 +1,77 @@
+##############################################################################
+# maali cygnet file for creating module file for system intel-mkl
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® Math Kernel Library (Intel® MKL) optimizes code with minimal effort
+for future generations of Intel® processors. It is compatible with your choice
+of compilers, languages, operating systems, and linking and threading models.
+
+- Features highly optimized, threaded, and vectorized math functions that
+  maximize performance on each processor family
+- Utilizes industry-standard C and Fortran APIs for compatibility with popular
+  BLAS, LAPACK, and FFTW functions-no code changes required
+- Dispatches optimized code for each processor automatically without the need
+  to branch code
+
+
+For further information see https://software.intel.com/en-us/mkl
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+if [ "$MAALI_TOOL_VERSION" == "2017.0.3" ]; then
+  INTEL_VERSION="17.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "2017.0.1" ]; then
+  INTEL_VERSION="17.0.1"
+elif [ "$MAALI_TOOL_VERSION" == "11.3.4" ]; then
+  INTEL_VERSION="16.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.4" ]; then
+  INTEL_VERSION="15.0.5"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.3" ]; then
+  INTEL_VERSION="15.0.3"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.0" ]; then
+  INTEL_VERSION="15.0.0"
+elif [ "$MAALI_TOOL_VERSION" == "10.3.12" ]; then
+  INTEL_VERSION="12.1.7"
+else
+  INTEL_VERSION="unknown"
+fi
+
+MAALI_INSTALL_DIR="/pawsey/intel/${INTEL_VERSION}/mkl"
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='intel-mkl'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='tools'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib/intel64'
+MAALI_MODULE_SET_MANPATH='man/en_US'
+MAALI_MODULE_SET_INTEL_INC_PATH='include'
+MAALI_MODULE_SET_INTEL_LIB_PATH='lib/intel64'
+MAALI_MODULE_SET_INTEL_LICENSE_FILE='/pawsey/intel/licenses/USE_SERVER.lic'
+MAALI_MODULE_SET_MKLROOT='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_MKL_HOME='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_OMP_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_DYNAMIC='FALSE'
+
+##############################################################################
