@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for d2to1
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+d2to1 (the d is for distutils) allows using distutils2-like setup.cfg files for
+a packages metadata with a distribute/setuptools setup.py script. It works by
+providing a distutils2-formatted setup.cfg file containing all of a packages
+metadata, and a very minimal setup.py which will slurp its arguments from the
+setup.cfg.
+
+For further information see https://pypi.python.org/pypi/d2to1
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7"
+
+##############################################################################
+
+#Use this until maali fixed.
+function maali_python_build {
+  # should work with most python packages
+
+  PYTHON_MAJOR_MINOR_VERSION=`echo "$PYTHON_VERSION" | cut -d '.' -f 1,2`
+  export PYTHON="python${PYTHON_MAJOR_MINOR_VERSION}"
+
+  # need to add the python library path to PYTHONPATH temporarily
+  MAALI_OLD_PYTHONPATH=$PYTHONPATH
+  MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
+  export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+
+  maali_makedir "$MAALI_NEWPYTHONPATH"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "$PYTHON setup.py build"
+  maali_run "$PYTHON setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+  export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+}
+

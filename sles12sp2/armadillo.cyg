@@ -41,12 +41,7 @@ MAALI_MODULE_SET_MANPATH=1
 
 ##############################################################################
 
-function maali_cmake_build {
-  # for tools that use cmake
-
-  # allows late evaluation
-  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-
+function maali_pre_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
@@ -75,17 +70,6 @@ function maali_cmake_build {
 
   fi
 
-  # cmake likes to build in a directory of it's own
-  mkdir "$MAALI_TOOL_NAME-build"
-  cd "$MAALI_TOOL_NAME-build"
-
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $cmake_flags $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make VERBOSE=TRUE"
-  else
-    maali_run "make"
-  fi
-  maali_run "make install"
 }
 
 ##############################################################################

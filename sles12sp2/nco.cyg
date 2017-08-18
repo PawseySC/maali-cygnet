@@ -2,6 +2,17 @@
 # maali cygnet file for NCO
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The netCDF Operators (NCO) comprise a dozen standalone, command-line programs
+that take netCDF, HDF, and/or DAP files as input, then operate (e.g., derive
+new data, compute statistics, print, hyperslab, manipulate metadata) and output
+the results to screen or files in text, binary, or netCDF formats.
+
+For further information see http://nco.sourceforge.net/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
@@ -23,7 +34,7 @@ MAALI_TOOL_TYPE="tools"
 MAALI_TOOL_PREREQ="$MAALI_MPI_DEFAULT netcdf gsl udunits"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="--enable-gsl --enable-udunits"
+MAALI_TOOL_CONFIGURE='--enable-gsl --enable-udunits NETCDF_INC="${MAALI_NETCDF_HOME}/include" NETCDF_LIB="${MAALI_NETCDF_HOME}/lib"'
 
 # for auto-building module fils
 
@@ -33,15 +44,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
-# Description of what the package/tool is.
-MAALI_MODULE_WHATIS="The netCDF Operators (NCO) comprise a dozen standalone, command-line programs that take netCDF, HDF, and/or DAP files as input, then operate (e.g., derive new data, compute statistics, print, hyperslab, manipulate metadata) and output the results to screen or files in text, binary, or netCDF formats."
-
-##############################################################################
-function maali_build {
-  cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "./configure NETCDF_INC="${MAALI_NETCDF_HOME}/include" NETCDF_LIB="${MAALI_NETCDF_HOME}/lib" $MAALI_TOOL_CONFIGURE --prefix=${MAALI_INSTALL_DIR}"
-  maali_run "make VERBOSE=1"
-  maali_run "make install"
-}
 
 ##############################################################################
