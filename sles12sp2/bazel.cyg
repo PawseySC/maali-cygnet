@@ -1,0 +1,66 @@
+##############################################################################
+# maali cygnet file for BAZEL 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bazel is a build tool with native support for Java, C/C++ and Python soure code.
+It is used by Google as the build tool for Tensorflow.
+
+For further information see https://www.bazel.build
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/5.4.0 intel/17.0.4"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# URL to download the source code from (expecting version 0.5.2 or 0.5.3)
+MAALI_URL="https://github.com/bazelbuild/bazel/releases/download/${MAALI_TOOL_VERSION}/bazel-${MAALI_TOOL_VERSION}-installer-linux-x86_64.sh"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.sh" 
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuda-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="broadwell/1.0 java/8u131 gcc/5.4.0 python/2.7.13 pip/9.0.1 numpy/1.13.1 wheel/0.29.0"
+
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ=''
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
+TMPDIR="${MYSCRATCH}"
+
+function maali_unpack {
+  echo " "	
+}
+
+##############################################################################
+
+function maali_build {
+
+  export JAVA_VERSION="1.8"
+  maali_run "sh $MAALI_DST --prefix=${MAALI_INSTALL_DIR}"
+
+  export PATH=$PATH:${MAALI_INSTALL_DIR}/bin
+  export CXX=CC
+  export CC=cc
+  export TEST_TMP_DIR=${MY_SCRATCH}
+  export TMP_DIR=${MY_SCRATCH}
+  export TMPDIR=${MYSCRATCH}
+}
+
+##############################################################################
+
