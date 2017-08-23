@@ -14,7 +14,15 @@ For further information see http://www.fftw.org/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="knl broadwell"
+
+# tool pre-requisites modules needed to install this new tool/package
+if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
+   MAALI_TOOL_PREREQ="mvapich"
+fi
 
 # URL to download the source code from
 MAALI_URL="http://www.fftw.org/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -27,13 +35,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
-
-# add additional configure options
-MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-sse2 --enable-avx --enable-avx2'
-
-# runs in front of the configure line
-export CFLAGS="-fPIC"
-export FFLAGS="-fPIC"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -50,25 +51,36 @@ MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
 ##############################################################################
 
 function maali_build {
-  # fftw needs a double build for creating software
-  #
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+  if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
+    export CC=icc
     export F77=ifort
+    if [[ $MAALI_CPU_NAME == "knl" ]]; then
+       export CFLAGS="-fPIC -xMIC-AVX512 -O3"
+       export FFLAGS="-fPIC -xMIC-AVX512 -O3"
+    else
+       export CFLAGS="-fPIC -xCORE-AVX2 -O3"
+       export FFLAGS="-fPIC -xCORE_AVX2 -O3"
+    fi
+  else
+    export CC=gcc
+    export F77=gfortran
+    if [[ $MAALI_CPU_NAME == "knl" ]]; then
+       export CFLAGS="-fPIC -mavx512f -mavx512cd -O2"
+       export FFLAGS="-fPIC -mavx512f -mavx512cd -O2"
+    else
+       export CFLAGS="-fPIC -mavx2 -O3"
+       export FFLAGS="-fPIC -mavx2 -O3"
+    fi
   fi
 
   cd "$MAALI_TOOL_BUILD_DIR"
-  # Making single precision version with type prefix
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-float --enable-type-prefix"
-  maali_run "make -j $MAALI_CORES"
-  maali_run "make install"
-  maali_run "make clean"
-  # Making double precision version without type prefix
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
-  maali_run "make -j $MAALI_CORES"
-  maali_run "make install"
-  maali_run "make clean"
-  # Making double precision version with type prefix
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-type-prefix"
+
+  if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
+     maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-mpi --enable-type-prefix --enable-double"
+  else
+     maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-threads --enable-double"
+  fi
+
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
 }
