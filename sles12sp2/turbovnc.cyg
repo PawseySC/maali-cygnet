@@ -4,11 +4,12 @@
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-TurboVNC is a derivative of VNC (Virtual Network Computing) that is tuned to provide peak performance for 3D and video workloads.
+TurboVNC is a derivative of VNC (Virtual Network Computing) that is tuned to
+provide peak performance for 3D and video workloads.
 
 All VNC implementations, including TurboVNC, use the RFB (remote framebuffer)
-protocol to send “framebuffer updates” from the VNC server to any connected
-"viewers."
+protocol to send framebuffer updates from the VNC server to any connected
+viewers.
 
 For further information see http://www.turbovnc.org/
 
