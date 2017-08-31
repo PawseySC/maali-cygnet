@@ -1,0 +1,38 @@
+##############################################################################
+# maali cygnet file for networkx
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NetworkX is a Python language software package for the creation, manipulation,
+and study of the structure, dynamics, and functions of complex networks.
+
+For further information see https://www.gnu.org/software/ncurses/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE=""
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="decorator/4.1.2"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
