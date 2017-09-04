@@ -1,0 +1,41 @@
+##############################################################################
+# maali cygnet file for PyTest 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The pytest framework makes it easy to write small tests, yet scales to support 
+complex functional testing for applications and libraries.
+
+Latest tested version was Version 3.2.1 (Sept 4, 2017)
+
+For further information see https://pypi.python.org/pypi/pytest
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell knl"
+
+# There is nothing to download
+MAALI_URL=""
+MAALI_DST=""
+
+# We will use the pip installer to build the Python package
+MAALI_TOOL_BUILD_PREREQ="pip setuptools"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
+
+function maali_python_build {
+   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR $MAALI_TOOL_NAME_ORIG"
+}
+

@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for the Microsoft Cognitive Toolkit
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Microsoft Cognitive Toolkit - CNTK - is a unified deep-learning toolkit by Microsoft
+
+For further information see https://docs.microsoft.com/en-us/cognitive-toolkit/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# There is nothing to download 
+MAALI_URL=""
+MAALI_DST=""
+
+# We need the following Python packages for a successful build: pip, setuptools, numpy, scipy, wheel
+# We also need the CUDA, OpenMPI and GCC modules loaded
+MAALI_TOOL_PREREQ="broadwell gcc/5.4.0 cuda openmpi/1.10.7"
+MAALI_TOOL_BUILD_PREREQ="pip setuptools numpy scipy wheel"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+ # Create a temporary directory for build stuff
+   maali_makedir "${MAALI_TOOL_BUILD_DIR}/tmp"
+   export TMPDIR="${MAALI_TOOL_BUILD_DIR}/tmp"
+
+ # Use pip to install the MxNet package
+   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR https://cntk.ai/PythonWheel/GPU-1bit-SGD/cntk-${MAALI_TOOL_VERSION}-cp27-cp27mu-linux_x86_64.whl"
+}

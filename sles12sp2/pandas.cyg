@@ -1,0 +1,50 @@
+##############################################################################
+# maali cygnet file for Pandas 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pandas is a Python package providing fast, flexible, and expressive data structures 
+designed to make working with relationalbor labeled data both easy and intuitive. 
+It aims to be the fundamental high-level building block for doing practical, real 
+world data analysis in Python.
+
+Latest tested version was Version 0.20.3 (Sept 1, 2017)
+
+For further information see https://pandas.pydata.org/pandas-docs/stable/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# There is nothing to download
+MAALI_URL=""
+MAALI_DST=""
+
+# We will use the pip installer to build the Python package
+MAALI_TOOL_BUILD_PREREQ="gcc/5.4.0 sqlite pip setuptools numpy scipy"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
+
+function maali_python_build {
+
+  # PANDAS requires pyTest to perform unit testing
+   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR pytest"
+
+  # PANDAS requires pySQLITE to log results from unit testing 
+#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR pysqlite3"
+
+   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR $MAALI_TOOL_NAME_ORIG"
+}
+
