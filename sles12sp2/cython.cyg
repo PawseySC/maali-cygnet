@@ -30,24 +30,3 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-#Use this until maali fixed.
-function maali_python_build {
-  # should work with most python packages
-
-  PYTHON_MAJOR_MINOR_VERSION=`echo "$PYTHON_VERSION" | cut -d '.' -f 1,2`
-  export PYTHON="python${PYTHON_MAJOR_MINOR_VERSION}"
-
-  # need to add the python library path to PYTHONPATH temporarily
-  MAALI_OLD_PYTHONPATH=$PYTHONPATH
-  MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
-  export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
-
-  maali_makedir "$MAALI_NEWPYTHONPATH"
-
-  cd "$MAALI_TOOL_BUILD_DIR"
-  maali_run "$PYTHON setup.py build"
-  maali_run "$PYTHON setup.py install --prefix=$MAALI_INSTALL_DIR"
-
-  export PYTHONPATH=$MAALI_OLD_PYTHONPATH
-}
-

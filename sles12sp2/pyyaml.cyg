@@ -1,12 +1,16 @@
 ##############################################################################
-# maali cygnet file for pip
+# maali cygnet file for PyYAML
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The PyPA recommended tool for installing Python packages.
+YAML parser and emitter for Python
 
-For further information see https://pypi.org/project/pip/
+YAML is a data serialization format designed for human readability and
+interaction with scripting languages. PyYAML is a YAML parser and emitter for
+Python.
+
+For further information see http://pyyaml.org/
 
 EOF
 
@@ -17,19 +21,10 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
-
-# tool pre-requisites
-MAALI_TOOL_PREREQ=""
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7"
-
-# for auto-building module files
-MAALI_MODULE_SET_PATH=1
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 ##############################################################################
 

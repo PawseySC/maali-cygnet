@@ -1,12 +1,17 @@
 ##############################################################################
-# maali cygnet file for pip
+# maali cygnet file for tornado
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The PyPA recommended tool for installing Python packages.
+Tornado is a Python web framework and asynchronous networking library,
+originally developed at FriendFeed. By using non-blocking network I/O, Tornado
+can scale to tens of thousands of open connections, making it ideal for long
+polling, WebSockets, and other applications that require a long-lived
+connection to each user.
 
-For further information see https://pypi.org/project/pip/
+
+For further information see http://www.tornadoweb.org/
 
 EOF
 
@@ -17,19 +22,12 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
-
-# tool pre-requisites
-MAALI_TOOL_PREREQ=""
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
-
