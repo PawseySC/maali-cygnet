@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for biolite
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BioLite is a bioinformatics framework written in Python/C++ that automates the
+collection and reporting of diagnostics, tracks provenance, and provides
+lightweight tools for building out customized analysis pipelines.
+
+BioLite provides generalized components aimed at developers of NGS analyses
+workflows.
+
+For further information see https://bitbucket.org/caseywdunn/biolite
+
+EOF
+
+# specify which compilers we want to build the tool with
+# Python Dependency of networks which required python 2.7+
+# biolite/1.0.0 requires python<3.
+#MAALI_TOOL_COMPILERS="${MAALI_DEFAULT_PYTHON}"
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# URL to download the source code from
+MAALI_URL="https://bitbucket.org/caseywdunn/${MAALI_TOOL_NAME}/downloads/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy/1.13.1 pylibxml2/2.9.4 matplotlib/2.0.2 pandas/0.20.3 wget/3.2 networkx/2.0b2 lxml/3.8.0 ete3/3.0.0b35 docutils/0.14"
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26"
+
+# for auto-building module files
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
