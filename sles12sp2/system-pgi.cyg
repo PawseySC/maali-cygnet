@@ -1,0 +1,78 @@
+##############################################################################
+# maali cygnet file for creating module file for system PGI compiler
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PGI optimizing Fortran, C and C++ compilers & tools are for scientists and
+engineers who develop applications for high-performance computing (HPC)
+systems.
+
+For further information see http://www.pgroup.com/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+MAALI_INSTALL_DIR="/pawsey/pgi/${MAALI_TOOL_VERSION}"
+
+if [ "$MAALI_TOOL_VERSION" \> "14.999" ]; then
+MAALI_MODULE_SET_CXX='pgc++'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/lib'
+else
+MAALI_MODULE_SET_CXX='pgcpp'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/lib linux86-64/$MAALI_TOOL_VERSION/libso'
+fi
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='pgi'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PGI='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_CC='pgcc'
+MAALI_MODULE_SET_FC='pgfortran'
+MAALI_MODULE_SET_F77='pgf77'
+MAALI_MODULE_SET_F90='pgf90'
+MAALI_MODULE_SET_F95='pgf95 '
+MAALI_MODULE_SET_PATH='linux86-64/$MAALI_TOOL_VERSION/bin'
+MAALI_MODULE_SET_MANPATH='linux86-64/$MAALI_TOOL_VERSION/man'
+
+##############################################################################
+
+function maali_pre_build {
+if [ "$MAALI_TOOL_VERSION" == "14.7" ]; then
+  touch ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/test.txt
+  if [ $? -eq 0 ]; then
+    chmod u+rwx ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin
+    chmod u+rwx ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}
+    chmod u+rw ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    chmod u+rw ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    rm ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/test.txt
+  else
+    "Patching Failed, can't edit files / directories ${MAALI_INSTALL_DIR}"
+    "Make sure it is readable / writeable by Maali"
+    exit
+  fi
+fi
+}
+
