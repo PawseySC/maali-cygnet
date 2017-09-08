@@ -1,0 +1,50 @@
+##############################################################################
+# maali cygnet file for dflowfm-1.1.171
+# Compile with Intel  
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+#MAALI_URL="http://www.nano-editor.org/dist/v$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-netcdf-hdf5parallel cray-tpsl cray-petsc"
+
+MAALI_TOOL_TYPE="apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="CC=cc CXX=CC FC=ftn F77=ftn MPICXX=CC MPIFC=ftn MPIF77=ftn --with-mpi --with-netcdf --with-petsc"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+##############################################################################
+
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+	maali_run "sed -i 's/mpicc/cc/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "sed -i 's/mpif90/ftn/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "sed -i 's/mpif77/ftn/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "./configure $MAALI_TOOL_CONFIGURE --disable-openmp NETCDF_FORTRAN_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdf\" NETCDF_FORTRAN_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdff\" PETSc_CFLAGS=\"-I${PETSC_DIR}/include -I${PETSC_DIR}/${PETSC_ARCH}/include\" PETSc_LIBS=\"-L${PETSC_DIR}/${PETSC_ARCH}/lib -lcraypetsc_intel_real\" --with-metis=\"${CRAY_TPSL_PREFIX_DIR}\" METIS_CFLAGS=\"-I${CRAY_TPSL_PREFIX_DIR}/include\" METIS_LIBS=\"-L${CRAY_TPSL_PREFIX_DIR}/lib -lmetis\" --prefix=$MAALI_INSTALL_DIR --host=x86_64-unknown-linux"
+
+	maali_run "make V=1"
+	maali_run "make install"
+}
+
+##############################################################################
+
