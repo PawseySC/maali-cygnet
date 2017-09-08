@@ -18,11 +18,17 @@ For further information see http://www.gromacs.org/
 
 EOF
 
-# specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
 
-# specify which cuda versions we want to build the tool with
-MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+# specify which compilers we want to build the tool with
+if [ $MAALI_CUDA_BUILD -eq 0 ]; then
+   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+   MAALI_TOOL_CUDA_COMPILERS=""
+else
+   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+   MAALI_TOOL_CUDA_COMPILERS="cuda/8.0.61_375.26"
+fi
 
 # URL to download the source code from
 MAALI_URL="ftp://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -37,13 +43,10 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.4 libxml2/2.9.3 boost/1.49.0 lapack/3.5.0"
-
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw boost"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=' -DGMX_GPU=OFF -DGMX_SIMD=AVX_256 -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INCLUDE  -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME -DFFTW3_LIBRARIES=$FFTW_LIB -DFFTW3F_LIBRARIES=$FFTW_LIB -DFFTW3F_INCLUDE_DIR=$FFTW_INCLUDE -DFFTW3_INCLUDE_DIR=$FFTW_INCLUDE  -DGMX_BUILD_UNITTESTS=OFF'
+MAALI_TOOL_CONFIGURE=' -DGMX_SIMD=AVX_256 -DGMX_FFT_LIBRARY=fftw3 -DFFTWF_INCLUDE_DIR=$FFTW_INCLUDE -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME -DFFTW3_LIBRARIES=$FFTW_LIB -DFFTW3F_LIBRARIES=$FFTW_LIB -DFFTW3F_INCLUDE_DIR=$FFTW_INCLUDE -DFFTW3_INCLUDE_DIR=$FFTW_INCLUDE'
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake"
@@ -57,15 +60,9 @@ MAALI_MODULE_SET_GMXDATA='$MAALI_APP_HOME/share'
 MAALI_MODULE_SET_GMXMAN='$MAALI_APP_HOME/share/man'
 
 # Gromacs library path changed from version 5
-if [ $MAALI_TOOL_MAJOR_VERSION -le 4 ]; then
-  LIB=lib
-  MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
-  MAALI_MODULE_SET_LD_LIBRARY_PATH=1                                                                                                                     
-elif [ $MAALI_TOOL_MAJOR_VERSION -ge 5 ]; then
-  LIB=lib64
-  MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
-  MAALI_MODULE_SET_LD_LIBRARY_PATH="$LIB"
-fi
+LIB=lib64
+MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
+MAALI_MODULE_SET_LD_LIBRARY_PATH="$LIB"
 
 ##############################################################################
 function maali_cmake_build {
@@ -74,94 +71,16 @@ function maali_cmake_build {
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
+  if [[ $MAALI_TOOL_VERSION > 5.1.1 ]]; then
 
-if [ $MAALI_TOOL_VERSION == 4.5.5 ] || [ $MAALI_TOOL_VERSION == 4.6.7 ]; then
-
-  	# cmake likes to build in a directory of it's own.  single-precision, no MPI, no GPU
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-
-        para_make=20
-  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make VERBOSE=TRUE"
-  	else
-  	  maali_run "make -j $para_make "
-  	fi
-  	maali_run "make install"
-
-  	# cmake likes to build in a directory of it's own. double-precision, no MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
-
-  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make -j $para_make "
-  	fi
-  	maali_run "make install"
-
-    # cpu build of gromacs
-    if [ $MAALI_CUDA_BUILD -eq 0 ]; then
-
-  	## cmake likes to build in a directory of it's own.  single-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-
-  	maali_run "cmake -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make mdrun -j $para_make "
-  	fi
-  	maali_run "make install-mdrun"
-
-  	# cmake likes to build in a directory of it's own. double-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
-
-  	maali_run "cmake -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make mdrun -j $para_make "
-  	fi
-  	maali_run "make install-mdrun"
-
-    # gpu build of gromacs when maali is invoked with -n 
-    else
-
-  	# cmake likes to build in a directory of it's own. CUDA, single-precision
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-cuda"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-cuda"
-
-  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DGMX_GPU=ON -DGMX_DEFAULT_SUFFIX=OFF -DGMX_BINARY_SUFFIX=\"_cuda\" -DGMX_LIBS_SUFFIX=\"_cuda\" $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make mdrun -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make mdrun -j $para_make "
-  	fi
-  	maali_run "make install-mdrun"
-
-    fi
-
-  elif [ $MAALI_TOOL_VERSION == 5.1.2 ] || [ $MAALI_TOOL_VERSION == 5.1.1 ] || [ $MAALI_TOOL_VERSION \> 5.0.0 ]; then
-
-        # see bug http://redmine.gromacs.org/issues/1848
-        # and bug fix http://redmine.gromacs.org/projects/gromacs/repository/revisions/318ed3bb35b5e54aa71ed14600a17d35ede7a92c
-        # this only appears in 5.1.1; versions 5.0.5 and 5.1.2 are fine
-        if [ $MAALI_TOOL_VERSION == 5.1.1 ]; then
-          sed -i -e 's/gmx_bcast(eglsNR\*sizeof(gs->mpiBuffer), gs->mpiBuffer, cr);/gmx_bcast(eglsNR*sizeof(gs->mpiBuffer[0]), gs->mpiBuffer, cr);/g'
-$MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
-        fi
+     if [[ $MAALI_COMPILER_NAME == "gcc"* ]]; then
 
   	# cmake likes to build in a directory of it's own.  single-precision, no MPI
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
   	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
 
   	para_make=20
-  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  	maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DGMX_GPU=OFF $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
   	  maali_run "make -j $para_make VERBOSE=TRUE"
   	else
@@ -173,7 +92,7 @@ $MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
   	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
 
-  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  	maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DGMX_GPU=OFF $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
   	  maali_run "make  -j $para_make  VERBOSE=TRUE"
   	else
@@ -181,33 +100,33 @@ $MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
   	fi
   	maali_run "make install"
 
-    # cpu build of gromacs
-    if [ $MAALI_CUDA_BUILD -eq 0 ]; then
+    # cpu build of gromacs should only use the gcc compilers
+        if [ $MAALI_CUDA_BUILD -eq 0 ]; then
 
 	#MPT has defined a macro called UNDEFINED so gromacs is not happy about that
-        sed -i -e 's;#define UNDEFINED       "UNDEFINED";#define GMX_UNDEFINED       "UNDEFINED";g' $MAALI_TOOL_BUILD_DIR/src/gromacs/legacyheaders/names.h
-        sed -i -e 's;UNDEFINED :;GMX_UNDEFINED :;g' $MAALI_TOOL_BUILD_DIR/src/gromacs/legacyheaders/names.h
+           sed -i -e 's;#define UNDEFINED       "UNDEFINED";#define GMX_UNDEFINED       "UNDEFINED";g' $MAALI_TOOL_BUILD_DIR/src/gromacs/legacyheaders/names.h
+           sed -i -e 's;UNDEFINED :;GMX_UNDEFINED :;g' $MAALI_TOOL_BUILD_DIR/src/gromacs/legacyheaders/names.h
 
 	#turn off C++ bindings in MPT
-        sed -i -e '/#define OMPI_SKIP_MPICXX 1/a \#define MPI_NO_CPPBIND 1' $MAALI_TOOL_BUILD_DIR/src/gromacs/utility/gmxmpi.h
+           sed -i -e '/#define OMPI_SKIP_MPICXX 1/a \#define MPI_NO_CPPBIND 1' $MAALI_TOOL_BUILD_DIR/src/gromacs/utility/gmxmpi.h
 
   	# cmake likes to build in a directory of it's own.  single-precision, MPI
-  	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
-  	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  	   maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  	   cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
 
-  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
-  	if [ $DEBUG ]; then
-  	  maali_run "make  -j $para_make  VERBOSE=TRUE"
-  	else
-  	  maali_run "make  -j $para_make "
-  	fi
-  	maali_run "make install"
+  	   maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_GPU=OFF -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+     	   if [ $DEBUG ]; then
+  	     maali_run "make  -j $para_make  VERBOSE=TRUE"
+  	   else
+  	      maali_run "make  -j $para_make "
+  	   fi
+    	   maali_run "make install"
 
   	# cmake likes to build in a directory of it's own. double-precision, MPI
   	maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
   	cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
 
-  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  	maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_GPU=OFF -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
   	if [ $DEBUG ]; then
   	  maali_run "make  -j $para_make  VERBOSE=TRUE"
   	else
@@ -231,8 +150,9 @@ $MAALI_TOOL_BUILD_DIR/src/gromacs/mdlib/mdrun_signalling.cpp
   	maali_run "make install"
 
     fi
+    fi
 
-fi
+ fi
 }
 
 ##############################################################################
