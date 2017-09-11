@@ -1,0 +1,106 @@
+##############################################################################
+# maali cygnet file for NAMD
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NAMD, recipient of a 2002 Gordon Bell Award and a 2012 Sidney Fernbach Award,
+is a parallel molecular dynamics code designed for high-performance simulation
+of large biomolecular systems. Based on Charm++ parallel objects, NAMD scales
+to hundreds of cores for typical simulations and beyond 500,000 cores for the
+largest simulations. NAMD uses the popular molecular graphics program VMD for
+simulation setup and trajectory analysis, but is also file-compatible with
+AMBER, CHARMM, and X-PLOR. NAMD is distributed free of charge with source code.
+
+For further information see http://www.ks.uiuc.edu/Research/namd/
+
+EOF
+
+# specify wchich compilers/architecture to use for the GPU build
+if [ ${MAALI_CUDA_BUILD} -eq "1" ]; then
+  MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/16.0.4 intel/17.0.4 pgi/17.5"
+  MAALI_TOOL_CPU_TARGET="broadwell"
+else
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+  MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+fi
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/NAMD_${MAALI_TOOL_VERSION}_Source.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/NAMD_""$MAALI_TOOL_VERSION""_Source"
+
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+# set a proper CHARMBASE directory
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ $MAALI_TOOL_VERSION -eq "2.10" ]; then
+    # old version
+    CHARM_VERSION="6.6.1" 
+  else 
+    # new version 
+    CHARM_VERSION="6.7.1" 
+  fi
+
+  maali_run 'tar xf charm-$CHARM_VERSION.tar'
+  cd "charm-$CHARM_VERSION"
+
+  maali_run './build charm++ multicore-linux64 icc -O -DCMK_OPTIMIZE=1'
+ 
+  echo "Charm built"
+ 
+  cd "$MAALI_TOOL_BUILD_DIR"
+ 
+  # download the precompiled tcl binaries from namd site
+  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64.tar.gz'
+  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64-threaded.tar.gz'
+  maali_run 'tar xzf tcl8.5.9-linux-x86_64.tar.gz'
+  maali_run 'tar xzf tcl8.5.9-linux-x86_64-threaded.tar.gz'
+  maali_run 'mv tcl8.5.9-linux-x86_64 tcl'
+  maali_run 'mv tcl8.5.9-linux-x86_64-threaded tcl-threaded'
+
+  echo "TCL downloaded and unpacked"
+
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
+  else
+    maali_run './config Linux-x86_64-icc --charm-arch multicore-linux64-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME'
+  fi
+
+  cd Linux-x86_64-icc
+  maali_run 'make'
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  ln -s Linux-x86_64-icc bin
+  
+  maali_run 'mkdir -p $MAALI_INSTALL_DIR'
+  maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
+
+}
+
+##############################################################################
