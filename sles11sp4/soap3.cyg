@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for SOAP3
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SOAP3 is a GPU-based software for aligning short reads to a reference sequence. It can find all alignments with k mismatches, where k is chosen from 0 to 4. When compared with its previous version SOAP2, SOAP3 can be up to tens of times faster. For example, when aligning length-100 reads with the human genome, SOAP3 is the first software that can find all 4-mismatch alignments in tens of seconds per million reads.
+
+For further information see http://i.cs.hku.hk/2bwt-tools/soap3/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://i.cs.hku.hk/2bwt-tools/soap3/soap3-${MAALI_TOOL_VERSION}-source.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/soap3-${MAALI_TOOL_VERSION}-source.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/soap3-""$MAALI_TOOL_VERSION""-source"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gcc cuda"
+
+# defined environment variable of the basic path  
+MAALI_MODULE_SET_PATH=1
+#MAALI_MODULE_SET_BLASTDB='/group/data/blast'
+#MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
+MAALI_CUDA_SUPPORT=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ "$MAALI_CUDA_BUILD" -eq "1" ]; then
+    MAALI_TOOL_COMPILERS="gcc/4.8.5"
+    MAALI_TOOL_CPU_TARGET="sandybridge"	
+    maali_run "sed -i 's;^CUDAFLAG =.*;CUDAFLAG = -cuda -arch=sm_35 --ptxas-options=-v;g' $MAALI_TOOL_BUILD_DIR/Makefile"
+    maali_run "sed -i 's;^LIBFLAG =.*;LIBFLAG = -L$NVIDIA_CUDA_HOME/lib64 -lcuda -lcudart -lz;g' $MAALI_TOOL_BUILD_DIR/Makefile"
+    maali_run "sed -i 's;^CFLAGS =.*;CFLAGS = -O3 -funroll-loops -lm -Wno-unused-result;g' $MAALI_TOOL_BUILD_DIR/Makefile"
+    maali_run "make"
+    maali_makedir "$MAALI_INSTALL_DIR"
+    maali_run "mv soap3_aligner $MAALI_INSTALL_DIR"
+  else 
+    echo "Warning: Only GPU builds are supported for SOAP3. Run maali with -n option."
+  fi
+}
+
+##############################################################################
