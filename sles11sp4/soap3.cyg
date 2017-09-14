@@ -31,8 +31,6 @@ MAALI_TOOL_PREREQ="gcc cuda"
 
 # defined environment variable of the basic path  
 MAALI_MODULE_SET_PATH=1
-#MAALI_MODULE_SET_BLASTDB='/group/data/blast'
-#MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
 MAALI_CUDA_SUPPORT=1
 
 ##############################################################################
@@ -46,11 +44,17 @@ function maali_build {
     maali_run "sed -i 's;^LIBFLAG =.*;LIBFLAG = -L$NVIDIA_CUDA_HOME/lib64 -lcuda -lcudart -lz;g' $MAALI_TOOL_BUILD_DIR/Makefile"
     maali_run "sed -i 's;^CFLAGS =.*;CFLAGS = -O3 -funroll-loops -lm -Wno-unused-result;g' $MAALI_TOOL_BUILD_DIR/Makefile"
     maali_run "make"
-    maali_makedir "$MAALI_INSTALL_DIR"
-    maali_run "mv soap3_aligner $MAALI_INSTALL_DIR"
+    maali_run "make BGS-Build"
   else 
     echo "Warning: Only GPU builds are supported for SOAP3. Run maali with -n option."
   fi
+  maali_makedir "$MAALI_INSTALL_DIR"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/soap3_aligner $MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/soap3-builder $MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/BGS-View-PE $MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/BGS-Build $MAALI_INSTALL_DIR/bin"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/soap3_aligner.ini $MAALI_INSTALL_DIR/bin"
 }
 
 ##############################################################################
