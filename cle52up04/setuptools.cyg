@@ -11,7 +11,7 @@ For further information see https://pypi.python.org/pypi/setuptools
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="python/2.7.13"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
 if [ "$MAALI_TOOL_MAJOR_VERSION" -ge 20 ] 
