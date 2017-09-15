@@ -14,31 +14,20 @@ EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
-#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
-# URL to download the source code from
-# http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
-# Version "cuda_7.5.18_linux.run" -> cudnn-7.5-linux-x64-v5.0-ga.tgz -> cudnn-sample-v5.tgz
-# Version "cuda_8.0.61_375.26_linux.run" -> cudnn-8.0-linux-x64-v6.0.tgz
-
-if [ "$MAALI_TOOL_VERSION" == "8.0.61" ]; then
-VERION_EXTRA="_375.26"
-fi
-
-if [[ $MAALI_TOOL_MAJOR_VERSION -lt 8 ]]; then
-MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}${VERION_EXTRA}_linux.run"
+# Specify where to download the CUDA runfile from and where to place it locally             
+if [ "$MAALI_TOOL_MAJOR_VERSION" -ge 8 ]; then
+   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux.run"
+#elif [ "$MAALI_TOOL_VERSION" == "9.0.103" ]; then
+#   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.0/rc/local_installers/cuda_9.0.103_384.59_linux-run"
 else
-MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod2/local_installers/cuda_${MAALI_TOOL_VERSION}${VERION_EXTRA}_linux.run"
+   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
 fi
 
-# location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.run"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}${VERSION_EXTRA}.run"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuda-${MAALI_TOOL_VERSION}"
-
-# No KNL-gpu build
-#MAALI_DEFAULT_TOOL_CPU_TARGET="sandybridge broadwell"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuda-${MAALI_TOOL_VERSION}${VERSION_EXTRA}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
@@ -56,12 +45,12 @@ MAALI_TOOL_CONFIGURE=""
 
 MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
 if [[ $MAALI_TOOL_MAJOR_VERSION -lt 8 ]]; then
-MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/lib"
+   MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/lib"
 else
-MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64"
+   MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/extras/CUPTI/lib64"
 fi
-MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl"
-MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl"
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
 MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}/doc/man"
 MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_NVIDIA_CUDA_TOOLKIT='$MAALI_APP_HOME'
@@ -72,8 +61,6 @@ function maali_unpack {
   # use this for temporary files by the installer
   maali_makedir "$MAALI_TOOL_BUILD_DIR"
   export TMPDIR=${MAALI_TOOL_BUILD_DIR}
-
-  echo "If matching cudnn is found it wil be installed"	
 }
 
 ##############################################################################
@@ -81,133 +68,39 @@ function maali_unpack {
 function maali_build {
 
   echo "CUDA Binary Build"
-  maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --samples --samplespath=${MAALI_INSTALL_DIR}/samples --tmpdir=${MAALI_TOOL_BUILD_DIR}"
+  maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}"
 
-  # Now to compile the samples.
-  # Only build them system-wide; it takes a while.
-  if [ "$MAALI_COMPILER" != "binary" ]; then
-  #if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
-    echo "Building CUDA SDK Samples"
-    cd ${MAALI_INSTALL_DIR}/samples
-
-    # Need to skip the cudaDecodeGL example.
-    FILTER_OUT="3_Imaging/cudaDecodeGL/Makefile"
-
-    if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
-      # Cuda 8 and below do not support gcc higher than 5.x
-      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "5.9" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-        FILTER_OUT+=" 6_Advanced/threadFenceReduction/Makefile"
-      # Cuda 7 and below do not support gcc higher than 4.9.x
-      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "4.9" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-        sed -i -e '/unsupported GNU version/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
+  #Now add cuDNN support
+  declare -a cuddn_versions=("5.1" "6.0" "7.0")
+  for i in "${cuddn_versions[@]}"
+  do
+      cuddnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${i}.tgz"
+      if [ -f $cuddnFile ]; then
+         echo "Matching cudnn detected -> Installing"
+         cd ${MAALI_INSTALL_DIR}
+         tar xzf $cuddnFile
+         mv cuda/include/* include/
+         mv cuda/lib64/* lib64/
+         rmdir cuda/include
+         rmdir cuda/lib64
+         rmdir cuda
+         break 
       fi
-    fi
+  done
 
-    if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-      # Cuda 8 and below do not support Intel higher than 16.0
-      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-      # Cuda 7 and below do not support Intel higher than 15.0
-      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "14.9" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-      fi
-    fi
-
-    if [ "$MAALI_COMPILER_NAME" == "pgi" ]; then
-      # Cuda 8 and below do not support PGI higher than 16.0
-      if [ "$MAALI_TOOL_MAJOR_VERSION" \< "9" ] && [ "$MAALI_COMPILER_VERSION" \> "15.9" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        FILTER_OUT+=" 6_Advanced/c++11_cuda/Makefile"
-        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-      # Cuda 7 and below do not support PGI higher than 15.4
-      elif [ "$MAALI_TOOL_MAJOR_VERSION" \< "8" ] && [ "$MAALI_COMPILER_VERSION" \> "15.4" ]; then
-        export EXTRA_NVCCFLAGS="-Xcompiler -std=c++98"
-        sed -i -e '/unsupported ICC configuration/ s!^!// !' ${MAALI_INSTALL_DIR}/include/host_config.h
-      fi
-    fi
-
-    export FILTER_OUT
-    log "FILTER_OUT=${FILTER_OUT}"
-    maali_run "make -e -j $MAALI_CORES"
-  fi
-
-  #Now to compile cuDNN
-  #Note that cuDNN licensing means it cannot be installed globally
-  #You Need to be a Registered Nvidia Developer to download it
-
-  if [ "$MAALI_TOOL_VERSION" == "7.5.18" ]; then
-    if [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v5.0-ga.tgz ]; then
-      echo "Matching cudnn detected -> Installing"
-      cd $MAALI_INSTALL_DIR
-      export PATH=$PATH:${MAALI_INSTALL_DIR}/bin:${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release
-      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MAALI_INSTALL_DIR}/lib64:${MAALI_INSTALL_DIR}/lib
-      export FPATH=$FPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
-      export CPATH=$CPATH:${MAALI_INSTALL_DIR}/include:${MAALI_INSTALL_DIR}/include/cl
-      export NVIDIA_CUDA_HOME=${MAALI_INSTALL_DIR}
-      export NVIDIA_CUDA_TOOLKIT=${MAALI_INSTALL_DIR}
-      cd ${MAALI_INSTALL_DIR}
-      tar xf $MAALI_SRC/cudnn-7.5-linux-x64-v5.0-ga.tgz
-      mv cuda/include/* include
-      mv cuda/lib64/* lib64
-      rmdir cuda/include
-      rmdir cuda/lib64
-      rmdir cuda
-
-      # You Need to be a Registered Nvidia Developer
-      if [ "$MAALI_COMPILER" != "binary" ]; then
-        if [ -f $MAALI_SRC/cudnn-sample-v5.tgz ]; then
-          echo "Matching cudnn samples detected -> Installing"
-          mkdir -p ${MAALI_INSTALL_DIR}/samples.dnn
-          cd ${MAALI_INSTALL_DIR}/samples.dnn
-          tar xf $MAALI_SRC/cudnn-sample-v5.tgz
-
-          #Compliling Samples
-          cd RNN
-          sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
-          maali_run "make -j $MAALI_CORES"
-          cd ..
-
-          cd mnistCUDNN
-          sed -i s^"/usr/local/cuda"^"$NVIDIA_CUDA_HOME"^g Makefile
-          maali_run "make -j $MAALI_CORES"
-        cd ..
-
-      fi
-      fi
-
-    fi
-  fi
-
-  if [ "$MAALI_TOOL_VERSION" == "8.0.61" ]; then
-  # There is no seperate sample packages for CUDNN for version v6.0 or v7
-    if [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v7.tgz ]; then
-      echo "Matching cudnn detected -> Installing"
-      cd ${MAALI_INSTALL_DIR}
-      tar xf $MAALI_SRC/cudnn-8.0-linux-x64-v7.tgz
-      mv cuda/include/* include
-      mv cuda/lib64/* lib64
-      rmdir cuda/include
-      rmdir cuda/lib64
-      rmdir cuda
-    elif [ -f $MAALI_SRC/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v6.0.tgz ]; then
-      echo "Matching cudnn detected -> Installing"
-      cd ${MAALI_INSTALL_DIR}
-      tar xf $MAALI_SRC/cudnn-8.0-linux-x64-v6.0.tgz
-      mv cuda/include/* include
-      mv cuda/lib64/* lib64
-      rmdir cuda/include
-      rmdir cuda/lib64
-      rmdir cuda
-    fi
-  fi
+ # add NCCL 2.0 support
+  nccl_ver="2.0.5-2"
+  if [ -f ${MAALI_SRC}/nccl_${nccl_ver}-cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64.txz ]; then
+     echo "nccl detected -> Installing"
+     cd ${MAALI_INSTALL_DIR}
+     tar xJf $MAALI_SRC/nccl_${nccl_ver}-cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64.txz
+     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/include/* include
+     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/lib/* lib64
+     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/include
+     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/lib
+     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/*.txt .
+     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64
+  fi 
 
 }
 
