@@ -1,0 +1,42 @@
+##############################################################################
+# maali cygnet file for setuptools
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Pint is a Python package to define, operate and manipulate physical quantities: 
+the product of a numerical value and a unit of measurement. It allows arithmetic 
+operations between them and conversions from and to different units.
+
+For further information see https://pypi.python.org/pypi/Pint
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# using pip for the install so we don't need to download anything here 
+MAALI_URL=""
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# Load the prerequisite Python packages includig cuda and MKL
+MAALI_TOOL_PREREQ="setuptools pip"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages
+
+##############################################################################
+# Need to run bootstrap before install
+function maali_python_build {
+
+# Install Theano with pip
+  maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR pint==${MAALI_TOOL_VERSION}"
+
+}
+
+
+
