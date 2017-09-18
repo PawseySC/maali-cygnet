@@ -1,17 +1,11 @@
 ##############################################################################
-# maali cygnet file for GNU Bison package 
+# maali cygnet file for STREAM version 1.0 benchmark
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Bison is a general-purpose parser generator that converts an annotated
-context-free grammar into a deterministic LR or generalized LR (GLR) parser
-employing LALR(1) parser tables. As an experimental feature, Bison can also
-generate IELR(1) or canonical LR(1) parser tables. Once you are proficient with
-Bison, you can use it to develop a wide range of language parsers, from those
-used in simple desk calculators to complex programming languages.
-
-For further information see https://www.gnu.org/software/bison/
+STREAM: Sustainable Memory Bandwidth in High Performance Computers 
+For further information see https://www.cs.virginia.edu/stream/
 
 EOF
 
