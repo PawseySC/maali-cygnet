@@ -57,8 +57,10 @@ function maali_build {
   sed -i "s;^TCLLIB=.*;TCLLIB=$TCLLIB -lz -dynamic;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
   sed -i "s;^TCLINCL=.*;TCLINCL=$TCLINCL;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
 
-  maali_run 'tar xf charm-6.6.1.tar'
-  cd charm-6.6.1
+  CHARM_VERSION=`ls charm*.tar | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
+
+  maali_run 'tar xf charm-$CHARM_VERSION.tar'
+  cd charm-$CHARM_VERSION
 
   maali_run './build charm++ gni-crayxc-persistent-smp -O -DCMK_OPTIMIZE=1'
  
