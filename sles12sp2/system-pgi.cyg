@@ -16,6 +16,7 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
+# Commercial binary you have to download it
 MAALI_URL=""
 
 # location we are downloading the source code to
@@ -25,7 +26,7 @@ MAALI_DST=""
 MAALI_TOOL_BUILD_DIR=""
 
 # this only creates a module file
-MAALI_REMODULE=1
+MAALI_REMODULE=0
 
 MAALI_INSTALL_DIR="/pawsey/pgi/${MAALI_TOOL_VERSION}"
 
@@ -74,5 +75,45 @@ if [ "$MAALI_TOOL_VERSION" == "14.7" ]; then
     exit
   fi
 fi
+
+#Only for 17+
+if [ "$MAALI_TOOL_VERSION" > "17" ]; then
+    MAALI_INSTALL_DIR="/pawsey/pgi/${MAALI_TOOL_VERSION}"
+    export PGI_SILENT=true
+    export PGI_ACCEPT_EULA=accept
+    export PGI_INSTALL_DIR=$MAALI_INSTALL_DIR
+    #export PGI_INSTALL_TYPE=single|network
+    export PGI_INSTALL_TYPE=single
+    export PGI_INSTALL_NVIDIA=true
+    export PGI_INSTALL_AMD=false
+    export PGI_INSTALL_JAVA=true
+    export PGI_INSTALL_MPI=false
+    export PGI_MPI_GPU_SUPPORT=false
+
+    #Version is differnt in filename
+    PGI_FILENAME_VERSION=$(echo $MAALI_TOOL_VERSION | sed s/\\\.//g)
+
+    #PGI
+    # pgilinux-2017-177-x86_64.tar.gz
+    MAALI_DST="$MAALI_SRC/pgilinux-2017-$PGI_FILENAME_VERSION-x86_64.tar.gz"
+    MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/pgi-${MAALI_TOOL_VERSION}"
+
+    #Wasn't downloaded it
+    maali_run "mkdir -p $MAALI_TOOL_BUILD_DIR"
+    maali_run "cd $MAALI_TOOL_BUILD_DIR"
+    maali_run "tar xfv $MAALI_DST"
+    maali_run "./install"
+    maali_run "rm -rf $MAALI_INSTALL_DIR/license.dat"
+cat <<EOF > $MAALI_INSTALL_DIR/license.dat
+SERVER license-server aaabadbabe01 27000
+DAEMON pgroupd PORT=58800
+EOF
+
+fi
+}
+
+function maali_build {
+    #Dummy Function
+    echo ".. nothing to build"
 }
 
