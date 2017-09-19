@@ -29,6 +29,9 @@ MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}linux-2017-$PGI_FILENAME_VERSION-x86_64.
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
+# create directory befor unpacking
+MAALI_UNPACK_MKDIR=1
+
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
@@ -45,6 +48,9 @@ MAALI_MODULE_SET_F95='pgf95 '
 MAALI_MODULE_SET_PATH='linux86-64/$MAALI_TOOL_VERSION/bin'
 MAALI_MODULE_SET_MANPATH='linux86-64/$MAALI_TOOL_VERSION/man'
 MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/lib'
+
+# this only creates a module file
+MAALI_REMODULE=1
 
 ##############################################################################
 
