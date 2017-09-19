@@ -1,0 +1,75 @@
+##############################################################################
+# maali cygnet file for STREAM version 1.0 benchmark
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+STREAM: Sustainable Memory Bandwidth in High Performance Computers 
+For further information see https://www.cs.virginia.edu/stream/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+
+# URL to download the source code from
+MAALI_URL="https://www.cs.virginia.edu/${MAALI_TOOL_NAME}/FTP/Code"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.tar"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_BISON_ROOT='$MAALI_INSTALL_DIR'
+
+##############################################################################
+function maali_download {
+	cd $MAALI_SRC
+	mkdir $MAALI_TOOL_NAME 
+        flist=(HISTORY.txt LICENSE.txt Makefile READ.ME Versions mysecond.c stream.c stream.f)
+	for i in ${flist[@]}
+	 do
+		wget ${MAALI_URL}/${i} -O ${MAALI_TOOL_NAME}/$i
+	done
+	tar cvf ${MAALI_TOOL_NAME}.tar ${MAALI_TOOL_NAME}
+}
+
+function maali_unpack {
+	cd $MAALI_BUILD_DIR
+	tar xvf $MAALI_DST	
+
+}	
+
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+	mkdir ${MAALI_INSTALL_DIR}/bin
+	
+	if [ "${COMPILER}" = "gcc" ]; then
+		maali_run "make CC=gcc CXX=g++ FF=gfortran"
+		mv stream*.exe ${MAALI_INSTALL_DIR}/bin 
+
+		maali_run "make clean"
+		maali_run "make CC=gcc CXX=g++ CFLAGS=\"-fopenmp -DSTREAM_ARRAY_SIZE=80000000\" stream_c.exe"
+		mv stream_c.exe ${MAALI_INSTALL_DIR}/bin/stream_c.omp.80M.20x.gcc
+	elif [ "${COMPILER}" = "intel" ]; then
+		sed -i 's/CORE-AVX2/AVX/g' ./Makefile
+		sed -i 's/AVX2/AVX/g' ./Makefile
+		maali_run "make stream.icc"
+		mv stream.omp.AVX.80M.20x.icc ${MAALI_INSTALL_DIR}/bin
+	fi
+}
+
