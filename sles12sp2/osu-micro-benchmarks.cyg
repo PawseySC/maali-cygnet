@@ -1,10 +1,9 @@
 ##############################################################################
-# maali cygnet file for 
+# maali cygnet file for OSU-micro-benchmarks 
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
-
-
+Microbenchmarks to test performance of Interconnect for running MPI  applications Intranode and Internode.
 EOF
 
 # specify which compilers we want to build the tool with
