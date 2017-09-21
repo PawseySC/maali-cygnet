@@ -1,6 +1,12 @@
 ##############################################################################
-# maali cygnet file for ior for cle52up04 --- tested with version 2.
+# maali cygnet file for IOR benchmark -- tested with version 3.0.1
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+IOR is an IO benchmark to test I/O performance of the Filesystems.
+The current module is built with POSIX and MPIIO support. 
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
