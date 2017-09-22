@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for OSU-micro-benchmarks 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+Microbenchmarks to test performance of Interconnect for running MPI  applications Intranode and Internode.
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# specify CPU targets to build for
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+
+# URL to download the source code from
+MAALI_URL="http://mvapich.cse.ohio-state.edu/download/mvapich/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="mvapich"
+
+# add additional configure options
+#
+#### NOTE ####
+# These configure options are only for getting a functional build on f001
+# They need to be changed for Athena and more performant options chosen
+##############
+MAALI_TOOL_CONFIGURE="CC=mpicc CXX=mpicxx"
+
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_OSU_HOME='\$env\(MAALI_OSUMICROBENCHMARKS_HOME\)/libexec/osu-micro-benchmarks'
+##############################################################################
