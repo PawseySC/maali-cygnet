@@ -52,6 +52,10 @@ fi
 function maali_pre_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "./autogen.sh"
+  sed -i 's/-arch compute_13//g' libhmsbeagle/GPU/kernels/Makefile.am
+  sed -i 's/-arch compute_13//g' libhmsbeagle/GPU/kernels/Makefile.in
+  sed -i '/CUDA_LIBS/ s/lib/lib64/g' configure
+  sed -i '/CUDA_LIBS/ s/lib/lib64/g' configure.ac
 }
 
 ##############################################################################
