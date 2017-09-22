@@ -1,0 +1,40 @@
+##############################################################################
+# maali cygnet file for R
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+R is a language and environment for statistical computing and graphics. It is a
+GNU project which is similar to the S language and environment which was
+developed at Bell Laboratories (formerly AT&T, now Lucent Technologies) by John
+Chambers and colleagues. R can be considered as a different implementation of
+S. There are some important differences, but much code written for S runs
+unaltered under R.
+
+For further information see https://www.r-project.org/about.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://cran.csiro.au/src/base/R-$MAALI_TOOL_MAJOR_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# packages that need to be installed in the operating system for this build to work
+#MAALI_SYSTEM_PACKAGES_PREREQ='cairo-devel libpng-devel libtiff-devel libjpeg-devel'
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="--enable-R-shlib --with-x=no"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_R_VERSION=$MAALI_TOOL_VERSION
+
+##############################################################################
