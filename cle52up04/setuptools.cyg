@@ -14,7 +14,15 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="http://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+if [ "$MAALI_TOOL_MAJOR_VERSION" -ge 20 ] 
+then
+   if [ "$MAALI_TOOL_MINOR_VERSION" -gt 3 ] 
+   then
+      extra_letter="v"
+   fi
+fi
+
+MAALI_URL="https://github.com/pypa/${MAALI_TOOL_NAME_ORIG}/archive/${extra_letter}${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
@@ -24,5 +32,22 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages
 
 ##############################################################################
+# Need to run bootstrap before install
+function maali_python_build {
+
+   cd $MAALI_TOOL_BUILD_DIR
+   maali_run "python bootstrap.py"
+   maali_run "python setup.py build"
+
+   new_install_dir="${MAALI_INSTALL_DIR}/lib/python2.7/site-packages"
+   maali_makedir "${new_install_dir}"
+   export PYTHONPATH=${new_install_dir}
+   maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}"
+
+}
+
+
+

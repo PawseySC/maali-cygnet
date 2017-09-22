@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for NAMD (Cray Specific)
+# maali cygnet file for NAMD
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -16,14 +16,20 @@ For further information see http://www.ks.uiuc.edu/Research/namd/
 
 EOF
 
-# specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
-
-# specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+# specify wchich compilers/architecture to use for the GPU build
+if [ ${MAALI_CUDA_BUILD} -eq "1" ]; then
+  MAALI_TOOL_COMPILERS="intel/17.0.4"
+  MAALI_TOOL_CPU_TARGET="broadwell"
+else
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+  MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+fi
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL=""
@@ -34,15 +40,18 @@ MAALI_DST="$MAALI_SRC/NAMD_${MAALI_TOOL_VERSION}_Source.tar.gz"
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/NAMD_""$MAALI_TOOL_VERSION""_Source"
 
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI rca fftw craype-hugepages8M tcl"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_HUGETLB_MORECORE='no'
-MAALI_MODULE_SET_HUGETLB_DEFAULT_PAGE_SIZE='8M'
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+# set a proper CHARMBASE directory
 
 ##############################################################################
 
@@ -50,36 +59,41 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  TCLLIB=`pkg-config --libs tcl`
-  TCLINCL=`pkg-config --cflags tcl`
-  TCLDIR=$MAALI_TCL_HOME
-  sed -i "s;^TCLDIR=.*;TCLDIR=$TCLDIR;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
-  sed -i "s;^TCLLIB=.*;TCLLIB=$TCLLIB -lz -dynamic;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
-  sed -i "s;^TCLINCL=.*;TCLINCL=$TCLINCL;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
-
   CHARM_VERSION=`ls charm*.tar | sed "s/.*-\(.*\)\.[a-zA-Z0-9]\{3\}$/\1/"`
 
   maali_run 'tar xf charm-$CHARM_VERSION.tar'
-  cd charm-$CHARM_VERSION
+  cd "charm-$CHARM_VERSION"
 
-  maali_run './build charm++ gni-crayxc-persistent-smp -O -DCMK_OPTIMIZE=1'
- 
+  maali_run './build charm++ verbs-linux-x86_64 icc  smp  -j8  --with-production'
+
   echo "Charm built"
  
   cd "$MAALI_TOOL_BUILD_DIR"
  
-  maali_run './config CRAY-XC-intel --with-fftw3 --with-tcl --fftw-prefix $FFTW_INC'
+  # download the precompiled tcl binaries from namd site
+  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64.tar.gz'
+  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64-threaded.tar.gz'
+  maali_run 'tar xzf tcl8.5.9-linux-x86_64.tar.gz'
+  maali_run 'tar xzf tcl8.5.9-linux-x86_64-threaded.tar.gz'
+  maali_run 'mv tcl8.5.9-linux-x86_64 tcl'
+  maali_run 'mv tcl8.5.9-linux-x86_64-threaded tcl-threaded'
 
-  cd CRAY-XC-intel
-  maali_run 'make'
+  echo "TCL downloaded and unpacked"
+
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+     maali_run './config Linux-x86_64-icc --charm-arch verbs-linux-x86_64-smp-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
+  else
+    maali_run './config Linux-x86_64-icc --charm-arch verbs-linux-x86_64-smp-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME '
+  fi
+
+  cd Linux-x86_64-icc
+  maali_run 'make -j8'
 
   cd "$MAALI_TOOL_BUILD_DIR"
-  ln -s CRAY-XC-intel bin
+  ln -s Linux-x86_64-icc bin
   
   maali_run 'mkdir -p $MAALI_INSTALL_DIR'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
-  #maali_run 'chown -R stapops:namd $MAALI_INSTALL_DIR'
-  #maali_run 'chmod -R o-rwx $MAALI_INSTALL_DIR'
 
 }
 

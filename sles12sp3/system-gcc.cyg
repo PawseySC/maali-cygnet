@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for creating module file for system gcc
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The GNU Compiler Collection includes front ends for C, C++, Objective-C,
+Fortran, Ada, and Go, as well as libraries for these languages (libstdc++,...).
+GCC was originally written as the compiler for the GNU operating system. The
+GNU system was developed to be 100% free software, free in the sense that it
+respects the user's freedom.
+
+For further information see https://gcc.gnu.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+# need to set this to create the module
+MAALI_TOOL_VERSION=`gcc -v 2>&1 | grep 'gcc version' | cut -d ' ' -f 3`
+MAALI_INSTALL_DIR='/usr'
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='gcc'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='gcc'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_CC='gcc'
+MAALI_MODULE_SET_CXX='g++'
+MAALI_MODULE_SET_FC='gfortran'
+MAALI_MODULE_SET_F77='gfortran'
+MAALI_MODULE_SET_F90='gfortran'
+MAALI_MODULE_SET_F95='gfortran'
+MAALI_MODULE_SET_F9X='gfortran'
+
+##############################################################################
