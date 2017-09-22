@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for PyTorch 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyTorch is a python package that provides two high-level features:
+
+  - Tensor computation (like numpy) with strong GPU acceleration
+  - Deep Neural Networks built on a tape-based autograd system
+
+You can reuse your favorite python packages such as numpy, scipy and Cython to 
+extend PyTorch when needed.
+
+For further information see http://pytorch.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# Set the URL of where the source code is located 
+MAALI_URL="https://github.com/pytorch/pytorch/archive/v0.2.0.zip"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
+
+# We will use the pip installer to build the Python package
+MAALI_TOOL_BUILD_PREREQ="gcc/5.4.0 setuptools numpy cuda pyyaml intel-mkl magma cffi"
+MAALI_TOOL_PREREQ="gcc/5.4.0 numpy cuda pyyaml intel-mkl magma cffi"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+function maali_python_build {
+
+ # Activate MKL by setting some necessary environment variables
+   export MKL_ROOT="$MKLROOT"
+   export MKL_INCLUDE="${MKLROOT}/include"
+   export MKL_LIBRARY="${MKLROOT}/lib/intel64"
+   export CMAKE_INCLUDE_PATH="${MKL_INCLUDE}:${CMAKE_INCLUDE_PATH}"
+   export CMAKE_LIBRARY_PATH="${MKL_LIBRARY}:${CMAKE_LIBRARY_PATH}"
+
+ # Build package
+   cd $MAALI_TOOL_BUILD_DIR
+#   maali_makedir "${MAALI_INSTALL_DIR}/lib/python2.7/site-packages"
+   maali_run "python setup.py build"
+
+ # Install newly built package
+   maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}" 
+
+}
+
+
