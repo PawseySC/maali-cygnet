@@ -1,0 +1,51 @@
+##############################################################################
+# maali cygnet file for JasPer 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The JasPer Project is an open-source initiative to provide a free software-based 
+reference implementation of the codec specified in the JPEG-2000 Part-1 standard.
+
+For further information see http://www.ece.uvic.ca/~frodo/jasper
+
+EOF
+
+# specify which compilers we want to build the tool with
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.2 intel/14.0.1.106 cce/8.3.0"
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+
+# URL to download the source code from
+MAALI_URL="http://www.ece.uvic.ca/~frodo/$MAALI_TOOL_NAME/software/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites 
+MAALI_TOOL_TYPE="apps"
+
+# Either autotools or CMake is used for the build -depends on the version requested 
+if [[ $MAALI_TOOL_MAJOR_VERSION -eq 1 ]]; then
+   MAALI_TOOL_PREREQ=""
+   MAALI_TOOL_CONFIGURE="CC=cc --disable-shared --enable-static --host=x86_64-unknown-linux"
+else
+   MAALI_CMAKE_TOOL=1
+   MAALI_TOOL_PREREQ="cmake/3.4.1"
+   MAALI_TOOL_CONFIGURE=""
+fi
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
