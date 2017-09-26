@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for CFFI 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+C Foreign Function Interface for Python. Interact with almost any C code from 
+Python, based on C-like declarations that you can often copy-paste from header 
+files or documentation.
+
+For further information see https://cffi.readthedocs.io/en/latest/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="python/2.7.13"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# There is nothing to download
+MAALI_URL=""
+MAALI_DST=""
+
+# Load the prerequisite Python packages, CUDA SDK and GCC compiler
+MAALI_TOOL_PREREQ="python setuptools pip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}
+MAALI_MODULE_SET_LD_LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib
+
+##############################################################################
+
+function maali_python_build {
+
+   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR cffi==${MAALI_TOOL_VERSION}"
+}
+
