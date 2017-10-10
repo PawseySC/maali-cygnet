@@ -13,7 +13,7 @@ For further information see http://hpc.github.io/libcircle/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from, and to...
 MAALI_URL="https://github.com/hpc/libcircle/releases/download/${MAALI_TOOL_VERSION}/libcircle-${MAALI_TOOL_VERSION}.tar.gz"
@@ -28,7 +28,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libcircle-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="mpich/3.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -36,5 +36,5 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='MPICC=mpicc'
+MAALI_TOOL_CONFIGURE='CC=mpicc'
 
