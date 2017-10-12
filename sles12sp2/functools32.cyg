@@ -13,10 +13,10 @@ For further information see https://github.com/MiCHiLU/python-functools32
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://github.com/MiCHiLU/python-${MAALI_TOOL_NAME}/archive/${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
@@ -30,12 +30,6 @@ MAALI_MODULE_SET_PATH=1
 ##############################################################################
 
 function maali_python_build {
-  # should work with most python packages
-
-  # Only build for Python/2
-  if [ "$MAALI_PYTHON_MAJOR_VERSION" == "2" ]; then
-    # Call e.g. python2.7, python3.6 directly, rather than just python.
-    MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
 
     # need to add the python library path to PYTHONPATH temporarily
     MAALI_OLD_PYTHONPATH=$PYTHONPATH
@@ -45,10 +39,9 @@ function maali_python_build {
     maali_makedir "$MAALI_NEWPYTHONPATH"
 
     cd "$MAALI_TOOL_BUILD_DIR"
-    maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build"
-    maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py install --prefix=$MAALI_INSTALL_DIR"
+    maali_run "python setup.py build"
+    maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
 
     export PYTHONPATH=$MAALI_OLD_PYTHONPATH
-  fi
 }
 
