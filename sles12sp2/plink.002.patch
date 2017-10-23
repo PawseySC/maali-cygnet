@@ -1,0 +1,25 @@
+--- elf.cpp.orig	2009-10-11 00:00:21.000000000 +0800
++++ elf.cpp	2015-07-31 16:53:36.793637000 +0800
+@@ -1175,10 +1175,10 @@
+ 	  << setw(8) << gcnt << " "
+ 	  << setw(8) << (double)cnt / (double)gcnt << "\n";
+ 
+-      map<int,int>::iterator i = chr_cnt.begin();
+-      while ( i != chr_cnt.end() )
++      map<int,int>::iterator iter = chr_cnt.begin();
++      while ( iter != chr_cnt.end() )
+ 	{
+-	  int c = i->first;
++	  int c = iter->first;
+ 	  int x = chr_cnt.find( c )->second;
+ 	  int y = chr_gcnt.find( c )->second;
+ 	  
+@@ -1189,7 +1189,7 @@
+ 	      << setw(8) << y << " "
+ 	      << setw(8) << (double)x / (double)y << "\n";
+ 	  
+-	  ++i;
++	  ++iter;
+ 	}
+       
+     }
