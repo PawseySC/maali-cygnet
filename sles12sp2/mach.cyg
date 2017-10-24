@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for ChunkChromosome
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ChunkChromosome is a helper utility for minimac and MaCH. It can be used to
+facilitate analyses of very large datasets in overlapping slices
+
+For further information see https://genome.sph.umich.edu/wiki/ChunkChromosome
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://csg.sph.umich.edu/abecasis/${MAALI_TOOL_NAME_ORIG}/download/${MAALI_TOOL_NAME}.${MAALI_TOOL_VERSION}.source.tgz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}.${MAALI_TOOL_VERSION}.source.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# to stop polluting build
+MAALI_UNPACK_MKDIR=1
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's!g++!icpc!g' Makefile
+  fi
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "make install INSTALLDIR=$MAALI_INSTALL_DIR"
+}
+
+##############################################################################
