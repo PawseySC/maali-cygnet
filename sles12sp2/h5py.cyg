@@ -25,8 +25,8 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.13.1 six/1.10.0"
-MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC setuptools/36.2.7 cython/0.26 hdf5/1.10.1"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC numpy/1.13.1 six/1.10.0"
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26 hdf5/1.10.1"
 #use system zlib
 
 ##############################################################################
