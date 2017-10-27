@@ -1,12 +1,10 @@
 ##############################################################################
-# maali cygnet file for h5py-parallel
+# maali cygnet file for h5py
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 The h5py package is a Pythonic interface to the HDF5 binary data format.
-
-h5py-parallel interfaces to the hdf5-parallel module.
 
 For further information see http://www.h5py.org/
 
