@@ -1,24 +1,21 @@
 ##############################################################################
-# maali cygnet file for SciPy
+# maali cygnet file for h5py-parallel
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-NumPy is the fundamental package for scientific computing with Python. It contains among other things:
+The h5py package is a Pythonic interface to the HDF5 binary data format.
 
-- a powerful N-dimensional array object
-- sophisticated (broadcasting) functions
-- tools for integrating C/C++ and Fortran code
-- useful linear algebra, Fourier transform, and random number capabilities
+h5py-parallel interfaces to the hdf5-parallel module.
 
-For further information see http://www.numpy.org/
+For further information see http://www.h5py.org/
 
 EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
-MAALI_TOOL_CPU_TARGET="broadwell"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
 
 # URL to download the source code from
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
