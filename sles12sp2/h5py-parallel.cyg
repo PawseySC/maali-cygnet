@@ -35,4 +35,5 @@ MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26 hdf5-parallel/1.10.1"
 
 function maali_pre_build {
   export CC=mpicc MPICC=mpicc
+  export HDF5_MPI=ON # needed to tell h5py to try MPI
 }
