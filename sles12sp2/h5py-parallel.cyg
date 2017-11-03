@@ -1,10 +1,12 @@
 ##############################################################################
-# maali cygnet file for h5py
+# maali cygnet file for h5py-parallel
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 The h5py package is a Pythonic interface to the HDF5 binary data format.
+
+h5py-parallel interfaces to the hdf5-parallel module.
 
 For further information see http://www.h5py.org/
 
@@ -16,18 +18,22 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
 
 # URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/h5py/h5py-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/h5py-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/h5py-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC numpy/1.13.1 six/1.10.0"
-MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26 hdf5/1.10.1"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC $MAALI_DEFAULT_MPI numpy/1.13.1 six/1.10.0 mpi4py/2.0.0"
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26 hdf5-parallel/1.10.1"
 #use system zlib
 
 ##############################################################################
 
+function maali_pre_build {
+  export CC=mpicc MPICC=mpicc
+  export HDF5_MPI=ON # needed to tell h5py to try MPI
+}
