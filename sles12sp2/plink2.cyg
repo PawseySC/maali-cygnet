@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for plink2
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+For further information see https://www.cog-genomics.org/plink/2.0/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://s3.amazonaws.com/${MAALI_TOOL_NAME}-assets/${MAALI_TOOL_NAME}_linux_avx2_${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_linux_avx2_${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located - no source code for you
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# to stop polluting build
+MAALI_UNPACK_MKDIR=1
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 plink2 $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################
