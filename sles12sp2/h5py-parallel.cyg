@@ -27,8 +27,8 @@ MAALI_DST="$MAALI_SRC/h5py-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/h5py-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC $MAALI_DEFAULT_MPI numpy/1.13.1 six/1.10.0 mpi4py/2.0.0"
-MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26 hdf5-parallel/1.10.1"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC $MAALI_DEFAULT_MPI numpy/1.13.1 six/1.10.0 mpi4py/2.0.0 hdf5-parallel/1.10.1"
+MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7 cython/0.26"
 #use system zlib
 
 ##############################################################################
