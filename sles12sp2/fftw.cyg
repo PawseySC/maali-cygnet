@@ -46,7 +46,7 @@ MAALI_MODULE_SET_FFTW_INCLUDE='$MAALI_APP_HOME/include'
 MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
 
 #Tell autoconf we're cross-compiling
-MAALI_TOOL_CONFIGURE='--enable-double'
+MAALI_TOOL_CONFIGURE='--enable-fortran --enable-shared'
 if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
   MAALI_TOOL_CONFIGURE+=' --enable-mpi --enable-type-prefix'
 else
@@ -100,10 +100,21 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
-
+  # Making single precision version with type prefix
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-float --enable-type-prefix"
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
+  maali_run "make clean"
+  # Making double precision version without type prefix
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-double"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+  maali_run "make clean"
+  # Making double precision version with type prefix
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-double --enable-type-prefix"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+
 }
 
 ##############################################################################
