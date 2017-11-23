@@ -24,13 +24,13 @@ MAALI_URL="https://github.com/LLNL/dtcmp/releases/download/v${MAALI_TOOL_VERSION
 MAALI_DST="$MAALI_SRC/dtcmp-v${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/dtcmp-v${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/dtcmp-${MAALI_TOOL_VERSION}"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="mvapich/2.3a lwgrp/1.0.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI lwgrp/1.0.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -44,6 +44,6 @@ MAALI_MODULE_SET_INCLUDE_PATH=1
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-lwgrp=$MAALI_LWGRP_HOME CC=cc MPICC=mpicc'
 
-MAALI_TAR_EXTRA=--strip-components=1
+#MAALI_TAR_EXTRA=--strip-components=1
 
 ###############################################################################
