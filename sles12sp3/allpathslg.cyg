@@ -1,0 +1,41 @@
+##############################################################################
+# maali cygnet file for ALLPATHS-LG
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ALLPATHS-LG is a whole genome shotgun assembler that can generate high quality
+genome assemblies using short reads (~100bp) such as those produced by the new
+generation of sequencers.  The significant difference between ALLPATHS and
+traditional assemblers such as Arachne is that ALLPATHS assemblies are not
+necessarily linear, but instead are presented in the form of a graph.  This
+graph representation retains ambiguities, such as those arising from
+polymorphism, uncorrected read errors, and unresolved repeats, thereby
+providing information that has been absent from previous genome assemblies.
+
+For further information see http://software.broadinstitute.org/allpaths-lg/blog/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="ftp://ftp.broadinstitute.org/distribution/crd/ALLPATHS/Release-LG/latest_source_code/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
