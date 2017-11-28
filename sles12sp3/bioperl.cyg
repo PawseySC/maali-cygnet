@@ -1,0 +1,49 @@
+##############################################################################
+# maali cygnet file for BioPerl
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bioperl is an open source bioinformatics toolkit used by researchers all over
+the world. If youre looking for a script built to fit your exact needs you
+may or may not find it in Bioperl (check the scripts and examples directories).
+What you will find is an extensive set of Perl modules that will enable you to
+write your own script, and a community of people who are willing to help you.
+
+For further information see http://bioperl.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PERLLIB='lib/perl5/vendor_perl'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "echo 'n\na\nn\n' | perl Build.PL --prefix $MAALI_INSTALL_DIR --installdirs vendor"
+  maali_run "./Build"
+  maali_run "./Build install"
+}
+
+##############################################################################
