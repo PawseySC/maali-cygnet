@@ -1,0 +1,30 @@
+##############################################################################
+# maali cygnet file for functools32
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is a backport of the functools standard library module from Python 3.2.3
+for use on Python 2.7 and PyPy. It includes new features lru_cache
+(Least-recently-used cache decorator).
+
+For further information see https://github.com/MiCHiLU/python-functools32
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/MiCHiLU/python-${MAALI_TOOL_NAME}/archive/${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/python-$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
