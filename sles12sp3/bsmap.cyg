@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for BSMAP
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BSMAP is a short reads mapping software for bisulfite sequencing reads.
+Bisulfite treatment converts unmethylated Cytosines into Uracils (sequenced as
+Thymine) and leave methylated Cytosines unchanged, hence provides a way to
+study DNA cytosine methylation at single nucleotide resolution. BSMAP aligns
+the Ts in the reads to both Cs and Ts in the reference.
+
+For further information see https://code.google.com/archive/p/bsmap/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://dldcc-web.brc.bcm.edu/lilab/yxi/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tgz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's!g++!icpc!g' Makefile
+  fi
+
+  maali_run "dos2unix *.cpp"
+  sed -i -e 's/#include<iostream>/#include<iostream>\n#include<unistd.h>/g' param.cpp
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  for file in "bsmap sam2bam.sh methratio.py"
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+  done
+}
+
+##############################################################################
