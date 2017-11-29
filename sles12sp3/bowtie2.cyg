@@ -42,6 +42,8 @@ function maali_build {
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     sed -i -e 's!$(GCC_PREFIX)/gcc$(GCC_SUFFIX)!icc!g' Makefile
     sed -i -e 's!$(GCC_PREFIX)/g++$(GCC_SUFFIX)!icpc!g' Makefile
+  else
+    export NO_TBB=1
   fi
 
   maali_run "make"

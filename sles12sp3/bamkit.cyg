@@ -35,18 +35,25 @@ MAALI_MODULE_SET_PATH=1
 ##############################################################################
 
 function maali_download {
-  maali_wiki ".. supressing downloading as we are using a git repository"
+  log ".. supressing downloading as we are using a git repository"
 }
 
 ##############################################################################
 
 function maali_unpack {
-  maali_wiki ".. supressing unpacking as we are using a git repository"
+  log " .. supressing unpacking as we are using a git repository"
 }
 
 ##############################################################################
 
-function maali_build {
+function maali_pre_build {
+  log " .. supressing unpacking as we are using a git repository"
+}
+
+##############################################################################
+
+function maali_python_build {
+  maali_makedir "$MAALI_TOOL_BUILD_DIR"
   cd "$MAALI_BUILD_DIR"
 
   maali_run "git clone $MAALI_URL"

@@ -25,7 +25,7 @@ if [ $MAALI_TOOL_MAJOR_VERSION -gt 1 ]; then
 
   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
-  MAALI_URL="ftp://ftp.genome.umd.edu/pub/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+  MAALI_URL="https://github.com/gmarcais/${MAALI_TOOL_NAME_ORIG}/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 else
   MAALI_URL="http://www.cbcb.umd.edu/software/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 fi

@@ -43,7 +43,7 @@ MAALI_MODULE_SET_JAVA_HOME='$MAALI_APP_HOME'
 ##############################################################################
 
 function maali_unpack {
-  maali_wiki ".. supressing unpacking java source as it builds in place"
+  log ".. supressing unpacking java source as it builds in place"
 }
 
 ##############################################################################

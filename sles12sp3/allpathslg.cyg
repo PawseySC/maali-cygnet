@@ -18,7 +18,7 @@ For further information see http://software.broadinstitute.org/allpaths-lg/blog/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
 MAALI_URL="ftp://ftp.broadinstitute.org/distribution/crd/ALLPATHS/Release-LG/latest_source_code/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"

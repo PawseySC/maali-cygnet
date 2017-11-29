@@ -20,7 +20,7 @@ For further information see http://amos.sourceforge.net/wiki/index.php/AMOS
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0 intel/17.0.5"
 
 # URL to download the source code from
 MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz/download"

@@ -29,6 +29,9 @@ MAALI_TOOL_NAME='sandybridge'
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
+# for auto-building module files
+MAALI_MODULE_SET_CPU_TARGET='sandybridge'
+
 # conflict with other processor architectures
 MAALI_MODULE_CONFLICT='broadwell knl'
 
