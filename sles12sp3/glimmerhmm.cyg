@@ -12,7 +12,7 @@ Interpolated Markov Models for the coding and noncoding models . Currently,
 GlimmerHMM's GHMM structure includes introns of each phase, intergenic regions,
 and four types of exons (initial, internal, final, and single).
 
-For further information see https://ccb.jhu.edu/software/glimmerhmm/
+For further information see http://ccb.jhu.edu/software/glimmerhmm/
 
 EOF
 
@@ -20,7 +20,7 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="ftp://ftp.cbcb.umd.edu/pub/software/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="ftp://ccb.jhu.edu/pub/software/$MAALI_TOOL_NAME/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
