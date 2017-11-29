@@ -18,6 +18,8 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
+/home/maali/.maali/sles12sp3/cygnet_files/biolite-tools.cyg
+https://github.com/bioperl/bioperl-live/archive/release-1-7-1.tar.gz
 MAALI_URL="http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
