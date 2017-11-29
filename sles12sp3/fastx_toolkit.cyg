@@ -1,0 +1,39 @@
+##############################################################################
+# maali cygnet file for FASTX-Toolkit
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The FASTX-Toolkit is a collection of command line tools for Short-Reads
+FASTA/FASTQ files preprocessing.
+
+For further information see http://hannonlab.cshl.edu/fastx_toolkit/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# icc: command line warning #10120: overriding '-O2' with '-O1'
+# fasta_nucleotide_changer.c(96): error #188: enumerated type mixed with another type
+#   		FASTA_OR_FASTQ, ALLOW_N | ALLOW_U, REQUIRE_UPPERCASE,
+
+# URL to download the source code from
+MAALI_URL="https://github.com/agordon/${MAALI_TOOL_NAME}/releases/download/${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="libgtextutils/0.7"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
