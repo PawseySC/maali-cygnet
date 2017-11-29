@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for exabayes 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ExaBayes is a software package for Bayesian tree inference. It is particularly
+suitable for large-scale analyses on computer clusters.
+
+For further information see https://sco.h-its.org/exelixis/web/software/exabayes/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://www.dropbox.com/sh/nghfer321li7oiu/AADcNa60I18t6Sc3QscotV1qa/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz?dl=1 "
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# runs in front of the configure line
+export CFLAGS=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+
+  # configure and compile
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-mpi MPICXX=mpicxx"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
