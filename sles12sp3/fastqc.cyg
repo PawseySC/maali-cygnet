@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for FastQC
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A quality control tool for high throughput sequence data.
+
+For further information see https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_v${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/FastQC"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/8u151"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "mv * $MAALI_INSTALL_DIR/bin"
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/fastqc"
+}
+
+##############################################################################
