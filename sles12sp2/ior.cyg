@@ -27,7 +27,7 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_BUILD_PREREQ=""
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="mvapich"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE="--with-posix --with-mpiio --prefix=$MAALI_INSTALL_DIR"

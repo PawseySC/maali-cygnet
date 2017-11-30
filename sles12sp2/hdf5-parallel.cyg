@@ -32,8 +32,7 @@ MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
 #zlib >= 1.2.8
-MAALI_TOOL_PREREQ="szip/2.1.1 mvapich/2.3a"
-
+MAALI_TOOL_PREREQ="szip/2.1.1 $MAALI_DEFAULT_MPI"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--enable-parallel --with-zlib --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-build-mode=production --with-default-api-version=v16 CC=mpicc FC=mpif90'
