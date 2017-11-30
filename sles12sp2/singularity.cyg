@@ -19,7 +19,7 @@ MAALI_TOOL_COMPILERS="gcc/6.3.0 intel/17.0.4"
 MAALI_TOOL_CPU_TARGET="knl broadwell"
 
 # tool pre-requisites modules needed to install this new tool/package
-#MAALI_TOOL_PREREQ="mvapich"
+#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/singularityware/$MAALI_TOOL_NAME/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
