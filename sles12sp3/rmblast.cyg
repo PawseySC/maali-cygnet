@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for rmblast
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RMBlast is a RepeatMasker compatible version of the standard NCBI blastn
+program. The primary difference between this distribution and the NCBI
+distribution is the addition of a new program rmblastn for use with
+RepeatMasker and RepeatModeler.
+
+For further information see http://www.repeatmasker.org/RMBlast.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/$MAALI_TOOL_VERSION/ncbi-blast-${MAALI_TOOL_VERSION}+-src.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/ncbi-blast-${MAALI_TOOL_VERSION}+-src.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi-blast-${MAALI_TOOL_VERSION}+-src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_BLASTDB='/group/data/blast'
+MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  # patch
+  if [ ! -f "$MAALI_SRC/isb-2.6.0+-changes-vers2.patch.gz" ]; then
+    wget -O "$MAALI_SRC/isb-2.6.0+-changes-vers2.patch.gz" -q http://www.repeatmasker.org/isb-2.6.0+-changes-vers2.patch.gz
+  fi
+
+  maali_run "gzcat $MAALI_SRC/isb-2.6.0+-changes-vers2.patch.gz > isb-2.6.0+-changes-vers2.patch"
+
+  cd "$MAALI_TOOL_BUILD_DIR/c++"
+  maali_run "patch -p1 < ../isb-2.6.0+-changes-vers2.patch"
+
+  maali_run "./configure --with-mt --prefix=$MAALI_INSTALL_DIR --without-debug"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
