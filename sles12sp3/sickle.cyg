@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for sickle
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Windowed Adaptive Trimming for fastq files using quality.
+
+For further information see https://github.com/najoshi/sickle
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/najoshi/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      sed -i -e 's/gcc/icc/g' Makefile
+  fi
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 sickle $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################
