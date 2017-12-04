@@ -1,0 +1,50 @@
+--- sets.cpp.orig	2015-07-31 14:34:50.000000000 +0800
++++ sets.cpp	2015-07-31 14:44:28.165218000 +0800
+@@ -768,11 +768,11 @@
+       //////////////////////////////////////////////
+       // Reset original missing status
+ 
+-      vector<Individual*>::iterator i = PP->sample.begin();
+-      while ( i != PP->sample.end() )
++      vector<Individual*>::iterator v = PP->sample.begin();
++      while ( v != PP->sample.end() )
+ 	{
+-	  (*i)->missing = (*i)->flag;
+-	  ++i;
++	  (*v)->missing = (*v)->flag;
++	  ++v;
+ 	}
+ 
+       ////////////////////////////////////////////////
+@@ -840,11 +840,11 @@
+   //////////////////////////////////////////////
+   // Use flag to store original missing status
+ 
+-  vector<Individual*>::iterator i = PP->sample.begin();
+-  while ( i != PP->sample.end() )
++  vector<Individual*>::iterator v = PP->sample.begin();
++  while ( v != PP->sample.end() )
+     {
+-      (*i)->flag = (*i)->missing;
+-      ++i;
++      (*v)->flag = (*v)->missing;
++      ++v;
+     }
+ 
+   /////////////////////////////////
+@@ -889,11 +889,11 @@
+       PP->printLOG("Downweighting observed statistics in set-test by a factor of " 
+ 		   + dbl2str( par::lambda ) + "\n");
+       
+-      vector_t::iterator i = singleSNP.begin();
+-      while ( i != singleSNP.end() )
++      vector_t::iterator v = singleSNP.begin();
++      while ( v != singleSNP.end() )
+ 	{
+-	  *i = (*i) / par::lambda;
+-	  ++i;
++	  *v = (*v) / par::lambda;
++	  ++v;
+ 	}
+     }
+   
