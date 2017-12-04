@@ -1,0 +1,91 @@
+##############################################################################
+# maali cygnet file for raxml
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A tool for Phylogenetic Analysis and Post-Analysis of Large Phylogenies
+
+For further information see https://sco.h-its.org/exelixis/web/software/raxml/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/stamatak/standard-RAxML/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/standard-RAxML-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd $MAALI_TOOL_BUILD_DIR
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  maali_run "make clean"
+  maali_run "cp Makefile.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.PTHREADS.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.SSE3.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.SSE3.PTHREADS.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.AVX.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.AVX.PTHREADS.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.AVX2.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "cp Makefile.AVX2.PTHREADS.gcc Makefile"
+  maali_run "make"
+  maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"
+  maali_run "make clean"
+
+  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/raxml*"
+
+}
+
+##############################################################################
