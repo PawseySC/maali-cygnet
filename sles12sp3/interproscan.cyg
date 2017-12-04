@@ -49,7 +49,7 @@ function maali_build {
 
   maali_run "mv * $MAALI_INSTALL_DIR"
   cd $MAALI_INSTALL_DIR/data
-  maali_run "tar xpzf $MAALI_SRC/panther-data-9.0.tar.gz"
+  maali_run "tar xpzf $MAALI_SRC/panther-data-12.0.tar.gz"
 }
 
 ##############################################################################

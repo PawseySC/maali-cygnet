@@ -11,7 +11,7 @@ For further information see https://github.com/agordon/libgtextutils
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/agordon/${MAALI_TOOL_NAME}/releases/download/${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"

@@ -13,10 +13,10 @@ For further information see http://www.hyperrealm.com/libconfig/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/5.5.0 gcc/7.2.0"
 
 # URL to download the source code from
-MAALI_URL="http://www.hyperrealm.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://github.com/hyperrealm/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -31,7 +31,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ=""
+MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

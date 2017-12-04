@@ -29,7 +29,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi-blast-${MAALI_TOOL_VERSION}+-src"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ=""
+MAALI_TOOL_PREREQ="lmdb/0.9.21"
 
 # defined environment variable of the basic path  
 MAALI_MODULE_SET_PATH=1
@@ -59,7 +59,7 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR/c++"
 
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --without-gui --without-fastcgi"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --without-gui --without-fastcgi --with-lmdb=$MAALI_LMDB_HOME"
 
   maali_run "make"
   maali_run "make install"

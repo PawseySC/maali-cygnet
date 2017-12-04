@@ -42,6 +42,9 @@ function maali_build {
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export LINUX_MODE=icc
+    sed -i -e 's;-Wl,-Bstatic;;g' ncbi/platform/linux64_icc9.ncbi.mk
+  else
+    sed -i -e 's;-Wl,-Bstatic;;g' ncbi/platform/linux64.ncbi.mk
   fi
 
   maali_run "./ncbi/make/makedis.csh"

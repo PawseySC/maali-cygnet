@@ -45,6 +45,13 @@ function maali_build {
 
   cd src/dmd
 
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64"
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/src/res"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/src/VERSION $MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64/"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/src/VERSION $MAALI_TOOL_BUILD_DIR/src/dmd/"
+  maali_run "touch $MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64/SYSCONFDIR.imp"
+  maali_run "touch $MAALI_TOOL_BUILD_DIR/src/res/default_ddoc_theme.ddoc"
+
   # Required for gcc/6
   sed -i -e '/BACK_FLAGS :=/ s/$/ -std=gnu++98/' posix.mak
 
@@ -54,13 +61,21 @@ function maali_build {
 
   cat <<EOF >$MAALI_INSTALL_DIR/bin/dmd.conf
 [Environment64]
-DFLAGS=-I%@P%/../../src/phobos -I%@P%/../../src/druntime/import -L-L$MAALI_INSTALL_DIR/linux/lib64 -L--export-dynamic
+DFLAGS=-I$MAALI_INSTALL_DIR/src/phobos -I$MAALI_INSTALL_DIR/src/druntime/import -L-L$MAALI_INSTALL_DIR/linux/lib64 -L--export-dynamic
 EOF
 
   cd "$MAALI_TOOL_BUILD_DIR"
   cd src/phobos
-  sed -i -e 's!dmd/src/dmd!dmd/dmd!g' posix.mak
+  sed -i -e 's;/src/osmodel.mak;/osmodel.mak;g' posix.mak
+  sed -i -e 's;/src/osmodel.mak;/osmodel.mak;g' $MAALI_TOOL_BUILD_DIR/src/druntime/posix.mak
+  sed -i -e 's;$(DMD_DIR)/generated/$(OS)/release/$(MODEL)/dmd;'$MAALI_TOOL_BUILD_DIR'/src/generated/$(OS)/release/$(MODEL)/dmd;g' posix.mak
+  sed -i -e 's;$(DMD_DIR)/generated/$(OS)/release/$(MODEL)/dmd;'$MAALI_TOOL_BUILD_DIR'/src/generated/$(OS)/release/$(MODEL)/dmd;g' $MAALI_TOOL_BUILD_DIR/src/druntime/posix.mak
+
   maali_run "make -f posix.mak"
+  maali_run "make -f posix.mak INSTALL_DIR=$MAALI_INSTALL_DIR install"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd src/druntime
   maali_run "make -f posix.mak INSTALL_DIR=$MAALI_INSTALL_DIR install"
 
   cd "$MAALI_TOOL_BUILD_DIR"

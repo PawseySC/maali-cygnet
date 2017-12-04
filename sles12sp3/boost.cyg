@@ -58,6 +58,12 @@ function maali_build {
   fi
 
   maali_run "./bjam install --prefix=$MAALI_INSTALL_DIR"
+
+  if [ "$MAALI_TOOL_VERSION" == "1.64.0" ]; then
+    sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/matrix.hpp
+    sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/storage.hpp
+  fi
+
 }
 
 ##############################################################################

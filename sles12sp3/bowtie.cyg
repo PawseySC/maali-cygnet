@@ -14,7 +14,7 @@ For further information see http://bowtie-bio.sourceforge.net/index.shtml
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="http://sourceforge.net/projects/bowtie-bio/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src.zip/download"
@@ -43,6 +43,13 @@ function maali_build {
     sed -i -e 's!gcc!icc!g' Makefile
     sed -i -e 's!g++!icpc!g' Makefile
     maali_run "patch -p0 < $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
+
+    # processor_support.h(47): error: argument of type "void *" is incompatible with parameter of type "int *"
+    #           __cpuid((void *) &regs,0); // test if __cpuid() works, if not catch the exception
+    #                   ^
+
+  else
+    export NO_TBB=1
   fi
 
   maali_run "make"

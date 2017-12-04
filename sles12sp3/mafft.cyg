@@ -41,20 +41,19 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 ##############################################################################
 
 function maali_build {
+
   cd $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR/core
-  cp Makefile Makefile.backup
   sed -i s^/usr/local^$MAALI_INSTALL_DIR^g Makefile
-  make clean
-  make
-  make install
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "make install"
 	
   cd $MAALI_TOOL_BUILD_DIR/extensions
-  cp Makefile Makefile.backup
   sed -i s^/usr/local^$MAALI_INSTALL_DIR^g Makefile
-  make clean
-  make
-  make install
+  maali_run "make clean"
+  maali_run "make"
+  maali_run "make install"
 
 }
 

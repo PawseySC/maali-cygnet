@@ -12,7 +12,7 @@ For further information see http://hannonlab.cshl.edu/fastx_toolkit/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
 
 # icc: command line warning #10120: overriding '-O2' with '-O1'
 # fasta_nucleotide_changer.c(96): error #188: enumerated type mixed with another type
