@@ -1,0 +1,11 @@
+--- src/SeqAn-1.2/seqan/platform/platform_gcc.h.orig	2011-03-11 05:17:35.000000000 +0800
++++ src/SeqAn-1.2/seqan/platform/platform_gcc.h	2013-06-07 16:38:16.000000000 +0800
+@@ -39,7 +39,7 @@
+ #define finline __inline__
+ 
+ // default 64bit type
+-typedef int64_t __int64;
++#define __int64 long long
+ typedef uint64_t __uint64;
+ 
+ 
