@@ -60,20 +60,20 @@ function maali_build {
   maali_run "make"
   cd ../..
 
-  if [ ! -f "$MAALI_SRC/ncbi-vdb-2.5.4.zip" ]; then
-      wget -O "$MAALI_SRC/ncbi-vdb-2.5.4.zip" -q https://github.com/ncbi/ncbi-vdb/archive/2.5.4.zip
+  if [ ! -f "$MAALI_SRC/ncbi-vdb-2.8.2-2.zip" ]; then
+      wget -O "$MAALI_SRC/ncbi-vdb-2.8.2-2.zip" -q https://github.com/ncbi/ncbi-vdb/archive/2.8.2-2.zip
   fi
 
-  maali_run "unzip $MAALI_SRC/ncbi-vdb-2.5.4.zip"
+  maali_run "unzip $MAALI_SRC/ncbi-vdb-2.8.2-2.zip"
 
-  cd ncbi-vdb-2.5.4
+  cd ncbi-vdb-2.8.2-2
   maali_run "./configure --with-ngs-sdk-prefix=$MAALI_TOOL_BUILD_DIR/ngs-1.3.0/ngs-sdk --build=$MAALI_TOOL_BUILD_DIR/ncbi-outdir"
   maali_run "make"
   cd ..
 
   sed -i -e 's;\$HOME/ncbi-outdir/ngs-sdk;'$MAALI_TOOL_BUILD_DIR'/ncbi-outdir;g' package.pm
 
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-ngs-sdk-prefix=$MAALI_TOOL_BUILD_DIR/ngs-1.3.0/ngs-sdk --with-ncbi-vdb-sources=$MAALI_TOOL_BUILD_DIR/ncbi-vdb-2.5.4 --with-ncbi-vdb-build=$MAALI_TOOL_BUILD_DIR/ncbi-outdir --build=$MAALI_TOOL_BUILD_DIR/ncbi-outdir"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-ngs-sdk-prefix=$MAALI_TOOL_BUILD_DIR/ngs-1.3.0/ngs-sdk --with-ncbi-vdb-sources=$MAALI_TOOL_BUILD_DIR/ncbi-vdb-2.8.2-2 --with-ncbi-vdb-build=$MAALI_TOOL_BUILD_DIR/ncbi-outdir --build=$MAALI_TOOL_BUILD_DIR/ncbi-outdir"
   maali_run "make"
   maali_run "make install"
 }
