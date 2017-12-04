@@ -76,6 +76,4 @@ MAALI_MODULE_SET_OMP_NUM_THREADS='1'
 MAALI_MODULE_SET_MKL_NUM_THREADS='1'
 MAALI_MODULE_SET_MKL_DYNAMIC='FALSE'
 
-MAALI_MODULE_CONFLICT="intel"
-
 ##############################################################################
