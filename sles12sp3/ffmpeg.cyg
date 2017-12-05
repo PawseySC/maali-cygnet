@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for ffmpeg 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FFmpeg is the leading multimedia framework, able to decode, encode, transcode,
+mux, demux, stream, filter and play pretty much anything that humans and
+machines have created. It supports the most obscure ancient formats up to the
+cutting edge. No matter if they were designed by some standards committee, the
+community or a corporation. It is also highly portable: FFmpeg compiles, runs,
+and passes our testing infrastructure FATE across Linux, Mac OS X, Microsoft
+Windows, the BSDs, Solaris, etc. under a wide variety of build environments,
+machine architectures, and configurations. 
+
+For further information see, https://ffmpeg.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.ffmpeg.org/releases/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX'
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="FFmpeg"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
