@@ -1,0 +1,36 @@
+##############################################################################
+# maali cygnet file for pywcs
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pywcs is a set of routines for handling the FITS World Coordinate System (WCS)
+standard. It is a thin wrapper around the high- and mid-level interfaces of Dr.
+Mark Calabrettas WCSLIB
+
+For further information see https://pypi.python.org/pypi/pywcs
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="pyfits/3.4 d2to1/0.2.12post1 numpy/1.13.3"
+
+# tool build pre-requisites
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
