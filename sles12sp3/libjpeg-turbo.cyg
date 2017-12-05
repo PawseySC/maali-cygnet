@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for libjpeg-turbo
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+libjpeg-turbo is a JPEG image codec that uses SIMD instructions (MMX, SSE2,
+AVX2, NEON, AltiVec) to accelerate baseline JPEG compression and decompression
+on x86, x86-64, ARM, and PowerPC systems. On such systems, libjpeg-turbo is
+generally 2-6x as fast as libjpeg, all else being equal. On other types of
+systems, libjpeg-turbo can still outperform libjpeg by a significant amount, by
+virtue of its highly-optimized Huffman coding routines. In many cases, the
+performance of libjpeg-turbo rivals that of proprietary high-speed JPEG codecs.
+
+For further information see http://libjpeg-turbo.virtualgl.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--with-pic'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
