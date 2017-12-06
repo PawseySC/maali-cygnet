@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for Togl
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Togl is a Tk widget for OpenGL rendering. Togl was originally based on OGLTK,
+written by Benjamin Bederson at the University of New Mexico.
+
+For further information see http://togl.sourceforge.net/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 2 ]]; then
+  MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz/download"
+else
+  MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG$MAALI_TOOL_VERSION-src.tar.gz/download"
+fi
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 2 ]]; then
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+else
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG$MAALI_TOOL_VERSION"
+fi
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+
+##############################################################################
