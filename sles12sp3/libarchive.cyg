@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libarchive-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="mpich/3.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -39,11 +39,11 @@ MAALI_MODULE_SET_C_INCLUDE_PATH=1
 
 function maali_build {
 
-    cd "$MAALI_TOOL_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR"
 
-    maali_run "./configure --prefix $MAALI_INSTALL_DIR CC=gcc MPICC=mpicc"
-    maali_run "make"
-    maali_run "make install"
+  maali_run "./configure --prefix $MAALI_INSTALL_DIR CC=gcc MPICC=mpicc"
+  maali_run "make"
+  maali_run "make install"
 
 }
 
