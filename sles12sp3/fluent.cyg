@@ -1,0 +1,87 @@
+##############################################################################
+# maali cygnet file for Fluent
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ANSYS Fluent is the most-powerful computational fluid dynamics (CFD) software
+tool available, empowering you to go further and faster as you optimize your
+products performance. Fluent includes well-validated physical modeling
+capabilities to deliver fast, accurate results across the widest range of CFD
+and multiphysics applications.
+
+For further information see http://www.ansys.com/Products/Fluids/ANSYS-Fluent
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# untar / copy all the installation media into this directory
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
+
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not
+#honour group sticky bit, so non-system builds may fail with quota issues.
+
+##############################################################################
+# This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
+function maali_unpack {
+  mkdir $MAALI_TOOL_BUILD_DIR
+  cd $MAALI_TOOL_BUILD_DIR
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  else
+    # Untar with correct group id.
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd $MAALI_TOOL_BUILD_DIR | awk '{print $3}'`
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  fi
+}
+
+##############################################################################
+
+function maali_build {
+  mkdir -p ${MAALI_INSTALL_DIR}
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "chmod u+x INSTALL"
+
+  # Ansys installer does its own untarring
+  export TAR_OPTIONS="--group=$MAALI_MODULE_RESTRICT_GROUP"
+
+  # Sooo fussy about space
+  export TMPDIR="$MAALI_TOOL_BUILD_DIR/tmp"
+  mkdir $TMPDIR
+
+  maali_run './INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -disablerss -fluent'
+
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  else
+    GROUP=`ls -gd $MAALI_INSTALL_DIR | awk '{print $3}'`
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  fi
+}
+
+##############################################################################
+
+MAALI_TOOL_SHORT_VERSION=v`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+
+MAALI_MODULE_SET_PATH="$MAALI_TOOL_SHORT_VERSION/fluent/bin $MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64"
+#MAALI_MODULE_SET_PATH="$MAALI_TOOL_SHORT_VERSION/ansys/bin $MAALI_TOOL_SHORT_VERSION/fluent/bin $MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64"
+MAALI_MODULE_SET_FLUENT_ARCH='lnamd64'
+#MAALI_MODULE_SET_SETENV='FLUENT_ARCH=lnamd64'
+
+MAALI_MODULE_RESTRICT_GROUP='ANSYS'
+
