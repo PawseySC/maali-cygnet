@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for CNVnator
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CNVnator: an approach to discover, genotype, and characterize typical and
+atypical CNVs from family and population genome sequencing
+
+For further information see https://github.com/abyzovlab/CNVnator
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/abyzovlab/${MAALI_TOOL_NAME_ORIG}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="samtools/1.6 htslib/1.6 root/6.10.08"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  sed -i -e "s;SAMDIR = samtools;SAMDIR =${MAALI_SAMTOOLS_HOME};g" Makefile
+  sed -i -e 's;-I$(SAMDIR);;g' Makefile
+  sed -i -e $'s;SAMLIB = $(SAMDIR)/libbam.a;SAMLIB = $(SAMDIR)/lib/libbam.a\\\nINC   += -I$(SAMDIR)/include/bam;g' Makefile
+  sed -i -e "s;HTSDIR = \$(wildcard \$(SAMDIR)/htslib-\*);HTSDIR = ${MAALI_HTSLIB_HOME};g" Makefile
+  sed -i -e 's;SAMLIB += $(HTSDIR)/libhts.a;SAMLIB += $(HTSDIR)/lib/libhts.a;g' Makefile
+  sed -i -e 's;INC    += -I$(HTSDIR);INC    += -I$(HTSDIR)/include;g' Makefile 
+
+  export LD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$LD_LIBRARY_PATH
+  maali_run "make VERBOSE=1"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "cp cnvnator cnvnator2VCF.pl $MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/share/man"
+  maali_run "cp README CITATION license.rtf $MAALI_INSTALL_DIR/share/man"
+}
+
+##############################################################################
