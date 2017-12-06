@@ -1,0 +1,75 @@
+##############################################################################
+# maali cygnet file for ParaView (amended by mshaikh dated 13 Jan 2016)
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ParaView is an open-source, multi-platform data analysis and visualization
+application. ParaView users can quickly build visualizations to analyze their
+data using qualitative and quantitative techniques.
+
+For further information see https://www.paraview.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v$MAALI_TOOL_MAJOR_MINOR_VERSION&type=source&os=all&downloadFile=$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION-source.tar.gz http://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v$MAALI_TOOL_MAJOR_MINOR_VERSION&type=data&os=all&downloadFile=ParaViewData-v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION-source.tar.gz $MAALI_SRC/"$MAALI_TOOL_NAME_ORIG"Data-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION-source"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="qt/5.9.3 hdf5/1.10.1 netcdf/4.5.0 ffmpeg/3.4 boost/1.65.1 silo/4.10.2 $MAALI_DEFAULT_MPI"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='-DBUILD_EXAMPLES:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_EXE_LINKER_FLAGS="-dynamic -fPIC" -DPARAVIEW_DATA_ROOT:PATH=${MAALI_SRC}/ParaViewData-$MAALI_TOOL_VERSION -DCMAKE_BUILD_TYPE:STRING=Release -DFFMPEG_INCLUDE_DIR:PATH=$MAALI_FFMPEG_HOME/include -DFFMPEG_avcodec_LIBRARY:PATH=$MAALI_FFMPEG_HOME/lib/libavcodec.a -DFFMPEG_avformat_LIBRARY:PATH=$MAALI_FFMPEG_HOME/lib/libavformat.a -DFFMPEG_avutil_LIBRARY:PATH=$MAALI_FFMPEG_HOME/lib/libavutil.a -DFFMPEG_swscale_LIBRARY:PATH=$MAALI_FFMPEG_HOME/lib/libswscale.a   -DPARAVIEW_BUILD_PLUGIN_PointSprite:BOOL=OFF -DPARAVIEW_DATA_ROOT:FILEPATH=$MAALI_INSTALL_DIR/ParaView -DPARAVIEW_USE_VISITBRIDGE:BOOL=ON -DBoost_INCLUDE_DIR:PATH=$BOOST_ROOT/include -DVISIT_BUILD_READER_Silo:BOOL=ON -DSILO_INCLUDE_DIR:PATH=$MAALI_SILO_HOME/include -DSILO_LIBRARY:FILEPATH=$MAALI_SILO_HOME/lib/libsiloh5.so -DPARAVIEW_USE_MPI:BOOL=ON -DMPI_C_LIBRARIES=${MPI_ROOT}/lib/libmpi.so -DMPI_C_INCLUDE_PATH=${MPI_ROOT}/include -DCMAKE_CFLAGS=\"-fPIC\"'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LIBGL_ALWAYS_INDIRECT='y'
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki " .... only need to unpack first source"
+  cd $MAALI_BUILD_DIR
+
+  MAALI_DST1=`echo $MAALI_DST | cut -d ' ' -f 1`
+  tar zxf $MAALI_DST1
+
+}
+
+##############################################################################
+
+function maali_cmake_build {
+
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ -f ".ExternalData/README.rst" ]; then
+    rm -f .ExternalData/README.rst
+    rmdir .ExternalData
+  fi
+  
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/paraview-build"
+  cd "$MAALI_TOOL_BUILD_DIR/paraview-build"
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
+  maali_run "make -j $MAALI_CORES VERBOSE=True"
+  maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR"
+  maali_run "tar -zxf $MAALI_SRC/ParaViewData-v$MAALI_TOOL_VERSION.tar.gz"
+  maali_run "mv ParaViewData-v$MAALI_TOOL_VERSION ParaView"
+}
+
+##############################################################################
