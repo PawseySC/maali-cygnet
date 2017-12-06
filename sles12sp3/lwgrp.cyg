@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for lwgrp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+lwgrp (lightweight group) is a c library that defines data structures and
+collective operations to group MPI processes as an ordered set. Such groups are
+useful as substitutes for MPI communicators when the overhead of communicator
+creation is too costly.  For example, certain sorting algorithms recursively
+divide processes into subgroups as the sort algorithm progresses.  These groups
+may be different with each invocation, so that it is inefficient to create and
+destroy communicators during the sort routine.
+
+For further information see, https://github.com/hpc/lwgrp/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC"
+
+# URL to download the source code from, and to...
+MAALI_URL="https://github.com/LLNL/lwgrp/releases/download/v${MAALI_TOOL_VERSION}/lwgrp-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/lwgrp-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/lwgrp-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='MPICC=mpicc'
+
