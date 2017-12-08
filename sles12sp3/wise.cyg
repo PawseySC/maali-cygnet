@@ -44,6 +44,16 @@ function maali_build {
   maali_run "sed -i -e 's/getline/getLine/g' HMMer2/sqio.c"
   maali_run "sed -i -e 's/isnumber/isdigit/g' models/phasemodel.c"
   maali_run "make clean"
+
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' dynlibsrc/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' dynlibsrc/makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' network/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' network/makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' models/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' models/makefile
+
   maali_run "make all CC=$CC"
 
   cd ..

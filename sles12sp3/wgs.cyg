@@ -17,7 +17,11 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/wgs-assembler/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+if [ "$MAALI_TOOL_VERSION" == "8.3rc2" ]; then
+  MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/wgs-assembler/$MAALI_TOOL_NAME-8.3/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+else
+  MAALI_URL="http://sourceforge.net/projects/wgs-assembler/files/wgs-assembler/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2/download"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"

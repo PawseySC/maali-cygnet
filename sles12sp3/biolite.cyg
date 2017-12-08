@@ -16,7 +16,7 @@ For further information see https://bitbucket.org/caseywdunn/biolite
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
 
 # URL to download the source code from
 MAALI_URL="https://bitbucket.org/caseywdunn/biolite/downloads/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"

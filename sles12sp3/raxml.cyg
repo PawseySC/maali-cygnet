@@ -43,7 +43,6 @@ function maali_build {
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 
-  maali_run "make clean"
   maali_run "cp Makefile.gcc Makefile"
   maali_run "make"
   maali_run "cp raxmlHPC* $MAALI_INSTALL_DIR/bin"

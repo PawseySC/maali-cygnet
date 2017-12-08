@@ -33,18 +33,3 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_PERLLIB='lib/perl5/site_perl'
 
 ##############################################################################
-
-function maali_build {
-  cd "$MAALI_TOOL_BUILD_DIR"
-
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    sed -i -e 's!g++!icpc!g' Makefile
-    sed -i -e 's!g++!icpc!g' cpp/Makefile
-  fi
-
-  maali_run "make"
-  maali_run "make install PREFIX=$MAALI_INSTALL_DIR"
-  maali_run "mv bin/vcftools $MAALI_INSTALL_DIR/bin"
-}
-
-##############################################################################

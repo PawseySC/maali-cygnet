@@ -34,7 +34,7 @@ MAALI_TOOL_CONFIGURE=' -DENABLE_NETCDF_4=ON -DUSE_HDF5=ON -DENABLE_DAP=OFF -DCMA
 MAALI_TOOL_PREREQ="szip/2.1.1 hdf5/1.10.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
+MAALI_TOOL_BUILD_PREREQ="cmake/3.10.0"
 
 MAALI_TOOL_VERSION_CXX="4.3.0"
 MAALI_TOOL_VERSION_FC="4.4.2"

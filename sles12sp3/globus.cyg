@@ -6,13 +6,13 @@
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-MAALI_URL="http://toolkit.globus.org/ftppub/gt5/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/installers/src/gt$MAALI_TOOL_VERSION-all-source-installer.tar.gz"
+MAALI_URL="https://downloads.globus.org/toolkit/gt6/stable/installers/linux/globus_toolkit-latest-x86_64-unknown-linux-gnu.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/gt$MAALI_TOOL_VERSION-all-source-installer.tar.gz"
+MAALI_DST="$MAALI_SRC/globus_toolkit-latest-x86_64-unknown-linux-gnu.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/gt$MAALI_TOOL_VERSION-all-source-installer"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/globus_toolkit-6.0.1502136246-x86_64-unknown-linux-gnu-Build-14"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ=""
@@ -30,10 +30,8 @@ MAALI_MODULE_SET_GLOBUS_LOCATION='$MAALI_INSTALL_DIR'
 
 function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
-
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-wsgram-pb"
-  maali_run "make"
-  maali_run "make install"
+  cd globus 
+  maali_run "mv * $MAALI_INSTALL_DIR"
 }
 
 ##############################################################################

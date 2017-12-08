@@ -18,7 +18,7 @@ For further information see http://snap.cs.berkeley.edu/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
 
 # fails on icpc
 # SNAPLib/SAM.cpp(602): error: identifier "UINT32_MAX" is undefined

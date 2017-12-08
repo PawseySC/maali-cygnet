@@ -33,11 +33,11 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
 
   sshversion=$(echo "$MAALI_OPENSSH_VERSION" | sed -e 's/\./_/g' | sed -e 's/p/_P/g')
-  patchversion$(echo "$MAALI_PATCH_VERSION" | sed -e 's/v/\./g')
+  patchversion=$(echo "$MAALI_PATCH_VERSION" | sed -e 's/v/\./g')
 
   wget -q -O openssh-$sshversion-hpn-$patchversion.diff "https://sourceforge.net/projects/hpnssh/files/HPN-SSH%20$MAALI_PATCH_VERSION%20$MAALI_OPENSSH_VERSION/openssh-$sshversion-hpn-$patchversion.diff/download"
 
-  maali_run "patch -p1 < openssh-$sshversion-hpn-14.10.diff"
+  maali_run "patch -p1 < openssh-$sshversion-hpn-$patchversion.diff"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-privsep-path=$MAALI_INSTALL_DIR/var/empty --with-pid-dir==$MAALI_INSTALL_DIR/var/run"
   maali_run "make"
   maali_run "make install"

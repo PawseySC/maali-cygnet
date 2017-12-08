@@ -27,7 +27,7 @@ MAALI_URL="http://trna.ucsc.edu/software/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-2.0"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -40,23 +40,5 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-
-##############################################################################
-
-function maali_build {
-  cd $MAALI_TOOL_BUILD_DIR
-
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    sed -i -e 's!gcc!icc!g' Makefile
-  fi
-
-  # http://prashanthmadi.blogspot.com.au/2010/10/installing-trnascan-se.html
-  sed -i -e 's/getline/getLine/g' sqio.c
-
-  export MAALI_INSTALL_DIR="$MAALI_INSTALL_DIR"
-  sed -i -e "s/HOME/MAALI_INSTALL_DIR/g" Makefile
-  maali_run "make"
-  maali_run "make install"
-}
 
 ##############################################################################

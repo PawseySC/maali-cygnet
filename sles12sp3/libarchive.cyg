@@ -12,7 +12,7 @@ For further information see http://www.libarchive.org/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from, and to...
 MAALI_URL="http://www.libarchive.org/downloads/libarchive-${MAALI_TOOL_VERSION}.tar.gz"

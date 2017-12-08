@@ -14,7 +14,7 @@ For further information see https://ccb.jhu.edu/software/tophat/index.shtml
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
 
 # intel/12.1 fails on
 # ./SeqAn-1.2/seqan/platform/platform_gcc.h(42): error: invalid combination of type specifiers

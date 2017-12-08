@@ -14,7 +14,7 @@ For further information see http://catchenlab.life.illinois.edu/stacks/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/5.5.0 gcc/7.2.0"
 
 # URL to download the source code from
 if [ $MAALI_TOOL_VERSION == 1.32 ]; then

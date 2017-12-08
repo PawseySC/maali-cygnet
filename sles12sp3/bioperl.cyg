@@ -18,15 +18,15 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from
-/home/maali/.maali/sles12sp3/cygnet_files/biolite-tools.cyg
-https://github.com/bioperl/bioperl-live/archive/release-1-7-1.tar.gz
-MAALI_URL="http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_TOOL_BIOPERL_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./-/g'`
+MAALI_TOOL_PERL_VERSION=`perl -e 'print "$^V"' | sed -e 's/v//g'`
+MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-live/archive/release-$MAALI_TOOL_BIOPERL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_BIOPERL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-live-release-$MAALI_TOOL_BIOPERL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -35,8 +35,9 @@ MAALI_TOOL_TYPE="bio-apps"
 MAALI_TOOL_PREREQ=""
 
 # for auto-building module files
+MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_MANPATH=1
-MAALI_MODULE_SET_PERLLIB='lib/perl5/vendor_perl'
+MAALI_MODULE_SET_PERLLIB="lib/perl5/vendor_perl/$MAALI_TOOL_PERL_VERSION"
 
 ##############################################################################
 
