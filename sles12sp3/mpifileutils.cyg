@@ -35,7 +35,7 @@ MAALI_TOOL_PATCHES="001"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="mpich/3.2 libcircle/0.2.1-rc.1 dtcmp/1.0.3 lwgrp/1.0.2 libarchive/3.2.2"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI libcircle/0.2.1-rc.1 dtcmp/1.1.0 lwgrp/1.0.2 libarchive/3.3.2"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="autoconf/2.69"
