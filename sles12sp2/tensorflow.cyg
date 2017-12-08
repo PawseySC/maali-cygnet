@@ -1,0 +1,98 @@
+##############################################################################
+# maali cygnet file for Tensorflow
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+TensorFlow™ is an open source software library for numerical computation using data flow graphs. Nodes in the graph represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) communicated between them. The flexible architecture allows you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device with a single API. TensorFlow was originally developed by researchers and engineers working on the Google Brain Team within Google's Machine Intelligence research organization for the purposes of conducting machine learning and deep neural networks research, but the system is general enough to be applicable in a wide variety of other domains as well.
+
+For further information see https://www.tensorflow.org
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/5.4.0"
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# Specify where to download the CUDA runfile from and where to place it locally             
+MAALI_URL="https://github.com/tensorflow/tensorflow/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+#export TMPDIR=${MAALI_TOOL_BUILD_DIR}
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="bazel/0.8.0 gcc/5.4.0 python/2.7.13 cuda/8.0.61 pip numpy/1.13.1 intel-mkl setuptools wheel swig"
+
+# packages that need to be installed in the operating system for this build to work
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64"
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
+
+function maali_build {
+
+  echo "Tensorflow Build"
+
+  #Now add cuDNN support
+  declare -a cuddn_versions=("6.0")
+  for i in "${cuddn_versions[@]}"
+  do
+      cuddnFile="${MAALI_SRC}/cudnn-8.0-linux-x64-v${i}.tar"
+      if [ -f $cuddnFile ]; then
+         echo "Matching cudnn detected -> Installing"
+         cd ${MAALI_INSTALL_DIR}
+         tar xf $cuddnFile
+         mv cuda/include/ .
+         mv cuda/lib64/ .
+         rmdir cuda
+         cd ${MAALI_TOOL_BUILD_DIR}
+	 maali_makedir "$MAALI_TOOL_BUILD_DIR"
+  	 maali_makedir "${MAALI_TOOL_BUILD_DIR}/tmp"
+  	 export TMPDIR="${MAALI_TOOL_BUILD_DIR}/tmp"
+  	 export PATH=${MAALI_BAZEL_HOME}/bin:${PATH}
+  	 export TF_NEED_CUDA=1
+  	 export GCC_HOST_COMPILER_PATH=${MAALI_GCC_HOME}/bin/gcc
+  	 export TF_CUDA_VERSION=8.0.61
+  	 export CUDA_TOOLKIT_PATH=${MAALI_CUDA_HOME}
+  	 export TF_CUDNN_VERSION=6.0.21
+  	 export CUDNN_INSTALL_PATH=${MAALI_INSTALL_DIR}
+  	 export TF_CUDA_COMPUTE_CAPABILITIES=3.5,3.7,5.2,6.0
+  	 export CC_OPT_FLAGS="-march=broadwel"
+  	 export PYTHON_BIN_PATH="${MAALI_PYTHON_HOME}/bin/python"
+  	 export USE_DEFAULT_PYTHON_LIB_PATH=1
+  	 export TF_NEED_JEMALLOC=1
+  	 export TF_NEED_GCP=0
+  	 export TF_NEED_HDFS=0
+  	 export TF_ENABLE_XLA=0
+  	 export TF_NEED_OPENCL=0
+  	 export TF_NEED_GDR=0
+  	 export TF_NEED_S3=0
+  	 export TF_NEED_OPENCL_SYCL=0
+  	 export TF_NEED_VERBS=0
+  	 export TF_NEED_MPI=0
+  	 export TF_CUDA_CLANG=0
+  	 export TF_DOWNLOAD_MKL=1
+  	 export LD_LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib64:${LD_LIBRARY_PATH}
+  	 maali_run "./configure"
+  	 maali_run 'bazel build  --config=opt --cxxopt="-march=broadwell" --cxxopt="-mrtm" --cxxopt="-D_GLIBC_USE_CXX11_ABI=0" --copt="-march=broadwell" --copt="-mrtm" --copt="-DEIGEN_USE_VML" --config=cuda //tensorflow/tools/pip_package:build_pip_package'
+  	 maali_run 'bazel-bin/tensorflow/tools/pip_package/build_pip_package .'
+  	 maali_run 'pip install --prefix=${MAALI_INSTALL_DIR} tensorflow-1.4.0-cp27-cp27mu-linux_x86_64.whl'
+         export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages/:${PYTHONPATH}
+         break 
+      else
+	 echo "Cannot find cudnn libraries. Download cudnn-8.0-linux-x64-v${i}.tgz and place it in ${MAALI_SRC}"	
+      fi
+  done
+
+}
+
+##############################################################################
