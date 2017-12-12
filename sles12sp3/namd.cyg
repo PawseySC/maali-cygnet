@@ -26,8 +26,7 @@ else
 fi
 
 # specify which cuda versions we want to build the tool with
-#MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
-MAALI_TOOL_CUDA_COMPILERS="cuda"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL=""
@@ -48,8 +47,6 @@ MAALI_MODULE_SET_PATH=1
 
 # supports building CUDA version
 MAALI_CUDA_SUPPORT=1
-
-# set a proper CHARMBASE directory
 
 ##############################################################################
 
@@ -90,8 +87,15 @@ function maali_build {
   cd "$MAALI_TOOL_BUILD_DIR"
   ln -s Linux-x86_64-icc bin
   
+  cat <<EOF >srun_launcher
+#!/bin/csh -f
+shift
+exec srun --export=ALL -n $* 
+EOF
+  chmod +x srun_launcher
   maali_run 'mkdir -p $MAALI_INSTALL_DIR'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
+  maali_run 'cp srun_launcher ${MAALI_INSTALL_DIR}/bin'
 
 }
 
