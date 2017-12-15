@@ -1,0 +1,41 @@
+##############################################################################
+# maali cygnet file for OpenMPI
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+OpenMPI is an open source Message Passing Interface implementation that is developed and
+maintained by a consrtium of academic, research and industry partners. 
+
+For further information see https://www.openmpi.org
+
+EOF
+
+# specify which compilers we want to build the tool with. We specify only compiler that work with CUDA build
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.openmpi.org/software/ompi/v$MAALI_TOOL_MAJOR_MINOR_VERSION/downloads/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--with-pmi=/usr --with-lustre=/usr --with-slurm'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
