@@ -28,20 +28,20 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=' -DENABLE_NETCDF_4=ON -DUSE_HDF5=ON -DENABLE_DAP=OFF -DCMAKE_BUILD_TYPE:STRING=Release -DENABLE_TESTS=OFF -DTEST_PARALLEL=OFF'
+MAALI_TOOL_CONFIGURE='--enable-netcdf-4'
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ="szip/2.1.1 hdf5/1.10.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/3.10.0"
+MAALI_TOOL_BUILD_PREREQ=""
 
 MAALI_TOOL_VERSION_CXX="4.3.0"
-MAALI_TOOL_VERSION_FC="4.4.2"
+MAALI_TOOL_VERSION_FC="4.4.4"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_LD_LIBRARY_PATH='lib64'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib'
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
@@ -51,86 +51,52 @@ MAALI_MODULE_SET_NETCDF='$MAALI_APP_HOME'
 
 ###############################################################################
 
-function maali_cmake_build {
+function maali_build {
 
-  # cmake likes to build in a director of it's own
-  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
-  # netcdf-C interface.
-  # Build static libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=OFF $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
-  fi
-  maali_run "make install"
+  export CFLAGS="-fPIC -I$MAALI_HDF5_HOME/include -I$MAALI_SZIP_HOME/include -L$MAALI_HDF5_HOME/lib -L$MAALI_SZIP_HOME/lib"
+  export LDFLAGS="-L$MAALI_HDF5_HOME/lib -L$MAALI_SZIP_HOME/lib"
 
   # netcdf-C interface.
-  # Build shared libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=ON $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
-  fi
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-shared"
+  maali_run "make -j $MAALI_CORES"
   maali_run "make install"
 
-  # netcdf-C++ interface.
-  maali_run "git clone http://github.com/unidata/netcdf-cxx4"
-  cd netcdf-cxx4
-  maali_run "git checkout v${MAALI_TOOL_VERSION_CXX}"
-  mkdir netcdf-cxx-build
-  cd netcdf-cxx-build
-
-  # netcdf-C++ interface.
-  # Build static libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=OFF $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
+  # C++ library
+  if [ ! -f "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz" ]; then
+    wget -O "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz" -q "http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz"
   fi
+
+  tar zxf "$MAALI_SRC/$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX.tar.gz"
+  cd "$MAALI_TOOL_NAME-cxx4-$MAALI_TOOL_VERSION_CXX"
+
+  export CFLAGS=""
+  export CPPFLAGS="-I$MAALI_INSTALL_DIR/include -L$MAALI_INSTALL_DIR/lib"
+  export LDFLAGS="-L$MAALI_INSTALL_DIR/lib"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-shared"
+  maali_run "make -j $MAALI_CORES"
   maali_run "make install"
 
-  # netcdf-C++ interface.
-  # Build shared libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=ON $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
+  # fortran library
+  if [ ! -f "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz" ]; then
+      wget -O "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz" -q "http://www.unidata.ucar.edu/downloads/$MAALI_TOOL_NAME/ftp/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz"
   fi
+
+  export CFLAGS=""
+  export CPPFLAGS="-I$MAALI_INSTALL_DIR/include -L$MAALI_INSTALL_DIR/lib"
+  export FCFLAGS="-I$MAALI_INSTALL_DIR/include -L$MAALI_INSTALL_DIR/lib"
+  export LDFLAGS="-L$MAALI_INSTALL_DIR/lib"
+  export LD_LIBRARY_PATH="$MAALI_INSTALL_DIR/lib:$LD_LIBRARY_PATH"
+
+  cd ..
+  tar zxf "$MAALI_SRC/$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC.tar.gz"
+  cd "$MAALI_TOOL_NAME-fortran-$MAALI_TOOL_VERSION_FC"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-shared"
+  maali_run "make -j $MAALI_CORES"
   maali_run "make install"
-
-  # netcdf-fortran interface.
-  maali_run "git clone http://github.com/unidata/netcdf-fortran"
-  cd netcdf-fortran
-  maali_run "git checkout v${MAALI_TOOL_VERSION_FC}"
-  mkdir netcdf-fortran-build
-  cd netcdf-fortran-build
-
-  # netcdf-fortran interface.
-  # Build static libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=OFF $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
-  fi
-  maali_run "make install"
-
-  # netcdf-fortran interface.
-  # Build shared libs
-  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE -DBUILD_SHARED_LIBS=ON $MAALI_CMAKE_PATH"
-  if [ $DEBUG ]; then
-    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
-  else
-    maali_run "make -j $MAALI_CORES"
-  fi
-  maali_run "make install"
-
 }
 
 ##############################################################################

@@ -27,7 +27,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 ## tool pre-requisites
-MAALI_TOOL_PREREQ="fltk/1.3.4"
+MAALI_TOOL_PREREQ="netcdf/4.5.0 fltk/1.3.4"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -43,6 +43,9 @@ MAALI_MODULE_SET_PATH=1
 function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
+
+  cat configure.options
+
   mv ../plugins .
   cd plugins
 
@@ -50,16 +53,24 @@ function maali_build {
 
   temp_arch=LINUXAMD64
 
+  sed -i -e 's/-ltcl8.5/-ltcl8.6/g' Make-arch
+  sed -i -e "s;-lnetcdf;-L$MAALI_NETCDF_HOME/lib -lnetcdf;g" Make-arch
+
   maali_run "make $temp_arch"
   maali_run "make distrib PLUGINDIR=$MAALI_INSTALL_DIR/lib/plugins"
   cd ..
-  sed -i -e 's\ACTC\OPENGL FLTK TK\g' configure.options
-  sed -i -e 's\LIBTACHYON\\g' configure.options
 
-  maali_run "VMDINSTALLBINDIR=$MAALI_INSTALL_DIR/bin VMDINSTALLLIBRARYDIR=$MAALI_INSTALL_DIR/lib ./configure "
+  maali_run "VMDINSTALLBINDIR=$MAALI_INSTALL_DIR/bin VMDINSTALLLIBRARYDIR=$MAALI_INSTALL_DIR/lib ./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT NETCDF COLVARS TCL PTHREADS SILENT GCC"
+  cat configure.options
+
   cd src
   sed -i -e "s/..\/plugins\/$temp_arch\/molfile/..\/plugins\/compile\/lib_$temp_arch\/molfile/g" Makefile
   sed -i -e 's/-lGLU -lX11/-lGLU -lX11 -lXcursor -lXinerama/g' Makefile
+  sed -i -e "s;-L/usr/X11R6/lib64;-L$MAALI_NETCDF_HOME/lib -L/usr/X11R6/lib64;g" Makefile
+  sed -i -e 's/-ltcl8.5/-ltcl8.6/g' Makefile
+  sed -i -e 's/-ltk8.5/-ltk8.6/g' Makefile
+  sed -i -e 's/ -ll//g' Makefile
+  sed -i -e "s;-lfltk;-L$MAALI_FLTK_HOME/lib -lfltk -lXext -lXfixes -lXft -lfontconfig -lXrender -lXcursor -lXinerama;g" Makefile
 
   maali_run "make"
   maali_run "make install"

@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0 intel/17.0.5"
 
 # URL to download the source code from
 MAALI_URL="http://sourceforge.net/projects/opencvlibrary/files/$MAALI_TOOL_NAME-unix/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
@@ -21,10 +21,10 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="qt/5.9.3 $MAALI_DEFAULT_27_PYTHON numpy/1.13.3"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_27_PYTHON numpy/1.13.3"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_CXX_FLAGS=-shared -DWITH_QT=ON -DWITH_CUDA=OFF -DWITH_CUFFT=OFF -DWITH_FFMPEG=OFF -DPYTHON_EXECUTABLE=${MAALI_PYTHON_HOME}/bin/python -DPYTHON_INCLUDE_DIR=${MAALI_PYTHON_HOME}/include/python${MAALI_PYTHON_LIB_VERSION} -DPYTHON_LIBRARY=${MAALI_PYTHON_HOME}/lib/libpython${MAALI_PYTHON_LIB_VERSION}.so -DBUILD_NEW_PYTHON_SUPPORT=ON -DPYTHON_PACKAGES_PATH=$MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages -DPYTHON_NUMPY_INCLUDE_DIR=${MAALI_NUMPY_HOME}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages/numpy/core/include'
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC -DWITH_QT=OFF -DWITH_CUDA=OFF -DWITH_CUFFT=OFF -DWITH_FFMPEG=OFF -DWITH_IPP=ON -DWITH_TBB=OFF -DWITH_OPENMP=ON -DWITH_EIGEN=OFF -DPYTHON_EXECUTABLE=${MAALI_PYTHON_HOME}/bin/python -DPYTHON_INCLUDE_DIR=${MAALI_PYTHON_HOME}/include/python${MAALI_PYTHON_LIB_VERSION} -DPYTHON_LIBRARY=${MAALI_PYTHON_HOME}/lib/libpython${MAALI_PYTHON_LIB_VERSION}.so -DBUILD_NEW_PYTHON_SUPPORT=ON -DPYTHON_PACKAGES_PATH=$MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages -DPYTHON_NUMPY_INCLUDE_DIR=${MAALI_NUMPY_HOME}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages/numpy/core/include'
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -35,18 +35,10 @@ MAALI_MODULE_SET_PYTHONPATH='lib/python2.7/site-packages'
 
 function maali_cmake_build {
 
-  #There cmake rules prefix ie numpy/ndarrayobject.h to "PYTHON_NUMPY_INCLUDE_DIR" path var
-  if [ -d $MAALI_NUMPY_HOME/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages/numpy/core/include/numpy ]; then
-    echo "Numpy Headers found in default position"
-    echo "$MAALI_NUMPY_HOME/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages/numpy/core/include/numpy"
-  else
-    #Assume in default Python Installation where its not meant to be (Numpy and Includes?)
-    echo "Numpy in Python Installation Assumption then"
-    MAALI_NUMPY_HOME=${MAALI_PYTHON_HOME}
-    echo "${MAALI_NUMPY_HOME}"
-  fi
-
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  # intel
+  # -D CMAKE_CXX_COMPILER=CC -D CMAKE_C_COMPILER=cc -D CMAKE_C_FLAGS='-O3 -fPIC'
 
   maali_run "mkdir $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
   cd ${MAALI_TOOL_BUILD_DIR}/${MAALI_TOOL_NAME}-build

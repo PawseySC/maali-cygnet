@@ -49,16 +49,20 @@ function maali_build {
     export CC=icc
     if [[ $MAALI_CPU_NAME == "knl" ]]; then
        export CFLAGS="-xMIC-AVX512 -O3"
-    else
+    elif [[ $MAALI_CPU_TARGET == "broadwell" ]]; then
        export CFLAGS="-xAVX2 -O3"
+    else   
+       export CFLAGS="-O3"
     fi
     maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
   else
     export CC=gcc
     if [[ $MAALI_CPU_NAME == "knl" ]]; then
        export CFLAGS="-mavx512f -mavx512cd -O3"
-    else
+    elif [[ $MAALI_CPU_TARGET == "broadwell" ]]; then
        export CFLAGS="-mavx2 -O3"
+    else
+       export CFLAGS="-O3"
     fi
     maali_run "./configure --prefix=$MAALI_INSTALL_DIR --with-gnu-ld"
   fi
