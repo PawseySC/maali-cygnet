@@ -1,0 +1,84 @@
+##############################################################################
+# maali cygnet file for SOAP3
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SOAP3 is a GPU-based software for aligning short reads to a reference sequence.
+It can find all alignments with k mismatches, where k is chosen from 0 to 4.
+When compared with its previous version SOAP2, SOAP3 can be up to tens of times
+faster. For example, when aligning length-100 reads with the human genome, SOAP3
+is the first software that can find all 4-mismatch alignments in tens of seconds
+per million reads.
+
+For further information see http://i.cs.hku.hk/2bwt-tools/soap3/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0 intel/17.0.5"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# specify which CPU architectures we want to build the tool with
+MAALI_TOOL_CPU_TARGET='sandybridge broadwell'
+
+# needed for URL
+MAALI_TOOL_VERSION_BEAGLE=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="http://i.cs.hku.hk/2bwt-tools/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source.tar.gz"
+
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+##############################################################################
+
+function maali_build {
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    cd "$MAALI_TOOL_BUILD_DIR"
+    sed -i -e "s;/usr/local/cuda/lib64/;$NVIDIA_CUDA_HOME/lib64;g" Makefile
+    sed -i -e 's;soap3_aligner BGS-Build BGS-View BGS-View-PE clean;soap3_aligner BGS-Build BGS-View BGS-View-PE;g' Makefile
+    sed -i -e 's;-lm;-lm -lpthread -lz;g' Makefile
+    maali_run "make"
+
+    maali_makedir "$MAALI_INSTALL_DIR/bin"
+    MAALI_INSTALL_FILES="soap3_aligner soap3-builder BGS-Build BGS-View BGS-View-PE"
+
+    for file in $MAALI_INSTALL_FILES
+    do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    done
+
+    for file in `ls *.ini`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/bin"
+    done
+
+    for file in `ls *.sh`
+    do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    done
+
+  else
+    echo "Requires CUDA"
+    exit
+  fi
+}
+
+##############################################################################
