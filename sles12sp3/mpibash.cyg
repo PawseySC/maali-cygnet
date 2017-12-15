@@ -1,0 +1,72 @@
+##############################################################################
+#
+# maali cygnet file for mpibash
+#
+#  mpibash is a limited MPI implementation for bash.
+#  See, e.g., https://github.com/losalamos/MPI-Bash
+#
+#  The recommended version of bash is v4.3.30, which I am going
+#  to build in the same place to keep them together as a single
+#  module. This also avoids having an independent bash-4.3.30
+#  module floating around which users can use/abuse.
+#
+#  I am also going to build libcircle support via the
+#  libcircle-0.2.1 module.
+#
+#  See comments on build process below.
+#  KS 23/6/2015
+#
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/losalamos/MPI-Bash/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz http://mirror.aarnet.edu.au/pub/gnu/bash/bash-4.3.30.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz $MAALI_SRC/bash-4.3.30.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="libcircle/0.2.1 $MAALI_DEFAULT_MPI"
+	
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+mpibash is a limited implementation of the message passing interface
+(MPI) for bash scripts. This version provides libcircle support via
+the bash interface included with mpibash.
+
+For further information see, e.g., https://github.com/losalamos/MPI-Bash
+
+EOF
+
+###############################################################################
+
+function maali_build {
+
+  cd "$MAALI_BUILD_DIR/bash-4.3.30"
+
+  maali_run "./configure --prefix=${MAALI_INSTALL_DIR}"
+  maali_run "make"
+  maali_run "make install"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "./configure --prefix=${MAALI_INSTALL_DIR} --with-bashdir=${MAALI_BUILD_DIR}/bash-4.3.30"
+  maali_run "make"
+  maali_run "make install"
+
+}
+
+###############################################################################
