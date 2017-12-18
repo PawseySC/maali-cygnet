@@ -19,7 +19,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/losalamos/MPI-Bash/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz http://mirror.aarnet.edu.au/pub/gnu/bash/bash-4.3.30.tar.gz"
@@ -63,7 +63,7 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  maali_run "./configure --prefix=${MAALI_INSTALL_DIR} --with-bashdir=${MAALI_BUILD_DIR}/bash-4.3.30"
+  maali_run "./configure --prefix=${MAALI_INSTALL_DIR} --with-bashdir=${MAALI_BUILD_DIR}/bash-4.3.30 CC=mpicc"
   maali_run "make"
   maali_run "make install"
 

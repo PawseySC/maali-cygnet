@@ -13,13 +13,10 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from, and to...
 MAALI_URL="https://github.com/hpc/libcircle/tarball/master"
-
-# patch files to download
-#MAALI_TOOL_PATCHES="001"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/libcircle-v${MAALI_TOOL_VERSION}.tar.gz"
@@ -52,25 +49,6 @@ For further information see, e.g., http://hpc.github.io/libcircle/
 EOF
 
 ##############################################################################
-#
-#  Unfortunately, the configure script for libcircle is, well, not very
-#  configurable. There are two main problems:
-#
-#  1. assumption of gcc compiler options
-#  2. assumption of OpenMPI-like mpicc compiler options
-#
-#  The first is overcome simply by using GCC; the second requires a
-#  patch to the configure script. To do this I removed the offending
-#  configuration code (mainly related to MPICC) and created the
-#  relevant  patch file.
-#
-#  This is /ivec/cle52/magnus/src/libcircle-v0.2.1.patch 
-#  i.e., in ($IVEC_SRC for magnus)
-#
-#  If the version of libcircle is changed, the patch file may have
-#  to be re-created.
-#
-###############################################################################
 
 function maali_build {
 
@@ -80,9 +58,7 @@ function maali_build {
     cd ..
     rmdir hpc-libcircle-*
 
- #   patch configure < "$MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch"
-
-    maali_run "./configure --prefix $MAALI_INSTALL_DIR"
+    maali_run "./configure --prefix $MAALI_INSTALL_DIR LDFLAGS=-L/usr/lib64"
     maali_run "make"
     maali_run "make install"
 
