@@ -21,18 +21,10 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 3.8 ]; then
-  MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
-else
-  MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
-fi
- 
+MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
 # location we are downloading the source code to
-if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 3.8 ]; then
-  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
-else
-  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
-fi
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
