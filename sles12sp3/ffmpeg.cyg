@@ -33,7 +33,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="tools"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX'
+MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX --enable-pic --enable-shared'
 
 # used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
 MAALI_WIKI_TOOL_NAME="FFmpeg"
@@ -43,5 +43,24 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [[ $MAALI_CPU_TARGET == "sandybridge" ]]; then
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --disable-avx2"
+  else
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  fi
+ 
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+}
 
 ##############################################################################
