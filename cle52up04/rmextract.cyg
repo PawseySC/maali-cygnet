@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for RMextract
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RMextract is a set of python based tools that can be used to calculate Ionospheric 
+Faraday Rotation for a given epoch, location and line of sight.
+
+For further information see https://github.com/lofar-astron/RMextract/wiki/RMextract
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/lofar-astron/RMextract/archive/v0.1.tar.gz"
+MAALI_WGET_EXTRA=--no-check-certificate
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/RMextract-0.1.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/RMextract-0.1"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="PrgEnv-gnu/5.2.82 setuptools/18.4 numpy/1.10.1"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--add-lofar-utils'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+
+##############################################################################
+
+#function maali_python_build {
+#
+#cd $MAALI_TOOL_BUILD_DIR
+#
+#export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.6/site-packages:$PYTHONPATH
+#export PATH=${MAALI_INSTALL_DIR}/bin:$PATH
+#
+#maali_run "python setup.py build --add-lofar-utils"
+#maali_run "python setup.py install --add-lofar-utils --prefix=$MAALI_INSTALL_DIR"
+#
+#}
+
+##############################################################################
