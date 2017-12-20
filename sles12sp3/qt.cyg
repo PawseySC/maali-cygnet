@@ -3,7 +3,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 #QT4 does not compile with gcc/6.  https://forum.qt.io/topic/75842/can-t-compile-qt-4-8-7/2
 if [[ $MAALI_TOOL_MAJOR_VERSION -lt 5 ]]; then
@@ -57,7 +57,7 @@ function maali_pre_build {
 function maali_build {
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    MAALI_TOOL_CONFIGURE="-platform linux-icc-64 -no-javascript-jit $MAALI_TOOL_CONFIGURE"
+    MAALI_TOOL_CONFIGURE="-platform linux-icc-64 $MAALI_TOOL_CONFIGURE"
   fi
  
   cd "$MAALI_TOOL_BUILD_DIR"
