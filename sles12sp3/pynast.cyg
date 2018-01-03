@@ -2,6 +2,14 @@
 # maali cygnet file for pynast
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Python Nearest Alignment Space Termination tool
+
+For further information see https://pypi.python.org/pypi/pynast
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
