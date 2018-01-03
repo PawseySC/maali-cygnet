@@ -1,0 +1,33 @@
+##############################################################################
+# maali cygnet file for lmfit
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Lmfit provides a high-level interface to non-linear optimization and curve
+fitting problems for Python. It builds on and extends many of the optimization
+methods of scipy.optimize.
+
+For further information see https://lmfit.github.io/lmfit-py/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy/1.13.3 scipy/1.0.0 setuptools/38.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
