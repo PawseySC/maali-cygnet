@@ -1,12 +1,12 @@
 ##############################################################################
-# maali cygnet file for funcsigs
+# maali cygnet file for click
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Python function signatures from PEP362 for Python 2.6, 2.7 and 3.2+
+A simple wrapper around optparse for powerful command line utilities.
 
-For further information see https://pypi.python.org/pypi/funcsigs/
+For further information see https://pypi.python.org/pypi/click/
 
 EOF
 
