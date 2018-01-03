@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for libsodium
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sodium is a modern, easy-to-use software library for encryption, decryption,
+signatures, password hashing and more.
+
+It is a portable, cross-compilable, installable, packageable fork of NaCl, with
+a compatible API, and an extended API to improve usability even further.
+
+Its goal is to provide all of the core operations needed to build higher-level
+cryptographic tools.
+
+Sodium is cross-platforms and cross-languages. It runs on a variety of compilers
+and operating systems, including Windows (with MinGW or Visual Studio, x86 and x86_64),
+iOS and Android. Javascript and WebAssembly versions are also available and are fully
+supported. Bindings for all common programming languages are available and well-supported.
+
+The design choices emphasize security and ease of use. But despite the emphasis
+on high security, primitives are faster across-the-board than most implementations.
+
+For further information see https://download.libsodium.org/doc/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/jedisct1/${MAALI_TOOL_NAME}/releases/download/${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
