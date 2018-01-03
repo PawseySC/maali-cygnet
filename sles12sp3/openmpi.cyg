@@ -39,3 +39,9 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
 ##############################################################################
+
+# Should be part of the post-install process:
+## maali@zeus-1:~> tail -3 /pawsey/sles12sp3/devel/sandybridge/gcc/4.8.5/openmpi/2.1.2/etc/openmpi-mca-params.conf
+## Define the MPI interconnects
+## btl = sm,openib,self
+## btl_openib_warn_default_gid_prefix = 0

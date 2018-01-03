@@ -23,7 +23,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.13.3 matplotlib/1.5.0 pyyaml/3.12"
+MAALI_TOOL_PREREQ="numpy/1.13.3 matplotlib/2.1.0 pyyaml/3.12"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=''

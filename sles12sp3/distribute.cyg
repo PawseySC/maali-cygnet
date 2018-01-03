@@ -33,5 +33,7 @@ MAALI_TOOL_PREREQ=""
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
+# create a module for python3 versions, but don't install
+MAALI_PYTHON3_SKIP=1
 
 ##############################################################################

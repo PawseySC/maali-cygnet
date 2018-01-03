@@ -51,5 +51,11 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib'
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 ##############################################################################
