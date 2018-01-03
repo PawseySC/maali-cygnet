@@ -1,0 +1,257 @@
+##############################################################################
+# maali cygnet file for VASP
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic
+scale materials modelling, e.g. electronic structure calculations and
+quantum-mechanical molecular dynamics, from first principles.
+
+For further information see https://www.vasp.at/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# Be sure to put the patches into the tarball rather than using maali.
+# The directory name within the tarball should be vasp.$MAALI_TOOL_MAJOR_MINOR_VERSION.  E.g. vasp.5.3 and not vasp.5.3.5.
+# Location of the source code.
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
+
+# put a string here to help identify the patch level.
+VASP_VERSION='5.4.4.18Apr17'
+
+# where the unpacked source code is located
+if [ $MAALI_TOOL_VERSION \< 5.4.4 ]; then
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_MINOR_VERSION"
+else
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
+fi
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-fftw"
+#vasp does not like craype-hugepages2M
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cray-mpich cray-libsci"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# restrict the module to a specified group
+MAALI_MODULE_RESTRICT_GROUP='vasp'
+
+##############################################################################
+
+function maali_build {
+
+  # Unload for Intel MKL
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    maali_run "module unload cray-libsci"
+  fi
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+
+    SRC="${MAALI_TOOL_BUILD_DIR}"
+    makefile=makefile.linux_ifc_P4
+
+    # Compile VASP lib
+    tar xf "$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_VERSION.lib.tar.gz"
+    cd "$MAALI_TOOL_NAME.$MAALI_TOOL_MAJOR_VERSION.lib"
+    export FC='ftn'
+    export CFLAGS='-Os'
+    export CPP='gcc -E -P -C -DLONGCHAR $*.F >$*.f'
+    if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      export FFLAGS='-Os -FI'
+    elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      export FFLAGS='-O1'
+      export FREE='-ffree-form -ffree-line-length-none -FR -lowercase'
+      export NOFREE='-ffixed-form'
+    fi
+    maali_run "make -e -f $makefile"
+    cd ${MAALI_TOOL_BUILD_DIR}
+
+  else # >= 5.4
+
+    SRC="${MAALI_TOOL_BUILD_DIR}/src"
+    makefile=makefile
+
+    if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      cp arch/makefile.include.linux_intel makefile.include
+    else
+      if [ $MAALI_TOOL_VERSION \< 5.4.4 ]; then
+        cp arch/makefile.include.linux_gfortran makefile.include
+      else
+        cp arch/makefile.include.linux_gnu makefile.include
+      fi
+    fi
+  fi
+
+  # Fix buggy file.  5.3.2.  Fixed in 5.4.1.
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION == 5.3 ]; then
+    sed -i -e '/INTEGER IP, LMBASE, ISPIRAL, ISPINOR, NLIIND, NIS, NT, LMMAXC, NI, INDMAX, L, IND/ s/L, IND/L, LM, IND/' ${SRC}/nonlr.F
+  fi
+
+  # Fix buggy file.  5.3.3
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+    sed -i -e '/do_dbg/ s/3I)/3I5)/' ${SRC}/spinsym.F
+    sed -i -e "/'Hf','Ta','W'/ s/W/W /" ${SRC}/vdwforcefield.F
+    sed -i -e '/WRITE (APP  , / s/I)/I5)/' ${SRC}/finite_diff.F
+    sed -i -e '/write(7,/ s/(I,/(I5,/' ${SRC}/fcidump.F
+  fi
+
+  # Fixed in 5.4.1.
+  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    if [ $MAALI_TOOL_MAJOR_MINOR_VERSION == 5.3 ]; then
+      sed -i -e '/USE us/ s/USE us/USE us, only : setdij_, augmentation_charge/' ${SRC}/us.F
+    fi
+  fi
+
+  # Compile VASP...
+
+  ##################################################
+
+  export FC='ftn'
+  # -heap-arrays used to be needed to stop runing out of memory.
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    #Note that we are using the fftw module and not Intel's fftw interface.
+
+    export OFLAG='-O2 -ip'
+    export OFLAG_HIGH='-O3 -ip'
+    if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+      export FFLAGS='-FR -names lowercase -assume byterecl -align array32byte -align dcommons -align rec32byte '
+      export CPP_='./preprocess <$*.F | /usr/bin/cpp -P -C -traditional >$*$(SUFFIX)'
+      export CPP_PAWSEY='-DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -DPGF90 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
+    else
+      export FFLAGS='-FR -names lowercase -assume byterecl -align array32byte -align dcommons -align rec32byte '
+      export CPP_PAWSEY='-DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -DPGF90 -Davoidalloc -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Duse_bse_te -Duse_shmem -Dtbdyn '
+      export OBJECTS=''
+#      export OBJECTS='fftmpiw.o fftmpi_map.o  fftw3d.o  fft3dlib.o'
+    fi
+
+    export FCL='${FC} -mkl=sequential'
+
+    # Intel MKL
+#    export FFTW_INC='$(MKLROOT)/include/fftw'
+    export BLAS='-mkl=sequential'
+    export LAPACK=''
+    export SCALAPACK='-lmkl_scalapack_lp64 -lmkl_blacs_intelmpi_lp64'
+
+# radial.F needs to be compiled with low optimisation with Intel 14.
+# nonl.F does not like -fno-alias with Intel 14.
+    if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+cat <<EOF >> ${SRC}/$makefile
+
+radial.o : radial.F
+	\$(CPP)
+	\$(FC) \$(FFLAGS) -O1 -prec-div -c \$*\$(SUFFIX)
+
+nonl.o : nonl.F
+	\$(CPP)
+	\$(FC) \$(FFLAGS) -O2 -ip -unroll-aggressive -opt-prefetch -use-intel-optimized-headers -no-prec-div -c \$*\$(SUFFIX)
+
+EOF
+    else
+cat <<EOF >> ${SRC}/$makefile
+
+radial.o : radial\$(SUFFIX)
+	\$(FC) \$(FREE) \$(FFLAGS) -O1 -prec-div \$(INCS) -c \$*\$(SUFFIX)
+
+EOF
+    fi
+  elif [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    export FFLAGS='-ffree-line-length-none -fno-second-underscore -FR -lowercase'
+    if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+      export CPP_='./preprocess <$*.F | /usr/bin/cpp -P -C -traditional >$*$(SUFFIX)'
+      export CPP_PAWSEY='-DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -Davoidalloc -Dkind8 -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Ddo_loops -Drandom_array -DnoSTOPCAR -DLONGCHAR '
+    else
+      export CPP_PAWSEY='-DMPI -DHOST=\"Magnus\" -DIFC -DCACHE_SIZE=4000 -Davoidalloc -DMPI_BLOCK=64000 -Duse_collective -DscaLAPACK -Duse_bse_te -Dtbdyn'
+    fi
+    export OFLAG='-O2'
+    export FC='ftn -ffree-line-length-none'
+    export FCL='${FC}'
+
+    # Cray libsci
+    export BLAS=''
+    export LAPACK=''
+    export SCALAPACK=''
+
+    export OBJECTS=''
+    export INCS=''
+
+  fi
+  # End of compiler-specific options.
+  ##################################################
+
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+    export LIB="-Lvasp.5.lib -ldmy ${MAALI_TOOL_BUILD_DIR}/vasp.5.lib/linpack_double.o -L\$(FFTW_DIR) -lfftw3 \$(SCALAPACK) \$(LAPACK) \$(BLAS)"
+    export INCS='-I$(FFTW_INC)'
+  elif [ $MAALI_TOOL_VERSION \< 5.4.4 ]; then
+    export LLIBS="-L\$(FFTW_DIR) -lfftw3 \$(SCALAPACK) \$(LAPACK) \$(BLAS)"
+    export INCS='-I$(FFTW_INC)'
+  else
+    export FFTW=`echo $FFTW_DIR | sed 's/\/lib//'`
+#    export FFTW=$FFTW_DIR
+#    export MPI_INC=/opt/gfortran/openmpi-1.10.2/install/ompi-1.10.2-GFORTRAN-5.4.1/include
+
+  fi
+  export FFT3D='fftmpiw.o fftmpi_map.o  fftw3d.o  fft3dlib.o'
+  export CC_LIB='${CC}'
+
+  ##################################################
+  # Compile it without additional options.
+
+  echo ${VASP_VERSION} > ${MAALI_INSTALL_DIR}/VERSION
+
+  export CPP_OPTIONS='$(CPP_PAWSEY)'
+
+  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 5.4 ]; then
+    export CPP='$(CPP_) $(CPP_PAWSEY) -DNGZhalf'
+    maali_run "make -e -f $makefile clean"
+    maali_run "make -e -f $makefile"
+    maali_run "install -m 750 -g vasp vasp $MAALI_INSTALL_DIR/bin/vasp"
+  else
+    maali_run "make -e -f $makefile veryclean"
+    maali_run "make -e -f $makefile"
+    maali_run "install -m 750 -g vasp bin/vasp_gam $MAALI_INSTALL_DIR/bin"
+    maali_run "install -m 750 -g vasp bin/vasp_ncl $MAALI_INSTALL_DIR/bin"
+    maali_run "install -m 750 -g vasp bin/vasp_std $MAALI_INSTALL_DIR/bin"
+  fi
+
+  ##################################################
+  # This would be a great place to compile additional VASP binaries with customisations.
+
+
+  ##################################################
+  # if this is a system build we need to restrict it to the appropriate group
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+
+    maali_run "chmod 750 $MAALI_INSTALL_DIR/bin"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR/bin"
+  fi
+
+}
+
+##############################################################################
