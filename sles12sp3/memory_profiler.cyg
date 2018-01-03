@@ -1,0 +1,40 @@
+##############################################################################
+# maali cygnet file for memory_profiler
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is a python module for monitoring memory consumption of a process as well
+as line-by-line analysis of memory consumption for python programs. It is a
+pure python module and has the psutil module as optional (but highly
+recommended) dependencies.
+
+For further information see https://pypi.python.org/pypi/memory_profiler
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="python"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="setuptools/38.2.1"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

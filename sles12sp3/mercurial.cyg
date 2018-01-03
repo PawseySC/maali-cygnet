@@ -1,0 +1,32 @@
+##############################################################################
+# maali cygnet file for mercurial
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Mercurial is a free, distributed source control management tool. It efficiently
+handles projects of any size and offers an easy and intuitive interface.
+
+For further information see https://www.mercurial-scm.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://www.mercurial-scm.org/release/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
