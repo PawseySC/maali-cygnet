@@ -1,34 +1,50 @@
 ##############################################################################
-# maali cygnet file for Keras
+# maali cygnet file for Keras 
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Keras is a high-level neural networks API, written in Python and capable of
-running on top of TensorFlow, CNTK, or Theano. It was developed with a focus on
-enabling fast experimentation. Being able to go from idea to result with the
-least possible delay is key to doing good research.
+Keras is a high-level neural networks API, written in Python and capable of 
+running on top of TensorFlow, CNTK, or Theano. It was developed with a focus 
+on enabling fast experimentation.
 
-For further information see https://keras.io/
+For further information see https://github.com/keras-team/keras 
 
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="python/2.7.13"
 
-# URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
 
-# location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+# There is nothing to download
+MAALI_URL="https://github.com/keras-team/keras/archive/${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# Load the prerequisite Python packages, CUDA SDK and GCC compiler
+MAALI_TOOL_PREREQ="broadwell gcc/5.4.0 cuda numpy scipy cython setuptools pip wheel six nose libgpuarray"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
-MAALI_TOOL_BUILD_PREREQ="setuptools/36.2.7"
-MAALI_TOOL_PREREQ="numpy/1.13.1 scipy/0.19.1 six/1.10.0 pyyaml/3.12"
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}
+MAALI_MODULE_SET_LD_LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib
+MAALI_MODULE_SET_CUDA_ROOT=${MAALI_CUDA_HOME}
+#MAALI_MODULE_SET_THEANO_FLAGS='cuda.root=\$env\(MAALI_CUDA_HOME\),device=cuda,floatX=float32'
 
 ##############################################################################
+
+#function maali_python_build {
+#
+# # Install PyCuda and a developer version of scikit-cuda with pip
+#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR pycuda"
+#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR git+https://github.com/lebedov/scikit-cuda.git#egg=scikit-cuda"
+#
+# # Install Theano with pip
+#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR theano==${MAALI_TOOL_VERSION}"
+#}
+
