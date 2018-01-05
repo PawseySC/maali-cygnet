@@ -25,4 +25,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 # tool pre-requisites
 MAALI_TOOL_PREREQ=""
 
+# create a module for python3 versions, but don't install
+MAALI_PYTHON3_SKIP=1
+
 ##############################################################################
