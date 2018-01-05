@@ -1,14 +1,14 @@
 ##############################################################################
-# maali cygnet file for pytest
+# maali cygnet file for mpi4py
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The pytest framework makes it easy to write small tests, yet scales to support 
-complex functional testing for applications and libraries.
+MPI for Python provides bindings of the Message Passing Interface (MPI)
+standard for the Python programming language, allowing any Python program to
+exploit multiple processors.
 
-
-For further information see https://docs.pytest.org/en/latest/
+For further information see http://pythonhosted.org/mpi4py/
 
 EOF
 
@@ -25,11 +25,15 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="funcsigs/1.0.2 pluggy/0.6.0 attrs/17.3.0 six/1.11.0 py/1.5.2"
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ=""
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC broadwell/1.0 $MAALI_DEFAULT_MPI"
 
 # for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_pre_build {
+  export CC=mpicc MPICC=mpicc
+}
 
 ##############################################################################

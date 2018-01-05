@@ -1,14 +1,19 @@
 ##############################################################################
-# maali cygnet file for pytest
+# maali cygnet file for mock
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The pytest framework makes it easy to write small tests, yet scales to support 
-complex functional testing for applications and libraries.
+Rolling backport of unittest.mock for all Pythons
 
+mock is a library for testing in Python. It allows you to replace parts of your
+system under test with mock objects and make assertions about how they have
+been used.
 
-For further information see https://docs.pytest.org/en/latest/
+mock is now part of the Python standard library, available as unittest.mock in
+Python 3.3 onwards.
+
+For further information see https://pypi.python.org/pypi/mock
 
 EOF
 
@@ -25,11 +30,9 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="funcsigs/1.0.2 pluggy/0.6.0 attrs/17.3.0 six/1.11.0 py/1.5.2"
+MAALI_TOOL_PREREQ="setuptools/38.2.1"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
-
-# for auto-building module files
 
 ##############################################################################

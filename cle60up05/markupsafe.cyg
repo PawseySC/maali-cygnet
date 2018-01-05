@@ -1,17 +1,15 @@
 ##############################################################################
-# maali cygnet file for distribute
+# maali cygnet file for MarkupSafe
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Distribute is a now deprecated fork of the Setuptools project.
+MarkupSafe is a library for Python that implements a unicode string that is
+aware of HTML escaping rules and can be used to implement automatic string
+escaping. It is used by Jinja 2, the Mako templating engine, the Pylons web
+framework and many more.
 
-Distribute was intended to replace Setuptools as the standard method
-for working with Python module distributions. The code has since been merged
-back into the parent project as is being maintained by the community at large.
-
-
-For further information see https://pypi.python.org/pypi/distribute
+For further information see http://www.pocoo.org/projects/markupsafe/
 
 EOF
 
@@ -19,10 +17,10 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.zip"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
@@ -32,8 +30,5 @@ MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
-
-# create a module for python3 versions, but don't install
-MAALI_PYTHON3_SKIP=1
 
 ##############################################################################

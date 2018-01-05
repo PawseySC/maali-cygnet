@@ -1,14 +1,18 @@
 ##############################################################################
-# maali cygnet file for pytest
+# maali cygnet file for blist
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The pytest framework makes it easy to write small tests, yet scales to support 
-complex functional testing for applications and libraries.
+A list-like type with better asymptotic performance and similar performance on
+small lists
 
+The blist is a drop-in replacement for the Python list that provides better
+performance when modifying large lists. The blist package also provides
+sortedlist, sortedset, weaksortedlist, weaksortedset, sorteddict, and btuple
+types.
 
-For further information see https://docs.pytest.org/en/latest/
+For further information see https://pypi.python.org/pypi/blist/
 
 EOF
 
@@ -16,7 +20,7 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
@@ -25,11 +29,6 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="funcsigs/1.0.2 pluggy/0.6.0 attrs/17.3.0 six/1.11.0 py/1.5.2"
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ=""
-
-# for auto-building module files
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
 ##############################################################################
