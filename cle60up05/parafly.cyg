@@ -1,0 +1,60 @@
+##############################################################################
+# maali cygnet file for ParaFly
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ParaFly provides a simple mechanism for running a predefined list of unix
+commands in parallel using multithreading. Failed processes are captured and
+reported. Successfully executed processes are noted. If the process is rerun,
+only those previously incompleted or failed processes will be executed.
+
+For further information see http://parafly.sourceforge.net/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME_ORIG}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    export LDFLAGS="-openmp"
+  else
+    export LDFLAGS="-fopenmp"
+  fi
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################
