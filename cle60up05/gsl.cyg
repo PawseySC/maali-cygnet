@@ -48,3 +48,17 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_GSL_DIR='$MAALI_APP_HOME'
 
 ##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
+    export CFLAGS="-xHost"
+  fi
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+}
+
+##############################################################################

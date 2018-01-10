@@ -30,7 +30,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_TOOL_PREREQ="numpy/1.13.3 pytz/2017.3 pyparsing/2.2.0 tornado/4.5.2 six/1.11.0 cycler/0.10.0 python-dateutil/2.6.1 functools32/3.2.3-2 subprocess32/3.2.7 backports.functools_lru_cache/1.4"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools"
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

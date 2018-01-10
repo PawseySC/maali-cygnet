@@ -20,7 +20,7 @@ MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME_ORIG}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
@@ -46,6 +46,7 @@ function maali_build {
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    export CXXFLAGS="-xHost"
     export LDFLAGS="-openmp"
   else
     export LDFLAGS="-fopenmp"

@@ -29,7 +29,7 @@ MAALI_TOOL_TYPE=""
 MAALI_TOOL_PREREQ="six/1.11.0"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ=""
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

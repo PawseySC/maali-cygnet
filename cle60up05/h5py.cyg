@@ -26,7 +26,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_TOOL_PREREQ="PrgEnv-gnu/6.0.4 gcc/4.9.3 numpy/1.13.3 six/1.11.0"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1 cython/0.27.3 cray-hdf5/1.10.0.3"
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1 cython/0.27.3 cray-hdf5/1.10.1.1"
 
 ##############################################################################
 
