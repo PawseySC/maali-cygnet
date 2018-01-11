@@ -31,7 +31,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="m4/1.4.17 flex/2.6.0"
+MAALI_TOOL_PREREQ="flex"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""
