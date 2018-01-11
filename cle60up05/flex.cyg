@@ -1,0 +1,39 @@
+##############################################################################
+# maali cygnet file for GNU flex package -- tested with v2.6.1 upto v2.6.4
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Flex is a fast lexical analyser generator. It is a tool for generating programs that perform pattern-matching on text.
+
+For further information see https://www.gnu.org/software/flex/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+#MAALI_URL="http://downloads.sourceforge.net/project/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2?r=&ts=1413949316&use_mirror=softlayer-sng"
+MAALI_URL="https://github.com/westes/flex/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_FLEX_ROOT='$MAALI_INSTALL_DIR'
+
+##############################################################################
