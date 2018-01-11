@@ -42,7 +42,7 @@ MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ="cray-netcdf cray-hdf5 python/2.7.14"
-MAALI_TOOL_BUILD_PREREQ="cray-mpich"
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
 
 # add additional configure options
 if [ $MAALI_TOOL_VERSION \< "16" ]; then
