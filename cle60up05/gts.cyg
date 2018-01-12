@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for GTS  
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is the GTS library. GTS stands for the GNU Triangulated Surface Library.
+It includes a number of useful functions to deal with triangulated surfaces
+including, but not limited to, multi-resolution models, Delaunay and
+Constrained Delaunay triangulations, set operations on surfaces (intersection,
+union etc ...), bounding-boxes trees for efficient collision and intersection
+detection, triangle strips generation for fast rendering.
+
+For further information see http://gts.sourceforge.net/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://gts.sf.net/$MAALI_TOOL_NAME-snapshot.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-snapshot.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-snapshot-121130"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+#MAALI_TOOL_PREREQ="glib"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--enable-shared --enable-static --with-pic CC=cc CXX=CC LDFLAGS=-dynamic'
+
+# Don't use haswell module, since --host option does not work for cross-compile.
+#MAALI_EXTRA_CRAY="craype-sandybridge"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
