@@ -34,7 +34,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ=""
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="--enable-largefile"
+MAALI_TOOL_CONFIGURE="--enable-largefile --enable-shared --enable-threads"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

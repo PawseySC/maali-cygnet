@@ -1,0 +1,35 @@
+##############################################################################
+# maali cygnet file for Sphinx
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sphinx is a tool that makes it easy to create intelligent and beautiful
+documentation, written by Georg Brandl and licensed under the BSD license.
+
+It was originally created for the Python documentation, and it has excellent
+facilities for the documentation of software projects in a range of languages.
+
+For further information see http://www.sphinx-doc.org/en/stable/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="http://pypi.python.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="distribute/0.7.3 docutils/0.14 jinja2/2.10 pygments/2.2.0 requests/2.18.4 six/1.11.0 typing/3.6.2 sphinxcontrib-websupport/1.0.1 imagesize/0.7.1 alabaster/0.7.10 babel/2.5.1 snowballstemmer/1.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

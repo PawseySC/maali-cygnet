@@ -1,0 +1,40 @@
+##############################################################################
+# maali cygnet file for netcdf4-python 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+netcdf4-python is a Python interface to the netCDF C library.
+
+netCDF version 4 has many features not found in earlier versions of the library
+and is implemented on top of HDF5. This module can read and write files in both
+the new netCDF 4 and the old netCDF 3 format, and can create files that are
+readable by HDF5 clients. The API modelled after Scientific.IO.NetCDF, and
+should be familiar to users of that module.
+
+For further information see http://unidata.github.io/netcdf4-python/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/Unidata/netcdf4-python/archive/v${MAALI_TOOL_VERSION}rel.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}rel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy/1.13.3 cython/0.27.3 $MAALI_DEFAULT_SYSTEM_GCC broadwell/1.0 netcdf/4.5.0"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

@@ -1,0 +1,78 @@
+##############################################################################
+# maali cygnet file for khmer
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The khmer software is a set of command-line tools for working with DNA shotgun
+sequencing data from genomes, transcriptomes, metagenomes, and single cells.
+khmer can make de novo assemblies faster, and sometimes better. khmer can also
+identify (and fix) problems with shotgun data.
+
+For further information see https://github.com/dib-lab/khmer
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/dib-lab/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="screed/1.0 bz2file/0.98"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1 cython/0.27.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_pre_build {
+
+if [ "${MAALI_TOOL_VERSION}" \< "2.1.3" ]; then
+
+patch -p0 --fuzz=3 "${MAALI_TOOL_BUILD_DIR}/setup.py" <<EOF
+--- setup.py    2017-08-30 16:32:54.267768000 +0800
++++ setup.py.000        2017-08-30 16:34:18.603640000 +0800
+@@ -45,7 +45,7 @@
+ import shutil
+ import subprocess
+ import tempfile
+-import csv
++import codecs
+
+ from setuptools import setup
+ from setuptools import Extension
+@@ -199,10 +199,11 @@
+ #     correctly for the citation information, but this requires a non-standard
+ #     library that we don't want to add as a dependency for `setup.py`.
+ #     -- Daniel Standage, 2017-05-21
+-with open('authors.csv', 'r') as csvin:
+-    authors = csv.reader(csvin)
+-    authorstr = ', '.join([row[0] for row in authors])
+-    authorstr = 'Daniel Standage, ' + authorstr + ', C. Titus Brown'
++with codecs.open('authors.csv', 'r', encoding="utf-8") as csvin:
++    authors = csvin.readlines()
++authors = [a.strip().split(',') for a in authors]
++authorstr = ', '.join([row[0] for row in authors])
++authorstr = 'Daniel Standage, ' + authorstr + ', C. Titus Brown'
+
+
+ SETUP_METADATA = \\
+EOF
+
+fi
+
+}

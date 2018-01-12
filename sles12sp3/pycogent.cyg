@@ -1,0 +1,37 @@
+##############################################################################
+# maali cygnet file for PyCogent
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyCogent is a software library for genomic biology. It is a fully integrated
+and thoroughly tested framework for: controlling third-party applications;
+devising workflows; querying databases; conducting novel probabilistic
+analyses of biological sequence evolution; and generating publication quality
+graphics. It is distinguished by many unique built-in capabilities (such as
+true codon alignment) and the frequent addition of entirely new methods for
+the analysis of genomic data.
+
+For further information see http://pycogent.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy/1.13.3 sphinx/1.6.5"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
