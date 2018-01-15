@@ -3,11 +3,10 @@
 #
 # This is for the OpenFOAM foundation version
 ##############################################################################
-
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-OpenFOAM is an open-source CFD package, providing solvers, visualisation tools,
-and pre- and post-processing utilities.
+OpenFOAM is an open-source CFD package, providing solvers, visualisation
+tools, and pre- and post-processing utilities.
 
 This module provides the OpenFOAM foundation version of OpenFOAM
 
@@ -16,7 +15,8 @@ For further information see http://openfoam.org
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+MAALI_TOOL_COMPILERS=$MAALI_DEFAULT_COMPILERS
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/OpenFOAM/OpenFOAM-$MAALI_TOOL_MAJOR_VERSION.x/archive/version-$MAALI_TOOL_VERSION.tar.gz https://github.com/OpenFOAM/ThirdParty-$MAALI_TOOL_MAJOR_VERSION.x/archive/version-$MAALI_TOOL_VERSION.tar.gz https://github.com/CGAL/cgal/releases/download/releases%2FCGAL-4.8.1/CGAL-4.8.1.tar.xz"
@@ -43,7 +43,7 @@ MAALI_MODULE_SET_WM_LDFLAGS='-m64'
 MAALI_MODULE_SET_FOAM_INST_DIR='$MAALI_APP_HOME'
 MAALI_MODULE_SET_WM_PROJECT='OpenFOAM'
 MAALI_MODULE_SET_WM_PROJECT_VERSION='$MAALI_TOOL_VERSION'
-MAALI_MODULE_SET_WM_COMPILER='\$env\(foam_COMPILER\)'
+MAALI_MODULE_SET_WM_COMPILER='os.getenv(foam_COMPILER)'
 MAALI_MODULE_SET_WM_COMPILER_TYPE=system
 MAALI_MODULE_SET_WM_ARCH_OPTION='64'
 MAALI_MODULE_SET_WM_PRECISION_OPTION='DP'
@@ -52,49 +52,50 @@ MAALI_MODULE_SET_WM_COMPILE_OPTION='Opt'
 MAALI_MODULE_SET_WM_MPLIB='SYSTEMOPENMPI'
 MAALI_MODULE_SET_WM_OSTYPE='POSIX'
 MAALI_MODULE_SET_FOAM_SIGFPE=''
-MAALI_MODULE_SET_WM_PROJECT_INST_DIR='\$env\(FOAM_INST_DIR\)'
-MAALI_MODULE_SET_WM_PROJECT_DIR='\$env\(WM_PROJECT_INST_DIR\)/\$env\(WM_PROJECT\)-\$env\(WM_PROJECT_VERSION\)'
-MAALI_MODULE_SET_WM_THIRD_PARTY_DIR='\$env\(WM_PROJECT_INST_DIR\)/ThirdParty-\$env\(WM_PROJECT_VERSION\)'
-MAALI_MODULE_SET_WM_PROJECT_USER_DIR='\$env\(MYGROUP\)/\$env\(WM_PROJECT\)/\$env\(USER\)-\$env\(WM_PROJECT_VERSION\)'
+MAALI_MODULE_SET_WM_PROJECT_INST_DIR='os.getenv(FOAM_INST_DIR)'
+MAALI_MODULE_SET_WM_PROJECT_DIR='os.getenv(WM_PROJECT_INST_DIR)/os.getenv(WM_PROJECT)-os.getenv(WM_PROJECT_VERSION)'
+MAALI_MODULE_SET_WM_THIRD_PARTY_DIR='os.getenv(WM_PROJECT_INST_DIR)/ThirdParty-os.getenv(WM_PROJECT_VERSION)'
+MAALI_MODULE_SET_WM_PROJECT_USER_DIR='os.getenv(MYGROUP)/os.getenv(WM_PROJECT)/os.getenv(USER)-os.getenv(WM_PROJECT_VERSION)'
 MAALI_MODULE_SET_FOAM_SETTINGS=''
 MAALI_MODULE_SET_WM_ARCH='linux64'
 MAALI_MODULE_SET_WM_COMPILER_LIB_ARCH='64'
 MAALI_MODULE_SET_WM_CC='mpicc'
 MAALI_MODULE_SET_WM_CXX='mpicxx'
-MAALI_MODULE_SET_FOAM_JOB_DIR='\$env\(WM_PROJECT_INST_DIR\)/jobControl'
-MAALI_MODULE_SET_WM_DIR='\$env\(WM_PROJECT_DIR\)/wmake'
+MAALI_MODULE_SET_FOAM_JOB_DIR='os.getenv(WM_PROJECT_INST_DIR)/jobControl'
+MAALI_MODULE_SET_WM_DIR='os.getenv(WM_PROJECT_DIR)/wmake'
 MAALI_MODULE_SET_WM_LINK_LANGUAGE='c++'
-MAALI_MODULE_SET_WM_LABEL_OPTION='Int\$env\(WM_LABEL_SIZE\)'
-MAALI_MODULE_SET_WM_OPTIONS='\$env\(WM_ARCH\)\$env\(WM_COMPILER\)\$env\(WM_PRECISION_OPTION\)\$env\(WM_LABEL_OPTION\)\$env\(WM_COMPILE_OPTION\)'
-MAALI_MODULE_SET_FOAM_APPBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
-MAALI_MODULE_SET_FOAM_LIBBIN='\$env\(WM_PROJECT_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
-MAALI_MODULE_SET_FOAM_EXT_LIBBIN='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
-MAALI_MODULE_SET_FOAM_SITE_APPBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/bin'
-MAALI_MODULE_SET_FOAM_SITE_LIBBIN='\$env\(WM_PROJECT_INST_DIR\)/site/\$env\(WM_PROJECT_VERSION\)/platforms/\$env\(WM_OPTIONS\)/lib'
-MAALI_MODULE_SET_FOAM_USER_APPBIN='\$env\(WM_PROJECT_USER_DIR\)/platforms/\$env\(WM_OPTIONS\)/bin'
-MAALI_MODULE_SET_FOAM_USER_LIBBIN='\$env\(WM_PROJECT_USER_DIR\)/platforms/\$env\(WM_OPTIONS\)/lib'
-MAALI_MODULE_SET_FOAM_ETC='\$env\(WM_PROJECT_DIR\)/etc'
-MAALI_MODULE_SET_FOAM_APP='\$env\(WM_PROJECT_DIR\)/applications'
-MAALI_MODULE_SET_FOAM_SRC='\$env\(WM_PROJECT_DIR\)/src'
-MAALI_MODULE_SET_FOAM_TUTORIALS='\$env\(WM_PROJECT_DIR\)/tutorials'
-MAALI_MODULE_SET_FOAM_UTILITIES='\$env\(FOAM_APP\)/utilities'
-MAALI_MODULE_SET_FOAM_SOLVERS='\$env\(FOAM_APP\)/solvers'
-MAALI_MODULE_SET_FOAM_RUN='\$env\(WM_PROJECT_USER_DIR\)/run'
+MAALI_MODULE_SET_WM_LABEL_OPTION='"Int"..os.getenv(WM_LABEL_SIZE)'
+MAALI_MODULE_SET_WM_OPTIONS='os.getenv(WM_ARCH)os.getenv(WM_COMPILER)os.getenv(WM_PRECISION_OPTION)os.getenv(WM_LABEL_OPTION)os.getenv(WM_COMPILE_OPTION)'
+MAALI_MODULE_SET_FOAM_APPBIN='os.getenv(WM_PROJECT_DIR)/platforms/os.getenv(WM_OPTIONS)/bin'
+MAALI_MODULE_SET_FOAM_LIBBIN='os.getenv(WM_PROJECT_DIR)/platforms/os.getenv(WM_OPTIONS)/lib'
+MAALI_MODULE_SET_FOAM_EXT_LIBBIN='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_OPTIONS)/lib'
+MAALI_MODULE_SET_FOAM_SITE_APPBIN='os.getenv(WM_PROJECT_INST_DIR)/site/os.getenv(WM_PROJECT_VERSION)/platforms/os.getenv(WM_OPTIONS)/bin'
+MAALI_MODULE_SET_FOAM_SITE_LIBBIN='os.getenv(WM_PROJECT_INST_DIR)/site/os.getenv(WM_PROJECT_VERSION)/platforms/os.getenv(WM_OPTIONS)/lib'
+MAALI_MODULE_SET_FOAM_USER_APPBIN='os.getenv(WM_PROJECT_USER_DIR)/platforms/os.getenv(WM_OPTIONS)/bin'
+MAALI_MODULE_SET_FOAM_USER_LIBBIN='os.getenv(WM_PROJECT_USER_DIR)/platforms/os.getenv(WM_OPTIONS)/lib'
+MAALI_MODULE_SET_FOAM_ETC='os.getenv(WM_PROJECT_DIR)/etc'
+MAALI_MODULE_SET_FOAM_APP='os.getenv(WM_PROJECT_DIR)/applications'
+MAALI_MODULE_SET_FOAM_SRC='os.getenv(WM_PROJECT_DIR)/src'
+MAALI_MODULE_SET_FOAM_TUTORIALS='os.getenv(WM_PROJECT_DIR)/tutorials'
+MAALI_MODULE_SET_FOAM_UTILITIES='os.getenv(FOAM_APP)/utilities'
+MAALI_MODULE_SET_FOAM_SOLVERS='os.getenv(FOAM_APP)/solvers'
+MAALI_MODULE_SET_FOAM_RUN='os.getenv(WM_PROJECT_USER_DIR)/run'
 MAALI_MODULE_SET_FOAM_MPI='openmpi-system'
-MAALI_MODULE_SET_MPI_ARCH_PATH='\$env\(MAALI_OPENMPI_HOME\)'
+MAALI_MODULE_SET_FOAM_FILEHANDLER='collated'
+MAALI_MODULE_SET_MPI_ARCH_PATH='os.getenv(MAALI_OPENMPI_HOME)'
 MAALI_MODULE_SET_MPI_BUFFER_SIZE='20000000'
 MAALI_MODULE_SET_ParaView_VERSION='5.4.0'
 MAALI_MODULE_SET_ParaView_MAJOR='5.4'
-MAALI_MODULE_SET_ParaView_DIR='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/ParaView-\$env\(ParaView_VERSION\)'
-MAALI_MODULE_SET_ParaView_LIB_DIR='\$env\(ParaView_DIR\)/lib/paraview-\$env\(ParaView_MAJOR\)'
-MAALI_MODULE_SET_ParaView_INCLUDE_DIR='\$env\(ParaView_DIR\)/include/paraview-\$env\(ParaView_MAJOR\)'
-MAALI_MODULE_SET_PV_PLUGIN_PATH='\$env\(FOAM_LIBBIN\)/paraview-\$env\(ParaView_MAJOR\)'
-MAALI_MODULE_SET_BOOST_ARCH_PATH='\$env\(MAALI_BOOST_HOME\)'
-MAALI_MODULE_SET_ParaView_DIR='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/ParaView-\$env\(ParaView_VERSION\)'
-MAALI_MODULE_SET_CGAL_ARCH_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)/$env\(WM_COMPILER\)/CGAL-4.8.1'
-MAALI_MODULE_SET_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/gperftools-svn/bin \$env\(ParaView_DIR\)/bin \$env\(FOAM_USER_APPBIN\) \$env\(FOAM_SITE_APPBIN\) \$env\(FOAM_APPBIN\) \$env\(WM_PROJECT_DIR\)/bin \$env\(WM_DIR\)'
-MAALI_MODULE_SET_LD_LIBRARY_PATH='\$env\(WM_THIRD_PARTY_DIR\)/platforms/\$env\(WM_ARCH\)\$env\(WM_COMPILER\)/gperftools-svn/lib \$env\(CGAL_ARCH_PATH\)/lib \$env\(FOAM_EXT_LIBBIN\)/\$env\(FOAM_MPI\) \$env\(FOAM_USER_LIBBIN\) \$env\(FOAM_SITE_LIBBIN\) \$env\(FOAM_LIBBIN\) \$env\(FOAM_EXT_LIBBIN\)'
-MAALI_MODULE_SET_LD_LIBRARY_PATH_APPEND='\$env\(FOAM_LIBBIN\)/dummy'
+MAALI_MODULE_SET_ParaView_DIR='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_ARCH)os.getenv(WM_COMPILER)/ParaView-os.getenv(ParaView_VERSION)'
+MAALI_MODULE_SET_ParaView_LIB_DIR='os.getenv(ParaView_DIR)/lib/paraview-os.getenv(ParaView_MAJOR)'
+MAALI_MODULE_SET_ParaView_INCLUDE_DIR='os.getenv(ParaView_DIR)/include/paraview-os.getenv(ParaView_MAJOR)'
+MAALI_MODULE_SET_PV_PLUGIN_PATH='os.getenv(FOAM_LIBBIN)/paraview-os.getenv(ParaView_MAJOR)'
+MAALI_MODULE_SET_BOOST_ARCH_PATH='os.getenv(MAALI_BOOST_HOME)'
+MAALI_MODULE_SET_ParaView_DIR='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_ARCH)os.getenv(WM_COMPILER)/ParaView-os.getenv(ParaView_VERSION)'
+MAALI_MODULE_SET_CGAL_ARCH_PATH='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_ARCH)/$env(WM_COMPILER)/CGAL-4.8.1'
+MAALI_MODULE_SET_PATH='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_ARCH)os.getenv(WM_COMPILER)/gperftools-svn/bin os.getenv(ParaView_DIR)/bin os.getenv(FOAM_USER_APPBIN) os.getenv(FOAM_SITE_APPBIN) os.getenv(FOAM_APPBIN) os.getenv(WM_PROJECT_DIR)/bin os.getenv(WM_DIR)'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='os.getenv(WM_THIRD_PARTY_DIR)/platforms/os.getenv(WM_ARCH)os.getenv(WM_COMPILER)/gperftools-svn/lib os.getenv(CGAL_ARCH_PATH)/lib os.getenv(FOAM_EXT_LIBBIN)/os.getenv(FOAM_MPI) os.getenv(FOAM_USER_LIBBIN) os.getenv(FOAM_SITE_LIBBIN) os.getenv(FOAM_LIBBIN) os.getenv(FOAM_EXT_LIBBIN)'
+MAALI_MODULE_SET_LD_LIBRARY_PATH_APPEND='os.getenv(FOAM_LIBBIN)/dummy'
 # don't prenpend the path with stuff
 MAALI_MODULE_PREPEND_PATH=off
 MAALI_MODULE_PREPEND_LD_LIBRARY_PATH=off
@@ -123,7 +124,7 @@ function maali_build {
   cd $FOAM_INST_DIR
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
      sed -i -e 's/export WM_COMPILER=Gcc/export WM_COMPILER=Icc/g' $foamDotFile
-     sed -i -e 's/gcc/icc/g' $WM_THIRD_PARTY_DIR/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM
+     sed -i -e 's/gcc/icc/g' $MAALI_INSTALL_DIR/ThirdParty-$MAALI_TOOL_VERSION/etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM
   fi
   sed -i -e 's/cgal_version=cgal-system/#cgal_version=cgal-system/g' OpenFOAM-$MAALI_TOOL_VERSION/etc/config.sh/CGAL
   sed -i -e 's/#cgal_version=CGAL-4.8.1/cgal_version=CGAL-4.8.1/g' OpenFOAM-$MAALI_TOOL_VERSION/etc/config.sh/CGAL
