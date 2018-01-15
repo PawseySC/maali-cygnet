@@ -8,6 +8,9 @@ The casacore package contains the core libraries of the old AIPS++/CASA
 package. This split was made to get a better separation of core libraries and
 applications. CASA is now built on top of casacore.
 
+Becasue of Casacore not being thread safe, it is not linked with Cray-LibSci.
+Instead it is built with Lapack. 
+
 For further information see http://casacore.github.io/casacore/
 
 EOF
@@ -40,10 +43,10 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_BUILD_PREREQ="cmake"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="cray-mpich cfitsio wcslib cray-hdf5-parallel cray-fftw boost python/2.7.14 numpy"
+MAALI_TOOL_PREREQ="cray-mpich cfitsio wcslib cray-hdf5-parallel cray-fftw boost python/2.7.14 numpy lapack"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=OFF -DBLAS_LIBRARIES=${CRAY_LIBSCI_PREFIX_DIR}/lib/libsci_gnu.so -DLAPACK_LIBRARIES=${CRAY_LIBSCI_PREFIX_DIR}/lib/libsci_gnu.so -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME} -DHDF5_ROOT_DIR=${HDF5_ROOT} -DFFTW3F_THREADS_LIBRARY=${FFTW_DIR}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_DIR}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_DIR}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_DIR}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INC} -DDATA_DIR=/ivec/cle52/Casacore_data/data -DCMAKE_EXE_LINKER_FLAGS=-lcurl '
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=OFF -DBLAS_LIBRARIES=${LAPACK}/lib64/libblas.so -DLAPACK_LIBRARIES=${LAPACK}/lib64/liblapack.so -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME} -DHDF5_ROOT_DIR=${HDF5_ROOT} -DFFTW3F_THREADS_LIBRARY=${FFTW_DIR}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_DIR}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_DIR}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_DIR}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INC} -DDATA_DIR=/ivec/cle52/Casacore_data/data -DCMAKE_EXE_LINKER_FLAGS=-lcurl '
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
