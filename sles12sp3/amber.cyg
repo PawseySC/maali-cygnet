@@ -97,10 +97,11 @@ function maali_build {
   maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/cphstats/configure"
   maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/configure2"
 
-  maali_run "sed -i -e 's!netcdf_dir}/lib!netcdf_dir}/lib64!g' ./AmberTools/src/configure2"
+#  maali_run "sed -i -e 's!netcdf_dir}/lib!netcdf_dir}/lib64!g' ./AmberTools/src/configure2"
 
-  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib/!/lib64/!g' ./AmberTools/src/cpptraj/configure"
-  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib !/lib64 !g' ./AmberTools/src/cpptraj/configure"
+#  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib/!/lib64/!g' ./AmberTools/src/cpptraj/configure"
+#  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib !/lib64 !g' ./AmberTools/src/cpptraj/configure"
+
 #NETCDFLIB="$NETCDF_HOME/lib/libnetcdf.a"
 #NETCDFLIB="-L$NETCDF_HOME/lib $NETCDFLIB"
 
