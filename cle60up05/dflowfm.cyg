@@ -1,0 +1,78 @@
+##############################################################################
+# maali cygnet file for dflowfm-1.1.171
+# Compile with Intel  
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CPUS"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="cray-netcdf-hdf5parallel cray-tpsl cray-petsc"
+
+MAALI_TOOL_TYPE="apps"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="CC=cc CXX=CC FC=ftn F77=ftn MPICXX=CC MPIFC=ftn MPIF77=ftn --with-mpi --with-netcdf --with-petsc"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+##############################################################################
+
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+	maali_run "sed -i 's/mpicc/cc/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "sed -i 's/mpif90/ftn/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "sed -i 's/mpif77/ftn/g' ./third_party_open/pARMS/pARMS_3.2/makefile.in"
+	maali_run "sed -i 's/PETSC_DEFAULT_DOUBLE_PRECISION/PETSC_DEFAULT_REAL/g' ./src/solve_petsc.F90"
+        maali_run "sed -i 's/PetscLogBegin/PetscLogDefaultBegin/g' ./src/solve_petsc.F90"
+
+	if [ $CRAY_PETSC_VERSION == "3.7.6.2" ]; then
+	# trying to avoid the bug in PETSC 3.7.6
+	# the bug is related to missing matcreatempiaijsplitarrays interface in the petsc lib
+	# creating my own interface and adding it while linking the binaries
+        cd src
+cat <<EOF > matcreatempiaijsplitarrays_interface.c
+#include <petsc/private/fortranimpl.h>
+#include <petscmat.h>
+
+#if defined(PETSC_HAVE_FORTRAN_CAPS)
+#define matcreatempiaijwithsplitarrays_ MATCREATEMPIAIJWITHSPLITARRAYS
+#elif !defined(PETSC_HAVE_FORTRAN_UNDERSCORE)
+#define matcreatempiaijwithsplitarrays_  matcreatempiaijwithsplitarrays
+#endif
+
+PETSC_EXTERN void PETSC_STDCALL  matcreatempiaijwithsplitarrays_(MPI_Comm *comm,PetscInt *m,PetscInt *n,PetscInt *M,PetscInt *N,PetscInt i[],PetscInt j[],PetscScalar a[],PetscInt oi[],PetscInt oj[],PetscScalar oa[],Mat *mat, int *ierr )
+{
+  *ierr = MatCreateMPIAIJWithSplitArrays(MPI_Comm_f2c(*(MPI_Fint*)&*comm),*m,*n,*M,*N,i,j,a,oi,oj,oa,mat);
+}
+EOF
+	maali_run "cc -fPIC -c matcreatempiaijsplitarrays_interface.c -o matcreatempiaijsplitarrays_interface.o"
+ 	cd ../
+	maali_run "./configure $MAALI_TOOL_CONFIGURE --disable-openmp NETCDF_FORTRAN_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdf\" NETCDF_FORTRAN_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdff\" PETSc_CFLAGS=\"-I${PETSC_DIR}/include -I${PETSC_DIR}/${PETSC_ARCH}/include -I${PETSC_DIR}/${PETSC_ARCH}/include/petsc\" PETSc_LIBS=\"-L${PETSC_DIR}/${PETSC_ARCH}/lib -lcraypetsc_intel_real ${MAALI_TOOL_BUILD_DIR}/src/matcreatempiaijsplitarrays_interface.o \" --with-metis=\"${CRAY_TPSL_PREFIX_DIR}\" METIS_CFLAGS=\"-I${CRAY_TPSL_PREFIX_DIR}/include\" METIS_LIBS=\"-L${CRAY_TPSL_PREFIX_DIR}/lib -lmetis\" --prefix=$MAALI_INSTALL_DIR --without-mkl"
+
+	else
+	# the bug should not be seen in other PETSC versions, but be aware
+
+	maali_run "./configure $MAALI_TOOL_CONFIGURE --disable-openmp NETCDF_FORTRAN_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_CFLAGS=\"-I${NETCDF_DIR}/include\" NETCDF_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdf\" NETCDF_FORTRAN_LIBS=\"-L${NETCDF_DIR}/lib -lnetcdff\" PETSc_CFLAGS=\"-I${PETSC_DIR}/include -I${PETSC_DIR}/${PETSC_ARCH}/include -I${PETSC_DIR}/${PETSC_ARCH}/include/petsc\" PETSc_LIBS=\"-L${PETSC_DIR}/${PETSC_ARCH}/lib -lcraypetsc_intel_real\" --with-metis=\"${CRAY_TPSL_PREFIX_DIR}\" METIS_CFLAGS=\"-I${CRAY_TPSL_PREFIX_DIR}/include\" METIS_LIBS=\"-L${CRAY_TPSL_PREFIX_DIR}/lib -lmetis\" --prefix=$MAALI_INSTALL_DIR --without-mkl"
+	
+	fi
+
+	maali_run "make V=1"
+	maali_run "make install"
+}
+
+##############################################################################
