@@ -19,7 +19,7 @@ MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="cray-netcdf-hdf5parallel cray-tpsl cray-petsc"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-netcdf-hdf5parallel cray-tpsl cray-petsc"
 
 MAALI_TOOL_TYPE="apps"
 
