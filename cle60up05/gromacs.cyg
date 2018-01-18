@@ -1,0 +1,142 @@
+##############################################################################
+# maali cygnet file for gromacs
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the
+Newtonian equations of motion for systems with hundreds to millions of
+particles.
+
+It is primarily designed for biochemical molecules like proteins, lipids and
+nucleic acids that have a lot of complicated bonded interactions, but since
+GROMACS is extremely fast at calculating the nonbonded interactions (that
+usually dominate simulations) many groups are also using it for research on
+non-biological systems, e.g. polymers.
+
+For further information see http://www.gromacs.org/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="ftp://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cray-fftw/3.3.6.3 boost/1.65.1"
+#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.4.3 libxml2/2.9.3 boost/1.57.0 lapack/3.5.0"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=' -DCMAKE_C_COMPILER=cc -DCMAKE_CXX_COMPILER=CC -DBUILD_SHARED_LIBS=on -DGMX_FFT_LIBRARY=fftw3 -DGMX_BUILD_UNITTESTS=OFF -DBUILD_TESTING=OFF'
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_GMXLIB='$MAALI_APP_HOME/share/gromacs/top'
+MAALI_MODULE_SET_GMXBIN='$MAALI_APP_HOME/bin'
+MAALI_MODULE_SET_GMXDATA='$MAALI_APP_HOME/share'
+MAALI_MODULE_SET_GMXMAN='$MAALI_APP_HOME/share/man'
+
+# Gromacs library path changed from version 5
+LIB=lib64
+MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1                                                                                                                     
+
+##############################################################################
+function maali_cmake_build {
+  # for tools that use cmake
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  # Work around Cray not setting up pkg-config for user applications.
+  target="PE_FFTW_TARGET_${CRAY_CPU_TARGET}"
+  CRAY_FFTW_PKGCONFIG_PATH=${PE_FFTW_VOLATILE_PKGCONFIG_PATH/@PE_FFTW_TARGET@/${!target}}
+  export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:${CRAY_FFTW_PKGCONFIG_PATH}
+
+  export CMAKE_SYSROOT_COMPILE=" "
+
+  # maali defaults to dynamic
+  export CRAYPE_LINK_TYPE=dynamic
+
+  # Only use AVX2_256 hardware acceleration when appropriate
+  if [[ ${CRAY_CPU_TARGET} == "haswell" ]] || [[ ${CPU_TARGET} == "broadwell" ]]; then
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX2_256"
+  else
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX_256"
+  fi
+
+  # cmake likes to build in a directory of it's own.  single-precision, no MPI
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL $MAALI_CMAKE_PATH"
+  #Doesn't like gcc/6.1.0.  -isystem /usr/include is broken in gcc/6 and above
+  maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
+  if [ $DEBUG ]; then
+    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+  else
+    maali_run "make -j $MAALI_CORES "
+  fi
+  maali_run "make install"
+  
+  # cmake likes to build in a directory of it's own. double-precision, no MPI
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double"
+  
+  maali_run "cmake -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL $MAALI_CMAKE_PATH"
+  maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
+  if [ $DEBUG ]; then
+    maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
+  else
+    maali_run "make  -j $MAALI_CORES "
+  fi
+  maali_run "make install"
+  
+  # cmake likes to build in a directory of it's own.  single-precision, MPI
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build-mpi"
+  
+  maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL $MAALI_CMAKE_PATH"
+  maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
+  if [ $DEBUG ]; then
+    maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
+  else
+    maali_run "make  -j $MAALI_CORES "
+  fi
+  maali_run "make install"
+  
+  # cmake likes to build in a directory of it's own. double-precision, MPI
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-double-mpi"
+  
+  maali_run "cmake -DGMX_BUILD_MDRUN_ONLY=ON -DGMX_MPI=ON -DGMX_DOUBLE=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL $MAALI_CMAKE_PATH"
+  maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
+  if [ $DEBUG ]; then
+    maali_run "make  -j $MAALI_CORES  VERBOSE=TRUE"
+  else
+    maali_run "make  -j $MAALI_CORES "
+  fi
+  maali_run "make install"
+}
+
+##############################################################################
