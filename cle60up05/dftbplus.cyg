@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for dftb+
+# Compile with Intel  
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CPUS"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+MAALI_URL="https://github.com/dftbplus/dftbplus/archive/${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+MAALI_TOOL_PREREQ="arpack/96"
+
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages
+##############################################################################
+
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+ 	cp sys/make.x86_64-linux-intel make.arch
+        sed -i -e "s!FXX =.*!FXX = ftn!g" make.arch
+	sed -i -e "s!CC =.*!CC = cc!g" make.arch
+	./utils/get_opt_externals dftd3
+        ./utils/get_opt_externals slakos
+	sed -i -e "s!ARPACK_LIBS.*!ARPACK_LIBS := -L${MAALI_ARPACK_HOME}/lib -larpack_intel!g" make.config
+	sed -i -e "s!ARPACK_NEEDS_LAPACK.*!ARPACK_NEEDS_LAPACK := 1!g" make.config
+	sed -i -e "s!INSTALLDIR.*!INSTALLDIR := ${MAALI_INSTALL_DIR}!g" make.config
+	maali_run "make"
+	maali_run "make install"
+}
+
+##############################################################################
