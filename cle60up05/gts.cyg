@@ -34,16 +34,16 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-snapshot.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-snapshot-121130"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-#MAALI_TOOL_PREREQ="glib"
+MAALI_TOOL_PREREQ=""
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--enable-shared --enable-static --with-pic CC=cc CXX=CC LDFLAGS=-dynamic'
 
 # Don't use haswell module, since --host option does not work for cross-compile.
-#MAALI_EXTRA_CRAY="craype-sandybridge"
+MAALI_EXTRA_CRAY="craype-sandybridge"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
