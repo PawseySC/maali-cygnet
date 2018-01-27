@@ -44,6 +44,7 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_python_build {
 
+  MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
   maali_run 'mkdir -p $MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages'
   cd "$MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages"

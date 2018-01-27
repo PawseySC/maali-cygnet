@@ -1,0 +1,170 @@
+##############################################################################
+# maali cygnet file for LAMMPS
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale Atomic/Molecular Massively Parallel Simulator. LAMMPS has potentials for soft materials (biomolecules, polymers) and solid-state materials (metals, semiconductors) and coarse-grained or mesoscopic systems.
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from 
+MAALI_URL="http://lammps.sandia.gov/tars/${MAALI_TOOL_NAME}-stable.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-stable.tar.gz" 
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-fftw/3.3.6.3 cray-hdf5-parallel/1.10.1.1 gsl/2.3 ffmpeg/3.4" 
+
+# for auto-building module files
+MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_PATH='src'
+
+##############################################################################
+
+function maali_build {
+
+  MAALI_LOCAL_BUILD_DIR="$MAALI_APPS_DIR/$COMPILER/$COMPILER_VER/$MAALI_TOOL_NAME"
+
+  mv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR
+
+  export MAALI_CORES=6
+  export CC=CC
+  export LINK=CC
+  export F90=ftn
+
+  export CRAYPE_LINK_TYPE='dynamic'
+
+  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
+    export CCFLAGS="-O3 -hfp3 -hnoomp"
+    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -\I$(FFTW_INC)"
+    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3"
+  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    module unload cray-libsci
+    export CCFLAGS="-O2 -std=c++11 -DLAMMPS_MEMALIGN=64 -fno-alias -ansi-alias -restrict -qoverride-limits"
+    export FFT_INC='-DFFT_MKL -DFFT_SINGLE -I\$(MKLROOT)/include'
+    export FFT_PATH=
+    export FFT_LIB='-mkl=sequential -dynamic'
+  else #GNU
+    export CCFLAGS="-O3 -funroll-loops -std=c++11"
+    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -I\$(FFTW_INC)"
+    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3 -lstdc++"
+  fi
+  export SHFLAGS='-fPIC'
+
+  export MPI_INC='-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1'
+  export JPG_INC='-I/usr/include'
+  export JPG_LIB='-L/usr/lib -ljpeg -lpng16 -L${MAALI_FFMPEG_HOME}/lib -lavcodec -lavformat -lavutil -lavfilter -lavdevice -lswresample -lswscale '
+  export LMP_INC='-DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_FFMPEG -DLAMMPS_GZIP -DPACK_ARRAY'
+  export HDF5_PATH='$HDF5_DIR'
+ 
+  cd "$MAALI_INSTALL_DIR/src"	
+  maali_wiki " ... make packages"
+  maali_run "make clean-all" 
+
+#Download Eigen required for USER-SMD package
+        cd "$MAALI_INSTALL_DIR/lib/smd"
+        wget --no-check-certificate http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz
+        tar -zxvf *.tar.gz
+        ln -s eigen* includelink
+        cd "$MAALI_INSTALL_DIR/lib/voronoi"
+
+#To build Voronoi
+	maali_run "wget http://math.lbl.gov/voro++/download/dir/voro++-0.4.6.tar.gz"
+	maali_run "tar -xvf voro++-0.4.6.tar.gz"
+	cd voro++-0.4.6/
+	sed -i 's/g++/CC/g' config.mk
+	sed -i 's;/usr/local;$MAALI_INSTALL_DIR/lib/voronoi/voro++-0.4.6;g' config.mk
+	maali_run "make"
+	maali_run "make install"
+	cd ..
+	ln -s voro++-0.4.6/src includelink
+	ln -s voro++-0.4.6/src liblink
+
+#to build user-colvars
+	cd "${MAALI_INSTALL_DIR}/lib/colvars"
+	sed -i 's/g++/CC/g' Makefile.g++
+	make -f Makefile.g++
+
+#to build user-poems
+        cd "${MAALI_INSTALL_DIR}/lib/poems"
+        sed -i 's/g++/CC/g' Makefile.g++
+        make -f Makefile.g++
+
+#to build user-meam
+        cd "${MAALI_INSTALL_DIR}/lib/meam"
+        sed -i '0,/gfortran/! s/gfortran/ftn/' Makefile.gfortran
+	make -f Makefile.gfortran
+
+#to build user-reax (problem)
+        cd "${MAALI_INSTALL_DIR}/lib/reax"
+        sed -i '/Makefile/!s/gfortran/ftn/g' Makefile.gfortran 
+        make -f Makefile.gfortran
+	sed -i 's/-lgfortran//g' Makefile.lammps
+
+##to build user-qmmm
+        cd "${MAALI_INSTALL_DIR}/lib/qmmm"
+        sed -i 's/mpicxx/CC/g' Makefile.gfortran
+        make -f Makefile.gfortran
+
+#to build h5md
+        cd "${MAALI_INSTALL_DIR}/lib/h5md"
+        sed -i 's/h5cc/cc/g' Makefile.h5cc
+        make -f Makefile.h5cc
+
+#to build MSCG
+	cd "${MAALI_INSTALL_DIR}/lib/mscg"
+	maali_run "git clone https://github.com/uchicago-voth/MSCG-release.git"
+	mv MSCG-release/* .
+	cd "${MAALI_INSTALL_DIR}/lib/mscg/src"
+	sed -i 's/\-lgsl \-lgslcblas/\$\(MAALI\_GSL\_HOME\)\/lib \-lgsl \-lgslcblas/g' ../Makefile.mpi
+	sed -i 's/mpicc/cc/g' ../Makefile.mpi
+	sed -i 's/-O2/-O2 -std=c++11/g' ../Makefile.mpi
+	make -f ../Makefile.mpi libmscg.a
+	cd "${MAALI_INSTALL_DIR}/lib/mscg"
+	sed -i 's/\-lgsl \-lgslcblas/\-L \$\(MAALI\_GSL\_HOME\)\/lib \-lgsl \-lgslcblas/g' Makefile.lammps.mpi 
+	cp Makefile.lammps.mpi Makefile.lammps
+	ln -s src includelink
+	ln -s src liblink
+
+        cd "$MAALI_INSTALL_DIR/src"
+  
+        maali_run "make -e -j $MAALI_CORES yes-all"
+        maali_run "make no-gpu"
+        maali_run "make no-omp"
+        maali_run "make no-kim"
+        maali_run "make no-kokkos"
+        maali_run "make no-user-cuda"
+        maali_run "make no-user-intel"
+	if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+	        maali_run "make no-user-qmmm"
+       		maali_run "make no-meam"
+        	maali_run "make no-reax"	
+	fi
+        maali_run "make no-user-omp"
+	maali_run "make -e -j $MAALI_CORES yes-user-all"
+        maali_run "make no-user-quip"
+	maali_run "make no-user-awpmd"
+	maali_run "make no-user-atc"
+	maali_run "make no-user-vtk"
+	
+	maali_run "make -e -j $MAALI_CORES mpi"
+}
+
+##############################################################################

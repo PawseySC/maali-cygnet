@@ -1,0 +1,131 @@
+##############################################################################
+# maali cygnet file for nwchem
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+NWChem aims to provide its users with computational chemistry tools that are
+scalable both in their ability to treat large scientific computational
+chemistry problems efficiently, and in their use of available parallel
+computing resources from high-performance parallel supercomputers to
+conventional workstation clusters.
+
+For further information see http://www.nwchem-sw.org/index.php/Main_Page
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+if [ "$MAALI_TOOL_VERSION" == "6.8" ]; then
+MAALI_URL="https://github.com/nwchemgit/nwchem/archive/v$MAALI_TOOL_VERSION-release.tar.gz"
+elif [ "$MAALI_TOOL_VERSION" == "6.5" ]; then
+MAALI_URL="http://www.nwchem-sw.org/download.php?f=Nwchem-6.5.revision26243-src.2014-09-10.tar.gz"
+else
+MAALI_URL=""
+fi
+
+# location we are downloading the source code to
+if [ "$MAALI_TOOL_VERSION" \> "6.6" ]; then
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+else
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+fi
+
+#Shorten the directory name as we're limited to 64 chars.
+MAALI_TAR_EXTRA="--transform=s,nwchem-$MAALI_TOOL_VERSION-release/,nwchem-$MAALI_TOOL_VERSION/,"
+
+# where the unpacked source code is located
+if [ "$MAALI_TOOL_VERSION" \> "6.6" ]; then
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/nwchem-$MAALI_TOOL_VERSION"
+else
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Nwchem-$MAALI_TOOL_VERSION"
+fi
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+MAALI_TOOL_BUILD_PREREQ="craype-hugepages8M"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_NWCHEM_BASIS_LIBRARY='$MAALI_APP_HOME/data/libraries/'
+MAALI_MODULE_SET_NWCHEM_NWPW_LIBRARY='$MAALI_APP_HOME/data/'
+MAALI_MODULE_SET_HUGETLB_MORECORE='yes'
+MAALI_MODULE_SET_HUGETLB_DEFAULT_PAGE_SIZE='8M'
+#MAALI_MODULE_SET_UGNI_CDM_MDD_DEDICATED='2'
+MAALI_MODULE_SET_MPICH_GNI_MAX_EAGER_MSG_SIZE=16384 
+MAALI_MODULE_SET_MPICH_GNI_MAX_VSHORT_MSG_SIZE=10000 
+MAALI_MODULE_SET_MPICH_GNI_MAX_EAGER_MSG_SIZE=131072 
+MAALI_MODULE_SET_MPICH_GNI_NUM_BUFS=300 
+MAALI_MODULE_SET_MPICH_GNI_NDREG_MAXSIZE=16777216 
+MAALI_MODULE_SET_MPICH_GNI_MBOX_PLACEMENT=nic 
+MAALI_MODULE_SET_MPICH_GNI_LMT_PATH=disabled 
+MAALI_MODULE_SET_COMEX_MAX_NB_OUTSTANDING=6
+
+##############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  cd $MAALI_BUILD_DIR
+  cd $MAALI_TOOL_BUILD_DIR
+
+  export NWCHEM_TARGET=LINUX64
+  export ARMCI_NETWORK=MPI-PR
+#  export LIBMPI=" "
+#  export GA_DIR="ga-cray"
+
+  export USE_MPI=y
+  export USE_SCALAPACK=y
+  export SCALAPACK="-L$MKLROOT/lib/intel64 -lmkl_scalapack_ilp64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lmkl_blacs_intelmpi_ilp64 -lpthread -lm"
+  export SCALAPACK_SIZE=8
+  export SCALAPACK_LIB="$SCALAPACK"
+  export BLAS_SIZE=8
+  export BLASOPT="-L$MKLROOT/lib/intel64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lmkl_core -liomp5 -lpthread -ldmapp -lm"
+  export USE_NOIO=y
+  export CRAYPE_LINK_TYPE=dynamic
+
+  export NWCHEM_TOP=${MAALI_TOOL_BUILD_DIR}
+  export NWCHEM_MODULES="all"
+
+  export MPI_LOC=${MPICH_DIR}
+
+  export USE_MPI=y
+#  export USE_MPIF=y
+#  export USE_MPIF4=y
+  export LARGE_FILES=y
+
+  cd $NWCHEM_TOP/src
+
+#  maali_run 'make realclean'
+  maali_run 'make nwchem_config'
+
+  #maali_run "make _FC=ifort FC=ftn -j$MAALI_CORES"
+  maali_run "make FC=ftn -j$MAALI_CORES"
+
+  export NWCHEM=$MAALI_INSTALL_DIR
+
+  maali_run 'mkdir -p $NWCHEM/bin $NWCHEM/data'
+  maali_run 'cp $NWCHEM_TOP/bin/LINUX64/nwchem $NWCHEM/bin'
+  maali_run 'cp $NWCHEM_TOP/bin/LINUX64/depend.x $NWCHEM/bin/'
+  maali_run 'cp -r $NWCHEM_TOP/src/basis/libraries $NWCHEM/data/'
+  maali_run 'cp -r $NWCHEM_TOP/src/data $NWCHEM'
+  maali_run 'cp -r $NWCHEM_TOP/examples $NWCHEM'
+  maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/pspw_default $NWCHEM/data/'
+  maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/paw_default/ $NWCHEM/data/'
+  maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/TM $NWCHEM/data/'
+  maali_run 'cp -r $NWCHEM_TOP/src/nwpw/libraryps/HGH_LDA $NWCHEM/data/'
+  maali_run 'find $NWCHEM -perm 750 -exec chmod 755 {} \;'
+  maali_run 'find $NWCHEM -perm 730 -exec chmod 733 {} \;'
+  maali_run 'find $NWCHEM -perm 640 -exec chmod 644 {} \;'
+  maali_run 'find $NWCHEM -perm 620 -exec chmod 622 {} \;'
+}
+
+##############################################################################

@@ -1,0 +1,60 @@
+##############################################################################
+# maali cygnet file for beagle-lib
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BEAGLE is a high-performance library that can perform the core calculations at
+the heart of most Bayesian and Maximum Likelihood phylogenetics packages. It
+can make use of highly-parallel processors such as those in graphics cards
+(GPUs) found in many PCs.
+
+For further information see http://ant.apache.org://github.com/beagle-dev/beagle-lib
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# needed for URL
+MAALI_TOOL_VERSION_BEAGLE=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="https://github.com/beagle-dev/beagle-lib/archive/beagle_release_${MAALI_TOOL_VERSION_BEAGLE}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-beagle_release_${MAALI_TOOL_VERSION_BEAGLE}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-beagle_release_${MAALI_TOOL_VERSION_BEAGLE}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/8u151"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_MODULE_SET_BEAGLE_LIB_DIR='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_BUILD_DIR"
+
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "./autogen.sh"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################

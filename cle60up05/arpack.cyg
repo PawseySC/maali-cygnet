@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for arpack96
+# Compile with Cray/GNU/Intel  
+##############################################################################
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_CRAY_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CPUS"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+MAALI_URL="http://www.caam.rice.edu/software/ARPACK/SRC/arpack96.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ARPACK"
+
+
+MAALI_TOOL_TYPE="dev"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+##############################################################################
+
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+        sed -i -e "s!home =.*!home = ${MAALI_TOOL_BUILD_DIR}!g" ARmake.inc
+	sed -i -e 's!DIRS .*!DIRS = \$(SRCdir) \$(UTILdir)!g' ARmake.inc
+	sed -i -e 's!MAKE .*!MAKE = make !g' ARmake.inc
+        sed -i -e 's!.*FFLAGS.*!FFLAGS = -O2 !g' ARmake.inc
+	sed -i -e 's!FC .*!FC = ftn!g' ARmake.inc
+	sed -i -e 's!PLAT = .*!PLAT = intel!g' ARmake.inc
+	maali_run "make lib"
+        mkdir ${MAALI_INSTALL_DIR}/lib
+	cp ${MAALI_TOOL_BUILD_DIR}/libarpack_intel.a ${MAALI_INSTALL_DIR}/lib
+}
+
+##############################################################################
