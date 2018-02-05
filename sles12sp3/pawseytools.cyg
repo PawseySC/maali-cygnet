@@ -19,6 +19,8 @@ MAALI_URL="https://apollo.pawsey.org.au/team-super/${MAALI_TOOL_NAME}/repository
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.bz2"
 
+MAALI_TAR_EXTRA="--transform=s,pawseytools-$MAALI_TOOL_VERSION-[a-zA-Z0-9]*/,pawseytools-$MAALI_TOOL_VERSION/,"
+
 # where the unpacked source code is located - no source code for you
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 
@@ -35,8 +37,9 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_download {
   
-  MAALI_TOKEN=`cat $HOME/.hidden`
-  curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
+  #MAALI_TOKEN=`cat $HOME/.hidden`
+  #curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
+  echo "not downloading, ensure it is already downloaded"
 
 }
 
@@ -44,7 +47,7 @@ function maali_download {
 
 function maali_build {
 
-  cd $MAALI_TOOL_BUILD_DIR*
+  cd $MAALI_TOOL_BUILD_DIR
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 
