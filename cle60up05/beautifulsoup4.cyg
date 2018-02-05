@@ -1,12 +1,13 @@
 ##############################################################################
-# maali cygnet file for cffi
+# maali cygnet file for BeautifulSoup
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Foreign Function Interface for Python calling C code.
+Beautiful Soup sits atop an HTML or XML parser, providing Pythonic idioms for
+iterating, searching, and modifying the parse tree.
 
-For further information see https://pypi.python.org/pypi/cffi/
+For further information see http://www.crummy.com/software/BeautifulSoup/bs4/
 
 EOF
 
@@ -14,16 +15,16 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="pycparser/2.18"
+MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
