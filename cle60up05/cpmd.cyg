@@ -1,0 +1,66 @@
+##############################################################################
+# maali cygnet file for cpmd
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The CPMD code is a parallelized plane wave / pseudopotential implementation of
+Density Functional Theory, particularly designed for ab-initio molecular
+dynamics.
+
+For further information see http://www.cpmd.org/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="PrgEnv-cray/6.0.4 PrgEnv-intel/6.0.4"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="intel/17.0.4.196 cce/8.6.5"
+
+# URL to download the source code from
+MAALI_URL="https://www.pawsey.org.au"
+
+# consistant naming schemes are a myth
+MAALI_CPMD_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`;
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v4.1.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/CPMD"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
+     maali_run 'sed -i "/CPP=/c\     CPP=''" configure/CRAY-XE6-INTEL'
+     maali_run './configure.sh -omp -DEST=$MAALI_INSTALL_DIR CRAY-XE6-INTEL'
+  fi
+  if [[ $MAALI_COMPILER_NAME == "cce"* ]]; then
+     maali_run 'sed -i "/CPP=/c\     CPP=''" configure/CRAY-XE6-CCE'
+     maali_run './configure.sh -omp -DEST=$MAALI_INSTALL_DIR CRAY-XE6-CCE'
+  fi
+  
+  cd "$MAALI_INSTALL_DIR"
+  maali_run "make -j4"
+
+  maali_run "chmod -R 750 $MAALI_INSTALL_DIR"
+  maali_run "chgrp -R cpmd $MAALI_INSTALL_DIR"
+}
+
+##############################################################################
