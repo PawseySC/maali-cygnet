@@ -56,7 +56,7 @@ function maali_build {
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
   done
 
-  maali_run "cc -o munlink munlink.c"
+  maali_run "gcc -o $MAALI_INSTALL_DIR/bin/munlink munlink.c"
 
   # version dependent
   sed -i -e 's/PAWSEY_TOOLS_VERSION/'$MAALI_TOOL_VERSION'/g' $MAALI_INSTALL_DIR/bin/startServer
