@@ -13,7 +13,7 @@ For further information see http://casacore.github.io/casacore/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0 gcc/7.2.0"
+MAALI_TOOL_COMPILERS="gcc/5.5.0 gcc/7.2.0"
 
 # specify te CPU types to be built for
 MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
