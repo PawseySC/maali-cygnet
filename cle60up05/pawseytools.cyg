@@ -37,9 +37,10 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_download {
   
-  #MAALI_TOKEN=`cat $HOME/.hidden`
-  #curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
-  echo "not downloading, ensure it is already downloaded"
+  if [ ! -f "$MAALI_DST" ]; then
+    MAALI_TOKEN=`cat $HOME/.hidden`
+    curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
+  fi
 
 }
 
@@ -47,11 +48,11 @@ function maali_download {
 
 function maali_build {
 
-  cd $MAALI_TOOL_BUILD_DIR
+  cd "$MAALI_TOOL_BUILD_DIR"*
 
   maali_makedir "$MAALI_INSTALL_DIR/bin"
 
-  for file in `ls *`
+  for file in `ls *.sh pawseyAccountBalance pawseymodules remote-vis-reserve startServer vncsession`
   do
     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
   done
