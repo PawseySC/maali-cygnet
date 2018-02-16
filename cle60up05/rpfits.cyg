@@ -48,7 +48,7 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_RPFITS_DIR='$MAALI_APP_HOME'
 
-# Let's ovveride all of Maali's functions
+# Let's override some of Maali's functions
 
 function maali_pre_build {
   # do any patching before compilation here.
@@ -61,13 +61,6 @@ function maali_pre_build {
 #
   ls -otr
   echo "maali_pre_build:" "$MAALI_TOOL_BUILD_DIR"
-}
-
-function maali_post_build {
-  # do any work after the installation
-
-  cd "$MAALI_TOOL_BUILD_DIR"
-  echo "maali_post_build:" "$MAALI_TOOL_BUILD_DIR"
 }
 
 function maali_build {
@@ -100,29 +93,6 @@ cp -p ../doc/rpfits.defn     $MAALI_INSTALL_DIR/doc/rpfits-2,24/
 cp -p ../doc/y2k.txt         $MAALI_INSTALL_DIR/doc/rpfits-2,24/
 #
   echo "maali_build:" "$MAALI_TOOL_BUILD_DIR"
-}
-
-function maali_cmake_build {
-  # for tools that use cmake
-
-  cd "$MAALI_TOOL_BUILD_DIR"
-  echo "maali_cmake_build:" "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
-
-}
-
-function maali_download {
-
-  echo "maali_download: $MAALI_TMP_URL to $MAALI_TMP_DST"
-}
-
-function maali_genpkgconfig {
-
-  echo "maali_genpkgconfig:"
-}
-
-function maali_load_module {
-
-  echo "maali_load_module:"
 }
 
 ##############################################################################
