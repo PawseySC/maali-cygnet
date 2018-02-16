@@ -45,7 +45,7 @@ elif [ "$MAALI_TOOL_VERSION" == "11.2.0" ]; then
 elif [ "$MAALI_TOOL_VERSION" == "10.3.12" ]; then
   INTEL_VERSION="12.1.7"
 else
-  INTEL_VERSION="unknown"
+  INTEL_VERSION=$MAALI_TOOL_VERSION
 fi
 
 MAALI_INSTALL_DIR="/pawsey/intel/${INTEL_VERSION}/compilers_and_libraries/linux/mpi"
