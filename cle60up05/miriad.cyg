@@ -4,7 +4,7 @@
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 Kevin just wanted to echo everything that a Maali run would do, ahead of trying
 to build a PgPlot and friends for Miriad, and he eventually created this file,
-which was based on a PgPlot 5.3.1 build from VUW, NZ.
+which was based on a Miriad 2017.04.27 build from VUW, NZ.
 
 For further information talk to Kevin
 
@@ -23,55 +23,73 @@ MAALI_TOOL_COMPILERS="gcc/7.2.0"
 
 # URL to download the source code from
 #MAALI_URL="ftp://ftp.atnf.csiro.au/pub/software/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
-MAALI_URL="http://www.astro.caltech.edu/~tjp/pgplot/macos/pgplot531.tar.gz"
+MAALI_URL="ftp://ftp.atnf.csiro.au/pub/software/miriad/miriad-common.tar.bz2"
+#Also: ftp://ftp.atnf.csiro.au/pub/software/miriad/miriad-code.tar.bz2"
 
 # location we are downloading the source code to
 #MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
-MAALI_DST="$MAALI_SRC/pgplot531.tar.gz"
+MAALI_DST="$MAALI_SRC/miriad-common-20180208.tar.bz2"
 
 # patch files to download
-MAALI_TOOL_PATCHES="001 002 003 004 005 006 007 008"
+MAALI_TOOL_PATCHES="001 002 003"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/pgplotsrc"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Miriad/20180208"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ=""
+MAALI_TOOL_PREREQ="rpfits pgplot wcslib"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=toplevel
-MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-MAALI_MODULE_SET_PGPLOT_DIR='$MAALI_APP_HOME'
-
+MAALI_MODULE_SET_PATH="linux64/bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="linux64/lib"
+#
+# These match the variables that get set if the user runs a Miriad setup for themselves
+#
+MAALI_MODULE_SET_MIR='$MAALI_APP_HOME'
+MAALI_MODULE_SET_MIRARCH='linux64'
+#
+MAALI_MODULE_SET_MIRCAT='$MAALI_APP_HOME/cat'
+MAALI_MODULE_SET_MIRDOC='$MAALI_APP_HOME/doc'
+MAALI_MODULE_SET_MIRINC='$MAALI_APP_HOME/inc'
+MAALI_MODULE_SET_MIRPROG='$MAALI_APP_HOME/prog'
+MAALI_MODULE_SET_MIRSUBS='$MAALI_APP_HOME/subs'
+MAALI_MODULE_SET_MIRMAN='$MAALI_APP_HOME/man'
+#
+MAALI_MODULE_SET_MIRARCHD='$MAALI_APP_HOME/linux64'
+MAALI_MODULE_SET_MIRBIN='$MAALI_APP_HOME/linux64/bin'
+MAALI_MODULE_SET_MIRLIB='$MAALI_APP_HOME/linux64/lib'
+MAALI_MODULE_SET_MIRMAN='$MAALI_APP_HOME/linux64/man'
+#
+MAALI_MODULE_SET_PGPLOTFONT='$MAALI_APP_HOME/linux64/lib/grfont.dat'
 # Let's ovveride all of Maali's functions
 
 function maali_pre_build {
   # do any patching before compilation here.
 
-  cd "$MAALI_TOOL_BUILD_DIR"
+  # Note that we build things in the install dir.
+  maali_makedir "$MAALI_INSTALL_DIR"
+  cd "$MAALI_INSTALL_DIR"
+  echo "======================================"
+  pwd
+  echo "======================================"
 #
-  cp  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch sys_linux/gfortran_gcc.conf
-  sed -e 's/!  PNDRIV/  PNDRIV/g' -e 's/! PSDRIV/  PSDRIV/g' -e 's/! XWDRIV/  XWDRIV/g' -i drivers.list
+  tar --strip-components=1 -x -f $MAALI_SRC/miriad-common-20180208.tar.bz2
+  tar --strip-components=1 -x -f $MAALI_SRC/miriad-code-20180208.tar.bz2
+  echo "======================================"
+  ls -R
+  echo "======================================"
 #
-  cp  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.002.patch pgplot.pc
-  cp  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.003.patch cpgplot.pc
-  sed -e 's/archlibdir/\/usr\/lib64/' -i  pgplot.pc
-  sed -e 's/archlibdir/\/usr\/lib64/' -i cpgplot.pc
+  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.001.patch
+  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.002.patch
+  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.003.patch
 #
-  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.004.patch
-  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.005.patch
-  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.006.patch
-  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.007.patch
-  patch -Np1 -i  $MAALI_FILES_PATH/$MAALI_TOOL_NAME.008.patch
-#
-  ls -otr
-  echo "maali_pre_build:" "$MAALI_TOOL_BUILD_DIR"
+#  echo "maali_pre_build:" "$MAALI_TOOL_BUILD_DIR"
 }
 
 function maali_post_build {
@@ -87,30 +105,24 @@ function maali_build {
   # Note that we build things in the install dir.
   maali_makedir "$MAALI_INSTALL_DIR"
   cd "$MAALI_INSTALL_DIR"
+  echo "======================================"
   pwd
+  echo "======================================"
 #
-  cp $MAALI_TOOL_BUILD_DIR/drivers.list .
-#
-  maali_run "$MAALI_TOOL_BUILD_DIR/makemake $MAALI_TOOL_BUILD_DIR linux gfortran_gcc"
   module list
 # Do this by hand for now ??
   module load $MAALI_TOOL_CRAY_PRGENV
   module load $MAALI_TOOL_COMPILERS
+#PREREQ  module load rpfits
+#PREREQ  module load pgplot
+#PREREQ  module load wcslib
   module list
+#
+  ./configure --prefix=$MAALI_INSTALL_DIR --with-x  --with-wcslib=$WCSLIB_ROOT/lib  --with-rpfits=$RPFITS_DIR/lib64 --with-pgplot=$PGPLOT_DIR/lib
   maali_run "make"
-  maali_run "cc -shared -o libcpgplot.so  cpg*.o"
-  maali_run "make pgplot.html"
-  maali_run "make clean"
-  maali_run "rm cpg*.o"
-#
-  maali_run "mkdir $MAALI_INSTALL_DIR/lib"
-  cd $MAALI_INSTALL_DIR/lib
-#
-  maali_run "ln -s ../libcpgplot.a ."
-  maali_run "ln -s ../libpgplot.a ."
-  maali_run "ln -s ../libpgplot.so.5.3.1 ./libpgplot.so"
-  maali_run "ln -s ../libpgplot.so.5.3.1 ./libpgplot.so.5"
-  maali_run "ln -s ../libcpgplot.so ."
+  echo "======================================"
+  ls linux64/bin
+  echo "======================================"
 #
   echo "maali_build:" "$MAALI_TOOL_BUILD_DIR"
 }
@@ -138,10 +150,10 @@ function maali_git_download {
   echo "maali_git_download:"
 }
 
-function maali_load_module {
-
-  echo "maali_load_module:"
-}
+#function maali_load_module {
+#
+#  echo "maali_load_module:"
+#}
 
 #function maali_makedir {
 #
