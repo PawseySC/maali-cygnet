@@ -1,0 +1,119 @@
+##############################################################################
+# maali cygnet file for creating module file for system PGI compiler
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PGI optimizing Fortran, C and C++ compilers & tools are for scientists and
+engineers who develop applications for high-performance computing (HPC)
+systems.
+
+For further information see http://www.pgroup.com/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+# Commercial binary you have to download it
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=0
+
+MAALI_INSTALL_DIR="/pawsey/pgi/${MAALI_TOOL_VERSION}"
+
+if [ "$MAALI_TOOL_VERSION" \> "14.999" ]; then
+MAALI_MODULE_SET_CXX='pgc++'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/lib'
+else
+MAALI_MODULE_SET_CXX='pgcpp'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='linux86-64/$MAALI_TOOL_VERSION/lib linux86-64/$MAALI_TOOL_VERSION/libso'
+fi
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='pgi'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PGI='$MAALI_INSTALL_DIR'
+MAALI_MODULE_SET_CC='pgcc'
+MAALI_MODULE_SET_FC='pgfortran'
+MAALI_MODULE_SET_F77='pgf77'
+MAALI_MODULE_SET_F90='pgf90'
+MAALI_MODULE_SET_F95='pgf95 '
+MAALI_MODULE_SET_PATH='linux86-64/$MAALI_TOOL_VERSION/bin'
+MAALI_MODULE_SET_MANPATH='linux86-64/$MAALI_TOOL_VERSION/man'
+
+##############################################################################
+
+function maali_pre_build {
+if [ "$MAALI_TOOL_VERSION" == "14.7" ]; then
+  touch ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/test.txt
+  if [ $? -eq 0 ]; then
+    chmod u+rwx ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin
+    chmod u+rwx ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}
+    chmod u+rw ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    chmod u+rw ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    sed -i s^"\$NVVMLIBDIR:\$NEWLIB;"^"\$NVVMLIBDIR:\$NEWLDLIB;"^g ${MAALI_INSTALL_DIR}/linux86/${MAALI_TOOL_VERSION}/bin/pgnvdrc
+    rm ${MAALI_INSTALL_DIR}/linux86-64/${MAALI_TOOL_VERSION}/bin/test.txt
+  else
+    "Patching Failed, can't edit files / directories ${MAALI_INSTALL_DIR}"
+    "Make sure it is readable / writeable by Maali"
+    exit
+  fi
+fi
+
+}
+
+
+function maali_build {
+
+
+#Only for 17+
+if [ "$MAALI_TOOL_VERSION" > "17" ]; then
+    MAALI_INSTALL_DIR="/pawsey/pgi/${MAALI_TOOL_VERSION}"
+    export PGI_SILENT=true
+    export PGI_ACCEPT_EULA=accept
+    export PGI_INSTALL_DIR=$MAALI_INSTALL_DIR
+    #export PGI_INSTALL_TYPE=single|network
+    export PGI_INSTALL_TYPE=single
+    export PGI_INSTALL_NVIDIA=true
+    export PGI_INSTALL_AMD=false
+    export PGI_INSTALL_JAVA=true
+    export PGI_INSTALL_MPI=false
+    export PGI_MPI_GPU_SUPPORT=false
+
+    #Version is differnt in filename
+    PGI_FILENAME_VERSION=$(echo $MAALI_TOOL_VERSION | sed s/\\\.//g)
+
+    #PGI
+    # pgilinux-2017-177-x86_64.tar.gz
+    MAALI_DST="$MAALI_SRC/pgilinux-2017-$PGI_FILENAME_VERSION-x86_64.tar.gz"
+    MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+    #Wasn't downloaded it
+    maali_run "mkdir -p $MAALI_TOOL_BUILD_DIR"
+    maali_run "cd $MAALI_TOOL_BUILD_DIR"
+    maali_run "tar xfv $MAALI_DST"
+    maali_run "./install"
+    maali_run "rm -rf $MAALI_INSTALL_DIR/license.dat"
+cat <<EOF > $MAALI_INSTALL_DIR/license.dat
+SERVER license-server aaabadbabe01 27000
+DAEMON pgroupd PORT=58800
+EOF
+
+fi
+}
