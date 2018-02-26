@@ -85,6 +85,12 @@ function maali_cmake_build {
     MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX_256"
   fi
 
+  # fix "-multidir" bug in 2018 version
+  if [ ${MAALI_TOOL_VERSION} == 2018 ]; then
+    cd "$MAALI_TOOL_BUILD_DIR/src/programs/mdrun/"
+    sed -i "1045i         if(MPI_COMM_NULL != cr->ms->mpi_comm_masters)" runner.cpp
+  fi
+
   # cmake likes to build in a directory of it's own.  single-precision, no MPI
   maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
   cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
