@@ -16,7 +16,7 @@ For further information see https://software.intel.com/en-us/intel-mpi-library
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="pgi/17.5 pgi/17.7"
+MAALI_TOOL_COMPILERS="pgi/17.5 pgi/17.7 pgi/18.1"
 
 # URL to download the source code from
 MAALI_URL=""
