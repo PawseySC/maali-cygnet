@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for pshell (updated for 20171127 release)
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+pshell is a command line interface tool for accessing the Pawsey research storage.
+
+For further information see 
+  https://support.pawsey.org.au/documentation/display/US/Use+the+Command+Line
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://bitbucket.org/datapawsey/mfclient/downloads/pshell"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=" "
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_download {
+ log ".. supressing downloading as we are using a binary install"
+}
+
+function maali_unpack {
+ log " .. supressing unpacking as we are using a binary install"
+}
+
+function maali_pre_build {
+  log " .. supressing unpacking as we are using a binary install"
+}
+
+function maali_build {
+	maali_makedir "$MAALI_TOOL_BUILD_DIR"
+    cd "$MAALI_BUILD_DIR"
+	maali_run "wget $MAALI_URL"
+    maali_run "chmod +x pshell"
+	maali_makedir "$MAALI_INSTALL_DIR/bin"
+	maali_run "cp pshell $MAALI_INSTALL_DIR/bin/."
+}
