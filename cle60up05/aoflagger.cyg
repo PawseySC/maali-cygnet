@@ -1,0 +1,50 @@
+##############################################################################
+# maali cygnet file for aoflagger
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The AOFlagger is a flagger framework that implements several methods to deal with radio-frequency interference or RFI. 
+
+For further information see https://sourceforge.net/p/aoflagger/wiki/Home/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://downloads.sourceforge.net/project/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI casacore "
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS="-dynamic" -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DLAPACK_LIBRARIES=$LAPACK/lib64/liblapack.so -DBLAS_LIBRARIES=$LAPACK/lib64/liblapack.so -DGSL_LIB=$MAALI_GSL_HOME/lib/libgsl.so -DGSL_INCLUDE_DIR=$MAALI_GSL_HOME/include -DFFTW3_LIB=$FFTW_DIR/libfftw3.so -DFFTW3_INCLUDE_DIR=$FFTW_INC -DBoost_INCLUDE_DIR=$BOOST_ROOT/include -DBOOST_ASIO_H_FOUND=$BOOST_ROOT/include/boost -DCFITSIO_LIBRARY=${CFITSIO_ROOT}/lib/libcfitsio.so -DCFITSIO_INCLUDE_DIR=${CFITSIO_ROOT}/include'
+#-DCASA_INCLUDE_DIR=$CASACORE_ROOT/include/casacore -DCASA_MS_LIB=$CASACORE_ROOT/lib/libcasa_ms.so -DCASA_TABLES_LIB=$CASACORE_ROOT/lib/libcasa_tables.so -DCASA_CASA_LIB=$CASACORE_ROOT/lib/libcasa_casa.so -DCASA_MEASURES_LIB=$CASACORE_ROOT/lib/libcasa_measures.so 
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_AOFLAGGER_ROOT='$MAALI_APP_HOME'
+
+##############################################################################
+
