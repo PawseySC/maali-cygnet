@@ -1,0 +1,44 @@
+##############################################################################
+# maali cygnet file for tRNAscan-SE
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+tRNAscan-SE detects ~99% of eukaryotic nuclear or prokaryotic tRNA genes, with
+a false positive rate of less than one per 15 gigabases, and with a search
+speed of about 30 kb/second. It was implemented for large-scale human genome
+sequence analysis, but is applicable to other DNAs as well.
+
+For further information see http://eddylab.org/software.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# intel/12.1 fails on
+# ./SeqAn-1.2/seqan/platform/platform_gcc.h(42): error: invalid combination of type specifiers
+#  typedef int64_t __int64;
+
+# URL to download the source code from
+MAALI_URL="http://trna.ucsc.edu/software/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-2.0"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

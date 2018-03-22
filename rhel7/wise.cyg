@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for wise
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Wise2 package is now a rather stately bioinformatics package that has be
+around for a while. Its key programs are genewise, a program for aligning
+proteins or protein HMMs to DNA, and dynamite a rather cranky macro language
+which automates the production of dynamic programming.
+
+For further information see http://www.ebi.ac.uk/~birney/wise2/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.ebi.ac.uk/~birney/wise2/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_WISECONFIGDIR='$MAALI_APP_HOME/wisecfg'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cd src
+  maali_run "sed -i -e 's/getline/getLine/g' HMMer2/sqio.c"
+  maali_run "sed -i -e 's/isnumber/isdigit/g' models/phasemodel.c"
+  maali_run "make clean"
+
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' dynlibsrc/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' dynlibsrc/makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' network/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' network/makefile
+  sed -i -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/g' models/makefile
+  sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/g' models/makefile
+
+  maali_run "make all CC=$CC"
+
+  cd ..
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  for file in `ls src/bin/*`
+  do
+     maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/wisecfg"
+  for file in `ls wisecfg/*.*`
+  do
+     maali_run "install -m 644 $file $MAALI_INSTALL_DIR/wisecfg/"
+  done
+}
+
+##############################################################################

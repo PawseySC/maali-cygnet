@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for bedtools
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Collectively, the bedtools utilities are a swiss-army knife of tools for a
+wide-range of genomics analysis tasks. The most widely-used tools enable genome
+arithmetic: that is, set theory on the genome. For example, bedtools allows one
+to intersect, merge, count, complement, and shuffle genomic intervals from
+multiple files in widely-used genomic file formats such as BAM, BED, GFF/GTF,
+VCF. While each individual tool is designed to do a relatively simple task
+(e.g., intersect two interval files), quite sophisticated analyses can be
+conducted by combining multiple bedtools operations on the UNIX command line.
+
+For further information see http://bedtools.readthedocs.io/en/latest/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/arq5x/bedtools2/releases/download/v${MAALI_TOOL_VERSION}/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+if [[ "$MAALI_TOOL_VERSION" == "2.21.0" ]] || [[ "$MAALI_TOOL_VERSION" == "2.25.0" ]] || [[ "$MAALI_TOOL_VERSION" == "2.26.0" ]] ; then
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2"
+else
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/bedtools2-${MAALI_TOOL_VERSION}"
+fi
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's!gcc!icc!g' Makefile
+    sed -i -e 's!g++!icpc!g' Makefile
+  fi
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  for file in `ls bin/*`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+  done
+}
+
+##############################################################################

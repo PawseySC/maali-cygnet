@@ -1,0 +1,38 @@
+##############################################################################
+# maali cygnet file for broadwell
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Sets environment variables for the Intel Xeon Broadwell architecture.
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='broadwell'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_CPU_TARGET='broadwell'
+
+# conflict with other processor architectures
+MAALI_MODULE_CONFLICT='sandybridge knl'
+
+##############################################################################

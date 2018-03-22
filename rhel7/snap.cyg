@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for SNAP
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SNAP is a new sequence aligner that is 3-20x faster and just as accurate as
+existing tools like BWA-mem, Bowtie2 and Novoalign. It runs on commodity x86
+processors, and supports a rich error model that lets it cheaply match reads
+with more differences from the reference than other tools. This gives SNAP up
+to 2x lower error rates than existing tools (in some cases) and lets it match
+larger mutations that they may miss. SNAP also natively reads BAM, FASTQ, or
+gzipped FASTQ, and natively writes SAM or BAM, with built-in sorting, duplicate
+marking, and BAM indexing.
+
+For further information see http://snap.cs.berkeley.edu/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
+
+# fails on icpc
+# SNAPLib/SAM.cpp(602): error: identifier "UINT32_MAX" is undefined
+#       afterWrite(result != NotFound ? genomeLocation : UINT32_MAX, bufferOffset, (unsigned)sizeUsed);
+
+# URL to download the source code from
+MAALI_URL="https://github.com/amplab/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      sed -i -e 's/g++/icpc/g' Makefile
+  fi
+
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 snap $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################

@@ -1,0 +1,88 @@
+##############################################################################
+# maali cygnet file for DMD
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+D is a systems programming language with C-like syntax and static typing. It
+combines efficiency, control and modeling power with safety and programmer
+productivity.
+
+For further information see https://dlang.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+#MAALI_URL="http://downloads.dlang.org/releases/2015/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.zip"
+MAALI_URL="http://downloads.dlang.org/releases/2.x/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.linux.tar.xz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.linux.tar.xz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/dmd2"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cd src/dmd
+
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64"
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/src/res"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/src/VERSION $MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64/"
+  maali_run "cp $MAALI_TOOL_BUILD_DIR/src/VERSION $MAALI_TOOL_BUILD_DIR/src/dmd/"
+  maali_run "touch $MAALI_TOOL_BUILD_DIR/src/generated/linux/release/64/SYSCONFDIR.imp"
+  maali_run "touch $MAALI_TOOL_BUILD_DIR/src/res/default_ddoc_theme.ddoc"
+
+  # Required for gcc/6
+  sed -i -e '/BACK_FLAGS :=/ s/$/ -std=gnu++98/' posix.mak
+
+  maali_run "make -f posix.mak AUTO_BOOTSTRAP=1"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 dmd $MAALI_INSTALL_DIR/bin/"
+
+  cat <<EOF >$MAALI_INSTALL_DIR/bin/dmd.conf
+[Environment64]
+DFLAGS=-I$MAALI_INSTALL_DIR/src/phobos -I$MAALI_INSTALL_DIR/src/druntime/import -L-L$MAALI_INSTALL_DIR/linux/lib64 -L--export-dynamic
+EOF
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd src/phobos
+  sed -i -e 's;/src/osmodel.mak;/osmodel.mak;g' posix.mak
+  sed -i -e 's;/src/osmodel.mak;/osmodel.mak;g' $MAALI_TOOL_BUILD_DIR/src/druntime/posix.mak
+  sed -i -e 's;$(DMD_DIR)/generated/$(OS)/release/$(MODEL)/dmd;'$MAALI_TOOL_BUILD_DIR'/src/generated/$(OS)/release/$(MODEL)/dmd;g' posix.mak
+  sed -i -e 's;$(DMD_DIR)/generated/$(OS)/release/$(MODEL)/dmd;'$MAALI_TOOL_BUILD_DIR'/src/generated/$(OS)/release/$(MODEL)/dmd;g' $MAALI_TOOL_BUILD_DIR/src/druntime/posix.mak
+
+  maali_run "make -f posix.mak"
+  maali_run "make -f posix.mak INSTALL_DIR=$MAALI_INSTALL_DIR install"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd src/druntime
+  maali_run "make -f posix.mak INSTALL_DIR=$MAALI_INSTALL_DIR install"
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  wget --no-check-certificate https://raw.githubusercontent.com/D-Programming-Language/tools/master/rdmd.d
+  maali_run "$MAALI_INSTALL_DIR/bin/dmd -Isrc/druntime/src -Isrc/phobos rdmd.d"
+  maali_run "install -m 755 rdmd $MAALI_INSTALL_DIR/bin/"
+
+}
+
+##############################################################################

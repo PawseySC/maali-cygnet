@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for rsem
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RSEM is a software package for estimating gene and isoform expression levels
+from RNA-Seq data. The RSEM package provides an user-friendly interface,
+supports threads for parallel computation of the EM algorithm, single-end and
+paired-end read data, quality scores, variable-length reads and RSPD
+estimation. In addition, it provides posterior mean and 95% credibility
+interval estimates for expression levels. For visualization, It can generate
+BAM and Wiggle files in both transcript-coordinate and genomic-coordinate.
+
+For further information see https://deweylab.github.io/RSEM/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/deweylab/${MAALI_TOOL_NAME_ORIG}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PERLLIB=1
+
+##############################################################################
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+
+  maali_run "make"
+  maali_run "make install DESTDIR=$MAALI_INSTALL_DIR"
+}
+
+##############################################################################

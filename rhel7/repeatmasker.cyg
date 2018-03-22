@@ -1,0 +1,85 @@
+##############################################################################
+# maali cygnet file for RepeatMasker
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+RepeatMasker is a program that screens DNA sequences for interspersed repeats
+and low complexity DNA sequences. The output of the program is a detailed
+annotation of the repeats that are present in the query sequence as well as a
+modified version of the query sequence in which all the annotated repeats have
+been masked (default: replaced by Ns).
+
+For further information see http://www.repeatmasker.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# convert dots to dashes
+MAALI_REPEATMASKER_VERSION=`echo $MAALI_TOOL_VERSION | sed -e 's/\./-/g'`
+
+# 4.0.7 uses 20170127 
+MAALI_REPEATMASKER_LIBRARY_VERSION="20170127"
+
+# URL to download the source code from
+MAALI_URL="http://www.repeatmasker.org/$MAALI_TOOL_NAME_ORIG-open-$MAALI_REPEATMASKER_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-open-$MAALI_REPEATMASKER_VERSION.tar.gz"
+
+# where the unpacked source code is located - RepeatMasker builds in place
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gcc/4.8.5 broadwell/1.0 trf/4.09 hmmer/3.1b2 phrap/0.990329 rmblast/2.6.0"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_RESTRICT_GROUP='repbase'
+
+##############################################################################
+
+function maali_unpack {
+  maali_wiki ".. supressing unpacking RepeatMasker source as it builds in place"
+}
+
+##############################################################################
+
+function maali_build {
+
+  cd $MAALI_INSTALL_DIR
+  maali_run "tar zxf $MAALI_DST"
+  maali_run "mv $MAALI_TOOL_NAME_ORIG bin"
+
+  cd bin
+
+  # you need to register for the repeatmasker libraries
+  if [ -f "$MAALI_SRC/repeatmaskerlibraries-$MAALI_REPEATMASKER_LIBRARY_VERSION.tar.gz" ]; then
+    maali_run "tar zxf $MAALI_SRC/repeatmaskerlibraries-$MAALI_REPEATMASKER_LIBRARY_VERSION.tar.gz"
+  fi
+
+  sed -i -e 's;/u1/local/bin/perl;/usr/bin/perl;g' RepeatMasker
+  sed -i -e 's;/u1/local/bin/perl;/usr/bin/perl;g' DateRepeats
+  sed -i -e 's;/u1/local/bin/perl;/usr/bin/perl;g' DupMasker
+  sed -i -e 's;/u1/local/bin/perl;/usr/bin/perl;g' ProcessRepeats
+  sed -i -e 's;/u1/local/bin/perl;/usr/bin/perl;g' RepeatProteinMask
+
+  maali_run "cp RepeatMaskerConfig.tmpl RepeatMaskerConfig.pm"
+
+  sed -i -e 's!$CROSSMATCH_DIR = "/usr/local/bin";!$CROSSMATCH_DIR = $ENV{"MAALI_PHRAP_HOME"} . "/bin";!g' RepeatMaskerConfig.pm
+  sed -i -e 's!$HMMER_DIR   = "/usr/local/hmmer";!$HMMER_DIR   = $ENV{"MAALI_HMMER_HOME"} . "/bin";!g' RepeatMaskerConfig.pm
+  sed -i -e 's!$RMBLAST_DIR   = "/usr/local/rmblast";!$RMBLAST_DIR   = $ENV{"MAALI_RMBLAST_HOME"} . "/bin";!g' RepeatMaskerConfig.pm
+  # $RMBLAST_DIR   = "/usr/local/rmblast";
+  sed -i -e 's!$DEFAULT_SEARCH_ENGINE = "crossmatch";!$DEFAULT_SEARCH_ENGINE = "ncbi";!g' RepeatMaskerConfig.pm
+  sed -i -e 's!$TRF_PRGM = "";!$TRF_PRGM = $ENV{"MAALI_TRF_HOME"} . "/bin/trf";!g' RepeatMaskerConfig.pm
+}
+
+##############################################################################

@@ -1,0 +1,39 @@
+##############################################################################
+# maali cygnet file for LMDB
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/${MAALI_TOOL_NAME_ORIG}/${MAALI_TOOL_NAME}/archive/${MAALI_TOOL_NAME_ORIG}_${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}_${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_NAME_ORIG}_${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd "libraries/liblmdb"
+
+  sed -i -e 's;/usr/local;'$MAALI_INSTALL_DIR';g' Makefile
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    sed -i -e 's;gcc;icc;g' Makefile
+  fi
+
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################

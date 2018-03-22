@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for Jellyfish
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Jellyfish is a tool for fast, memory-efficient counting of k-mers in DNA. A
+k-mer is a substring of length k, and counting the occurrences of all such
+substrings is a central step in many analyses of DNA sequence. JELLYFISH can
+count k-mers quickly by using an efficient encoding of a hash table and by
+exploiting the compare-and-swap CPU instruction to increase parallelism.
+
+For further information see http://www.genome.umd.edu/jellyfish.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+if [ $MAALI_TOOL_MAJOR_VERSION -gt 1 ]; then
+  # version 2 failes on icpc
+  # lib/misc.cc(86): error: namespace "std" has no member "all_of"
+  #     if(std::all_of(arg.begin(), arg.end(), isblunt))
+
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+  MAALI_URL="https://github.com/gmarcais/${MAALI_TOOL_NAME_ORIG}/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+else
+  MAALI_URL="http://www.cbcb.umd.edu/software/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+fi
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+# MAALI_WIKI_TOOL_NAME=""
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+# MAALI_WIKI_CATEGORY=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################

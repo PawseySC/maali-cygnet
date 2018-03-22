@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for BLAST
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BLAST finds regions of similarity between biological sequences. The program
+compares nucleotide or protein sequences to sequence databases and calculates
+the statistical significance.
+
+For further information see https://blast.ncbi.nlm.nih.gov/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/$MAALI_TOOL_VERSION/ncbi.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/ncbi.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# defined environment variable of the basic path  
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_BLASTDB='/group/data/blast'
+MAALI_MODULE_SET_BLASTMAT='$MAALI_APP_HOME/data'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    export LINUX_MODE=icc
+    sed -i -e 's;-Wl,-Bstatic;;g' ncbi/platform/linux64_icc9.ncbi.mk
+  else
+    sed -i -e 's;-Wl,-Bstatic;;g' ncbi/platform/linux64.ncbi.mk
+  fi
+
+  maali_run "./ncbi/make/makedis.csh"
+  maali_makedir "$MAALI_INSTALL_DIR"
+  maali_run "mv ncbi/bin ncbi/data $MAALI_INSTALL_DIR"
+}
+
+##############################################################################

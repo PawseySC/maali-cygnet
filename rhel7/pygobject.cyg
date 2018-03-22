@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for PyGObject
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyGObject is a Python extension module that gives clean and consistent access
+to the entire GNOME software platform through the use of GObject Introspection.
+
+For further information see https://wiki.gnome.org/PyGObject
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_2_PYTHON"
+
+# URL to download the source code from and location we are downloading the source code to
+if [ $MAALI_TOOL_VERSION \< "2.28.6" ]; then
+MAALI_URL="ftp.gnome.org/pub/GNOME/sources/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+else
+MAALI_URL="ftp.gnome.org/pub/GNOME/sources/$MAALI_TOOL_NAME/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
+fi
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gobject-introspection/1.40.0 pycairo/1.15.4"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
+
+# Don't use setup.py as it does not install PKGCONFIG headers etc.
+function maali_python_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+
+  sed -i -e "s/case GI_INFO_TYPE_ERROR_DOMAIN://g" gi/pygi-info.c
+  sed -i -e "s/type = &PyGIErrorDomainInfo_Type;//g" gi/pygi-info.c
+
+  maali_run "make"
+  maali_run "make install"
+}
+
+##############################################################################

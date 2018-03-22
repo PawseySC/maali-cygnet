@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for creating module file for system intel
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+MAALI_INSTALL_DIR="/pawsey/intel/${MAALI_TOOL_VERSION}"
+MAALI_INTEL_LICENSE_DIR='/pawsey/intel/licenses'
+MAALI_MODULE_SET_MKLROOT="/pawsey/intel/${MAALI_TOOL_VERSION}/mkl"
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='intel'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_COMPILER='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PATH='bin mkl/tools'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='mkl/lib/intel64 compilers_and_libraries/linux/lib/intel64'
+MAALI_MODULE_SET_MANPATH='man/en_US'
+MAALI_MODULE_SET_CC='icc'
+MAALI_MODULE_SET_CXX='icpc'
+MAALI_MODULE_SET_FC='ifort'
+MAALI_MODULE_SET_F77='ifort'
+MAALI_MODULE_SET_F90='ifort'
+MAALI_MODULE_SET_F95='ifort'
+MAALI_MODULE_SET_F9X='ifort'
+MAALI_MODULE_SET_MPICC_CC='icc'
+MAALI_MODULE_SET_MPICXX_CXX='icpc'
+MAALI_MODULE_SET_INTEL_PATH=''
+MAALI_MODULE_SET_INTEL_INC_PATH='compiler/include include'
+MAALI_MODULE_SET_INTEL_LIB_PATH='mkl/lib/intel64 lib/intel64'
+MAALI_MODULE_SET_INTEL_LICENSE_FILE='/pawsey/intel/licenses/USE_SERVER.lic'
+MAALI_MODULE_SET_OMP_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_NUM_THREADS='1'
+MAALI_MODULE_SET_MKL_DYNAMIC='FALSE'
+
+##############################################################################

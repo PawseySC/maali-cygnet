@@ -1,0 +1,75 @@
+##############################################################################
+# maali cygnet file for migrate
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Migrate estimates effective population sizes and past migration rates between n
+population assuming a migration matrix model with asymmetric migration rates
+and different subpopulation sizes. Migrate uses maximum likelihood or Bayesian
+inference to jointly estimate all parameters.
+
+For further information see http://popgen.sc.fsu.edu/Migrate/Migrate-n.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://popgen.sc.fsu.edu/newversions/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/src"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH='man'
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_makedir "$MAALI_INSTALL_DIR/man/man1"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  maali_run "aclocal"
+  maali_run "autoconf"
+  maali_run "autoheader"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+
+  if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+    sed -i -e "s/for(int i=0;i<FOUR; i++)/int i;\n for(i=0;i<FOUR;i++)/g" src/mutationmodel.c
+  fi
+
+  maali_run "make"
+  maali_run "install -m 755 migrate-n $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 644 migrate.1 $MAALI_INSTALL_DIR/man/man1/"
+
+  # purge for MPI
+  maali_run "make clean"
+  module load $MAALI_DEFAULT_MPI
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+
+  if [[ $(echo "if (${MAALI_TOOL_MAJOR_VERSION} > 3) 1 else 0" | bc) -eq 1 ]]; then
+    sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile
+    sed -i -e "s/$(CFLAGS) -O3 -fvectorize/$(CFLAGS) -O3 /g" Makefile.in
+  fi
+
+  maali_run "make mpis"
+  maali_run "install -m 755 migrate-n-mpi $MAALI_INSTALL_DIR/bin/"
+}
+
+##############################################################################

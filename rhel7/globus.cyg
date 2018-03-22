@@ -1,0 +1,37 @@
+##############################################################################
+# maali cygnet file for globus
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://downloads.globus.org/toolkit/gt6/stable/installers/linux/globus_toolkit-latest-x86_64-unknown-linux-gnu.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/globus_toolkit-latest-x86_64-unknown-linux-gnu.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/globus_toolkit-6.0.1502136246-x86_64-unknown-linux-gnu-Build-14"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_GLOBUS_LOCATION='$MAALI_INSTALL_DIR'
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd globus 
+  maali_run "mv * $MAALI_INSTALL_DIR"
+}
+
+##############################################################################

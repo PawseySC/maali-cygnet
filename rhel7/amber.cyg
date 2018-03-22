@@ -1,0 +1,126 @@
+##############################################################################
+# maali cygnet file for Amber
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Amber refers to two things: a set of molecular mechanical force fields for
+the simulation of biomolecules (which are in the public domain, and are used in
+a variety of simulation programs); and a package of molecular simulation
+programs which includes source code and demos.
+
+For further information see http://ambermd.org/
+
+EOF
+
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+if [ $MAALI_TOOL_VERSION == "12" ]; then
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools13.tar.bz2"
+elif [ $MAALI_TOOL_VERSION == "14" ]; then
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools14.tar.bz2"
+elif [ $MAALI_TOOL_VERSION == "16" ]; then
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2 $MAALI_SRC/AmberTools17.tar.bz2"
+else
+  MAALI_DST="$MAALI_SRC/Amber$MAALI_TOOL_VERSION.tar.bz2"
+fi
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION"
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI netcdf/4.5.0 python/2.7.14"
+
+MAALI_TOOL_CONFIGURE='--no-updates -noX11 --with-netcdf $MAALI_NETCDF_HOME --with-python $PYTHON_DIR/bin/python intel'
+
+# add additional configure options
+if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+  MAALI_TOOL_CONFIGURE=" -cuda ${MAALI_TOOL_CONFIGURE}"
+fi
+
+# add additional configure options
+if [ $MAALI_TOOL_VERSION \< "16" ]; then
+  MAALI_TOOL_CONFIGURE=" -nomtkpp ${MAALI_TOOL_CONFIGURE}"
+fi
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_AMBERHOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_AMBER_DAT='$MAALI_APP_HOME/dat'
+MAALI_MODULE_SET_OMP_NUM_THREADS='1'
+MAALI_MODULE_SET_PYTHONPATH='bin'
+MAALI_MODULE_RESTRICT_GROUP=amber
+
+##############################################################################
+
+function maali_build {
+  export AMBERHOME=$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    module unload cray-libsci
+    export MKL_HOME=$MKLROOT
+    export AMBERBUILDFLAGS="-I${MKLROOT}/include/fftw"
+  fi
+
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    export CUDA_HOME=${NVIDIA_CUDA_HOME}
+  fi
+
+  export CC=mpicc
+  export CXX=mpicxx
+  export FC=mpif90
+  export MPI_HOME=$MPI_ROOT
+
+  # Bypass the normal configure script, which does an update and then calls configure2.
+  # Run twice so can patch itself.
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "echo y | ./update_amber --update"
+  maali_run "echo y | ./update_amber --update"
+
+  # The configure script from AmberTools forces -xHost.
+  maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/cphstats/configure"
+  maali_run "sed -i -e 's/-xHost//g' ./AmberTools/src/configure2"
+
+#  maali_run "sed -i -e 's!netcdf_dir}/lib!netcdf_dir}/lib64!g' ./AmberTools/src/configure2"
+
+#  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib/!/lib64/!g' ./AmberTools/src/cpptraj/configure"
+#  maali_run "sed -i -e '/ NETCDFLIB=/ s!/lib !/lib64 !g' ./AmberTools/src/cpptraj/configure"
+
+#NETCDFLIB="$NETCDF_HOME/lib/libnetcdf.a"
+#NETCDFLIB="-L$NETCDF_HOME/lib $NETCDFLIB"
+
+  # Serial
+  maali_run "./configure $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make -e"
+  maali_run "make -j$MAALI_CORES -e install"
+
+  # Parallel
+  maali_run "./configure -mpi $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make -e"
+  maali_run "make -j$MAALI_CORES -e install"
+
+  export AMBERHOME=${MAALI_INSTALL_DIR}
+  maali_run "sed -i -e 's!export AMBERHOME=.*!export AMBERHOME=${AMBERHOME}!g' ./amber.sh"
+  maali_run "sed -i -e 's!setenv AMBERHOME .*!setenv AMBERHOME ${AMBERHOME}!g' ./amber.csh"
+
+
+  maali_run "mv * $MAALI_INSTALL_DIR/"
+}
+
+##############################################################################

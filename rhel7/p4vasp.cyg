@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for p4vasp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+p4vasp, the VASP Visualization Tool
+
+For further information see http://p4vasp.at/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://p4vasp.at/files/p4vasp-$MAALI_TOOL_VERSION.tgz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-$MAALI_TOOL_VERSION.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="python/2.7.14 swig/3.0.12 fltk/1.3.4 pygtk/2.24.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
+
+function maali_build {
+
+   export SITE_PACKAGES=${MAALI_INSTALL_DIR}/${MAALI_PYTHON_LIBDIR}/python${MAALI_PYTHON_LIB_VERSION}/site-packages
+   export P4VASP_HOME=${MAALI_INSTALL_DIR}
+   export BINDIR=${MAALI_INSTALL_DIR}/bin
+   export LIBDIR=${MAALI_INSTALL_DIR}/lib
+   export INCLUDEDIR=${MAALI_INSTALL_DIR}/include
+
+   export PYINCLUDE=${MAALI_PYTHON_HOME}/include/python${MAALI_PYTHON_LIB_VERSION}
+
+   cd ${MAALI_TOOL_BUILD_DIR}/odpdom
+   maali_run "make -e -j $MAALI_CORES libODP.a"
+
+   cd ${MAALI_TOOL_BUILD_DIR}
+   maali_run "make -j $MAALI_CORES p4vasp_config"
+
+   cd ${MAALI_TOOL_BUILD_DIR}/install
+   maali_run "python${MAALI_PYTHON_LIB_VERSION} makeappletlist.py"
+
+   cd ${MAALI_TOOL_BUILD_DIR}/src
+
+#   #They do a hard coded check of the fltk version
+#   FLTKVERSION=`fltk-config --version`
+#   sed -i "/version/ s/\"]:/\",\"$FLTKVERSION\"]:/g" fltk-config.py
+
+   export LIBS="-L../odpdom -lODP `fltk-config --use-gl --ldstaticflags` -lpthread"
+   export CFLAGS="-g -Wall -fPIC \$(FLAGS) `fltk-config --cxxflags` -I\$(PYINCLUDE) -Iinclude -I../odpdom/include"
+
+   maali_run "make -e -j $MAALI_CORES"
+
+
+   cd ${MAALI_TOOL_BUILD_DIR}
+   maali_run "make -e install"
+}
+
+##############################################################################

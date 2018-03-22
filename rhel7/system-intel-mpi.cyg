@@ -1,0 +1,65 @@
+##############################################################################
+# maali cygnet file for creating module file for system intel-mpi
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® MPI Library focuses on enabling MPI applications to perform better for
+clusters based on Intel® architecture—implementing the high-performance MPI-3.1
+standard on multiple fabrics. Quickly deliver maximum end user performance―even
+if you change or upgrade to new interconnects―without requiring changes to the
+software or operating environment.
+
+
+For further information see https://software.intel.com/en-us/intel-mpi-library
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+if [ "$MAALI_TOOL_VERSION" == "2017.0.3" ]; then
+  INTEL_VERSION="17.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "2017.0.1" ]; then
+  INTEL_VERSION="17.0.1"
+elif [ "$MAALI_TOOL_VERSION" == "11.3.4" ]; then
+  INTEL_VERSION="16.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.4" ]; then
+  INTEL_VERSION="15.0.5"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.3" ]; then
+  INTEL_VERSION="15.0.3"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.0" ]; then
+  INTEL_VERSION="15.0.0"
+elif [ "$MAALI_TOOL_VERSION" == "10.3.12" ]; then
+  INTEL_VERSION="12.1.7"
+else
+  INTEL_VERSION=$MAALI_TOOL_VERSION
+fi
+
+MAALI_INSTALL_DIR="/pawsey/intel/${INTEL_VERSION}/compilers_and_libraries/linux/mpi"
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='intel-mpi'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='intel64/bin'
+MAALI_MODULE_SET_CLASSPATH='$MAALI_INSTALL_DIR/intel64/lib/mpi.jar'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='intel64/lib:$MAALI_INSTALL_DIR/mic/lib'
+MAALI_MODULE_SET_MANPATH='man'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='intel64/lib/release:$MAALI_INSTALL_DIR/mic/lib/release'
+

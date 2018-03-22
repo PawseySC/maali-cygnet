@@ -1,0 +1,37 @@
+##############################################################################
+# maali cygnet file for xopen
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This small Python module provides a xopen function that works like the built-in
+open function, but can also deal with compressed files. Supported compression
+formats are gzip, bzip2 and xz. They are automatically recognized by their file
+extensions .gz, .bz2 or .xz.
+
+For further information see https://github.com/marcelm/xopen/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="bz2file/0.98"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
