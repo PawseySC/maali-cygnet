@@ -52,7 +52,7 @@ MAALI_CUDA_SUPPORT=1
 function maali_build {
   if [ $MAALI_CUDA_BUILD -eq 1 ]; then
     cd "$MAALI_TOOL_BUILD_DIR"
-    sed -i -e "s;/usr/local/cuda/lib64/;$NVIDIA_CUDA_HOME/lib64;g" Makefile
+    sed -i -e "s;/usr/local/cuda/lib64/;$NVIDIA_CUDA_HOME/lib64 -L$NVIDIA_CUDA_HOME/lib64/stubs;g" Makefile
     sed -i -e 's;soap3_aligner BGS-Build BGS-View BGS-View-PE clean;soap3_aligner BGS-Build BGS-View BGS-View-PE;g' Makefile
     sed -i -e 's;-lm;-lm -lpthread -lz;g' Makefile
     maali_run "make"
