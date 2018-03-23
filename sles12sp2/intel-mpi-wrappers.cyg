@@ -46,8 +46,8 @@ function maali_build {
 
   if [[ $MAALI_CPU_TARGET == "knl" ]]; then
     ARCH="mic"
-    if [[ $MAALI_COMPILER_VERSION -gt 8.0 ]]; then
-      # -tp=knl came out in pgi/8.1
+    if [[ $(echo "if (${MAALI_COMPILER_VERSION} >= 18.1) 1 else 0" | bc) -eq 1 ]]; then
+      # -tp=knl came out in pgi/18.1
       MIC="-tp=knl"
     else
       MIC="-tp=haswell"
