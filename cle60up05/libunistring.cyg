@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for libunistring
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Text files are nowadays usually encoded in Unicode, and may consist of very
+different scripts - from Latin letters to Chinese Hanzi - , with many kinds of
+special characters - accents, right-to-left writing marks, hyphens, Roman
+numbers, and much more. But the POSIX platform APIs for text do not contain
+adequate functions for dealing with particular properties of many Unicode
+characters. In fact, the POSIX APIs for text have several assumptions at their
+base which don't hold for Unicode text.
+
+This library provides functions for manipulating Unicode strings and for
+manipulating C strings according to the Unicode standard. 
+
+For further information see https://www.gnu.org/software/libunistring/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://ftp.gnu.org/gnu/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.xz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
