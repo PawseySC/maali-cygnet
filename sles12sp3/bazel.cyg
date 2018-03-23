@@ -1,0 +1,64 @@
+##############################################################################
+# maali cygnet file for BAZEL 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bazel is a build tool with native support for Java, C/C++ and Python soure code.
+It is used by Google as the build tool for Tensorflow. 
+
+This MAALI cygnet file has been tested with versions 0.5.2 to 0.5.4 (as of Sept 1, 2017)
+
+For further information see https://www.bazel.build
+
+EOF
+
+# Bazel is a stand-alond Java application with no reliance on compilers
+MAALI_TOOL_COMPILERS="binary"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# URL to download the source code from 
+MAALI_URL="https://github.com/bazelbuild/bazel/releases/download/${MAALI_TOOL_VERSION}/bazel-${MAALI_TOOL_VERSION}-installer-linux-x86_64.sh"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.sh" 
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# We need to load the Java module to run Bazel commands 
+MAALI_TOOL_PREREQ="java"
+MAALI_SYSTEM_PACKAGES_PREREQ=''
+
+# configure isn't used  
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
+MAALI_MODULE_SET_TMPDIR="${MYSCRATCH}"
+
+# There is nothing to unpack
+function maali_unpack {
+  echo " "	
+}
+
+##############################################################################
+
+function maali_build {
+
+  export JAVA_VERSION="1.8"
+  maali_run "sh $MAALI_DST --prefix=${MAALI_INSTALL_DIR}"
+
+  export PATH=$PATH:${MAALI_INSTALL_DIR}/bin
+  export CXX=CC
+  export CC=cc
+  export TEST_TMP_DIR=${MYSCRATCH}
+  export TMP_DIR=${MYSCRATCH}
+  export TMPDIR=${MYSCRATCH}
+}
+
+##############################################################################
+
