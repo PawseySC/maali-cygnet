@@ -58,6 +58,14 @@ MAALI_MODULE_RESTRICT_GROUP='vasp'
 
 ##############################################################################
 
+function maali_pre_build {
+  cd "$MAALI_TOOL_BUILD_DIR/src"
+  wget http://theory.cm.utexas.edu/code/vtstcode.tgz
+  tar xz --strip-components=1 -f vtstcode.tgz
+  #Need to modify main.F in VTST v2.04 and later.
+  perl -pi -e 's/(CALL CHAIN_FORCE[(]T_INFO%NIONS,DYN%POSION,TOTEN,TIFOR, &\n)/$1        TSIF,LATT_CUR%A,LATT_CUR%B,IO%IU6) !/m' main.F
+}
+
 function maali_build {
 
   # Unload for Intel MKL
@@ -217,6 +225,10 @@ EOF
   fi
   export FFT3D='fftmpiw.o fftmpi_map.o  fftw3d.o  fft3dlib.o'
   export CC_LIB='${CC}'
+
+  # VTST modifcations
+  # Add extra objects to build, before chain.o
+  sed -i -e 's/chain.o/bfgs.o \\\n\tdynmat.o \\\n\tinstanton.o \\\n\tlbfgs.o \\\n\tsd.o \\\n\tcg.o \\\n\tdimer.o \\\n\tbbm.o \\\n\tfire.o \\\n\tlanczos.o \\\n\tneb.o \\\n\tqm.o \\\n\topt.o \\\n\tchain.o/' src/.objects
 
   ##################################################
   # Compile it without additional options.
