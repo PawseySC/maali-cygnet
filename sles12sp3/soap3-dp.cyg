@@ -1,0 +1,112 @@
+##############################################################################
+# maali cygnet file for SOAP3-dp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SOAP3-dp, like its predecessor SOAP3, is a GPU-based software for aligning short 
+reads to a reference sequence. It improves SOAP3 in terms of both speed and 
+sensitivity by skillful exploitation of whole-genome indexing and dynamic 
+programming on a GPU. SOAP3 is limited to find alignments with at most 
+4 mismatches, while SOAP3-dp can find alignments involving mismatches, INDELs, 
+and small gaps. The number of reads aligned, especially for paired-end data, 
+typically increases 5 to 10 percent from SOAP3 to SOAP3-dp. More interestingly, 
+SOAP3-dp's alignment time is much shorter than SOAP3, as it is found that 
+GPU-based dynamic programming when coupled with indexing can be much more 
+efficient. For example, when aligning length-100 single-end reads with the human 
+genome, SOAP3 typically requires tens of seconds per million reads, while 
+SOAP3-dp takes only a few seconds.
+
+For further information see http://http://www.cs.hku.hk/2bwt-tools/soap3-dp/index.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# specify which CPU architectures we want to build the tool with
+MAALI_TOOL_CPU_TARGET='sandybridge broadwell'
+
+# needed for URL
+MAALI_TOOL_VERSION_BEAGLE=`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="https://github.com/aquaskyline/soap3-dp/archive/master.zip"
+
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+##############################################################################
+
+function maali_pre_build {
+  maali_run "mv $MAALI_BUILD_DIR/SOAP3-dp-master $MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}-source"
+  cd "$MAALI_TOOL_BUILD_DIR"
+}
+
+function maali_build {
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    cd "$MAALI_TOOL_BUILD_DIR"
+
+    if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      sed -i -e "s;^CC =.*;CC = g++;g" Makefile
+      sed -i -e "s;^CC =.*;CC = g++;g" 2bwt-flex/Makefile
+      sed -i -e "s;^CC =.*;CC = g++;g" 2bwt-lib/Makefile
+      sed -i -e "/^CFLAGS =/ s;$; -lpthread;g" Makefile
+      sed -i -e "/^CFLAGS =/ s; -march=nocona;;g" 2bwt-flex/Makefile
+      sed -i -e "/^CFLAGS =/ s; -march=nocona;;g" 2bwt-lib/Makefile
+    elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      sed -i -e "s;^CC =.*;CC = icpc;g" Makefile
+      sed -i -e "s;^CC =.*;CC = icpc;g" 2bwt-flex/Makefile
+      sed -i -e "s;^CC =.*;CC = icpc;g" 2bwt-lib/Makefile
+      sed -i -e "s;^CFLAGS =.*;CFLAGS = -O3 -ipo -lz -qopenmp -lpthread;g" Makefile
+      sed -i -e "s;^CFLAGS =.*;CFLAGS = -O3 -ipo;g" 2bwt-flex/Makefile
+      sed -i -e "s;^CFLAGS =.*;CFLAGS = -O3 -ipo;g" 2bwt-lib/Makefile
+      sed -i -e "/^LIBS =/ s;-lm;;g" 2bwt-flex/Makefile
+      sed -i -e "/^LIBS =/ s;-lm;;g" 2bwt-lib/Makefile
+    else 
+      echo "Compiler " $MAALI_COMPILER_NAME " not supported by cygnet file"
+      exit
+    fi
+
+    sed -i -e "s;/usr/local/cuda/bin/nvcc;nvcc;g" Makefile
+    sed -i -e "s;/usr/local/cuda/lib64/;$NVIDIA_CUDA_HOME/lib64 -L$NVIDIA_CUDA_HOME/lib64/stubs;g" Makefile
+
+    maali_run "make"
+
+    maali_makedir "$MAALI_INSTALL_DIR/bin"
+    MAALI_INSTALL_FILES="soap3-dp soap3-dp-builder BGS-Build BGS-View BGS-View-PE"
+
+    for file in $MAALI_INSTALL_FILES
+    do
+      maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+    done
+
+    for file in `ls *.ini`
+    do
+      maali_run "install -m 644 $file $MAALI_INSTALL_DIR/bin"
+    done
+
+  else
+    echo "Requires CUDA"
+    exit
+  fi
+}
+
+##############################################################################
