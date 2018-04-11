@@ -15,7 +15,8 @@ For further information see https://rajanil.github.io/fastStructure/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+#AEG.MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="python/2.7.14"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/rajanil/fastStructure/archive/v${MAALI_TOOL_VERSION}.tar.gz"
@@ -24,11 +25,17 @@ MAALI_URL="https://github.com/rajanil/fastStructure/archive/v${MAALI_TOOL_VERSIO
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+#AEG.Modifying the name to use the original tool name with a capital "S": fastStructure
+#AEG.MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/fastStructure-${MAALI_TOOL_VERSION}"
 
 # prerequistes of fastStructure
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC numpy/1.13.3 scipy/1.0.0 gsl/2.3 matplotlib/2.1.0"
-
+#AEG.Updating for the use of gsl/2.4
+#AEG.Updating for avoiding the problem with gsl not knowing which  architecture to use (broadwell or sandybridge)
+#AEG.         any of the architectures should be listed in order to avoid the confusion for gsl usage
+#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC numpy/1.13.3 scipy/1.0.0 gsl/2.3 matplotlib/2.1.0"
+#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC broadwell/1.0 numpy/1.13.3 scipy/1.0.0 gsl/2.4 matplotlib/2.1.0"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_SYSTEM_GCC sandybridge/1.0 numpy/1.13.3 scipy/1.0.0 gsl/2.4 matplotlib/2.1.0"
 MAALI_TOOL_BUILD_PREREQ="cython/0.27.3 setuptools/38.2.1"
 
 # type of tool (eg. apps, devel, python, etc.)
@@ -44,6 +51,8 @@ MAALI_MODULE_SET_PATH=1
 
 function maali_python_build {
 
+#AEG. I set this definition here to avoid name crashing (and commented the original setting a few lines below)
+  MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
   maali_run 'mkdir -p $MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages'
   cd "$MAALI_INSTALL_DIR/lib/python${MAALI_PYTHON_MAJOR_MINOR_VERSION}/site-packages"
@@ -52,7 +61,8 @@ function maali_python_build {
   export CFLAGS="-I${MAALI_GSL_HOME}/include/gsl"
   export LDFLAGS="-L${MAALI_GSL_HOME}/lib"
 
-  MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
+#AEG. Commenting this line as I moved the definition a few lines above (this was done to avoid folder name crashing)
+#AEG. MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
   cd vars/
   maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build_ext --inplace"
   cd ../
