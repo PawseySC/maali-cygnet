@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for SHAPEIT
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SHAPEIT is a fast and accurate method for estimation of haplotypes (aka phasing)
+from genotype or sequencing data
+
+For further information see https://mathgen.stats.ox.ac.uk/genetics_software/shapeit/shapeit.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from - it's java
+#MAALI_URL="https://mathgen.stats.ox.ac.uk/genetics_software/$MAALI_TOOL_NAME/shapeit.v2.${MAALI_TOOL_VERSION}.GLIBCv2.20.Linux.static.tgz"
+MAALI_URL="https://mathgen.stats.ox.ac.uk/genetics_software/$MAALI_TOOL_NAME/shapeit.v2.${MAALI_TOOL_VERSION}.glibcv2.17.linux.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located - no source code for you
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# to stop polluting build
+MAALI_UNPACK_MKDIR=1
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+MAALI_TAR_EXTRA=--strip-components=1
+
+##############################################################################
+
+function maali_build {
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 bin/shapeit $MAALI_INSTALL_DIR/bin"
+
+  maali_makedir "$MAALI_INSTALL_DIR/example"
+  for file in `ls example/*.*`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/example"
+  done
+
+}
+
+##############################################################################
