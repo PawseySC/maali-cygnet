@@ -13,7 +13,7 @@ For further information see https://github.com/keras-team/keras
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="python/2.7.14"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # Build the package only for the compute nodes
 MAALI_TOOL_CPU_TARGET="broadwell"
@@ -30,21 +30,5 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_CPATH=1
-MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}
-MAALI_MODULE_SET_LD_LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib
-MAALI_MODULE_SET_CUDA_ROOT=${MAALI_CUDA_HOME}
-#MAALI_MODULE_SET_THEANO_FLAGS='cuda.root=\$env\(MAALI_CUDA_HOME\),device=cuda,floatX=float32'
-
-##############################################################################
-
-#function maali_python_build {
-#
-# # Install PyCuda and a developer version of scikit-cuda with pip
-#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR pycuda"
-#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR git+https://github.com/lebedov/scikit-cuda.git#egg=scikit-cuda"
-#
-# # Install Theano with pip
-#   maali_run "pip install -t ${MAALI_INSTALL_DIR}/lib/python2.7/site-packages -b $MAALI_TOOL_BUILD_DIR theano==${MAALI_TOOL_VERSION}"
-#}
+MAALI_MODULE_SET_PYTHONPATH=1
 
