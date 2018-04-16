@@ -12,7 +12,12 @@ For further information see https://ipython.org/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+# iPython6 requires python>3.3
+if [ "$MAALI_TOOL_VERSION" \> "6" ]; then
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_3_PYTHON"
+else
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+fi
 
 # URL to download the source code from
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
