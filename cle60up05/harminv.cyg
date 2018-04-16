@@ -1,0 +1,69 @@
+##############################################################################
+# maali cygnet file for harminv
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Harminv is a free program (and accompanying library) to solve the problem of
+harmonic inversion given a discrete-time, finite-length signal that consists of
+a sum of finitely-many sinusoids (possibly exponentially decaying) in a given
+bandwidth, it determines the frequencies, decay constants, amplitudes, and
+phases of those sinusoids.
+
+It can, in principle, provide much better accuracy than straightforwardly
+extracting FFT peaks, essentially because it assumes a specific form for the
+signal. (Fourier transforms, in contrast, attempt to represent any data as a
+sum of sinusoidal components, and are thus limited by the uncertainty
+principle.) It is also often more robust than directly least-squares fitting
+the data (which can have problematic convergence), since it re-expresses the
+problem in terms of simply finding the eigenvalues of a small matrix. 
+
+For further information see http://ab-initio.mit.edu/wiki/index.php/Harminv
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/stevengj/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+MAALI_TOOL_CONFIGURE="--enable-shared --host=x86_64-unknown-linux-gnu"
+ 
+# tool pre-requisites
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "sh autogen.sh"
+  maali_run "make"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
+  maali_run "make install"
+}
+
+##############################################################################

@@ -52,9 +52,25 @@ MAALI_CUDA_SUPPORT=1
 function maali_build {
   if [ $MAALI_CUDA_BUILD -eq 1 ]; then
     cd "$MAALI_TOOL_BUILD_DIR"
+
+    if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+      sed -i -e "s;^CC =.*;CC = g++;g" Makefile
+      sed -i -e "/^CFLAGS =/ s;$; -lz -lpthread;g ; s; -march=nocona;;g" Makefile
+    elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+      sed -i -e "s;^CC =.*;CC = icpc;g" Makefile
+      sed -i -e "s;^CFLAGS =.*;CFLAGS = -O3 -ipo -lz -lpthread;g" Makefile
+    else
+      echo "Compiler " $MAALI_COMPILER_NAME " not supported by cygnet file"
+      exit
+    fi
+
     sed -i -e "s;/usr/local/cuda/lib64/;$NVIDIA_CUDA_HOME/lib64 -L$NVIDIA_CUDA_HOME/lib64/stubs;g" Makefile
     sed -i -e 's;soap3_aligner BGS-Build BGS-View BGS-View-PE clean;soap3_aligner BGS-Build BGS-View BGS-View-PE;g' Makefile
-    sed -i -e 's;-lm;-lm -lpthread -lz;g' Makefile
+
+    maali_run "echo Applying patches to definitions.h and CPUfunctions.cpp"
+    sed -i "s;Ini_SaValueFileExt\[MAX_FILEEXT_LEN\];Ini_SaValueFileExt[MAX_FILEEXT_LEN+1];g" definitions.h
+    sed -i "s;tmp\[10\];tmp[11];g" CPUfunctions.cpp
+
     maali_run "make"
 
     maali_makedir "$MAALI_INSTALL_DIR/bin"

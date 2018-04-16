@@ -38,7 +38,7 @@ MAALI_TOOL_CONFIGURE=""
 # for auto-building module files
 
 MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
-MAALI_MODULE_SET_TMPDIR="${MYSCRATCH}"
+#MAALI_MODULE_SET_TMPDIR="${MYSCRATCH}"
 
 # There is nothing to unpack
 function maali_unpack {
@@ -57,7 +57,7 @@ function maali_build {
   export CC=cc
   export TEST_TMP_DIR=${MYSCRATCH}
   export TMP_DIR=${MYSCRATCH}
-  export TMPDIR=${MYSCRATCH}
+  #export TMPDIR=${MYSCRATCH}
 }
 
 ##############################################################################
