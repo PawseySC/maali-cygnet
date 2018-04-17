@@ -12,11 +12,11 @@ For further information see http://www.hyperrealm.com/libconfig/
 
 EOF
 
-# specify which compilers we want to build the tool with. We specify only compilers that work with CUDA build
-MAALI_TOOL_COMPILERS="gcc/5.5.0"
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # specify te CPU types to be built for
-MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+MAALI_TOOL_CPU_TARGET="$DEFAULT_MAALI_CPU_TARGET"
 
 # URL to download the source code from
 MAALI_URL="https://hyperrealm.github.io/libconfig/dist/libconfig-${MAALI_TOOL_VERSION}.tar.gz"
@@ -31,12 +31,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ=""
-
-# add additional configure options
-#MAALI_TOOL_CONFIGURE='--with-gnu-ld'
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
@@ -44,21 +38,12 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
+function maali_pre_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  if [ ! -f Makefile.in ]; then
+    # libconfig 1.5 does not include Makefile.in
+    autoreconf --install
+  fi
+}
 
 ##############################################################################
-
-#function maali_build {
-
-# generate configure script 
-#  cd "$MAALI_TOOL_BUILD_DIR"
-#  maali_run "aclocal"
-#  maali_run "autoconf"
-#  maali_run "automake --add-missing --foreign"
-
-# run configure script and then build 
-#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
-#  maali_run "make"
-#  maali_run "make install"
-
-#}
-
