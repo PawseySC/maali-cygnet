@@ -18,7 +18,8 @@ EOF
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="pgi/17.5 pgi/17.7 pgi/18.3"
 
-MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+MAALI_TOOL_CPU_TARGET="broadwell knl"
+#MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
 
 # URL to download the source code from
 MAALI_URL=""
