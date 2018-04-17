@@ -1,9 +1,25 @@
 ##############################################################################
-# maali config file for fftw
+# maali cygnet file for fftw
 ##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+FFTW is a C subroutine library for computing the discrete Fourier transform
+(DFT) in one or more dimensions, of arbitrary input size, and of both real and
+complex data (as well as of even/odd data, i.e. the discrete cosine/sine
+transforms or DCT/DST).
+
+For further information see http://www.fftw.org/
+
+EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# tool pre-requisites modules needed to install this new tool/package
+if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
+   MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+fi
 
 # URL to download the source code from
 MAALI_URL="http://www.fftw.org/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -17,14 +33,6 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# add additional configure options
-#--enable-avx-- FFTW 3.3.2 is capable of using AVX intrinsics on AVX enabled processors (e.g. Intel Sandy Bridge and AMD Bulldozer)
-MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-sse2 --enable-avx512'
-
-# runs in front of the configure line
-export CFLAGS="-fPIC"
-export FFLAGS="-fPIC"
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
@@ -36,37 +44,77 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_FFTW_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_FFTW_INCLUDE='$MAALI_APP_HOME/include'
 MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
-MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
+
+#Tell autoconf we're cross-compiling
+MAALI_TOOL_CONFIGURE='--enable-fortran --enable-shared'
+if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
+  MAALI_TOOL_CONFIGURE+=' --enable-mpi --enable-type-prefix'
+else
+  MAALI_TOOL_CONFIGURE+=' --enable-threads'
+fi
+
 
 ##############################################################################
 
 function maali_build {
-  # fftw needs a double build for creating software
-  #
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
+    export CC=icc
     export F77=ifort
-  elif [ "$MAALI_COMPILER_NAME" == "pgi" ]; then
-     export F77=pgfortran
-     export FFLAGS="-fast -Minfo" 
-     export CC=pgcc 
-     export CFLAGS="-fast -Minfo -fPIC"     
+    if [[ $MAALI_CPU_TARGET == "knl" ]]; then
+       export CFLAGS="-fPIC -xMIC-AVX512 -O3"
+       export FFLAGS="-fPIC -xMIC-AVX512 -O3"
+       MAALI_TOOL_CONFIGURE_EVAL+=' --enable-avx512'
+       MAALI_TOOL_CONFIGURE_EVAL+=' --host=x86_64-unknown-linux-gnu'
+    elif [[ $MAALI_CPU_TARGET == "broadwell" ]]; then
+       export CFLAGS="-fPIC -xCORE-AVX2 -O3"
+       export FFLAGS="-fPIC -xCORE-AVX2 -O3"
+       MAALI_TOOL_CONFIGURE_EVAL+=' --host=x86_64-unknown-linux-gnu'
+    else
+       export CFLAGS="-fPIC -xAVX -O3"
+       export FFLAGS="-fPIC -xAVX -O3"
+    fi
+  else
+    export CC=gcc
+    export F77=gfortran
+    if [[ $MAALI_CPU_TARGET == "knl" ]]; then
+       if [ $COMPILER_VER \< "5" ]; then
+         export CFLAGS="-fPIC -mavx2 -O2"
+         export FFLAGS="-fPIC -mavx2 -O2"
+       else
+         export CFLAGS="-fPIC -mavx512f -mavx512cd -O2"
+         export FFLAGS="-fPIC -mavx512f -mavx512cd -O2"
+       fi
+       MAALI_TOOL_CONFIGURE_EVAL+=' --host=x86_64-unknown-linux-gnu'
+    elif [[ $MAALI_CPU_TARGET == "broadwell" ]]; then
+       export CFLAGS="-fPIC -mavx2 -O3"
+       export FFLAGS="-fPIC -mavx2 -O3"
+       MAALI_TOOL_CONFIGURE_EVAL+=' --host=x86_64-unknown-linux-gnu'
+    else
+       export CFLAGS="-fPIC -mavx -O3"
+       export FFLAGS="-fPIC -mavx -O3"
+    fi
   fi
 
   cd "$MAALI_TOOL_BUILD_DIR"
+
   # Making single precision version with type prefix
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-float --enable-type-prefix"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-float --enable-type-prefix"
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
   maali_run "make clean"
   # Making double precision version without type prefix
-  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-double"
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
   maali_run "make clean"
   # Making double precision version with type prefix
-#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-type-prefix"
-#  maali_run "make -j $MAALI_CORES"
-#  maali_run "make install"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL --enable-double --enable-type-prefix"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+
 }
 
 ##############################################################################
