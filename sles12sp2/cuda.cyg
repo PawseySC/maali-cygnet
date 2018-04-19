@@ -16,12 +16,12 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # Specify where to download the CUDA runfile from and where to place it locally             
-if [ "$MAALI_TOOL_MAJOR_VERSION" -ge 8 ]; then
+if [ "$MAALI_TOOL_MAJOR_VERSION" == "8.0.61" ]; then
    MAALI_URL="http://developer.download.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux.run"
-#elif [ "$MAALI_TOOL_VERSION" == "9.0.103" ]; then
-#   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.0/rc/local_installers/cuda_9.0.103_384.59_linux-run"
+elif [ "$MAALI_TOOL_VERSION" == "9.1" ]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux"
 else
-   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux"
 fi
 
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}${VERSION_EXTRA}.run"
