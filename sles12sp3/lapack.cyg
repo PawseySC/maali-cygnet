@@ -20,6 +20,9 @@ EOF
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
+# specify which architectures we want to build the tool with
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+
 if [ $(echo ${MAALI_TOOL_MAJOR_MINOR_VERSION} | cut -d '.' -f2) -lt "8" ]; then
     echo TRUE
 # URL to download the source code from
@@ -65,3 +68,17 @@ fi
 MAALI_MODULE_SET_LAPACK='$MAALI_APP_HOME'
 
 ##############################################################################
+
+function maali_post_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cp make.inc.example make.inc
+  sed -i 's/^all\:.*/all: lapack_install lib blaslib/' Makefile
+  maali_run "make -j $MAALI_CORES"
+  cp -p liblapack.a ${MAALI_INSTALL_DIR}/${MAALI_MODULE_SET_LD_LIBRARY_PATH}/
+  cp -p librefblas.a ${MAALI_INSTALL_DIR}/${MAALI_MODULE_SET_LD_LIBRARY_PATH}/libblas.a
+  maali_run "make clean"
+
+}
+

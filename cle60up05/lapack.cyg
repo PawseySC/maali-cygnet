@@ -71,3 +71,17 @@ fi
 MAALI_MODULE_SET_LAPACK='$MAALI_APP_HOME'
 
 ##############################################################################
+
+function maali_post_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  cp make.inc.example make.inc
+  sed -i 's/^all\:.*/all: lapack_install lib blaslib/' Makefile
+  maali_run "make -j $MAALI_CORES"
+  cp -p liblapack.a ${MAALI_INSTALL_DIR}/${MAALI_MODULE_SET_LD_LIBRARY_PATH}/
+  cp -p librefblas.a ${MAALI_INSTALL_DIR}/${MAALI_MODULE_SET_LD_LIBRARY_PATH}/libblas.a
+  maali_run "make clean"
+
+}
+
