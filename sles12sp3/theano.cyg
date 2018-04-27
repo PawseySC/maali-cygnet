@@ -21,12 +21,14 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 # Build the package only for the compute nodes
 MAALI_TOOL_CPU_TARGET="broadwell"
 
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
 # There is nothing to download
 MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/rel-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_DST="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # Load the prerequisite Python packages, CUDA SDK and GCC compiler
-MAALI_TOOL_PREREQ="broadwell gcc/5.5.0 cuda numpy scipy cython setuptools pip wheel six nose libgpuarray"
+MAALI_TOOL_PREREQ="broadwell gcc/5.5.0 numpy scipy cython setuptools pip wheel six nose libgpuarray"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
@@ -35,7 +37,11 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_PYTHONPATH=1
+
+MAALI_CUDA_SUPPORT=1
+if [ $MAALI_CUDA_BUILD -eq 1 ]; then
 MAALI_MODULE_SET_THEANO_FLAGS='cuda.root=\$env\(MAALI_CUDA_HOME\),device=cuda,floatX=float32'
+fi
 
 MAALI_UNPACK_MKDIR=1
 MAALI_TAR_EXTRA=--strip-components=1
