@@ -17,7 +17,7 @@ For further information see http://www.ks.uiuc.edu/Research/namd/
 EOF
 
 # specify which PrgEnv we want to build the tool with
-MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
@@ -44,6 +44,9 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_HUGETLB_MORECORE='no'
 MAALI_MODULE_SET_HUGETLB_DEFAULT_PAGE_SIZE='8M'
 
+# restrict the module to a specified group
+MAALI_MODULE_RESTRICT_GROUP='namd'
+
 ##############################################################################
 
 function maali_build {
@@ -57,6 +60,14 @@ function maali_build {
 #  sed -i "s;^TCLLIB=.*;TCLLIB=$TCLLIB -lz -dynamic;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
 #  sed -i "s;^TCLINCL=.*;TCLINCL=$TCLINCL;g" $MAALI_TOOL_BUILD_DIR/arch/CRAY-XC.tcl
   TCLVER=`pkg-config --modversion tcl`
+
+  maali_run "cp arch/CRAY-XC-intel.arch arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/PrgEnv-intel/PrgEnv-gnu/g\" arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/CXX = .*/CXX = CC -std=c++11 -DNOHOSTNAME -DNO_GETPWUID -m64 -O3/g\" arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/CC = .*/CC = cc -m64 -O3/g\" arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/CXXOPTS = .*/CXXOPTS = -O3 -ffast-math -fexpensive-optimizations -fomit-frame-pointer/g\" arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/CXXNOALIASOPTS = .*/# CXXNOALIASOPTS =/g\" arch/CRAY-XC-gnu.arch"
+  maali_run "sed -i -e \"s/COPTS = .*/COPTS = -O3 -ffast-math -fexpensive-optimizations -fomit-frame-pointer/g\" arch/CRAY-XC-gnu.arch" 
 
   maali_run "sed -i -e \"s!fftw/3!cray-fftw/3!g\" arch/CRAY-XC.fftw3"
   maali_run "sed -i -e \"s/8.5/$TCLVER/g\" arch/CRAY-XC.tcl"
@@ -72,20 +83,26 @@ function maali_build {
  
   cd "$MAALI_TOOL_BUILD_DIR"
  
-#  maali_run './config CRAY-XC-intel --with-fftw3 --with-tcl --fftw-prefix $FFTW_INC'
-  #maali_run './config CRAY-XC-intel --with-cray-fftw --with-tcl --fftw-prefix $FFTW_INC --cxx-opts  "$CRAY_UGNI_POST_LINK_OPTS -lugni $CRAY_PMI_POST_LINK_OPTS -lpmi"'
-  maali_run './config CRAY-XC-intel --with-fftw3 --with-tcl --fftw-prefix $FFTW_INC --cxx-opts  "$CRAY_UGNI_POST_LINK_OPTS -lugni $CRAY_PMI_POST_LINK_OPTS -lpmi"'
+  maali_run './config CRAY-XC-gnu --with-fftw3 --with-tcl --fftw-prefix $FFTW_INC --cxx-opts  "$CRAY_UGNI_POST_LINK_OPTS -lugni $CRAY_PMI_POST_LINK_OPTS -lpmi -lsci_gnu"'
 
-  cd CRAY-XC-intel
+  cd CRAY-XC-gnu
   maali_run 'make'
 
   cd "$MAALI_TOOL_BUILD_DIR"
-  ln -s CRAY-XC-intel bin
+  ln -s CRAY-XC-gnu bin
   
   maali_run 'mkdir -p $MAALI_INSTALL_DIR'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
-  #maali_run 'chown -R stapops:namd $MAALI_INSTALL_DIR'
-  #maali_run 'chmod -R o-rwx $MAALI_INSTALL_DIR'
+
+  ##################################################
+  # if this is a system build we need to restrict it to the appropriate group
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+
+    maali_run "chmod 750 $MAALI_INSTALL_DIR/bin"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR/bin"
+  fi
 
 }
 
