@@ -1,0 +1,85 @@
+##############################################################################
+# maali cygnet file for creating module file for intel-mpi-wrappers
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® MPI Library focuses on enabling MPI applications to perform better for
+clusters based on Intel® architecture—implementing the high-performance MPI-3.1
+standard on multiple fabrics. Quickly deliver maximum end user performance―even
+if you change or upgrade to new interconnects―without requiring changes to the
+software or operating environment.
+
+
+For further information see https://software.intel.com/en-us/intel-mpi-library
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="pgi/17.5 pgi/17.7 pgi/18.3"
+
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+MAALI_TOOL_PREREQ="intel-mpi/17.0.5"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+function maali_pre_build {
+  mkdir -p $MAALI_TOOL_BUILD_DIR
+}
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='1'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='1'
+MAALI_MODULE_SET_I_MPI_LDFLAGS='-L$MAALI_APP_HOME/lib'
+
+function maali_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  tar xzf ${MAALI_SYSTEMINTELMPI_HOME}/binding/intel-mpi-binding-kit.tar.gz
+
+  if [[ $MAALI_CPU_TARGET == "knl" ]]; then
+    ARCH="mic"
+    if [[ $(echo "if (${MAALI_COMPILER_VERSION} >= 18.1) 1 else 0" | bc) -eq 1 ]]; then
+      # -tp=knl came out in pgi/18.1
+      MIC="-tp=knl"
+    else
+      MIC="-tp=haswell"
+    fi
+  else
+    ARCH="intel64"
+    MIC=" "
+  fi
+
+  #So far this file is all specific to PGI.
+  # Build c binding
+  cd $MAALI_TOOL_BUILD_DIR/c
+  maali_run "make MPI_INST=${MAALI_SYSTEMINTELMPI_HOME} CC=pgcc NAME=pgc ARCH=$ARCH MIC=$MIC"
+  cp -rp $ARCH/* $MAALI_INSTALL_DIR
+
+  # Build c++ binding
+  cd $MAALI_TOOL_BUILD_DIR/cxx
+  touch include/intel64/nopackage.h
+  maali_run "make MPI_INST=${MAALI_SYSTEMINTELMPI_HOME} CXX=pgc++ NAME=pgc++ ARCH=$ARCH MIC="
+  cp -rp $ARCH/* $MAALI_INSTALL_DIR
+
+  # Build Fortran 77 binding
+  cd $MAALI_TOOL_BUILD_DIR/f77
+  maali_run "make MPI_INST=${MAALI_SYSTEMINTELMPI_HOME} F77=pgf77 NAME=pgf ARCH=$ARCH MIC=$MIC"
+  cp -rp $ARCH/* $MAALI_INSTALL_DIR
+
+  # Build Fortran 90 binding
+  cd $MAALI_TOOL_BUILD_DIR/f90
+  maali_run "make MPI_INST=${MAALI_SYSTEMINTELMPI_HOME} F90=pgf90 NAME=pgf ARCH=$ARCH MIC=$MIC"
+  cp -rp $ARCH/* $MAALI_INSTALL_DIR
+}
+

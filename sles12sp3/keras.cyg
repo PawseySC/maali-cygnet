@@ -1,0 +1,34 @@
+##############################################################################
+# maali cygnet file for Keras 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Keras is a high-level neural networks API, written in Python and capable of 
+running on top of TensorFlow, CNTK, or Theano. It was developed with a focus 
+on enabling fast experimentation.
+
+For further information see https://github.com/keras-team/keras 
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# There is nothing to download
+MAALI_URL="https://github.com/keras-team/keras/archive/${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# Load the prerequisite Python packages, CUDA SDK and GCC compiler
+MAALI_TOOL_PREREQ="broadwell gcc/5.5.0 cuda numpy scipy cython setuptools wheel six nose libgpuarray"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+

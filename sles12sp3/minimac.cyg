@@ -1,0 +1,37 @@
+##############################################################################
+# maali cygnet file for Minimac
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+minimac is a low memory, computationally efficient implementation of the MaCH algorithm for genotype imputation
+
+For further information see https://genome.sph.umich.edu/wiki/Minimac
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="http://csg.sph.umich.edu/cfuchsb/${MAALI_TOOL_NAME}.src.tgz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}.src.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}.src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR/minimac"
+  maali_run "make"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "make install INSTALLDIR=$MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################

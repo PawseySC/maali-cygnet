@@ -4,60 +4,58 @@
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Bazel is a build tool with native support for Java, C/C++ and Python soure code.
-It is used by Google as the build tool for Tensorflow. 
-
-This MAALI cygnet file has been tested with versions 0.5.2 to 0.5.4 (as of Sept 1, 2017)
+Bazel is a build tool with native support for Java, C/C++ and Python soure
+code.  It is used by Google as the build tool for Tensorflow. 
 
 For further information see https://www.bazel.build
 
 EOF
 
 # Bazel is a stand-alond Java application with no reliance on compilers
-MAALI_TOOL_COMPILERS="binary"
-
-# specify the architectures we want to build the library on
-MAALI_TOOL_CPU_TARGET="broadwell"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from 
-MAALI_URL="https://github.com/bazelbuild/bazel/releases/download/${MAALI_TOOL_VERSION}/bazel-${MAALI_TOOL_VERSION}-installer-linux-x86_64.sh"
+MAALI_URL="https://github.com/bazelbuild/bazel/releases/download/${MAALI_TOOL_VERSION}/bazel-${MAALI_TOOL_VERSION}-dist.zip"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.sh" 
+MAALI_DST="$MAALI_SRC/bazel-${MAALI_TOOL_VERSION}-dist.zip" 
+
+MAALI_TOOL_CPU_TARGET="na"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
 # We need to load the Java module to run Bazel commands 
-MAALI_TOOL_PREREQ="java"
-MAALI_SYSTEM_PACKAGES_PREREQ=''
+MAALI_TOOL_PREREQ="java/8u131"
 
 # configure isn't used  
 MAALI_TOOL_CONFIGURE=""
 
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
 # for auto-building module files
 
-MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
+MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_TMPDIR="${MYSCRATCH}"
 
-# There is nothing to unpack
-function maali_unpack {
-  echo " "	
+function maali_pre_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  # dodgey hack to deal with default on Lustre of file locking turned off.
+  sed -i -e 's/\(static int setlk.*\)/\1 return 0;/' src/main/cpp/blaze_util_posix.cc
 }
+
+MAALI_UNPACK_MKDIR=1
 
 ##############################################################################
 
 function maali_build {
 
-  export JAVA_VERSION="1.8"
-  maali_run "sh $MAALI_DST --prefix=${MAALI_INSTALL_DIR}"
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "./compile.sh"
 
-  export PATH=$PATH:${MAALI_INSTALL_DIR}/bin
-  export CXX=CC
-  export CC=cc
-  export TEST_TMP_DIR=${MYSCRATCH}
-  export TMP_DIR=${MYSCRATCH}
-  export TMPDIR=${MYSCRATCH}
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 output/bazel $MAALI_INSTALL_DIR/bin/"
 }
 
 ##############################################################################

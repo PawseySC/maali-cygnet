@@ -1,0 +1,63 @@
+##############################################################################
+# maali cygnet file for libgpuarray 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libgpuarray's goal is to make a common GPU ndarray(n dimensions array) that can 
+be reused by all projects that is as future proof as possible, while keeping it 
+easy to use for simple need/quick test.
+
+For further information see http://deeplearning.net/software/libgpuarray
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+#MAALI_TOOL_COMPILERS="gcc/5.4.0"
+
+# Build the package only for the compute nodes
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# There is nothing to download
+MAALI_URL="https://github.com/Theano/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# Load the prerequisite modules and python packages 
+MAALI_TOOL_BUILD_PREREQ="python setuptools cuda cython numpy nose"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+MAALI_CMAKE_TOOL=1
+
+##############################################################################
+
+function maali_post_build {
+
+   # Call e.g. python2.7, python3.6 directly, rather than just python.
+   MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
+
+   # need to add the python library path to PYTHONPATH temporarily
+   MAALI_OLD_PYTHONPATH=$PYTHONPATH
+   MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
+   export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+
+   maali_makedir "$MAALI_NEWPYTHONPATH"
+
+ # Install the Python interface to libgpuarray
+#   export PYTHONPATH="${MAALI_INSTALL_DIR}:${MAALI_INSTALL_DIR}/lib/python2.7/site-packages:$PYTHONPATH"
+   cd $MAALI_TOOL_BUILD_DIR
+  # maali_makedir "${MAALI_INSTALL_DIR}/lib/python2.7/site-packages"
+   maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build_ext -L${MAALI_INSTALL_DIR}/lib -I${MAALI_INSTALL_DIR}/include"
+   maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+  export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+}
+

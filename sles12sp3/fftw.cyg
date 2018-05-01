@@ -50,7 +50,7 @@ MAALI_TOOL_CONFIGURE='--enable-fortran --enable-shared'
 if [[ $MAALI_TOOL_VERSION == "2."* ]]; then
   MAALI_TOOL_CONFIGURE+=' --enable-mpi --enable-type-prefix'
 else
-  MAALI_TOOL_CONFIGURE+=' --enable-threads'
+  MAALI_TOOL_CONFIGURE+=' --enable-threads --enable-openmp'
 fi
 
 

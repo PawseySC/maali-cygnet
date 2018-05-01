@@ -1,32 +1,31 @@
 ##############################################################################
-# maali cygnet file for ipython
+# maali cygnet file for pymorph
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-IPython provides a rich toolkit to help you make the most of using Python
-interactively.
+This image morphology toolbox implements the basic binary and greyscale morphology operations, working with numpy arrays representing images.
 
-For further information see https://ipython.org/
+For further information see https://pypi.org/project/pymorph/
 
 EOF
 
 # specify which compilers we want to build the tool with
-# iPython6 requires python>3.3
-if [ "$MAALI_TOOL_VERSION" \> "6" ]; then
-  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_3_PYTHON"
-else
-  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
-fi
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_2_PYTHON"
+#pymorph has not been updated for python3
 
 # URL to download the source code from
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

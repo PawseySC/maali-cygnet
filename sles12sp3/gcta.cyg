@@ -1,0 +1,60 @@
+##############################################################################
+# maali cygnet file for gcta64
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GCTA (Genome-wide Complex Trait Analysis) was originally designed to estimate
+the proportion of phenotypic variance explained by all genome-wide SNPs for
+complex traits (the GREML method), and has subsequently extended for many
+other analyses to better understand the genetic architecture of complex traits
+
+For further information see http://cnsgenomics.com/software/gcta/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://cnsgenomics.com/software/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}_src.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}_src.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="intel-mkl/2017.0.5 eigen/3.3.4"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_PATH=1
+
+MAALI_UNPACK_MKDIR=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  export EIGEN_PATH=$MAALI_EIGEN_HOME/include/eigen3
+  export CXXFLAGS="-w -O3 -m64 -fopenmp -I $EIGEN_PATH -DEIGEN_NO_DEBUG -I $MKL_HOME/include"
+  export LIB="-lz -Wl,--start-group $MKL_HOME/lib/intel64/libmkl_intel_lp64.a $MKL_HOME/lib/intel64/libmkl_gnu_thread.a $MKL_HOME/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl"
+
+  maali_run "make -e -j $MAALI_CORES"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 gcta64 $MAALI_INSTALL_DIR/bin/"
+
+}
+
+##############################################################################
