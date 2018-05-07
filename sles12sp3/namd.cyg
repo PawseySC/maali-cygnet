@@ -19,9 +19,9 @@ EOF
 # specify wchich compilers/architecture to use for the GPU build
 if [ ${MAALI_CUDA_BUILD} -eq "1" ]; then
   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
-  MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+  MAALI_TOOL_CPU_TARGET="broadwell"
 else
-  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
   MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
 fi
 
@@ -48,6 +48,9 @@ MAALI_MODULE_SET_PATH=1
 # supports building CUDA version
 MAALI_CUDA_SUPPORT=1
 
+# restrict the module to a specified group
+MAALI_MODULE_RESTRICT_GROUP='namd'
+
 ##############################################################################
 
 function maali_build {
@@ -59,30 +62,24 @@ function maali_build {
   maali_run 'tar xf charm-$CHARM_VERSION.tar'
   cd "charm-$CHARM_VERSION"
 
-  maali_run './build charm++ verbs-linux-x86_64 icc  smp  -j8  --with-production'
+  maali_run './build charm++ verbs-linux-x86_64 icc  smp -j$MAALI_CORES  --with-production'
 
   echo "Charm built"
  
   cd "$MAALI_TOOL_BUILD_DIR"
  
-  # download the precompiled tcl binaries from namd site
-  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64.tar.gz'
-  maali_run 'wget http://www.ks.uiuc.edu/Research/namd/libraries/tcl8.5.9-linux-x86_64-threaded.tar.gz'
-  maali_run 'tar xzf tcl8.5.9-linux-x86_64.tar.gz'
-  maali_run 'tar xzf tcl8.5.9-linux-x86_64-threaded.tar.gz'
-  maali_run 'mv tcl8.5.9-linux-x86_64 tcl'
-  maali_run 'mv tcl8.5.9-linux-x86_64-threaded tcl-threaded'
-
-  echo "TCL downloaded and unpacked"
-
   if [ $MAALI_CUDA_BUILD -eq 1 ]; then
-     maali_run './config Linux-x86_64-icc --charm-arch verbs-linux-x86_64-smp-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
+    maali_run './config Linux-x86_64-icc --charm-arch verbs-linux-x86_64-smp-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME --with-cuda --cuda-prefix $NVIDIA_CUDA_HOME'
   else
     maali_run './config Linux-x86_64-icc --charm-arch verbs-linux-x86_64-smp-icc --with-fftw3 --with-tcl --fftw-prefix $FFTW_HOME '
   fi
 
   cd Linux-x86_64-icc
-  maali_run 'make -j8'
+  export TCLLIB=`pkg-config --libs tcl`
+  export TCLINCL=''
+
+  #maali_run 'make -e -j $MAALI_CORES'
+  maali_run 'make -e -j $MAALI_CORES CXX="$CXX -std=c++11" CC="$CC"'
 
   cd "$MAALI_TOOL_BUILD_DIR"
   ln -s Linux-x86_64-icc bin
@@ -96,6 +93,16 @@ EOF
   maali_run 'mkdir -p $MAALI_INSTALL_DIR'
   maali_run 'cp -R $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR'
   maali_run 'cp srun_launcher ${MAALI_INSTALL_DIR}/bin'
+
+  ##################################################
+  # if this is a system build we need to restrict it to the appropriate group
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+
+    maali_run "chmod 750 $MAALI_INSTALL_DIR/bin"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR/bin"
+  fi
 
 }
 
