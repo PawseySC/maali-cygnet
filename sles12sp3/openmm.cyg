@@ -1,0 +1,84 @@
+##############################################################################
+# maali cygnet file for OpenMM
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A high performance toolkit for molecular simulation. Use it as a library, 
+or as an application. We include extensive language bindings for Python, 
+C, C++, and even Fortran. The code is open source and actively maintained 
+on Github, licensed under MIT and LGPL. 
+Part of the Omnia suite of tools for predictive biomolecular simulation.
+
+For further information see http://openmm.org
+
+EOF
+
+# specify wchich compilers/architecture to use for the GPU build
+if [ ${MAALI_CUDA_BUILD} -eq "1" ]; then
+  MAALI_TOOL_COMPILERS="gcc/5.5.0"
+  MAALI_TOOL_CPU_TARGET="broadwell"
+else
+  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+  MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+fi
+
+# specify which cuda versions we want to build the tool with
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/pandegroup/${MAALI_TOOL_NAME}/archive/${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/OpenMM-${MAALI_TOOL_VERSION}-Source.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/openmm-""$MAALI_TOOL_VERSION"""
+
+MAALI_TOOL_PREREQ="fftw/3.3.7 doxygen/1.8.9 python/2.7.14 swig/3.0.12"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PYTHONPATH="${MAALI_INSTALL_DIR}/lib/python2.7/site-packages:${PYTHONPATH}"
+
+# set a proper CHARMBASE directory
+
+##############################################################################
+
+function maali_build {
+
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "mkdir openmm_build"
+    cd openmm_build
+    maali_run "cmake ../ -DPYTHON_EXECUTABLE=$MAALI_PYTHON_HOME/bin/python -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DOPENMM_BUILD_CUDA_LIB=ON -DCUDA_CUDA_LIBRARY=/usr/lib64/libcuda.so"
+    maali_run "make"
+    maali_run "make install"
+    cd python
+    export OPENMM_INCLUDE_PATH="$MAALI_INSTALL_DIR/include"
+    export OPENMM_LIB_PATH="$MAALI_INSTALL_DIR/lib"
+    maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+  else 
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "mkdir openmm_build"
+    cd openmm_build
+    maali_run "cmake ../ -DPYTHON_EXECUTABLE=$MAALI_PYTHON_HOME/bin/python -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR"
+    maali_run "make"
+    maali_run "make install"   
+    cd python
+    export OPENMM_INCLUDE_PATH="$MAALI_INSTALL_DIR/include"
+    export OPENMM_LIB_PATH="$MAALI_INSTALL_DIR/lib"
+    maali_run "python setup.py install --prefix=$MAALI_INSTALL_DIR"
+  fi
+
+}
+
+##############################################################################
