@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for imagemagick
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Use ImageMagick to create, edit, compose, or convert bitmap images. 
+It can read and write images in a variety of formats (over 200) 
+including PNG, JPEG, GIF, HEIC, TIFF, DPX, EXR, WebP, Postscript, PDF, and SVG. 
+Use ImageMagick to resize, flip, mirror, rotate, distort, shear 
+and transform images, adjust image colors, apply various special effects, 
+or draw text, lines, polygons, ellipses and Bézier curves.
+
+For further information see, https://www.imagemagick.org
+
+EOF
+
+# specify which compilers/architectures we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0 gcc/7.2.0"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/ImageMagick/ImageMagick/archive/$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ImageMagick-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='CC=$CC CXX=$CXX'
+
+# used in the wiki navigation bar - defaults to MAALI_TOOL_NAME_ORIG
+MAALI_WIKI_TOOL_NAME="ImageMagick"
+
+# for auto-building module files
+MAALI_MODULE_SET_MAGICK_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
