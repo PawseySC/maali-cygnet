@@ -1,0 +1,71 @@
+##############################################################################
+# maali cygnet file for bbcp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+bbcp is a tool to securely and quickly copy data from source to target.
+
+For further information see http://www.slac.stanford.edu/~abh/bbcp
+
+EOF
+
+# specify which compilers/architectures we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+
+# URL to download the source code from
+MAALI_URL="http://www.slac.stanford.edu/~abh/bbcp"
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+if [ "$MAALI_TOOL_VERSION" ==  "17.12.00.00.0" ] ; then
+  BBCP_COMMIT="2fbc563b6c8b16623c4064cf4da95642dc2e3453"
+elif [ "$MAALI_TOOL_VERSION" ==  "15.02.03.01.1" ] ; then
+  BBCP_COMMIT="866ba250b8e7915f23e159a1060038933e829780"
+elif [ "$MAALI_TOOL_VERSION" ==  "12.08.17.00.0" ] ; then
+  BBCP_COMMIT="c6665f03fad23db8cdc5eb40c7ec227a7414cf33"
+else 
+  maali_die "bbcp version $MAALI_TOOL_VERSION not supported"
+fi
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_BBCP_VERSION='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_BBCP_ROOT='$MAALI_APP_HOME'
+##############################################################################
+
+function maali_download {
+  log ".. supressing downloading as we are using a git repository"
+}
+
+
+function maali_unpack {
+  log " .. supressing unpacking as we are using a git repository"
+}
+
+
+function maali_pre_build {
+
+  maali_run "git clone $MAALI_URL/bbcp.git $MAALI_TOOL_BUILD_DIR/"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "git checkout $BBCP_COMMIT"
+
+}
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR/src"
+  maali_run "make -j $MAALI_CORES"
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  BBCP_ARCH="amd64_linux"
+  maali_run "install -m 755 ../bin/$BBCP_ARCH/bbcp $MAALI_INSTALL_DIR/bin"
+
+}
