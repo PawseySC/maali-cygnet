@@ -39,6 +39,9 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_MPICC='mpicc'
+MAALI_MODULE_SET_MPICXX='mpicxx'
+MAALI_MODULE_SET_MPIF90='mpif90'
 
 ##############################################################################
 
