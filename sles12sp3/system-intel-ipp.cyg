@@ -1,0 +1,79 @@
+##############################################################################
+# maali cygnet file for creating module file for system intel-ipp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Intel® Integrated Performance Primitives (Intel® IPP)
+
+Speed performance for imaging, vision, signal, security, and storage
+applications.
+
+- Multicore, multiple operating system, and multiplatform ready,
+  computationally intensive and highly optimized functions.
+- Plug in and use APIs to quickly improve application performance.
+- Reduced cost and time-to-market (TTM) on software development and
+  maintenance.
+
+
+For further information see https://software.intel.com/en-us/intel-ipp
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+if [ "$MAALI_TOOL_VERSION" == "2017.0.4" ]; then
+  INTEL_VERSION="17.0.5"
+elif [ "$MAALI_TOOL_VERSION" == "2017.0.3" ]; then
+  INTEL_VERSION="17.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "2017.0.1" ]; then
+  INTEL_VERSION="17.0.1"
+elif [ "$MAALI_TOOL_VERSION" == "11.3.4" ]; then
+  INTEL_VERSION="16.0.4"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.4" ]; then
+  INTEL_VERSION="15.0.5"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.3" ]; then
+  INTEL_VERSION="15.0.3"
+elif [ "$MAALI_TOOL_VERSION" == "11.2.0" ]; then
+  INTEL_VERSION="15.0.0"
+elif [ "$MAALI_TOOL_VERSION" == "10.3.12" ]; then
+  INTEL_VERSION="12.1.7"
+else
+  INTEL_VERSION="unknown"
+fi
+INTEL_PATH="/pawsey/intel/${INTEL_VERSION}"
+
+MAALI_INSTALL_DIR="${INTEL_PATH}/ipp"
+
+# this is evil, do not try this at home
+MAALI_TOOL_NAME='intel-ipp'
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_CPATH='include'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib/intel64'
+MAALI_MODULE_SET_LIBRARY_PATH='lib/intel64'
+MAALI_MODULE_SET_MIC_LD_LIBRARY_PATH='lib/mic'
+MAALI_MODULE_PREPEND_MIC_LD_LIBRARY_PATH=on
+MAALI_MODULE_TYPE_MIC_LD_LIBRARY_PATH=prepend
+MAALI_MODULE_SET_INTEL_LICENSE_FILE='/pawsey/intel/licenses' #/USE_SERVER.lic'
+MAALI_MODULE_PREPEND_INTEL_LICENSE_FILE=off
+MAALI_MODULE_TYPE_INTEL_LICENSE_FILE=append
+MAALI_MODULE_SET_IPPROOT='$MAALI_INSTALL_DIR'
+
+##############################################################################
