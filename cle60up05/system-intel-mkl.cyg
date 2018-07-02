@@ -40,8 +40,9 @@ if [ "$MAALI_TOOL_VERSION" == "2017.0.3" ]; then
 else
   INTEL_VERSION="unknown"
 fi
+INTEL_PATH="/opt/intel/compilers_and_libraries_${INTEL_VERSION}"
 
-MAALI_INSTALL_DIR="/opt/intel/compilers_and_libraries_${INTEL_VERSION}/linux/mkl"
+MAALI_INSTALL_DIR="${INTEL_PATH}/linux/mkl"
 
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='intel-mkl'
@@ -51,11 +52,19 @@ MAALI_TOOL_TYPE="devel"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH='tools'
-MAALI_MODULE_SET_LD_LIBRARY_PATH='lib/intel64'
-MAALI_MODULE_SET_MANPATH='man/en_US'
+MAALI_MODULE_SET_CPATH='include'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_INSTALL_DIR/lib/intel64 ${INTEL_PATH}/linux/compiler/lib/intel64 ${INTEL_PATH}/linux/tbb/lib/intel64/gcc4.7'
+MAALI_MODULE_PREPEND_LD_LIBRARY_PATH=off
+MAALI_MODULE_SET_LIBRARY_PATH='$MAALI_INSTALL_DIR/lib/intel64 ${INTEL_PATH}/linux/compiler/lib/intel64 ${INTEL_PATH}/linux/tbb/lib/intel64/gcc4.7'
+MAALI_MODULE_PREPEND_LIBRARY_PATH=off
+MAALI_MODULE_SET_NLSPATH='lib/intel64/locale/%l_%t/%N'
+MAALI_MODULE_PREPEND_NLSPATH=on
+MAALI_MODULE_TYPE_NLSPATH=prepend
 MAALI_MODULE_SET_INTEL_INC_PATH='include'
 MAALI_MODULE_SET_INTEL_LIB_PATH='lib/intel64'
-MAALI_MODULE_SET_INTEL_LICENSE_FILE='/opt/intel/licenses/license.lic'
+MAALI_MODULE_SET_INTEL_LICENSE_FILE='${INTEL_PATH}/linux/licenses /opt/intel/licenses /intel/licenses'
+MAALI_MODULE_PREPEND_INTEL_LICENSE_FILE=off
+MAALI_MODULE_TYPE_INTEL_LICENSE_FILE=append
 MAALI_MODULE_SET_MKLROOT='$MAALI_INSTALL_DIR'
 MAALI_MODULE_SET_MKL_HOME='$MAALI_INSTALL_DIR'
 MAALI_MODULE_SET_OMP_NUM_THREADS='1'
