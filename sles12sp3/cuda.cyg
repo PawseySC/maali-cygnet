@@ -16,10 +16,26 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # Specify where to download the CUDA runfile from and where to place it locally             
-if [ "$MAALI_TOOL_MAJOR_VERSION" -ge 8 ]; then
-   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux.run"
-else
-   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/${MAALI_TOOL_MAJOR_MINOR_VERSION}/Prod/local_installers/cuda_${MAALI_TOOL_VERSION}_linux.run"
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.2" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux"
+   VERSION_EXTRA=".88_396.26"
+   nccl_ver="2.2.13-1"
+fi
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.1" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux-run"
+   VERSION_EXTRA=".85_387.26"
+   nccl_ver="2.1.15-1"
+fi
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.0" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.0.176_384.81_linux-run"
+   VERSION_EXTRA=".176_384.81"
+   nccl_ver="2.2.13-1"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_VERSION == "8" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux.run"
+   VERSION_EXTRA=".61_375.26"
+   nccl_ver="2.2.13-1"
 fi
 
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}${VERSION_EXTRA}.run"
@@ -69,35 +85,36 @@ function maali_build {
   maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}"
 
   #Now add cuDNN support
-  declare -a cuddn_versions=("5.1" "6.0" "7.0")
-  for i in "${cuddn_versions[@]}"
-  do
-      cuddnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${i}.tgz"
-      if [ -f $cuddnFile ]; then
-         echo "Matching cudnn detected -> Installing"
-         cd ${MAALI_INSTALL_DIR}
-         tar xzf $cuddnFile
-         mv cuda/include/* include/
-         mv cuda/lib64/* lib64/
-         rmdir cuda/include
-         rmdir cuda/lib64
-         rmdir cuda
-         break 
-      fi
-  done
-
- # add NCCL 2.0 support
-  nccl_ver="2.0.5-2"
-  if [ -f ${MAALI_SRC}/nccl_${nccl_ver}-cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64.txz ]; then
-     echo "nccl detected -> Installing"
+  cudnn_version="7.1"
+  cudnnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${cudnn_version}.tgz"
+  if [ -f $cudnnFile ]; then
+     echo "cuDNN file detected -> Installing"
      cd ${MAALI_INSTALL_DIR}
-     tar xJf $MAALI_SRC/nccl_${nccl_ver}-cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64.txz
-     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/include/* include
-     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/lib/* lib64
-     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/include
-     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/lib
-     mv nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64/*.txt .
-     rmdir nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_amd64
+     tar -xzf $cudnnFile
+     mv cuda/include/* include/
+     mv cuda/lib64/* lib64/
+     rmdir cuda/include
+     rmdir cuda/lib64
+     rmdir cuda
+  else
+     echo "no cuDNN file detected"
+  fi
+
+ # add NCCL support
+  ncclFile="${MAALI_SRC}/nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64.txz"
+  if [ -f $ncclFile ]; then
+     echo "NCCL file detected -> Installing"
+     cd ${MAALI_INSTALL_DIR}
+     tar -xJf $ncclFile
+     ncclPrefix="nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64" 
+     mv ${ncclPrefix}/include/* include
+     mv ${ncclPrefix}/lib/* lib64
+     rmdir ${ncclPrefix}/include
+     rmdir ${ncclPrefix}/lib
+     mv ${ncclPrefix}/*.txt .
+     rmdir $ncclPrefix
+  else
+     echo "no NCCL file detected"
   fi 
 
 }
