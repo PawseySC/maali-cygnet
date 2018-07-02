@@ -24,7 +24,6 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
 
 if [ $(echo ${MAALI_TOOL_MAJOR_MINOR_VERSION} | cut -d '.' -f2) -lt "8" ]; then
-    echo TRUE
 # URL to download the source code from
 MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 
@@ -32,7 +31,6 @@ MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
 
 else
-    echo FALSE
 # URL to download the source code from
 MAALI_URL="http://www.netlib.org/lapack/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
@@ -57,12 +55,10 @@ MAALI_TOOL_CONFIGURE='-DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_BUILD_TYPE:STRING=Rele
 
 # for auto-building module files
 if [ $(echo ${MAALI_TOOL_MAJOR_MINOR_VERSION} | cut -d '.' -f2) -lt "6" ]; then
-    echo TRUE
 MAALI_MODULE_SET_LD_LIBRARY_PATH='lib'
 MAALI_MODULE_SET_LAPACK_LIB='${MAALI_APP_HOME}/lib'
 MAALI_MODULE_SET_PKG_CONFIG_PATH='lib/pkgconfig'
 else
-    echo FALSE
 MAALI_MODULE_SET_LD_LIBRARY_PATH='lib64'
 MAALI_MODULE_SET_LAPACK_LIB='${MAALI_APP_HOME}/lib64'
 MAALI_MODULE_SET_PKG_CONFIG_PATH='lib64/pkgconfig'
