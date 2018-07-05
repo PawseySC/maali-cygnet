@@ -1,0 +1,137 @@
+##############################################################################
+# maali cygnet file for haddock
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Haddock is the High Ambiguity Driven biomolecular DOCKing
+based on biochemical and/or biophysical information. 
+
+For further information see http://www.bonvinlab.org/software/haddock2.2
+
+EOF
+
+# specify which compilers/architectures we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/2.7.14"
+
+# for auto-building module files
+MAALI_MODULE_SET_CNS_SOLVE='$MAALI_APP_HOME/cns_solve_1.3'
+MAALI_MODULE_SET_CNS_ARCH='intel-x86_64bit-linux'
+
+MAALI_MODULE_SET_CNS_LIB='$MAALI_APP_HOME/cns_solve_1.3/libraries'
+MAALI_MODULE_SET_CNS_CONFDB='$MAALI_APP_HOME/cns_solve_1.3/libraries/confdb'
+MAALI_MODULE_SET_CNS_NMRLIB='$MAALI_APP_HOME/cns_solve_1.3/libraries/nmr'
+MAALI_MODULE_SET_CNS_TOPPAR='$MAALI_APP_HOME/cns_solve_1.3/libraries/toppar'
+MAALI_MODULE_SET_CNS_XRAYLIB='$MAALI_APP_HOME/cns_solve_1.3/libraries/xray'
+MAALI_MODULE_SET_CNS_XTALLIB='$MAALI_APP_HOME/cns_solve_1.3/libraries/xtal'
+
+MAALI_MODULE_SET_CNS_MODULE='$MAALI_APP_HOME/cns_solve_1.3/modules'
+MAALI_MODULE_SET_CNS_NMRMODULE='$MAALI_APP_HOME/cns_solve_1.3/modules/nmr'
+MAALI_MODULE_SET_CNS_XTALMODULE='$MAALI_APP_HOME/cns_solve_1.3/modules/xtal'
+
+MAALI_MODULE_SET_CNS_HELPLIB='$MAALI_APP_HOME/cns_solve_1.3/helplib'
+
+MAALI_MODULE_SET_CNS_INST='$MAALI_APP_HOME/cns_solve_1.3/intel-x86_64bit-linux'
+MAALI_MODULE_SET_CNS_SOURCE='$MAALI_APP_HOME/cns_solve_1.3/intel-x86_64bit-linux/source'
+
+MAALI_MODULE_SET_HADDOCK='$MAALI_APP_HOME'
+MAALI_MODULE_SET_HADDOCKTOOLS='$MAALI_APP_HOME/tools'
+
+MAALI_MODULE_SET_OMP_NUM_THREADS='1'
+MAALI_MODULE_SET_OMP_STACKSIZE='256m'
+
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_APP_HOME'
+MAALI_MODULE_TYPE_PYTHONPATH=append
+MAALI_MODULE_PREPEND_PYTHONPATH=off
+
+MAALI_MODULE_SET_PATH='cns_solve_1.3/intel-x86_64bit-linux/utils cns_solve_1.3/intel-x86_64bit-linux/bin Haddock'
+
+##############################################################################
+
+function maali_build {
+
+  mv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR
+  cd "$MAALI_INSTALL_DIR"
+
+  srccns="$MAALI_SRC/cns_solve_1.3_all_intel-mac_linux.tar.gz"
+  dircns="$MAALI_INSTALL_DIR/cns_solve_1.3"
+
+  # CNS installation first
+  if [ ! -s $srccns ] ; then
+    maali_die "Source tarball for CNS 1.3 not found!"
+  fi
+  maali_run "tar xzf $srccns"
+  cd $dircns
+
+  #adding HADDOCK extensions to CNS
+  maali_run "cp -p $MAALI_INSTALL_DIR/cns1.3/* source/"
+
+  #prepare sourceable scripts
+  sed -i "s;setenv CNS_SOLVE '_CNSsolve_location_';setenv CNS_SOLVE ${dircns};g" cns_solve_env
+  sed -i 's;###setenv OMP_NUM_THREADS 4;setenv OMP_NUM_THREADS 1;g' cns_solve_env
+  maali_run "mv .cns_solve_env_sh cns_solve_env_sh.sh"
+  sed -i "s;CNS_SOLVE=_CNSsolve_location_;CNS_SOLVE=${dircns};g" cns_solve_env_sh.sh
+  sed -i 's;###export OMP_NUM_THREADS 4;export OMP_NUM_THREADS=1;g' cns_solve_env_sh.sh
+
+  #amend makefiles, as ffast-math with gcc crashes compilation of machvar.f
+  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    cns_my_arch=`${dircns}/bin/getarch`
+    cns_mkmach=$(ls ${dircns}/instlib/machine/supported/${cns_my_arch}/Makefile.header.*.${FC}_mp)
+    sed -i -n 'p ; s/F77OPT/F77OPTMACH/ ; s/ -ffast-math//p' $cns_mkmach
+    cns_mkproto="${dircns}/instlib/source/Makefile.proto"
+    cns_string1='# rule for the dynamic memory allocation C routines'
+    cns_string2='# rule for the machine precision Fortran routines\
+machvar.o: machvar.f\
+\t@ echo ; echo "compiling: $?"\
+\t@ $(F77) -c $(F77STD) $(F77OPTMACH) $(EXT_F77FLAGS) $(F77BUG) $?\
+\
+# rule for the dynamic memory allocation C routines'
+    sed -i "s/$cns_string1/$cns_string2/g" $cns_mkproto
+  fi
+
+  #compile
+  FCcns=$FC
+  unset FC
+  maali_run "make install compiler=${FCcns}_mp"
+  export FC=${FCcns}
+
+
+  # now HADDOCK installation
+  cd "$MAALI_INSTALL_DIR"
+
+  #prepare sourceable scripts
+  ln -fs haddock_configure.sh-linux haddock_configure.sh
+  ln -fs haddock_configure.csh-linux haddock_configure.csh
+  sed -i "s~HADDOCK=.*~HADDOCK=\"${root2}\"~ ; s/NACCESS/#NACCESS/ ; s/PALES/#PALES/ ; s/PROFIT/#PROFIT/ ; s/TENSOR2/#TENSOR2/ ; /haddock.\..=/ s/=/=\"/ ; /haddock.\..=/ s/$/\"/" haddock_configure.sh-linux
+  sed -i "s~setenv HADDOCK .*~setenv HADDOCK \"${root2}\"~ ; s/setenv NACCESS/#setenv NACCESS/ ; s/setenv PALES/#setenv PALES/ ; s/setenv PROFIT/#setenv PROFIT/ ; s/setenv TENSOR2/#setenv TENSOR2/ ; /haddock.\.. / s/haddock.\.. /&\"/ ; /haddock.\.. / s/$/\"/" haddock_configure.csh-linux
+
+  #compile tools
+  cd tools
+  sed -i "s/CPP=.*/CPP=${CXX}/" Makefile
+  maali_run "make"
+  cd ..
+
+  #prepare executable script
+  cd Haddock
+  echo '#!'"$(which python)" >haddock
+  cat RunHaddock.py >>haddock
+  chmod ug+x haddock
+  cd ..
+
+}
