@@ -26,7 +26,7 @@ MAALI_URL="https://github.com/keras-team/keras/archive/${MAALI_TOOL_VERSION}.tar
 MAALI_DST="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # Load the prerequisite Python packages, CUDA SDK and GCC compiler
-MAALI_TOOL_PREREQ="broadwell gcc/5.5.0 numpy scipy cython setuptools wheel six nose libgpuarray"
+MAALI_TOOL_PREREQ="broadwell gcc/5.5.0 python numpy scipy cython setuptools wheel six nose libgpuarray hdf5"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
