@@ -14,10 +14,10 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # URL to download the source code from - it's java
-MAALI_URL="https://apollo.pawsey.org.au/team-super/${MAALI_TOOL_NAME}/repository/archive.tar.bz2?ref=${MAALI_TOOL_VERSION}"
+MAALI_URL="https://bitbucket.pawsey.org.au/rest/api/latest/projects/PT/repos/pawseytools/archive?at=refs%2Ftags%2F${MAALI_TOOL_VERSION}&format=zip"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.bz2"
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.zip"
 
 MAALI_TAR_EXTRA="--transform=s,pawseytools-$MAALI_TOOL_VERSION-[a-zA-Z0-9]*/,pawseytools-$MAALI_TOOL_VERSION/,"
 
@@ -35,14 +35,14 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-function maali_download {
-  
-  if [ ! -f "$MAALI_DST" ]; then
-    MAALI_TOKEN=`cat $HOME/.hidden`
-    curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
-  fi
-
-}
+#function maali_download {
+#  
+#  if [ ! -f "$MAALI_DST" ]; then
+#    MAALI_TOKEN=`cat $HOME/.hidden`
+#    curl --header "PRIVATE-TOKEN: $MAALI_TOKEN" "$MAALI_URL" > $MAALI_DST
+#  fi
+#
+#}
 
 ##############################################################################
 
