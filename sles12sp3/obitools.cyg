@@ -1,0 +1,35 @@
+##############################################################################
+# maali cygnet file for OBITools
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The OBITools package is a set of programs specifically designed for analyzing
+NGS data in a DNA metabarcoding context, taking into account taxonomic
+information. It is distributed as an open source software available on the
+following website: http://metabarcoding.org/obitools
+
+For further information see https://pypi.python.org/pypi/OBITools/
+
+EOF
+
+# specify which compilers we want to build the tool with
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_2_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/${MAALI_TOOL_NAME_ORIG}/OBITools-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/OBITools-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/OBITools-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cython/0.27.3 sphinx/1.6.5 urllib3/1.22"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="wheel/0.29.0 setuptools/38.2.1"
+
+##############################################################################
