@@ -32,4 +32,6 @@ MAALI_TOOL_PREREQ="cython/0.27.3 sphinx/1.6.5 urllib3/1.22"
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="wheel/0.29.0 setuptools/38.2.1"
 
+MAALI_MODULE_SET_PATH=1
+
 ##############################################################################
