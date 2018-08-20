@@ -25,13 +25,14 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download the source code from
-MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz/download"
+# Their Package name in Source Forge has Capitals in the tar and untarred file
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_VERSION/VirtualGL-$MAALI_TOOL_VERSION.tar.gz/download"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/VirtualGL-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="tools"
@@ -49,3 +50,25 @@ MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
 MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
+
+
+#Need to include a fix to set DISPLAY on X11 Variable at Pawsey
+function maali_cmake_build {
+  # for tools that use cmake
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  # cmake likes to build in a director of it's own
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  if [ $DEBUG ]; then
+    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+  else
+    maali_run "make -j $MAALI_CORES"
+  fi
+  maali_run "make install"
+  maali_run 'echo "export DISPLAY=\$(echo $DISPLAY | sed s/\$HOSTNAME//g" >> $MAALI_INSTALL_DIR/bin/.vglrun.vars64'
+}
