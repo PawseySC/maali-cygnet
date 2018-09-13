@@ -17,7 +17,7 @@ MAALI_TOOL_COMPILERS="gcc/5.5.0"
 MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/SpiderMonkey1975/cuFFS/archive/v$MAALI_TOOL_MAJOR_MINOR_VERSION.tar.gz"
+MAALI_URL="https://github.com/sarrvesh/cuFFS/archive/v$MAALI_TOOL_MAJOR_MINOR_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/cuFFS-$MAALI_TOOL_MAJOR_MINOR_VERSION.tar.gz"
@@ -41,19 +41,35 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
+MAALI_CMAKE_TOOL=1
 
-##############################################################################
-
-function maali_build {
-
-# run make
-  cd "$MAALI_TOOL_BUILD_DIR/src"
-  maali_run "make"
-
-# copy executable to install directory
-  cd "$MAALI_INSTALL_DIR"
-  maali_run "mkdir bin"
-  cd "$MAALI_INSTALL_DIR/bin"
-  maali_run "cp $MAALI_TOOL_BUILD_DIR/src/rmsythesis ."
-
+function maali_pre_build {
+  export CFITSIO=$CFITSIO_ROOT
 }
+
+# Removed "make install" from cmake build, as cuFFS<=0.5.0 doesn't have it
+function maali_cmake_build {
+  # for tools that use cmake
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  # cmake likes to build in a director of it's own
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE $MAALI_CMAKE_PATH"
+  if [ $DEBUG ]; then
+    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+  else
+    maali_run "make -j $MAALI_CORES"
+  fi
+}
+
+function maali_post_build {
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 755 rmsynthesis $MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 755 fitsrotate $MAALI_INSTALL_DIR/bin/"
+}
+
