@@ -16,6 +16,8 @@ MAALI_TOOL_COMPILERS="gcc/5.5.0"
 # specify te CPU types to be built for
 MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
 
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
 # URL to download the source code from
 MAALI_URL="https://github.com/sarrvesh/cuFFS/archive/v$MAALI_TOOL_MAJOR_MINOR_VERSION.tar.gz"
 
@@ -29,7 +31,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuFFS-$MAALI_TOOL_MAJOR_MINOR_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cuda cfitsio libconfig hdf5"
+MAALI_TOOL_PREREQ="cfitsio libconfig hdf5"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""
@@ -42,6 +44,8 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
 MAALI_CMAKE_TOOL=1
+
+MAALI_CUDA_SUPPORT=1
 
 function maali_pre_build {
   export CFITSIO=$CFITSIO_ROOT
