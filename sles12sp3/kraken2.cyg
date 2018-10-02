@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for kraken2
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Kraken is a system for assigning taxonomic labels to short DNA sequences,
+usually obtained through metagenomic studies. Previous attempts by other
+bioinformatics software to accomplish this task have often used sequence
+alignment or machine learning techniques that were quite slow, leading to
+the development of less sensitive but much faster abundance estimation
+programs. Kraken aims to achieve high sensitivity and high speed by
+utilizing exact alignments of k-mers and a novel classification algorithm.
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/DerrickWood/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_run "./install_kraken2.sh $MAALI_INSTALL_DIR/bin"
+}
+
+##############################################################################
