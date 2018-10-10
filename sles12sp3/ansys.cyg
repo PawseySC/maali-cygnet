@@ -24,24 +24,22 @@ MAALI_TOOL_PREREQ="intel"
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not
+#honour group sticky bit.
+
 ##############################################################################
 # This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
 function maali_unpack {
-  mkdir $MAALI_TOOL_BUILD_DIR
-  cd $MAALI_TOOL_BUILD_DIR
-  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
-    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
-    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
-  else
-    # Untar with correct group id.
-    MAALI_MODULE_RESTRICT_GROUP=`ls -gd $MAALI_TOOL_BUILD_DIR | awk '{print $3}'`
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
-    maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+  mkdir "$MAALI_TOOL_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ "$MAALI_SYSTEM_BUILD" != "YES" ]; then
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd "$MAALI_TOOL_BUILD_DIR" | awk '{print $3}'`
   fi
+  maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+  maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
 }
 
 ##############################################################################
@@ -55,64 +53,21 @@ function maali_build {
   export TAR_OPTIONS="--group=$MAALI_MODULE_RESTRICT_GROUP"
 
   # Sooo fussy about space
-  export TMPDIR="$MAALI_TOOL_BUILD_DIR/tmp"
-  mkdir $TMPDIR
+  mkdir "$MAALI_TOOL_BUILD_DIR/tmp"
 
-  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR $MAALI_TOOL_BUILD_DIR/tmp"
+  maali_run "sg $MAALI_MODULE_RESTRICT_GROUP \"./INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -usetempdir $MAALI_TOOL_BUILD_DIR/tmp\""
 
-  maali_run './INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -disablerss'
-
-  # Cray fixes.
-  MAALI_TOOL_SHORT_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
-  sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR/v$revn/ansys!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION"
-  sed -i -e 's/distcmd="mpirun"/distcmd="aprun"/g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/anssh.ini"
-  sed -i -e 's!installdir=\"`$pwdpath`\"!installdir=$MAALI_ANSYS_HOME!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/anssh.ini"
-  sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansysdis$MAALI_TOOL_SHORT_VERSION"
-  sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/lsdyna$MAALI_TOOL_SHORT_VERSION"
-  sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/mpitest$MAALI_TOOL_SHORT_VERSION"
-  sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR!g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/userprog$MAALI_TOOL_SHORT_VERSION"
-  for name in ResRdDemo ResWrDemo ans_admin ansconnect anstclsh answish bintst display lsdyna lsl2a lsprepost mpitest nlhist rdresu rdsubs userprog wrtres wrtsub xdisplay ; do
-    sed -i -e 's!ansdir=/ansys_inc/v\$revn/ansys!ansdir=\$ANSYS_DIR!g' "${MAALI_INSTALL_DIR}/v${MAALI_TOOL_SHORT_VERSION}/ansys/bin/${name}${MAALI_TOOL_SHORT_VERSION}"
-  done
-  sed -i -e 's!ansinstalldir=/ansys_inc/v\$revn/!ansdir=\$ANSYS_DIR!g' "${MAALI_INSTALL_DIR}/v${MAALI_TOOL_SHORT_VERSION}/ansys/bin/xansadmin.tcl"
-
-  if [ $MAALI_TOOL_MAJOR_MINOR_VERSION \< 17.0 ]; then
-patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
---- ansys150.bak        2015-03-24 13:50:19.343883000 +0800
-+++ ansys150    2015-03-24 14:24:45.259096000 +0800
-@@ -810,6 +810,7 @@
-                   fi
-                   command="\$distcmd -prun \$ANS_HPMPI_PRUN_OPTIONS \$dansysscript \$ansysargs"
-                fi
-+               command="\$distcmd -n \$mpinp \$dansysscript \$ansysargs"
-                if [ ! -z "\$ANS_SEE_RUN_COMMAND" ]; then
-                   echo "Running... \$command"
-                fi
-EOF
-  else
-patch -p0 $MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION  <<EOF
---- ansys172.bak        2016-08-30 16:10:03.712540000 +0800
-+++ ansys172    2016-08-30 16:11:30.953923000 +0800
-@@ -302,6 +302,7 @@
-             fi
-             command="\${distcmd} -prun \${ANS_HPMPI_PRUN_OPTIONS} \${dansys_script} \${ansysargs}"
-          fi
-+         command="\${distcmd} -n \${mpinp} \${dansysscript} \${ansysargs}"
-          if [ ! -z "\${ANS_SEE_RUN_COMMAND}" ]; then
-             printf "\\n Running... \${command} \\n"
-EOF
+  if [ "$MAALI_SYSTEM_BUILD" != "YES" ]; then
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd "$MAALI_TOOL_BUILD_DIR" | awk '{print $3}'`
   fi
+  maali_run "chmod 750 $MAALI_INSTALL_DIR"
+  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+  maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
 
-  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
-    maali_run "chmod 750 $MAALI_INSTALL_DIR"
-    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
-    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
-  else
-    GROUP=`ls -gd $MAALI_INSTALL_DIR | awk '{print $3}'`
-    maali_run "chmod 750 $MAALI_INSTALL_DIR"
-    maali_run "chgrp -R $GROUP $MAALI_INSTALL_DIR"
-    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
-  fi
+  sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION"
+  sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION"
+
 }
 
 ##############################################################################
@@ -125,5 +80,8 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH="v$MAALI_TOOL_SHORT_VERSION/ansys/lib/linx64 v$
 
 MAALI_MODULE_RESTRICT_GROUP='ANSYS'
 MAALI_MODULE_SET_ANSYS_DIR='$MAALI_APP_HOME'
-#MAALI_MODULE_SET_SETENV='ANSYS_DIR=$MAALI_APP_HOME'
+
+MAALI_MODULE_I_MPI_FABRICS='shm:tmi'
+MAALI_MODULE_I_MPI_PMI_LIBRARY='/usr/lib64/libpmi.so'
+MAALI_MODULE_I_MPI_FALLBACK='no'
 
