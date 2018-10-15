@@ -30,7 +30,7 @@ MAALI_TOOL_TYPE="bio-apps"
 MAALI_TOOL_CONFIGURE=''
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="samtools/1.6 htslib/1.6 root/6.10.08"
+MAALI_TOOL_PREREQ="samtools/0.1.19 htslib/1.2.1 root/6.14.04"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
