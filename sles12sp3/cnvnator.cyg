@@ -49,11 +49,23 @@ function maali_build {
   sed -i -e 's;INC    += -I$(HTSDIR);INC    += -I$(HTSDIR)/include;g' Makefile 
 
   export LD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$LD_LIBRARY_PATH
-  maali_run "make VERBOSE=1"
+  if [ $DEBUG ]; then
+    maali_run "make VERBOSE=1"
+  else
+    maali_run "make"
+  fi
+
   maali_makedir "$MAALI_INSTALL_DIR/bin"
-  maali_run "cp cnvnator cnvnator2VCF.pl $MAALI_INSTALL_DIR/bin"
-  maali_makedir "$MAALI_INSTALL_DIR/share/man"
-  maali_run "cp README CITATION license.rtf $MAALI_INSTALL_DIR/share/man"
+  for file in cnvnator cnvnator2VCF.pl
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/doc"
+  for file in README CITATION license.rtf
+  do
+    maali_run "install -m 644 $file $MAALI_INSTALL_DIR/doc/"
+  done
 }
 
 ##############################################################################
