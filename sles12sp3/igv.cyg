@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for IGV - Integrative Genomics Viewer
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Integrative Genomics Viewer (IGV) is a high-performance visualization tool 
+for interactive exploration of large, integrated genomic datasets. 
+It supports a wide variety of data types, including array-based and next-generation sequence data, 
+and genomic annotations.
+
+For further information see https://software.broadinstitute.org/software/igv
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://data.broadinstitute.org/${MAALI_TOOL_NAME}/projects/downloads/${MAALI_TOOL_VERSION%.*}/IGV_${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/IGV_${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='$MAALI_APP_HOME'
+MAALI_MODULE_PREPEND_PATH=off
+
+##############################################################################
+
+function maali_build {
+  chmod -x $MAALI_TOOL_BUILD_DIR/igv.command
+  mv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/
+
+}
+
+##############################################################################
