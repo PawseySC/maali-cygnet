@@ -62,22 +62,28 @@ function maali_build {
   maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
   maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
 
-  mpiwrapper="${MAALI_INSTALL_DIR}/${MAALI_TOOL_SHORT_VERSION}/fluent/fluent${MAALI_TOOL_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
-
   # Override my_cmdline to use srun rather than mpirun.
+  mpiwrapper="${MAALI_INSTALL_DIR}/v${MAALI_TOOL_SHORT_VERSION}/fluent/fluent${MAALI_TOOL_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
   sed -i '/# start job/ i my_cmdline=\"srun --export=ALL -n \$FS_NPROC \$FS_CMD\"' ${mpiwrapper}
 
 }
 
 ##############################################################################
 
-MAALI_TOOL_SHORT_VERSION=v`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+MAALI_TOOL_SHORT_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
 
-MAALI_MODULE_SET_PATH="$MAALI_TOOL_SHORT_VERSION/fluent/bin $MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64"
+MAALI_MODULE_SET_PATH="v$MAALI_TOOL_SHORT_VERSION/fluent/bin v$MAALI_TOOL_SHORT_VERSION/Framework/bin/Linux64"
 MAALI_MODULE_SET_FLUENT_ARCH='lnamd64'
 
 MAALI_MODULE_RESTRICT_GROUP='ANSYS'
 
-MAALI_MODULE_I_MPI_FABRICS='shm:tmi'
-MAALI_MODULE_I_MPI_PMI_LIBRARY='/usr/lib64/libpmi.so'
-MAALI_MODULE_I_MPI_FALLBACK='no'
+MAALI_MODULE_SET_I_MPI_FABRICS='shm:ofi'
+MAALI_MODULE_SET_I_MPI_PMI_LIBRARY='/usr/lib64/libpmi.so'
+MAALI_MODULE_SET_I_MPI_FALLBACK='no'
+MAALI_MODULE_SET_I_MPI_ADJUST_REDUCE='2'
+MAALI_MODULE_SET_I_MPI_ADJUST_ALLREDUCE='2'
+MAALI_MODULE_SET_I_MPI_ADJUST_BCAST='\1'
+MAALI_MODULE_SET_I_MPI_DAPL_SCALABLE_PROGRESS='\1'
+MAALI_MODULE_SET_I_MPI_RDMA_TRANSLATION_CACHE='\1'
+MAALI_MODULE_SET_I_MPI_DAPL_UD='enable'
+
