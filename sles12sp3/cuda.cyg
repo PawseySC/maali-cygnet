@@ -85,20 +85,21 @@ function maali_build {
   maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}"
 
   #Now add cuDNN support
-  cudnn_version="7.1"
-  cudnnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${cudnn_version}.tgz"
-  if [ -f $cudnnFile ]; then
-     echo "cuDNN file detected -> Installing"
-     cd ${MAALI_INSTALL_DIR}
-     tar -xzf $cudnnFile
-     mv cuda/include/* include/
-     mv cuda/lib64/* lib64/
-     rmdir cuda/include
-     rmdir cuda/lib64
-     rmdir cuda
-  else
-     echo "no cuDNN file detected"
-  fi
+  for cudnn_version in 7.1 7.2 7.3;do
+    cudnnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${cudnn_version}.tgz"
+    if [ -f $cudnnFile ]; then
+      echo "cuDNN ${cudnn_version} file detected -> Installing"
+      cd ${MAALI_INSTALL_DIR}
+      tar -xzf $cudnnFile
+      mv cuda/include/* include/
+      mv cuda/lib64/* lib64/
+      rmdir cuda/include
+      rmdir cuda/lib64
+      rmdir cuda
+    else
+      echo "no cuDNN ${cudnn_version} file detected"
+    fi
+  done
 
  # add NCCL support
   ncclFile="${MAALI_SRC}/nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64.txz"
