@@ -84,7 +84,7 @@ function maali_cmake_build {
   cd vtk-build
   maali_run "cmake -DMPI_C_COMPILER=cc -DMPI_CXX_COMPILER=CC -DMPI_CXX_INCLUDE_PATH=${MPICH_DIR}/include  -DMPI_C_INCLUDE_PATH=${MPICH_DIR}/include  -DMPI_C_LIBRARIES=${MPICH_DIR}/lib  -DMPI_CXX_LIBRARIES=${MPICH_DIR}/lib  -DCMAKE_VERBOSE_MAKEFILE=on -DBUILD_SHARED_LIBS=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR} -DVTK_DATA_ROOT=${MAALI_INSTALL_DIR}/VTKData -DVTK_WRAP_PYTHON=on -DVTK_Group_MPI=on -DModule_vtkGUISupportQt=OFF -DVTK_Group_Rendering=on -DVTK_Group_StandAlone=on -DVTK_WRAP_TCL=on -DModule_vtkRenderingParallel=on ${MAALI_TOOL_BUILD_DIR}"
   maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
-  maali_run "make -j 48 VERBOSE=1"
+  maali_run "make -j $MAALI_CORES VERBOSE=1"
   maali_run "make install"
 }
 
