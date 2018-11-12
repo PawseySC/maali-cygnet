@@ -1,0 +1,75 @@
+##############################################################################
+# maali cygnet file for vtk
+##############################################################################
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.vtk.org/files/release/$MAALI_TOOL_MAJOR_MINOR_VERSION/VTK-$MAALI_TOOL_VERSION.tar.gz http://www.vtk.org/files/release/$MAALI_TOOL_MAJOR_MINOR_VERSION/VTKData-$MAALI_TOOL_VERSION.tar.gz"
+
+MAALI_WGET_EXTRA=--no-check-certificate
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/VTK-$MAALI_TOOL_VERSION.tar.gz $MAALI_SRC/VTKData-$MAALI_TOOL_VERSION.tar.gz"
+
+# Assuming VTK6 or later
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/VTK-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich cray-hdf5-parallel python/2.7.14 pmi/5.0.13 pmi-lib/5.0.13"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_VTK_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_VTKDATA_ROOT='$MAALI_APP_HOME/VTKData'
+MAALI_MODULE_SET_PYTHONPATH='lib/python2.7/site-packages'
+
+##############################################################################
+
+#function maali_download {
+#	echo "Skip download"
+#}
+
+function maali_unpack {
+  cd $MAALI_BUILD_DIR
+
+  # only untar the source code
+  MAALI_TMP_SRC=`echo "$MAALI_DST" | cut -d ' ' -f 1`
+  maali_run "tar zxf $MAALI_TMP_SRC"
+}
+
+##############################################################################
+
+function maali_cmake_build {
+
+  # unpack the vtkdata
+  cd $MAALI_INSTALL_DIR
+  MAALI_TMP_SRC=`echo "$MAALI_DST" | cut -d ' ' -f 2`
+  maali_run "tar zxf $MAALI_TMP_SRC"
+  export CC=cc CXX=CC FC=ftn F77=ftn F90=ftn 
+  export CRAYPE_LINK_TYPE=dynamic
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/vtk-build"
+  cd vtk-build
+  maali_run "cmake -DMPI_C_COMPILER=cc -DMPI_CXX_COMPILER=CC -DMPI_CXX_INCLUDE_PATH=${MPICH_DIR}/include  -DMPI_C_INCLUDE_PATH=${MPICH_DIR}/include  -DMPI_C_LIBRARIES=${MPICH_DIR}/lib  -DMPI_CXX_LIBRARIES=${MPICH_DIR}/lib  -DCMAKE_VERBOSE_MAKEFILE=on -DBUILD_SHARED_LIBS=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR} -DVTK_DATA_ROOT=${MAALI_INSTALL_DIR}/VTKData -DVTK_WRAP_PYTHON=on -DVTK_Group_MPI=on -DModule_vtkGUISupportQt=OFF -DVTK_Group_Rendering=on -DVTK_Group_StandAlone=on -DVTK_WRAP_TCL=on -DModule_vtkRenderingParallel=on ${MAALI_TOOL_BUILD_DIR}"
+  maali_run "find $MAALI_TOOL_BUILD_DIR -name flags.make -exec sed -i -i -e 's! -isystem /usr/include!!g' \{} \;"
+  maali_run "make -j 48 VERBOSE=1"
+  maali_run "make install"
+}
+
+##############################################################################
