@@ -6,7 +6,7 @@
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL"https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 
