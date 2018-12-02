@@ -1,0 +1,48 @@
+##############################################################################
+# maali cygnet file for Canu
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Canu is a fork of the Celera Assembler, designed for high-noise single-molecule
+sequencing (such as the PacBio RS II/Sequel or Oxford Nanopore MinION).
+
+For further information see http://canu.readthedocs.io/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/marbl/$MAALI_TOOL_NAME/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+#
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd "src"
+
+  maali_run "make"
+
+  cd ..
+
+  maali_run "mv Linux-amd64/bin $MAALI_INSTALL_DIR"
+}
+
+##############################################################################
