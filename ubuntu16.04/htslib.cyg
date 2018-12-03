@@ -31,12 +31,4 @@ MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
 
-#function maali_build {
-#  cd "$MAALI_TOOL_BUILD_DIR"
-#
-#  maali_run "make"
-#  maali_run "make prefix=$MAALI_INSTALL_DIR install"
 
-#}
-
-##############################################################################
