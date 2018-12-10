@@ -15,7 +15,7 @@ MAALI_URL="https://github.com/beagle-dev/beagle-lib.git"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/beagle-lib"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="java/8u40"
+MAALI_TOOL_PREREQ="java/8u191"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
