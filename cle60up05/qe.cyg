@@ -1,0 +1,67 @@
+##############################################################################
+# maali cygnet file for Quantum Espresso
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Quantum Espresso is an integrated suite of Open-Source computer codes for electronic-structure calculations and materials modeling at the nanoscale. It is based on density-functional theory, plane waves, and pseudopotentials.
+
+For further information see https://www.quantum-espresso.org
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/QEF/q-e/archive/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/q-e-$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--enable-parallel --enable-openmp --with-scalapack=intel'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  # allows late evaluation
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+
+  export CC=cc
+  export FC=ftn
+  export F77=ftn
+  export F90=ftn
+  export LAPACK_LIBS="-L$MKLROOT -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64"
+  export SCALAPACK_LIBS="-L$MKLROOT -lmkl_scalapack_lp64 -Wl,--start-group"
+  export FFT_LIBS="-L$MKLROOT/intel64"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
+  maali_run "make clean"
+  maali_run "make all"
+  maali_run "cp -Lr $MAALI_TOOL_BUILD_DIR/bin $MAALI_INSTALL_DIR/" 
+  maali_run "cp -Lr $MAALI_TOOL_BUILD_DIR/pseudo $MAALI_INSTALL_DIR/"
+
+}
+
+##############################################################################
