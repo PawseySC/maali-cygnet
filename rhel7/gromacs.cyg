@@ -28,11 +28,11 @@ if [ $MAALI_CUDA_BUILD -eq 0 ]; then
    MAALI_TOOL_CUDA_COMPILERS=""
 else
    MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-   MAALI_TOOL_CUDA_COMPILERS="cuda/8.0.61_375.26"
+   MAALI_TOOL_CUDA_COMPILERS="cuda/9.2"
 fi
 
 # URL to download the source code from
-MAALI_URL="ftp://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="httprm ://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -44,7 +44,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.7 boost/1.65.1"
+MAALI_TOOL_PREREQ="openmpi/3.0.1 fftw/3.3.8 boost/1.65.1"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=' -DGMX_FFT_LIBRARY=fftw3 -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME'
@@ -71,13 +71,20 @@ function maali_cmake_build {
 
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-
-  # Only use AVX2_256 hardware acceleration when appropriate
-  if [ ${CPU_TARGET} == "haswell" ] || [ ${CPU_TARGET} == "broadwell" ]; then
-    MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX2_256"
+  if [[ $MAALI_POWER == 1 ]];then
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_COMPILER=${CC}"
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DMPIEXEC_EXECUTABLE=${MAALI_OPENMPI_HOME}/bin/mpiexec"
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DMPI_CXX_COMPILER=${MAALI_OPENMPI_HOME}/bin/mpicxx -DMPI_C_COMPILER=${MAALI_OPENMPI_HOME}/bin/mpicc"
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_MPI=ON -DGMX_BUILD_OWN_FFTW=ON -DGMX_SIMD=IBM_VSX"
+    MAALI_TOOL_CONFIGURE_EVAL+=" -DCMAKE_VERBOSE_MAKEFILE=ON"
   else
-    MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX_256"
-  fi
+  # Only use AVX2_256 hardware acceleration when appropriate
+    if [ ${CPU_TARGET} == "haswell" ] || [ ${CPU_TARGET} == "broadwell" ]; then
+      MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX2_256"
+    else
+      MAALI_TOOL_CONFIGURE_EVAL+=" -DGMX_SIMD=AVX_256"
+    fi
+   fi
 
   if [[ $MAALI_COMPILER_NAME == "gcc"* ]]; then
 

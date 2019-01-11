@@ -1,0 +1,38 @@
+##############################################################################
+# MAALI config file for Prodigal
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/hyattpd/$MAALI_TOOL_NAME_ORIG/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+#https://github.com/hyattpd/Prodigal/archive/v2.6.3.tar.gz
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_WHATIS="Prodigal is a fast, reliable protein-coding gene prediction for prokaryotic genomes. "
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "make"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "mv prodigal $MAALI_INSTALL_DIR/bin"
+
+}
+

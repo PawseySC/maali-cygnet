@@ -1,0 +1,52 @@
+##############################################################################
+# maali cygnet file for bismark
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A tool to map bisulfite converted sequence reads and determine cytosine methylation states
+
+For further information see https://www.bioinformatics.babraham.ac.uk/projects/bismark/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/FelixKrueger/${MAALI_TOOL_NAME_ORIG}/archive/${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="gcc/4.8.5 broadwell/1.0 bowtie2/2.3.3.1 samtools/1.6"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+
+  for file in "bam2nuc bismark bismark2bedGraph bismark2report bismark2summary bismark_genome_preparation bismark_methylation_extractor coverage2cytosine deduplicate_bismark filter_non_conversion NOMe_filtering"
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin"
+  done
+
+  #for file in "bismark_sitrep.tpl Bismark_User_Guide.pdf license.txt RELEASE_NOTES.txt RRBS_Guide.pdf"
+  #do
+  #  maali_run "install -m 644 $file $MAALI_INSTALL_DIR/bin"
+  #done
+}
+
+##############################################################################
