@@ -19,7 +19,7 @@
 ##############################################################################
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/losalamos/MPI-Bash/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz http://mirror.aarnet.edu.au/pub/gnu/bash/bash-4.3.30.tar.gz"
@@ -34,7 +34,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="libcircle/0.2.1 $MAALI_DEFAULT_MPI"
+MAALI_TOOL_PREREQ="libcircle/0.2.1-rc.1 $MAALI_DEFAULT_MPI"
 	
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
