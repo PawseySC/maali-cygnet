@@ -12,7 +12,7 @@ For further information see https://www.openmpi.org
 EOF
 
 # specify which compilers we want to build the tool with. We specify only compiler that work with CUDA build
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL="http://www.openmpi.org/software/ompi/v$MAALI_TOOL_MAJOR_MINOR_VERSION/downloads/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
@@ -27,10 +27,15 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ=""
+# may need to install zlib!!
+MAALI_TOOL_PREREQ=" cuda/9.2"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--with-pmi=/usr --with-lustre=/usr --with-slurm'
+MAALI_TOOL_CONFIGURE='--with-hwloc --with-lsf --with-cuda'
+# --with-cuda=<$CUDA_HOME>
+#
+# supports building CUDA version
+MAALI_CUDA_SUPPORT=1
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
