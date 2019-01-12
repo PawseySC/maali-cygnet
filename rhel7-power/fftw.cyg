@@ -59,7 +59,7 @@ fi
 function maali_build {
 
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
-
+  if [[ ${MAALI_POWER} -eq "0" ]]; then
   if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
     export CC=icc
     export F77=ifort
@@ -96,6 +96,20 @@ function maali_build {
        export CFLAGS="-fPIC -mavx -O3"
        export FFLAGS="-fPIC -mavx -O3"
     fi
+  fi
+ else
+  # this is for a IBM power system or ppc64le build
+  # from https://gcc.gnu.org/onlinedocs/gcc/RS_002f6000-and-PowerPC-Options.html
+  # The -mcpu options automatically enable or disable the following options:
+  # -maltivec  -mfprnd  -mhard-float  -mmfcrf  -mmultiple 
+  # -mpopcntb -mpopcntd  -mpowerpc64 
+  # -mpowerpc-gpopt  -mpowerpc-gfxopt 
+  # -mmulhw  -mdlmzb  -mmfpgpr -mvsx 
+  # -mcrypto -mhtm -mpower8-fusion -mpower8-vector 
+  # -mquad-memory -mquad-memory-atomic -mfloat128 -mfloat128-hardware
+
+    export CFLAGS="-fPIC -mcpu=power8 -O3"
+    export FFLAGS="-fPIC -mcpu=power8 -O3"
   fi
 
   cd "$MAALI_TOOL_BUILD_DIR"
