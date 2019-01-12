@@ -32,7 +32,7 @@ else
 fi
 
 # URL to download the source code from
-MAALI_URL="httprm ://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="http://ftp.gromacs.org/pub/gromacs/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -44,7 +44,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="use.paragon openmpi/3.0.1 fftw/3.3.8 boost/1.65.1"
+MAALI_TOOL_PREREQ="use.paragon openmpi/3.1.0 fftw/3.3.8 boost/1.65.1"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=' -DGMX_FFT_LIBRARY=fftw3 -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME'
