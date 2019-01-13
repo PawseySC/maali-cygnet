@@ -15,11 +15,11 @@ For further information see http://www.boost.org/
 
 EOF
 
-# Request only the latest GNU and Intel compilers to be used
-MAALI_TOOL_COMPILERS="gcc/5.5.0 gcc/7.2.0 intel/17.0.5"
+# Request only the latest GNU and or Intel compilers to be used as specified in config file
+MAALI_TOOL_COMPILERS="${MAALI_DEFAULT_GCC_COMPILERS}"
 
-# Only build Basilisk for the Sandybridge and Broadwell CPUs
-MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+# need to only set for CRAY systems na is default
+MAALI_TOOL_CPU_TARGET="na"
 
 # needed  for this URL
 MAALI_BOOST_VERSION=`echo $MAALI_TOOL_VERSION| sed -e 's/\./_/g'`
