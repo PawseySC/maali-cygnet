@@ -37,7 +37,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="python"
+MAALI_TOOL_PREREQ="python3/3.6.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
@@ -70,7 +70,7 @@ function maali_build {
   if [ "$MAALI_TOOL_VERSION" == "1.66.0" ]; then
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=gcc"
     maali_run "./b2 -j8 install toolset=gcc --prefix=$MAALI_INSTALL_DIR -j$MAALI_CORES"
-  else
+  else  # all other versions of boost 
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --without-libraries=python"
     maali_run "./bjam -j$MAALI_CORES toolset=gcc release"
     maali_run "./bjam install --prefix=$MAALI_INSTALL_DIR"
