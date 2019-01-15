@@ -67,6 +67,9 @@ function maali_build {
   sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/anssh.ini"
   sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION"
   sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/ansys$MAALI_TOOL_SHORT_VERSION"
+  #KMP_AFFINITY=norespect giving segfaul in omp_get_num_procs
+  sed -i -e '/KMP_AFFINITY/ s/norespect/disabled/g' "$MAALI_INSTALL_DIR/v$MAALI_TOOL_SHORT_VERSION/ansys/bin/anssh.ini"
+
 
 }
 
