@@ -22,7 +22,7 @@ MAALI_DST=""
 MAALI_TOOL_BUILD_DIR=""
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy scipy future lxml decorator requests"
+MAALI_TOOL_PREREQ="numpy scipy future lxml decorator requests matplotlib"
 
 MAALI_TOOL_BUILD_PREREQ="setuptools pip"
  
