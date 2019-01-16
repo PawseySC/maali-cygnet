@@ -1,0 +1,46 @@
+##############################################################################
+# maali cygnet file for obspy
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+ObsPy is an open-source project dedicated to provide a Python framework for processing seismological data. 
+It provides parsers for common file formats, clients to access data centers and seismological signal processing 
+routines which allow the manipulation of seismological time series.  
+For further information visit https://github.com/obspy/obspy
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL=""
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy scipy future lxml decorator requests matplotlib"
+
+MAALI_TOOL_BUILD_PREREQ="setuptools pip"
+ 
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_download {
+    maali_run " echo Suppressing download"
+}
+
+function maali_unpack {
+    maali_run "echo Suppressing unpack"
+}
+
+function maali_python_build {
+
+    cd $MAALI_TOOL_BUILD_DIR
+    maali_run "pip install ${MAALI_TOOL_NAME}==${MAALI_TOOL_VERSION} --prefix=${MAALI_INSTALL_DIR}"
+
+}
