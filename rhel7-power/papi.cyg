@@ -2,6 +2,14 @@
 # maali config file for PAPI
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PAPI provides the tool designer and application engineer with a consistent interface and methodology for use of the performance counter hardware found in most major microprocessors. PAPI enables software engineers to see, in near real time, the relation between software performance and processor events.
+
+For further information see http://icl.utk.edu/papi/
+
+EOF
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
@@ -21,7 +29,7 @@ MAALI_TOOL_TYPE="tools"
 MAALI_TOOL_PREREQ=""
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE=''
+MAALI_TOOL_CONFIGURE='--with-tests=ctests'
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
