@@ -29,7 +29,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ncbi-blast-${MAALI_TOOL_VERSION}+-src"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="boost/1.62.0"
+MAALI_TOOL_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -51,7 +51,7 @@ function maali_build {
   maali_run "patch -p1 < isb-2.6.0+-changes-vers2.patch"
   cd "$MAALI_TOOL_BUILD_DIR/c++"
 
-  maali_run "./configure --with-mt --prefix=$MAALI_INSTALL_DIR --without-debug --with-boost=$MAALI_BOOST_HOME"
+  maali_run "./configure --with-mt --prefix=$MAALI_INSTALL_DIR --without-debug"
   maali_run "make"
   maali_run "make install"
 }
