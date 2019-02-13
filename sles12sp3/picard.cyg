@@ -16,14 +16,23 @@ EOF
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="binary"
 
-# URL to download the source code from
-MAALI_URL="https://github.com/broadinstitute/picard/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME.jar"
-
-# location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar"
-
-# where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+VER_MAJOR=$(echo $MAALI_TOOL_VERSION | cut -d . -f 1)
+VER_MINOR=$(echo $MAALI_TOOL_VERSION | cut -d . -f 2)
+if [ "$VER_MAJOR" -ge 2 -a "$VER_MINOR" -ge 6 ] ; then
+  # URL to download the source code from
+  MAALI_URL="https://github.com/broadinstitute/picard/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME.jar"
+  # location we are downloading the source code to
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar"
+  # where the unpacked source code is located
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+else
+  # URL to download the source code from
+  MAALI_URL="https://github.com/broadinstitute/picard/releases/download/$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-tools-$MAALI_TOOL_VERSION.zip"
+  # location we are downloading the source code to
+  MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
+  # where the unpacked source code is located
+  MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-tools-$MAALI_TOOL_VERSION"
+fi
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="bio-apps"
@@ -36,33 +45,37 @@ MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_CLASSPATH='jar/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar'
-MAALI_MODULE_PREPEND_CLASSPATH=on
-MAALI_MODULE_TYPE_CLASSPATH=prepend
 
 ##############################################################################
 
-function maali_unpack {
-  log " .. supressing unpacking as we have downloaded a JAR file"
-}
+if [ "$VER_MAJOR" -ge 2 -a "$VER_MINOR" -ge 6 ] ; then
 
-function maali_build {
-  maali_makedir "$MAALI_TOOL_BUILD_DIR"
-  cd "$MAALI_TOOL_BUILD_DIR"
+  function maali_unpack {
+    log " .. supressing unpacking as we have downloaded a JAR file"
+  }
 
-  maali_run "cp $MAALI_DST ."
+  function maali_pre_build {
+    maali_makedir "$MAALI_TOOL_BUILD_DIR"
+    cp -p $MAALI_DST $MAALI_TOOL_BUILD_DIR/picard.jar
+  }
 
-  maali_makedir "$MAALI_INSTALL_DIR/jar"
-  maali_makedir "$MAALI_INSTALL_DIR/bin"
+fi
 
-  cat <<EOF >"$MAALI_INSTALL_DIR/bin/$MAALI_TOOL_NAME"
+  function maali_build {
+    cd "$MAALI_TOOL_BUILD_DIR"
+  
+    maali_makedir "$MAALI_INSTALL_DIR/jar"
+    maali_makedir "$MAALI_INSTALL_DIR/bin"
+  
+    cat <<EOF >"$MAALI_INSTALL_DIR/bin/picard"
 #!/bin/bash
 
-java -Xmx20g -jar \$MAALI_PICARD_HOME/jar/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.jar \$*
+java -Xmx20g -jar \$MAALI_PICARD_HOME/jar/picard.jar \$*
 EOF
-  maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/$MAALI_TOOL_NAME"
-  maali_run "install -m 644 $MAALI_DST $MAALI_INSTALL_DIR/jar"
-
-}
+    maali_run "chmod 755 $MAALI_INSTALL_DIR/bin/picard"
+    for f in *.jar ; do
+      maali_run "install -m 644 $f $MAALI_INSTALL_DIR/jar/"
+    done
+  }
 
 ##############################################################################
