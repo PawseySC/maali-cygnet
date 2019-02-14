@@ -28,8 +28,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libcircle-${MAALI_TOOL_VERSION}"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI intel-mpi/2017.0.4"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
