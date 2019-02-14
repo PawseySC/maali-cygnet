@@ -56,6 +56,12 @@ if [ "$VER_MAJOR" -ge 2 -a "$VER_MINOR" -ge 6 ] ; then
 
   function maali_pre_build {
     maali_makedir "$MAALI_TOOL_BUILD_DIR"
+
+    MAALI_DST_FILESIZE=$(stat -c%s "$MAALI_DST")
+    if [ $MAALI_DST_FILESIZE -eq 0 ]; then
+      maali_die "$MAALI_DST is 0 bytes big"
+    fi
+
     cp -p $MAALI_DST $MAALI_TOOL_BUILD_DIR/picard.jar
   }
 
