@@ -34,6 +34,6 @@ MAALI_TOOL_TYPE="devel"
 MAALI_MODULE_SET_CPU_TARGET='knl'
 
 # conflict with other processor architectures
-MAALI_MODULE_CONFLICT='sandybridge,broadwell'
+MAALI_MODULE_CONFLICT='sandybridge broadwell'
 
 ##############################################################################
