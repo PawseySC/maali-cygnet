@@ -1,0 +1,11 @@
+--- miriad/prog/mfcal.h.orig	2011-10-31 11:00:26.000000000 +0000
++++ miriad/prog/mfcal.h	2013-10-03 23:12:50.000000000 +0000
+@@ -10,7 +10,7 @@
+ 	common/mfcalcm1/vis,model,angfreq,b1,b2,t1,t2,zerovar,nzero
+ c
+ 	integer MAXHASH
+-	parameter(MAXHASH=16*MAXCHAN*MAXANT)
++	parameter(MAXHASH=64*MAXCHAN*MAXANT)
+ 	integer hash(MAXHASH),nhash
+         double precision hashval(MAXHASH)
+ 	common/mfcalcm2/hash,hashval,nhash

@@ -1,0 +1,11 @@
+--- miriad/inc/linux64/maxdimc.h.orig	2011-10-31 11:00:02.000000000 +0000
++++ miriad/inc/linux64/maxdimc.h	2013-10-03 23:12:14.000000000 +0000
+@@ -32,7 +32,7 @@
+ #define MAXNAX  7
+ 
+ /* Maximum number of antennas. */
+-#define MAXANT  64
++#define MAXANT  128
+ 
+ /* Maximum number of baselines, including autocorrelations. */
+ #define MAXBASE ((MAXANT * (MAXANT + 1)) / 2)

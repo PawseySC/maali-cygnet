@@ -1,0 +1,11 @@
+--- miriad/inc/linux64/maxdim.h.orig	2012-04-26 12:00:02.000000000 +0000
++++ miriad/inc/linux64/maxdim.h	2013-10-03 23:11:42.000000000 +0000
+@@ -25,7 +25,7 @@
+ 
+ C     Maximum number of antennas (ATA=64).
+       INTEGER   MAXANT
+-      PARAMETER(MAXANT = 64)
++      PARAMETER(MAXANT = 128)
+ 
+ C     Maximum number of baselines, including autocorrelations.
+       INTEGER   MAXBASE
