@@ -13,7 +13,7 @@ For further information see, e.g., http://hpc.github.io/libcircle/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from, and to...
 #MAALI_URL="https://github.com/hpc/libcircle/tarball/master"
