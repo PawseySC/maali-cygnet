@@ -32,7 +32,8 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/mpifileutils-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI libcircle/0.2.1-rc.1 dtcmp/1.1.0 lwgrp/1.0.2 libarchive/3.3.2"
+MAALI_TOOL_PREREQ="libcircle/0.2.1-rc.1 dtcmp/1.1.0 lwgrp/1.0.2 libarchive/3.3.2"
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI intel-mpi/2017.0.4"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="autoconf/2.69"
@@ -43,8 +44,25 @@ MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
-MAALI_CMAKE_TOOL=1
+MAALI_TOOL_MINOR_VERSION=`echo "$MAALI_TOOL_VERSION" | cut -d '.' -f 2`
 
+#They shifted to CMake from 0.9 onwards
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 1 && $MAALI_TOOL_MINOR_VERSION -lt 9 ]]; then
+MAALI_TOOL_CONFIGURE='--enable-lustre --with-dtcmp=$MAALI_DTCMP_HOME MPICC=mpicc'
+else
 MAALI_TOOL_CONFIGURE='-DENABLE_LUSTRE:BOOL=ON -DMPIEXEC:STRING=srun -DMPIEXEC_MAX_NUMPROCS:STRING=224 -DMPIEXEC_NUMPROC_FLAG:STRING=-n'
+MAALI_CMAKE_TOOL=1
+fi
 
 ##############################################################################
+
+function maali_pre_build {
+
+cd $MAALI_TOOL_BUILD_DIR
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 1 && $MAALI_TOOL_MINOR_VERSION -lt 9 ]]; then
+./autogen.sh
+fi
+}
+
+#DTCMP_Segmented_exscanv first appears in dtcmp/1.1.0.  This is required for mpifileutils > 0.7
+#mpifileutils 0.7 can use dtcmp/1.0.3
