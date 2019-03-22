@@ -1,0 +1,76 @@
+##############################################################################
+# maali cygnet file for Wannier
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Wannier90 is an open-source code (released under GPLv2) for generating
+maximally-localized Wannier functions and using them to compute advanced
+electronic properties of materials with high efficiency and accuracy.
+
+For further information see https://github.com/wannier-developers/wannier90/archive/v3.0.0.tar.gz
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_CRAY_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/wannier-developers/wannier90/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# Location of the source code.
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/wannier90-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_TOOL_PREREQ="cray-mpich cray-libsci"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+
+function maali_pre_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+cat <<EOF > make.inc
+F90 = ftn
+COMMS=mpi
+MPIF90=ftn
+EOF
+
+if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+cat <<EOF >> make.inc
+LIBS='-mkl=sequential'
+EOF
+fi
+
+}
+
+function maali_build {
+
+if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+module unload cray-libsci
+fi
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 750 postw90.x $MAALI_INSTALL_DIR/bin/postw90.x"
+  maali_run "install -m 750 wannier90.x $MAALI_INSTALL_DIR/bin/wannier90.x"
+
+}
+##############################################################################
