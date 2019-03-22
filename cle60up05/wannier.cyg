@@ -35,18 +35,10 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/wannier90-${MAALI_TOOL_VERSION}"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="cray-fftw"
-#vasp does not like craype-hugepages2M
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cray-mpich cray-libsci"
+MAALI_TOOL_PREREQ="cray-mpich cray-libsci"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-
-# restrict the module to a specified group
-MAALI_MODULE_RESTRICT_GROUP='vasp'
 
 ##############################################################################
 
@@ -76,6 +68,7 @@ module unload cray-libsci
 fi
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make -j $MAALI_CORES"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
   maali_run "install -m 750 postw90.x $MAALI_INSTALL_DIR/bin/postw90.x"
   maali_run "install -m 750 wannier90.x $MAALI_INSTALL_DIR/bin/wannier90.x"
 
