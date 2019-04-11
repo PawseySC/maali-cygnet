@@ -25,8 +25,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/pyclustering-$MAALI_TOOL_VERSION"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_PREREQ="matplotlib/2.1.0 numpy/1.13.3 scipy/1.0.0 pillow/5.1.0 six/1.11.0 python-dateutil/2.6.1"
-MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+MAALI_TOOL_PREREQ="matplotlib/2.1.0 numpy/1.13.3 scipy/1.0.0 pillow/5.1.0 six/1.11.0 python-dateutil/2.6.1 setuptools/38.2.1 enum34/1.1.6"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
