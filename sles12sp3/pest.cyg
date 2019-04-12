@@ -1,0 +1,83 @@
+##############################################################################
+# maali cygnet file for Pest
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PEST is the industry standard software package for parameter estimation and
+uncertainty analysis of complex environmental and other computer models.
+
+For further information see http://pesthomepage.org/
+
+EOF
+
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS $MAALI_DEFAULT_INTEL_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="http://www.pesthomepage.org/getfiles.php?file=pest$MAALI_TOOL_VERSION.tar.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/pest$MAALI_TOOL_VERSION.tar.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/pest$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_pre_build {
+  mkdir -p "${MAALI_TOOL_BUILD_DIR}"
+  cd "${MAALI_TOOL_BUILD_DIR}"
+  tar xf "${MAALI_BUILD_DIR}/pest${MAALI_TOOL_VERSION}.tar"
+  rm "${MAALI_BUILD_DIR}/pest${MAALI_TOOL_VERSION}.tar"
+  find . -type d -exec chmod +x \{} \;
+}
+
+function maali_build {
+
+  # Let Fortran compiler do the preprocessing
+  for i in `ls -1 *.mak | xargs`; do
+    maali_run "sed -i -e 's/\.f/\.F/g' $i"
+  done
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl1.mak"
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl2.mak"
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl3.mak"
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl4.mak"
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl5.mak"
+  #maali_run "sed -i -e 's/\.f/\.F/g' pestutl6.mak"
+
+  for i in `grep -l matman.f *.F | xargs`; do
+    maali_run "sed -i -e 's/matman\.f/matman\.F/g' $i"
+  done
+
+
+  # Fix makefile typo
+  maali_run "sed -i -e 's/calmaintain.exe/calmaintain/g' ./pest.mak"
+
+  export DEFINES=""
+  export F90="$FC"
+  export LD="$FC"
+  export FFLAGS="-c -O -DUNIX -DFLUSHFILE -DSLEEP"
+  export LDFLAGS="-O"
+
+  # Serial
+  maali_run "make -e -f pest.mak"
+  maali_run "make -e -f pestutl1.mak"
+  maali_run "make -e -f pestutl2.mak"
+  maali_run "make -e -f pestutl3.mak"
+  maali_run "make -e -f pestutl4.mak"
+  maali_run "make -e -f pestutl5.mak"
+  #maali_run "make -e -f pestutl6.mak" # Learn to write makefiles please.
+
+  for file in ; do
+    maali_run "find . -type f -executable -exec install -m 755 \{} $MAALI_INSTALL_DIR/bin/ \;"
+  done
+
+}
+
+##############################################################################
