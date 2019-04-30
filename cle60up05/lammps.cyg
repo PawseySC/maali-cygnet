@@ -30,7 +30,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-fftw/3.3.6.3 cray-hdf5-parallel/1.10.1.1 gsl/2.3 ffmpeg/3.4" 
+MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-hdf5-parallel/1.10.1.1 ffmpeg/3.4 intel-mkl/2017.0.3" 
 
 # for auto-building module files
 MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
@@ -51,26 +51,20 @@ function maali_build {
 
   export CRAYPE_LINK_TYPE='dynamic'
 
-  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
-    export CCFLAGS="-O3 -hfp3 -hnoomp"
-    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -\I$(FFTW_INC)"
-    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3"
-  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    module unload cray-libsci
+  module unload cray-libsci
+  export FFT_INC="-DFFT_MKL -DFFT_SINGLE"
+  export FFT_PATH=
+  export FFT_LIB="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl"
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
     export CCFLAGS="-O2 -std=c++11 -DLAMMPS_MEMALIGN=64 -fno-alias -ansi-alias -restrict -qoverride-limits"
-    export FFT_INC='-DFFT_MKL -DFFT_SINGLE -I\$(MKLROOT)/include'
-    export FFT_PATH=
-    export FFT_LIB='-mkl=sequential -dynamic'
   else #GNU
     export CCFLAGS="-O3 -funroll-loops -std=c++11"
-    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -I\$(FFTW_INC)"
-    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3 -lstdc++"
   fi
   export SHFLAGS='-fPIC'
 
   export MPI_INC='-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1'
-  export JPG_INC='-I/usr/include'
-  export JPG_LIB='-L/usr/lib -ljpeg -lpng16 -L${MAALI_FFMPEG_HOME}/lib -lavcodec -lavformat -lavutil -lavfilter -lavdevice -lswresample -lswscale '
+  export JPG_INC=
+  export JPG_LIB='-ljpeg -lpng16 -L${MAALI_FFMPEG_HOME}/lib -lavcodec -lavformat -lavutil -lavfilter -lavdevice -lswresample -lswscale '
   export LMP_INC='-DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_FFMPEG -DLAMMPS_GZIP -DPACK_ARRAY'
   export HDF5_PATH='$HDF5_DIR'
  
@@ -108,15 +102,15 @@ function maali_build {
         make -f Makefile.g++
 
 #to build user-meam
-        cd "${MAALI_INSTALL_DIR}/lib/meam"
-        sed -i '0,/gfortran/! s/gfortran/ftn/' Makefile.gfortran
-	make -f Makefile.gfortran
+#        cd "${MAALI_INSTALL_DIR}/lib/meam"
+#        sed -i '0,/gfortran/! s/gfortran/ftn/' Makefile.gfortran
+#	make -f Makefile.gfortran
 
 #to build user-reax (problem)
-        cd "${MAALI_INSTALL_DIR}/lib/reax"
-        sed -i '/Makefile/!s/gfortran/ftn/g' Makefile.gfortran 
-        make -f Makefile.gfortran
-	sed -i 's/-lgfortran//g' Makefile.lammps
+#        cd "${MAALI_INSTALL_DIR}/lib/reax"
+#        sed -i '/Makefile/!s/gfortran/ftn/g' Makefile.gfortran 
+#        make -f Makefile.gfortran
+#	sed -i 's/-lgfortran//g' Makefile.lammps
 
 ##to build user-qmmm
         cd "${MAALI_INSTALL_DIR}/lib/qmmm"
@@ -151,20 +145,24 @@ function maali_build {
         maali_run "make no-kim"
         maali_run "make no-kokkos"
         maali_run "make no-latte"
+        maali_run "make no-message"
         maali_run "make no-mscg"
         maali_run "make no-user-cuda"
         maali_run "make no-user-intel"
+      	maali_run "make no-meam"
+       	maali_run "make no-reax"	
 	if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
 	        maali_run "make no-user-qmmm"
-       		maali_run "make no-meam"
-        	maali_run "make no-reax"	
 	fi
         maali_run "make no-user-omp"
-	maali_run "make -e -j $MAALI_CORES yes-user-all"
+#	maali_run "make -e -j $MAALI_CORES yes-user-all"
         maali_run "make no-user-quip"
 	maali_run "make no-user-awpmd"
 	maali_run "make no-user-atc"
 	maali_run "make no-user-vtk"
+	maali_run "make no-user-adios"
+	maali_run "make no-user-plumed"
+	maali_run "make no-user-scafacos"
 	
 	maali_run "make -e -j $MAALI_CORES mpi"
 }
