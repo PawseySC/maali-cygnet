@@ -40,6 +40,7 @@ MAALI_TOOL_PREREQ="cray-mpich cray-libsci"
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 
 ##############################################################################
 
@@ -52,6 +53,7 @@ cat <<EOF > make.inc
 F90 = ftn
 COMMS=mpi
 MPIF90=ftn
+FCOPTS=-fPIC -O3
 EOF
 
 if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
@@ -69,12 +71,14 @@ module unload cray-libsci
 fi
   cd "$MAALI_TOOL_BUILD_DIR"
   maali_run "make -j $MAALI_CORES"
-  maali_run "make -j $MAALI_CORES libs"
+  maali_run "make -j $MAALI_CORES lib"
+  maali_run "make -j $MAALI_CORES dynlib"
   maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
   maali_run "mkdir -p $MAALI_INSTALL_DIR/lib"
   maali_run "install -m 750 postw90.x $MAALI_INSTALL_DIR/bin/postw90.x"
   maali_run "install -m 750 wannier90.x $MAALI_INSTALL_DIR/bin/wannier90.x"
   maali_run "install -m 640 libwannier.a $MAALI_INSTALL_DIR/lib/libwannier.a"
+  maali_run "install -m 750 libwannier.so $MAALI_INSTALL_DIR/lib/libwannier.so"
 
 }
 ##############################################################################
