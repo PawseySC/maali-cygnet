@@ -1,13 +1,12 @@
 ##############################################################################
-# maali cygnet file for ipython
+# maali cygnet file for prompt_toolkit
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-IPython provides a rich toolkit to help you make the most of using Python
-interactively.
+'prompt_toolkit' is a library for building powerful interactive command line applications in Python.
 
-For further information see https://ipython.org/
+For further information see https://pypi.python.org/pypi/prompt_toolkit
 
 EOF
 
@@ -18,15 +17,12 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
-# for auto-building module files
-MAALI_MODULE_SET_PATH=1
-
-# tool pre-requisites
-MAALI_TOOL_PREREQ="traitlets/4.3.2 pygments/2.2.0 pexpect/4.7.0 pickleshare/0.7.5 prompt_toolkit/1.0.16 simplegeneric/0.8.1"
+MAALI_TOOL_BUILD_PREREQ="setuptools"
 
 ##############################################################################
+
