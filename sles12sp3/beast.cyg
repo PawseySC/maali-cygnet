@@ -62,7 +62,7 @@ function maali_build {
   if [ $MAALI_TOOL_MAJOR_VERSION -lt 2 ]; then 
     cd native
     # remove object files
-    maali_run "$MAALI_TOOL_BUILD_DIR/native/rm -rf *.o"
+    maali_run "rm -rf $MAALI_TOOL_BUILD_DIR/native/*.o"
 
     if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
       maali_run "make -f Makefile.icc"
