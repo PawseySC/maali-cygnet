@@ -16,6 +16,16 @@ EOF
 MAALI_TOOL_COMPILERS="binary"
 
 # Specify where to download the CUDA runfile from and where to place it locally             
+# https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run
+# https://developer.nvidia.com/compute/machine-learning/nccl/secure/v2.4/prod//nccl_2.4.7-1%2Bcuda10.1_x86_64.txz
+# nccl_2.4.7-1+cuda10.1_x86_64.txz
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run"
+   VERSION_EXTRA=".168_418.67"
+   nccl_ver="2.4.7-1"
+fi
+
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.2" ]]; then
    MAALI_URL="https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux"
    VERSION_EXTRA=".88_396.26"
@@ -82,7 +92,15 @@ function maali_unpack {
 function maali_build {
 
   echo "CUDA Binary Build"
-  maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}"
+
+  # 10.x does weird things, 10.0 does not support sles12 offically only 10.1 supports sles12sp4
+  # 10.1 require 418.67 Driver version
+  if [[ $MAALI_TOOL_MAJOR_VERSION == "10" ]]; then
+     export PATH=$PATH:/sbin
+     maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR} --installpath=${MAALI_INSTALL_DIR}"
+  else
+     maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}" 
+  fi
 
   #Now add cuDNN support
   for cudnn_version in 7.1 7.2 7.3;do
@@ -101,7 +119,7 @@ function maali_build {
     fi
   done
 
- # add NCCL support
+  #Add NCCL support
   ncclFile="${MAALI_SRC}/nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64.txz"
   if [ -f $ncclFile ]; then
      echo "NCCL file detected -> Installing"
