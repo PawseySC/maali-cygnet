@@ -1,0 +1,42 @@
+##############################################################################
+# maali cygnet file for PyVCF
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The intent of this module is to mimic the csv module in the Python stdlib, as
+opposed to more flexible serialization formats like JSON or YAML. vcf will
+attempt to parse the content of each record based on the data types specified
+in the meta-information lines – specifically the ##INFO and ##FORMAT lines. If
+these lines are missing or incomplete, it will check against the reserved types
+mentioned in the spec. Failing that, it will just return strings.
+
+For further information see https://pyvcf.readthedocs.io/en/latest/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_27_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/P/PyVCF/PyVCF-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/PyVCF-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="distribute/0.7.3"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+## create a module for python3 versions, but don't install
+#MAALI_PYTHON3_SKIP=1
+
+##############################################################################
