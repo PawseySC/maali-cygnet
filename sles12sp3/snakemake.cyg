@@ -1,0 +1,68 @@
+##############################################################################
+# maali cygnet file for snakemake
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Snakemake workflow management system is a tool to create reproducible and scalable data analyses. 
+
+Workflows are described via a human readable, Python based language. 
+They can be seamlessly scaled to server, cluster, grid and cloud environments, without the need to modify the workflow definition. 
+Finally, Snakemake workflows can entail a description of required software, which will be automatically deployed to any execution environment.
+
+For further information see https://snakemake.readthedocs.io/en/stable/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_3_PYTHON"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="pip/19.1.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_APP_HOME'
+MAALI_MODULE_PREPEND_PYTHONPATH="off"
+
+##############################################################################
+
+function maali_pre_build {
+  maali_makedir "$MAALI_TOOL_BUILD_DIR"
+}
+
+function maali_python_build {
+
+  MAALI_PYTHON_MAJOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1`
+
+  if [[ $MAALI_PYTHON_MAJOR_VERSION -gt 2 ]] && [[ $MAALI_PYTHON3_SKIP -eq 1 ]] ; then
+    echo "Don't install the package, but do create a module"
+  else
+    # should work with most python packages
+
+    # Call e.g. python2.7, python3.6 directly, rather than just python.
+    MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
+
+    # need to add the python library path to PYTHONPATH temporarily
+    MAALI_OLD_PYTHONPATH=$PYTHONPATH
+    MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR"
+    export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+
+    maali_makedir "$MAALI_NEWPYTHONPATH"
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "pip${MAALI_PYTHON_MAJOR_MINOR_VERSION} install --target $MAALI_INSTALL_DIR ${MAALI_TOOL_NAME_ORIG}==${MAALI_TOOL_VERSION}"
+
+    export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+  fi
+
+}
