@@ -50,6 +50,8 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 
 function maali_build {
 
+  # Singularity needs to be built / installed via root as it uses setuid bits
+
   if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
     export CC=icc
     export F77=ifort
@@ -82,8 +84,9 @@ function maali_build {
     #version 3.x, Uses google Go now
     cd "$MAALI_TOOL_BUILD_DIR"
     echo $MAALI_TOOL_BUILD_DIR
-    #Pre-Dependency Needs Google Go?
-    export goversion=1.11
+    # Pre-Dependency Needs Google Go?
+    # 3.2 needs at least go 1.12.x (Verified against stable 3.2.1)
+    export goversion=1.12.6
     maali_run "wget https://dl.google.com/go/go${goversion}.linux-amd64.tar.gz"
     maali_run "tar xpf go${goversion}.linux-amd64.tar.gz"
     export GOROOT=$PWD/go
