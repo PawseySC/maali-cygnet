@@ -1,0 +1,51 @@
+##############################################################################
+# maali cygnet file for mesa
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Mesa project began as an open-source implementation of the OpenGL specification - a system for rendering interactive 3D graphics. 
+
+For further information see https://mesa.freedesktop.org/intro.html
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://mesa.freedesktop.org/archive/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="llvm/5.0.2"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="--with-platforms=x11 --disable-dri --disable-dri3 --disable-egl --disable-gbm --disable-gles1 --disable-gles2 --disable-xvmc --disable-vdpau --disable-omx --disable-va --enable-glx --enable-llvm --with-gallium-drivers=swrast,swr --enable-gallium-osmesa"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_build {
+
+  MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
+  export MAALI_CORES=16
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --with-llvm-prefix=${MAALI_LLVM_HOME}"
+  maali_run "make VERBOSE=TRUE -j $MAALI_CORES"
+  maali_run "make install"
+
+}
+##############################################################################
