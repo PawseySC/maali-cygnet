@@ -13,41 +13,30 @@ For further information see https://www.paraview.org/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/5.5.0"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v$MAALI_TOOL_MAJOR_MINOR_VERSION&type=binary&os=Source&downloadFile=$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION.tar.gz https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v$MAALI_TOOL_MAJOR_MINOR_VERSION&type=data&os=all&downloadFile=ParaViewData-v$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v$MAALI_TOOL_MAJOR_MINOR_VERSION&type=binary&os=Source&downloadFile=$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION.tar.gz $MAALI_SRC/${MAALI_TOOL_NAME_ORIG}Data-v$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-v$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="qt/5.9.3 hdf5/1.10.1 netcdf/4.5.0 ffmpeg/3.4 boost/1.65.1 silo/4.10.2 $MAALI_DEFAULT_MPI $MAALI_DEFAULT_27_PYTHON"
+MAALI_TOOL_PREREQ="qt/5.9.3 hdf5/1.10.1 netcdf/4.5.0 ffmpeg/3.4 boost/1.65.1 silo/4.10.2 $MAALI_DEFAULT_MPI $MAALI_DEFAULT_27_PYTHON intel-tbb/2017.0.4 mesa/17.2.8  ospray/1.7.2 llvm/5.0.2"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake/3.5.2"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='-DBUILD_EXAMPLES:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_EXE_LINKER_FLAGS="-dynamic -fPIC" -DPARAVIEW_DATA_ROOT:PATH=${MAALI_SRC}/ParaViewData-$MAALI_TOOL_VERSION -DCMAKE_BUILD_TYPE:STRING=Release -DPARAVIEW_DATA_ROOT:FILEPATH=$MAALI_INSTALL_DIR/ParaView -DPARAVIEW_USE_VISITBRIDGE:BOOL=ON -DBoost_INCLUDE_DIR:PATH=$BOOST_ROOT/include -DVISIT_BUILD_READER_Silo:BOOL=ON -DSILO_INCLUDE_DIR:PATH=$MAALI_SILO_HOME/include -DSILO_LIBRARY:FILEPATH=$MAALI_SILO_HOME/lib/libsiloh5.so -DPARAVIEW_USE_MPI:BOOL=ON -DMPI_C_LIBRARIES=${MAALI_OPENMPI_HOME}/lib/libmpi.so -DMPI_C_INCLUDE_PATH=${MAALI_OPENMPI_HOME}/include -DCMAKE_CFLAGS=\"-fPIC\" -DPARAVIEW_ENABLE_PYTHON:BOOL=ON -DPYTHON_LIBRARY=${MAALI_PYTHON_HOME}/lib/libpython2.7.so -DPYTHON_INCLUDE_DIR=${MAALI_PYTHON_HOME}/include/python2.7 -DPYTHON_EXECUTABLE=${MAALI_PYTHON_HOME}/bin/python2.7 -DPARAVIEW_ENABLE_FFMPEG:BOOL=ON'
+MAALI_TOOL_CONFIGURE='-DBUILD_TESTING=OFF -DPARAVIEW_ENABLE_CATALYST=OFF -DCMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO="-dynamic -fPIC" -DMPI_CXX_LIBRARIES=${MAALI_OPENMPI_HOME}/lib/libmpi.so -DMPI_CXX_INCLUDE_PATH=${MAALI_OPENMPI_HOME}/include -DPARAVIEW_USE_OSPRAY:BOOL=ON -Dospray_DIR=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux -DOSPRAY_INSTALL_DIR=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux -DPARAVIEW_USE_VISITBRIDGE:BOOL=ON -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=TBB -DTBB_INCLUDE_DIR=${MAALI_SYSTEMINTELTBB_HOME}/include -DTBB_LIBRARY_RELEASE=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux/lib/libtbb.so -DTBB_LIBRARY:FILEPATH=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux/lib/libtbb.so -DTBB_LIBRARY_RELEASE:FILEPATH=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux/lib/libtbb.so -DTBB_MALLOC_LIBRARY_RELEASE:FILEPATH=${MAALI_OSPRAY_HOME}/ospray-1.7.2.x86_64.linux/lib/libtbbmalloc.s -DPARAVIEW_USE_VTKM:BOOL=OFF -DVTK_OPENGL_HAS_OSMESA:BOOL=ON -DVTK_USE_X:BOOL=OFF -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DPARAVIEW_INSTALL_DEVELOPMENT_FILES=ON -DOSMESA_INCLUDE_DIR=${MAALI_MESA_HOME}/include -DOSMESA_LIBRARY=${MAALI_MESA_HOME}/lib/libOSMesa.so -DPARAVIEW_BUILD_QT_GUI:BOOL=ON -DPARAVIEW_QT_VERSION=5 -DQt5_DIR=${MAALI_QT_HOME} -DPARAVIEW_ENABLE_WEB:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_EXE_LINKER_FLAGS="-dynamic -fPIC" -DBoost_INCLUDE_DIR:PATH=$BOOST_ROOT/include -DVISIT_BUILD_READER_Silo:BOOL=ON -DSILO_INCLUDE_DIR:PATH=$MAALI_SILO_HOME/include -DSILO_LIBRARY:FILEPATH=$MAALI_SILO_HOME/lib/libsiloh5.so -DPARAVIEW_USE_MPI:BOOL=ON -DMPI_C_LIBRARIES=${MAALI_OPENMPI_HOME}/lib/libmpi.so -DMPI_C_INCLUDE_PATH=${MAALI_OPENMPI_HOME}/include -DCMAKE_CFLAGS=\"-fPIC\" -DPARAVIEW_ENABLE_PYTHON:BOOL=ON -DPYTHON_LIBRARY=${MAALI_PYTHON_HOME}/lib/libpython2.7.so -DPYTHON_INCLUDE_DIR=${MAALI_PYTHON_HOME}/include/python2.7 -DPYTHON_EXECUTABLE=${MAALI_PYTHON_HOME}/bin/python2.7 -DPARAVIEW_ENABLE_FFMPEG:BOOL=ON'
 
 # for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LIBGL_ALWAYS_INDIRECT='y'
-
-##############################################################################
-
-function maali_unpack {
-  log " .... only need to unpack first source"
-  cd $MAALI_BUILD_DIR
-
-  MAALI_DST1=`echo $MAALI_DST | cut -d ' ' -f 1`
-  tar zxf $MAALI_DST1
-
-}
-
 ##############################################################################
 
 function maali_cmake_build {
@@ -55,21 +44,13 @@ function maali_cmake_build {
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
   cd "$MAALI_TOOL_BUILD_DIR"
-
-  if [ -f ".ExternalData/README.rst" ]; then
-    rm -f .ExternalData/README.rst
-    rmdir .ExternalData
-  fi
-  
+ 
   maali_makedir "$MAALI_TOOL_BUILD_DIR/paraview-build"
   cd "$MAALI_TOOL_BUILD_DIR/paraview-build"
   maali_run "cmake -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
-  maali_run "make VERBOSE=TRUE"
+  maali_run "make VERBOSE=TRUE -j16"
   maali_run "make install"
 
-  cd "$MAALI_INSTALL_DIR"
-  maali_run "tar -zxf $MAALI_SRC/ParaViewData-v$MAALI_TOOL_VERSION.tar.gz"
-  maali_run "mv ParaView-v$MAALI_TOOL_VERSION/.ExternalData ."
 }
 
 ##############################################################################
