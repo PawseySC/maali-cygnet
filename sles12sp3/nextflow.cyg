@@ -39,10 +39,6 @@ MAALI_TOOL_PREREQ="java/8u151"
 MAALI_MODULE_SET_PATH=toplevel
 MAALI_MODULE_SET_NXF_HOME='os.getenv\(\"MYGROUP\"\)..\"/.nextflow\"'
 MAALI_MODULE_QUOTES_NXF_HOME=off
-MAALI_MODULE_SET_NXF_SINGULARITY_CACHEDIR='os.getenv\(\"MYGROUP\"\)..\"/.nextflow/singularity\"'
-MAALI_MODULE_QUOTES_NXF_SINGULARITY_CACHEDIR=off
-MAALI_MODULE_SET_NXF_CONDA_CACHEDIR='os.getenv\(\"MYGROUP\"\)..\"/.nextflow/conda\"'
-MAALI_MODULE_QUOTES_NXF_CONDA_CACHEDIR=off
 
 ##############################################################################
 
