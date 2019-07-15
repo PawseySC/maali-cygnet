@@ -1,0 +1,50 @@
+##############################################################################
+# maali cygnet file for 
+##############################################################################
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+ReFrame is a new framework for writing regression tests for HPC systems. The goal of this framework is to abstract away the complexity of the interactions with the system, separating the logic of a regression test from the low-level details, which pertain to the system configuration and setup. This allows users to write easily portable regression tests, focusing only on the functionality.
+
+For further information see https://eth-cscs.github.io/reframe/index.html
+
+EOF
+
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="${MAALI_DEFAULT_SYSTEM_GCC}"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/eth-cscs/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="${MAALI_SRC}/${MAALI_TOOL_NAME}-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="python/3.6.3"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="" 
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+MAALI_WIKI_CATEGORY=""
+#
+# # for auto-building module files
+MAALI_MODULE_SET_PYTHONPATH='${MAALI_APP_HOME}'
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_REFRAME_HOME='${MAALI_APP_HOME}'
+
+##############################################################################
+
+
+function maali_build {
+
+    maali_run "cp -r $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR/"
+    cd $MAALI_TOOL_BUILD_DIR
+    maali_run "git clone https://bitbucket.pawsey.org.au/scm/pts/pawseyapplicationtestsuite.git"
+    maali_run "cp pawseyapplicationtestsuite/setup_files/settings.py $MAALI_INSTALL_DIR/reframe/"
+}
