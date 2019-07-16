@@ -1,0 +1,84 @@
+##############################################################################
+# maali cygnet file for dualsphysics
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/5.5.0"
+MAALI_TOOL_CPU_TARGET="broadwell"
+
+# URL to download the source code from
+#MAALI_URL="git clone https://github.com/DualSPHysics/DualSPHysics.git"
+#MAALI_URL="https://codeload.github.com/DualSPHysics/DualSPHysics/tar.gz/v$MAALI_TOOL_VERSION"
+#AEG: When the MAALI_URL is null, maali will look for the source code in the indicated place
+#     by MAALI_DST (see its definition a few lines below). Therefore, the source code should be
+#     downloaded with a separated tool and made available before installing with maali.
+MAALI_URL=""
+
+# location we are downloading the source code to
+#MAALI_DST="$MAALI_SRC/DualSPHysics-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST="$MAALI_SRC/DualSPHysics_v$MAALI_TOOL_VERSION.zip"
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/DualSPHysics-${MAALI_TOOL_VERSION}"
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/DualSPHysics_v${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/DualSPHysics_v${MAALI_TOOL_VERSION%.*}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="cuda/9.2"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+#MAALI_TOOL_BUILD_PREREQ=""
+
+MAALI_CUDA_SUPPORT=1
+MAALI_TOOL_CUDA_COMPILERS="cuda/9.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+#function maali_download {
+#  log ".. supressing downloading as we are using a git repository"
+#}
+
+##############################################################################
+
+#function maali_unpack {
+#  log " .. supressing unpacking as we are using a git repository"
+#}
+
+##############################################################################
+
+#function maali_pre_build {
+#  log " .. supressing unpacking as we are using a git repository"
+#}
+
+##############################################################################
+
+function maali_build {
+  echo "MAALI_TOOL_BUIL_DIR=$MAALI_TOOL_BUILD_DIR"
+  echo "MAALI_INSTALL_DIR=$MAALI_INSTALL_DIR"
+  echo "MAALI_CUDA_BUILD=$MAALI_CUDA_BUILD"
+  if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+    echo "Proceding to compile"
+    cd "$MAALI_TOOL_BUILD_DIR"
+    cd src/source
+    sed -i -e "s;DIRTOOLKIT=.*;DIRTOOLKIT=$MAALI_CUDA_HOME;g" Makefile
+    sed -i -e "s/^USE_GCC5=.*/USE_GCC5=YES/g" Makefile
+    maali_run "make clean"
+    maali_run "make"
+    maali_run "chmod 775 ../../bin/linux/*"
+    maali_makedir "$MAALI_INSTALL_DIR/bin"
+    #-##AEG: copying the compiled tool to the installation directory
+    #-#maali_run "cp ../../bin/linux/DualSPHysics${MAALI_TOOL_VERSION%.*}_linux64 $MAALI_INSTALL_DIR/bin"
+    #AEG: copying the compiled tool (and all the existing precompiled tools) to the installation directory
+    maali_run "cp -r ../../bin/linux/* $MAALI_INSTALL_DIR/bin"
+  else  
+    echo "${MAALI_TOOL_NAME} supports only GPU builds"
+  fi
+}
+
+##############################################################################
