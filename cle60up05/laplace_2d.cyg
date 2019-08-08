@@ -1,0 +1,53 @@
+##############################################################################
+# maali cygnet file for 
+##############################################################################
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+
+For further information see
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_CRAY_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/mshaikh786/Jacobi-iteration/archive/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/Jacobi-iteration-laplace_2d_${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/Jacobi-iteration-laplace_2d_${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="app"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="" 
+
+#
+# # for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_build {
+    echo "CPU_TARGET = $CRAY_CPU_TARGET"
+    cd ${MAALI_TOOL_BUILD_DIR}/src/MPI/
+    maali_run "make -f Makefile.CRAY VERBOSE=1"
+    cd ${MAALI_TOOL_BUILD_DIR}/src/SER/
+    maali_run "make -f Makefile.CRAY VERBOSE=1"
+
+    cp -r ${MAALI_TOOL_BUILD_DIR}/bin ${MAALI_INSTALL_DIR}/bin
+
+}
+
