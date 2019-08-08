@@ -22,7 +22,7 @@ MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/stevengj/$MAALI_TOOL_NAME/releases/download/v$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL="https://github.com/NanoComp/meep/releases/download/v${MAALI_TOOL_VERSION}/meep-${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -34,7 +34,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI guile/2.0.9 gsl/2.3 cray-hdf5-parallel/1.10.1.1 harminv/1.4.1 libctl/4.0.0 zlib/1.2.8 cray-fftw/3.3.6.3 mpb/1.6.1"
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI guile/2.0.9 gsl/2.3 cray-hdf5-parallel/1.10.1.1 harminv/1.4.1 libctl/4.3.0 zlib/1.2.8 cray-fftw/3.3.6.3 mpb/1.9.0 libgdsii/0.21"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE='--with-mpi --with-hdf5 --disable-shared --with-libctl=$MAALI_LIBCTL_HOME/share/libctl'
