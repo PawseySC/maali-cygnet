@@ -34,13 +34,15 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI guile/2.0.9 gsl/2.3 cray-hdf5-parallel/1.10.1.1 harminv/1.4.1 libctl/4.3.0 zlib/1.2.8 cray-fftw/3.3.6.3 mpb/1.9.0 libgdsii/0.21"
+
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI guile/2.0.9 gsl/2.3 cray-hdf5-parallel/1.10.1.1 harminv/1.4.1 libctl/4.3.0 zlib/1.2.8 cray-fftw/3.3.6.3 mpb/1.9.0 python/2.7.14 numpy/1.13.3 mpi4py/3.0.0 libgdsii/0.21"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--with-mpi --with-hdf5 --disable-shared --with-libctl=$MAALI_LIBCTL_HOME/share/libctl'
+MAALI_TOOL_CONFIGURE='--with-mpi --with-hdf5 --enable-shared  --with-libctl=$MAALI_LIBCTL_HOME/share/libctl'
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python2.7/site-packages
 
 ##############################################################################
 
@@ -53,8 +55,8 @@ function maali_build {
 
   export MPICC=cc
   export MPICXX=CC
-  export CFLAGS="-I$MAALI_MPB_HOME/include"
-  export LDFLAGS="-L$MAALI_GSL_HOME/lib -L$MAALI_LIBCTL_HOME/lib -L$MAALI_MPB_HOME/lib"
+  export CFLAGS="-I$MAALI_MPB_HOME/include -fPIC"
+  export LDFLAGS="-L$MAALI_GSL_HOME/lib -L$MAALI_LIBCTL_HOME/lib -L$MAALI_MPB_HOME/lib -fPIC"
 
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make V=1 install"
