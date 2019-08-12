@@ -63,6 +63,8 @@ function maali_build {
   maali_run "sh autogen.sh"
   maali_run "make"
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
+  maali_run "make clean"
+  maali_run "make"
   maali_run "make install"
 }
 
