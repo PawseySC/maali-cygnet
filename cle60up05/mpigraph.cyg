@@ -1,0 +1,75 @@
+##############################################################################
+# maali cygnet file for $MAALI_TOOL_NAME
+##############################################################################
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+
+For further information see
+
+EOF
+
+MAALI_TOOL_NAME="mpiGraph"
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_CRAY_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/LLNL/$MAALI_TOOL_NAME.git"
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="app"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE="" 
+
+# for adding [[Category:Python]] to wiki page - bio-apps, devel and python automatically generate a category
+MAALI_WIKI_CATEGORY="File Formats & Data Management"
+#
+# # for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+function maali_download {
+    echo "Supressing download"
+}
+
+function maali_unpack {
+    echo "Supressing unpack"
+}
+
+function maali_pre_build { 
+
+# Getting source
+
+    if [ ! -d "$MAALI_TOOL_BUILD_DIR" ]; then
+        cd $MAALI_BUILD_DIR
+        maali_run "git clone $MAALI_URL"
+    else
+        echo "Clone already exists, reusing it"
+    fi
+    
+    maali_makedir "$MAALI_INSTALL_DIR/bin"
+}
+
+function maali_build {
+
+    cd $MAALI_INSTALL_DIR/bin
+    if [ -f "$MAALI_TOOL_NAME" ];then
+        maali_run "rm $MAALI_TOOL_NAME"
+    fi
+    maali_run "cc -o $MAALI_TOOL_NAME $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME.c"
+}
