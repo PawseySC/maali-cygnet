@@ -9,15 +9,17 @@ annotated C++ sources, but it also supports other popular programming languages
 such as C, Objective-C, C#, PHP, Java, Python, IDL (Corba, Microsoft, and
 UNO/OpenOffice flavors), Fortran, VHDL, Tcl, and to some extent D.
 
-For further information see http://www.stack.nl/~dimitri/doxygen/
+For further information see http://www.doxygen.nl
 
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+MAALI_TOOL_CPU_TARGET="na"
 
 # URL to download the source code from
-MAALI_URL="http://ftp.stack.nl/pub/users/dimitri/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
+MAALI_URL="http://doxygen.nl/files/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.src.tar.gz"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
@@ -29,6 +31,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
+MAALI_TOOL_BUILD_PREREQ="cmake"
 MAALI_TOOL_PREREQ=" "
 
 # for auto-building module files
