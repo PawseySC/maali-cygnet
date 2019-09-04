@@ -80,8 +80,8 @@ function maali_build {
     cd "${GOROOT}/src/github.com/sylabs/singularity/builddir"
     maali_run "make -j $MAALI_CORES"
     maali_run "make install"
-    maali run "sed -i 's/^ *mount *home *=.*/mount home = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
   fi
+  maali run "sed -i 's/^ *mount *home *=.*/mount home = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
 
 }
 
