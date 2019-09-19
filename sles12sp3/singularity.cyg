@@ -25,8 +25,6 @@ MAALI_TOOL_CPU_TARGET="na"
 # URL to download the source code from
 MAALI_URL="https://github.com/sylabs/singularity/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
 
-echo $MAALI_URL
-
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
@@ -62,7 +60,6 @@ function maali_build {
   else
     #version 3.x, Uses google Go now
     cd "$MAALI_TOOL_BUILD_DIR"
-    echo $MAALI_TOOL_BUILD_DIR
     # Pre-Dependency Needs Google Go?
     # 3.2 needs at least go 1.12.x (Verified against stable 3.2.1)
     export goversion=1.12.6
