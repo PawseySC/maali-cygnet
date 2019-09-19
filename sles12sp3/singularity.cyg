@@ -8,7 +8,7 @@ Singularity enables users to have full control of their environment. Singularity
 containers can be used to package entire scientific workflows, software and 
 libraries, and even data.
 
-For further information see http://singularity.lbl.gov
+For further information see https://sylabs.io/singularity
 
 EOF
 
