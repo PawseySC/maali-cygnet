@@ -18,9 +18,6 @@ For further information see http://www.gromacs.org/
 
 EOF
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 # specify which compilers we want to build the tool with
 if [ $MAALI_CUDA_BUILD -eq 0 ]; then
    #MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"

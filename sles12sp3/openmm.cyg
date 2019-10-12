@@ -40,9 +40,6 @@ MAALI_TOOL_PREREQ="fftw/3.3.7 doxygen/1.8.9 python/2.7.14 swig/3.0.12"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1

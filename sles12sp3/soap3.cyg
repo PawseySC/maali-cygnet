@@ -44,9 +44,6 @@ MAALI_TOOL_TYPE="bio-apps"
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 ##############################################################################
 
 function maali_build {

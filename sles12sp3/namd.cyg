@@ -45,9 +45,6 @@ MAALI_TOOL_TYPE="apps"
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 # restrict the module to a specified group
 MAALI_MODULE_RESTRICT_GROUP='namd'
 

@@ -48,8 +48,6 @@ MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH="lib64"
 MAALI_MODULE_SET_PYTHONPATH=1
 
-MAALI_CUDA_SUPPORT=1
-
 ##############################################################################
 
 function maali_build {
