@@ -41,9 +41,6 @@ fi
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 MAALI_TOOL_CONFIGURE='--enable-mpi=yes --with-beagle=$BEAGLE_LIB_DIR'
 
 ##############################################################################

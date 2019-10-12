@@ -17,7 +17,7 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
 MAALI_TOOL_CPU_TARGET="broadwell"
 
 # specify which cuda versions we want to build the tool with
-MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="cuda/9.2"
 
 # URL to download the source code from
 MAALI_URL=""
@@ -41,24 +41,10 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-if [ $MAALI_CUDA_BUILD -eq 1 ]; then
-  MAALI_TOOL_PREREQ="intel-mpi cuda/9.2"
-else 
-  MAALI_TOOL_PREREQ="intel-mpi"
-fi
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-if [ $MAALI_CUDA_BUILD -eq 1 ]; then
-  MAALI_TOOL_BUILD_PREREQ="intel-mpi cuda/9.2"
-else 
-  MAALI_TOOL_BUILD_PREREQ="intel-mpi"
-fi
+MAALI_TOOL_PREREQ="intel-mpi"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
 
 # restrict the module to a specified group
 MAALI_MODULE_RESTRICT_GROUP='vasp'

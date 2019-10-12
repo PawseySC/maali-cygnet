@@ -19,7 +19,6 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 MAALI_TOOL_CPU_TARGET="broadwell"
 
 MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
-MAALI_CUDA_SUPPORT=1
 
 # There is nothing to download
 MAALI_URL="https://github.com/keras-team/keras/archive/${MAALI_TOOL_VERSION}.tar.gz"

@@ -45,8 +45,6 @@ MAALI_MODULE_SET_MANPATH=1
 
 MAALI_CMAKE_TOOL=1
 
-MAALI_CUDA_SUPPORT=1
-
 function maali_pre_build {
   export CFITSIO=$CFITSIO_ROOT
 }

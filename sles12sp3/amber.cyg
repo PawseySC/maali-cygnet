@@ -35,9 +35,6 @@ fi
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/amber$MAALI_TOOL_VERSION"
 
-# supports building CUDA version
-MAALI_CUDA_SUPPORT=1
-
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
