@@ -15,7 +15,7 @@ For further information see http://www.nwchem-sw.org/index.php/Main_Page
 EOF
 
 # specify which cpus to target
-MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_INTEL_COMPILERS"
