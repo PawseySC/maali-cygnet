@@ -10,7 +10,7 @@ EOF
 
 # specify which compilers/architectures we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/mshaikh786/Jacobi-iteration/archive/${MAALI_TOOL_NAME}_${MAALI_TOOL_VERSION}.tar.gz"
