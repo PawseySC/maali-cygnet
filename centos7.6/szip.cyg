@@ -21,8 +21,8 @@ For further information see https://support.hdfgroup.org/doc_resource/SZIP/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_CPU_TARGET="na"
 
 # URL to download the source code from
 MAALI_URL="http://www.hdfgroup.org/ftp/lib-external/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/src/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
