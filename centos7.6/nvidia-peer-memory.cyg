@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for rsync
+# maali cygnet file for nvidia-peer-memory
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -14,7 +14,6 @@ MAALI_TOOL_COMPILERS="binary"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
-MAALI_CUDA_SUPPORT=1
 
 # URL to download the source code from
 MAALI_URL=""
