@@ -68,5 +68,6 @@ MAALI_MODULE_PREPEND_CLASSPATH=on
 MAALI_MODULE_TYPE_CLASSPATH=prepend
 MAALI_MODULE_SET_LD_LIBRARY_PATH='intel64/lib'
 MAALI_MODULE_SET_MANPATH='man'
+MAALI_MODULE_SET_OMPI_MCA_btl_openib_allow_ib='1'
 
 ##############################################################################
