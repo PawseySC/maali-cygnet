@@ -1,6 +1,6 @@
 # maali-cygnet
 
-PawseySC build files using [maali](https://github.com/PawseySC/maali). 
+Cygnet (build) files for Pawsey Supercomputing Centre using [maali](https://github.com/PawseySC/maali). 
 
 ```
 git clone https://github.com/PawseySC/maali-cygnet.git
