@@ -7,4 +7,4 @@ git clone https://github.com/PawseySC/maali-cygnet.git
 ```
 
 * Currently in use at Pawsey: `cle60up05`, `sles12sp3` and `centos7.6`.
-* Ubuntu and fedora was tested for workstations builds on the NeCTAR Research Cloud.
+* Ubuntu was tested for workstations builds on the NeCTAR Research Cloud.
