@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for gdrcopy
+# maali cygnet file for rsync
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -14,6 +14,7 @@ MAALI_TOOL_COMPILERS="binary"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_CUDA_SUPPORT=1
 
 # URL to download the source code from
 # https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz
@@ -35,6 +36,7 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64"
+MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64"
 
 ##############################################################################
 
