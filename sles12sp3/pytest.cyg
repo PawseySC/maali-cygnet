@@ -31,5 +31,6 @@ MAALI_TOOL_PREREQ="funcsigs/1.0.2 pluggy/0.6.0 attrs/17.3.0 six/1.11.0 py/1.5.2"
 MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
+MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
