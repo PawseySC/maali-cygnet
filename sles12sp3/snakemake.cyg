@@ -27,7 +27,7 @@ MAALI_DST=""
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="pip/19.1.1"
+MAALI_TOOL_BUILD_PREREQ="pip/19.2.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
