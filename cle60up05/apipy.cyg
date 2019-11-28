@@ -2,6 +2,14 @@
 # maali cygnet file for apipy
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A Python 3 library for interacting with the Stack Exchange API.
+
+For further information see https://pypi.org/project/apipy/
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
