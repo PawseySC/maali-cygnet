@@ -2,6 +2,14 @@
 # maali cygnet file for python-casacore
 ##############################################################################
 
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Python-casacore is a set of Python bindings for casacore, a c++ library used in radio astronomy. Python-casacore replaces the old pyrap.
+
+The python-casacore documentation can be found on casacore.github.io/python-casacore.
+
+EOF
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
