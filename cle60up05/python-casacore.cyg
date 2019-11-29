@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for python-casacore
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Python-casacore is a set of Python bindings for casacore, a c++ library used in radio astronomy. Python-casacore replaces the old pyrap.
+
+The python-casacore documentation can be found on casacore.github.io/python-casacore.
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES" 
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/casacore/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/2.7.14 boost/1.65.1 casacore/2.3.0 numpy/1.13.3 cfitsio/3.420 wcslib/5.18"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="python"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_MANPATH='man'
+##############################################################################
+
+function maali_build {
+cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "mkdir -p ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages"
+  export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages:$PYTHONPATH
+  export CRAYPE_LINK_TYPE=dynamic
+  export CFLAGS="-std=c++11 -I${MAALI_CASACORE_HOME}/include -L${MAALI_CASACORE_HOME}/lib -L${MAALI_BOOST_HOME}/lib -I$MAALI_BOOST_HOME}/include -I${MAALI_WCSLIB_HOME}/include -L${MAALI_WCSLIB_HOME}/lib"
+  maali_run "CC=cc CXX=cc python setup.py build"
+  maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}"
+}
+
+##############################################################################
