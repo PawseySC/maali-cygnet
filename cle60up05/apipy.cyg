@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for apipy
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+A Python 3 library for interacting with the Stack Exchange API.
+
+For further information see https://pypi.org/project/apipy/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES" 
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/21/9a/45d156bf35bd14f380f6c8dc0b083d5e03e695da079934ed9c9a38bb4f6c/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.zip"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.zip"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/2.7.14"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1" 
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="python"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_MANPATH='man'
+##############################################################################
+
+function maali_build {
+cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "mkdir -p ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages"
+  export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages:$PYTHONPATH
+  export CRAYPE_LINK_TYPE=dynamic
+  maali_run "CC=cc CXX=cc python setup.py build"
+  maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}"
+}
+
+##############################################################################
