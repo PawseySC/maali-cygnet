@@ -1,0 +1,62 @@
+##############################################################################
+# maali cygnet file for APLpy
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+APLpy (the Astronomical Plotting Library in Python) is a Python module aimed at producing publication-quality plots of astronomical imaging data in FITS format. The module uses Matplotlib, a powerful and interactive plotting package. It is capable of creating output files in several graphical formats, including EPS, PDF, PS, PNG, and SVG. 
+
+http://aplpy.github.io/index.html
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME/archive/v$MAALI_TOOL_VERSION.tar.gz" 
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="virtualenv/15.1.0"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="python/2.7.14 numpy/1.13.3 astropy/2.0.2 matplotlib/2.1.0 pillow/5.1.0 montage/6.0"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_INCLUDE_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+##############################################################################
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  export CRAYPE_LINK_TYPE=dynamic
+  maali_run "mkdir -p ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages"
+  export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages:$PYTHONPATH
+  maali_run "virtualenv --no-site-packages env"
+  maali_run "env/bin/pip install aplpy --prefix=${MAALI_INSTALL_DIR}"
+  maali_run "env/bin/pip install pyregion --prefix=${MAALI_INSTALL_DIR}"
+  maali_run "env/bin/pip install pyavm --prefix=${MAALI_INSTALL_DIR}"
+  maali_run "env/bin/pip install montage-wrapper --prefix=${MAALI_INSTALL_DIR}"
+
+}
+##############################################################################
