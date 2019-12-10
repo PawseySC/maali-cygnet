@@ -61,7 +61,7 @@ function maali_build {
     cd "$MAALI_TOOL_BUILD_DIR"
     # Pre-Dependency Needs Google Go?
     # 3.2 needs at least go 1.12.x (Verified against stable 3.2.1)
-    export goversion=1.12.6
+    export goversion=1.12.14
     maali_run "wget https://dl.google.com/go/go${goversion}.linux-amd64.tar.gz"
     maali_run "tar xpf go${goversion}.linux-amd64.tar.gz"
     export GOROOT=$PWD/go
@@ -72,6 +72,15 @@ function maali_build {
     cd ${GOROOT}/src/github.com/sylabs  
     maali_run "tar xfz $MAALI_DST"
     cd ${GOROOT}/src/github.com/sylabs/singularity
+  
+    #Need magical test for 3.5.1
+    #Broken it says needs golang 1.13.x but fails it's own internal tests
+    if [[ $MAALI_TOOL_VERSION == 3.5.1 || $MAALI_TOOL_VERSION == 3.5.0 ]]; then
+      echo "Broken Version Detected patching"
+      maali_run "wget https://patch-diff.githubusercontent.com/raw/sylabs/singularity/pull/4769.patch"
+      maali_run "patch -p1 < 4769.patch"
+    fi
+
     maali_run "./mconfig --prefix=$MAALI_INSTALL_DIR"
     cd "${GOROOT}/src/github.com/sylabs/singularity/builddir"
     maali_run "make -j $MAALI_CORES"
