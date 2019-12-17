@@ -17,7 +17,7 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # specify the architectures we want to build the library on
-MAALI_TOOL_CPU_TARGET="na"
+MAALI_TOOL_CRAY_CPU_TARGET="na"
 
 # tool pre-requisites modules needed to install this new tool/package
 #MAALI_TOOL_PREREQ="mvapich"
