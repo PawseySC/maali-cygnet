@@ -76,7 +76,7 @@ function maali_build {
     
     #Need magical test for 3.5.1
     #Broken it says needs golang 1.13.x but fails it's own internal tests
-    if [[ $MAALI_TOOL_MAJOR_VERSION -ge 3 && $MAALI_TOOL_MINOR_VERSION -ge 5 ]]; then
+    if [[ $MAALI_TOOL_MINOR_VERSION -ge 5 ]]; then
       echo "Broken Version Detected patching"
       maali_run "wget https://patch-diff.githubusercontent.com/raw/sylabs/singularity/pull/4769.patch"
       maali_run "patch -p1 < 4769.patch"
