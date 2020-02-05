@@ -1,0 +1,119 @@
+##############################################################################
+# maali cygnet file for Ansys
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Ansys publishes engineering analysis software across a range of disciplines
+including finite element analysis, structural analysis, computational fluid
+dynamics, explicit and implicit methods, and heat transfer.
+
+For further information see http://www.ansys.com/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="PrgEnv-intel cray-mpich-abi"
+
+# untar / copy all the installation media into this directory
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
+
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not
+#honour group sticky bit.
+
+if [ "$MAALI_TOOL_VERSION" == "2020R1" ]; then
+  ANSYS_VERSION=201
+elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
+  ANSYS_VERSION=195
+elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
+  ANSYS_VERSION=194
+elif [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
+  ANSYS_VERSION=193
+else
+  ANSYS_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+fi
+
+##############################################################################
+# This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
+function maali_unpack {
+  mkdir "$MAALI_TOOL_BUILD_DIR"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ "$MAALI_SYSTEM_BUILD" != "YES" ]; then
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd "$MAALI_TOOL_BUILD_DIR" | awk '{print $3}'`
+  fi
+  maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+  maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+}
+
+##############################################################################
+
+function maali_build {
+  mkdir -p "${MAALI_INSTALL_DIR}"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "chmod u+x INSTALL"
+
+  # Ansys installer does its own untarring
+  export TAR_OPTIONS="--group=$MAALI_MODULE_RESTRICT_GROUP"
+
+  # Sooo fussy about space
+  mkdir "$MAALI_TOOL_BUILD_DIR/tmp"
+
+  maali_run "sg $MAALI_MODULE_RESTRICT_GROUP \"./INSTALL -silent -install_dir ${MAALI_INSTALL_DIR} -usetempdir $MAALI_TOOL_BUILD_DIR/tmp\""
+
+  if [ "$MAALI_SYSTEM_BUILD" != "YES" ]; then
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd "$MAALI_TOOL_BUILD_DIR" | awk '{print $3}'`
+  fi
+  maali_run "chmod 750 $MAALI_INSTALL_DIR"
+  maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+  maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+
+  sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+  sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+
+#  # Intel MPI / Cray MPI ABI compatability.
+
+  #/opt/cray/pe/mpt/7.7.0/gni/mpich-gnu-abi/4.9/lib
+  #${CRAY_MPICH_DIR}/lib
+#prepend LD_LIBRARY_PATH before running srun.
+
+  sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+  sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+
+  #Cray
+  #The cray=1 line is just to stop us emptying out an if test, it serves no other purpose
+  sed -i -e '/intel_mpi_version/ s/^/\ncray=1\n#/' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/intel_mpi_version/ s/^/\ncray=1\n#/' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+  sed -i -e '/intel_mpi_version/ s/^/\ncray=1\n#/' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansysdis$ANSYS_VERSION"
+  sed -i -e '/intel_mpi_version/ s/^/\ncray=1\n#/' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansysdis"
+}
+
+##############################################################################
+
+MAALI_MODULE_SET_PATH="v$ANSYS_VERSION/ansys/bin v$ANSYS_VERSION/Framework/bin/Linux64 v$ANSYS_VERSION/icemcfd/linux64_amd/bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="v$ANSYS_VERSION/ansys/lib/linx64 v$ANSYS_VERSION/icemcfd/linux64_amd/lib $CRAY_MPICH_DIR/lib"
+
+MAALI_MODULE_RESTRICT_GROUP='ANSYS'
+MAALI_MODULE_SET_ANSYS_DIR='$MAALI_APP_HOME'
+MAALI_MODULE_SET_ANSYS_INSTALLED='$MAALI_APP_HOME'
+
+#MAALI_MODULE_SET_I_MPI_FABRICS='shm:ofi'
+#MAALI_MODULE_SET_I_MPI_PMI_LIBRARY='/usr/lib64/libpmi.so'
+#MAALI_MODULE_SET_I_MPI_FALLBACK='no'
+#MAALI_MODULE_SET_I_MPI_ADJUST_REDUCE='2'
+#MAALI_MODULE_SET_I_MPI_ADJUST_ALLREDUCE='2'
+#MAALI_MODULE_SET_I_MPI_ADJUST_BCAST='\1'
+#MAALI_MODULE_SET_I_MPI_DAPL_SCALABLE_PROGRESS='\1'
+#MAALI_MODULE_SET_I_MPI_RDMA_TRANSLATION_CACHE='\1'
+#MAALI_MODULE_SET_I_MPI_DAPL_UD='enable'
+
