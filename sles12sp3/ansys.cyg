@@ -24,19 +24,20 @@ MAALI_TOOL_PREREQ="intel"
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 
-if [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
-  ANSYS_VERSION="19.3"
-elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
-  ANSYS_VERSION="19.4"
-elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
-  ANSYS_VERSION="19.5"
-else
-  ANSYS_VERSION=$MAALI_TOOL_VERSION
-fi
-ANSYS_SHORT_VERSION=`echo "$ANSYS_VERSION" | sed -e 's/\.//'`
-
 #The ANSYS installer does its own unpacking of tgz files, and it seems to not
 #honour group sticky bit.
+
+if [ "$MAALI_TOOL_VERSION" == "2020R1" ]; then
+  ANSYS_VERSION=201
+elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
+  ANSYS_VERSION=195
+elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
+  ANSYS_VERSION=194
+elif [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
+  ANSYS_VERSION=193
+else
+  ANSYS_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+fi
 
 ##############################################################################
 # This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
@@ -77,19 +78,19 @@ function maali_build {
   maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
   maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
 
-  sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$ANSYS_SHORT_VERSION/ansys/bin/anssh.ini"
-  sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$ANSYS_SHORT_VERSION/ansys/bin/ansys$ANSYS_SHORT_VERSION"
-  sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$ANSYS_SHORT_VERSION/ansys/bin/ansys$ANSYS_SHORT_VERSION"
+  sed -i -e 's/distcmd="mpirun"/distcmd="srun --export=ALL"/g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/distcmd/ s/ -np / -n /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
+  sed -i -e '/distcmd/ s/ \${extra_mpi_args} / /g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/ansys$ANSYS_VERSION"
   #KMP_AFFINITY=norespect giving segfaul in omp_get_num_procs
-  sed -i -e '/KMP_AFFINITY/ s/norespect/disabled/g' "$MAALI_INSTALL_DIR/v$ANSYS_SHORT_VERSION/ansys/bin/anssh.ini"
+  sed -i -e '/KMP_AFFINITY/ s/norespect/disabled/g' "$MAALI_INSTALL_DIR/v$ANSYS_VERSION/ansys/bin/anssh.ini"
 
 
 }
 
 ##############################################################################
 
-MAALI_MODULE_SET_PATH="v$ANSYS_SHORT_VERSION/ansys/bin v$ANSYS_SHORT_VERSION/Framework/bin/Linux64 v$ANSYS_SHORT_VERSION/icemcfd/linux64_amd/bin"
-MAALI_MODULE_SET_LD_LIBRARY_PATH="v$ANSYS_SHORT_VERSION/ansys/lib/linx64 v$ANSYS_SHORT_VERSION/icemcfd/linux64_amd/lib"
+MAALI_MODULE_SET_PATH="v$ANSYS_VERSION/ansys/bin v$ANSYS_VERSION/Framework/bin/Linux64 v$ANSYS_VERSION/icemcfd/linux64_amd/bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="v$ANSYS_VERSION/ansys/lib/linx64 v$ANSYS_VERSION/icemcfd/linux64_amd/lib"
 
 MAALI_MODULE_RESTRICT_GROUP='ANSYS'
 MAALI_MODULE_SET_ANSYS_DIR='$MAALI_APP_HOME'

@@ -23,19 +23,20 @@ MAALI_TOOL_TYPE="apps"
 # untar / copy all the installation media into this directory
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
 
-if [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
-  ANSYS_VERSION="19.3"
-elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
-  ANSYS_VERSION="19.4"
-elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
-  ANSYS_VERSION="19.5"
-else
-  ANSYS_VERSION=$MAALI_TOOL_VERSION
-fi
-ANSYS_SHORT_VERSION=`echo "$ANSYS_VERSION" | sed -e 's/\.//'`
-
 #The ANSYS installer does its own unpacking of tgz files, and it seems to not
 #honour group sticky bit.
+
+if [ "$MAALI_TOOL_VERSION" == "2020R1" ]; then
+  ANSYS_VERSION=201
+elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
+  ANSYS_VERSION=195
+elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
+  ANSYS_VERSION=194
+elif [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
+  ANSYS_VERSION=193
+else
+  ANSYS_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+fi
 
 ##############################################################################
 # This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
@@ -76,14 +77,14 @@ function maali_build {
   maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
 
   # Override my_cmdline to use srun rather than mpirun.
-  mpiwrapper="${MAALI_INSTALL_DIR}/v${ANSYS_SHORT_VERSION}/fluent/fluent${ANSYS_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
+  mpiwrapper="${MAALI_INSTALL_DIR}/v${ANSYS_VERSION}/fluent/fluent${ANSYS_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
   sed -i '/# start job/ i my_cmdline=\"srun --export=ALL -n \$FS_NPROC \$FS_CMD\"' ${mpiwrapper}
 
 }
 
 ##############################################################################
 
-MAALI_MODULE_SET_PATH="v$ANSYS_SHORT_VERSION/fluent/bin v$ANSYS_SHORT_VERSION/Framework/bin/Linux64"
+MAALI_MODULE_SET_PATH="v$ANSYS_VERSION/fluent/bin v$ANSYS_VERSION/Framework/bin/Linux64"
 MAALI_MODULE_SET_FLUENT_ARCH='lnamd64'
 
 MAALI_MODULE_RESTRICT_GROUP='ANSYS'
