@@ -1,0 +1,100 @@
+##############################################################################
+# maali cygnet file for CFX
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+ANSYS CFX is a high-performance computational fluid dynamics (CFD) software
+tool that delivers reliable and accurate solutions quickly and robustly across
+a wide range of CFD and multi-physics applications.
+
+For further information see http://www.ansys.com/Products/Fluids/ANSYS-CFX
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-mpich"
+
+# untar / copy all the installation media into this directory
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/ANSYS-$MAALI_TOOL_VERSION"
+
+#The ANSYS installer does its own unpacking of tgz files, and it seems to not
+#honour group sticky bit.
+
+##############################################################################
+# This assumes you've got the installation media as tarballs, e.g. ANSYS-15.0.7_1.tar
+function maali_unpack {
+  mkdir $MAALI_TOOL_BUILD_DIR
+  cd $MAALI_TOOL_BUILD_DIR
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run 'chmod 750 $MAALI_TOOL_BUILD_DIR'
+    maali_run 'chgrp $MAALI_MODULE_RESTRICT_GROUP $MAALI_TOOL_BUILD_DIR'
+  else
+    # Untar with correct group id.
+    MAALI_MODULE_RESTRICT_GROUP=`ls -gd $MAALI_TOOL_BUILD_DIR | awk '{print $3}'`
+  fi
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_1.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_2.tar'
+  maali_run 'tar --group=$MAALI_MODULE_RESTRICT_GROUP -x --strip-components=1 -f $MAALI_SRC/ANSYS-${MAALI_TOOL_VERSION}_3.tar'
+}
+
+if [ "$MAALI_TOOL_VERSION" == "2020R1" ]; then
+  ANSYS_VERSION=201
+elif [ "$MAALI_TOOL_VERSION" == "2019R3" ]; then
+  ANSYS_VERSION=195
+elif [ "$MAALI_TOOL_VERSION" == "2019R2" ]; then
+  ANSYS_VERSION=194
+elif [ "$MAALI_TOOL_VERSION" == "2019R1" ]; then
+  ANSYS_VERSION=193
+else
+  ANSYS_VERSION=`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+fi
+
+##############################################################################
+
+function maali_build {
+  mkdir -p ${MAALI_INSTALL_DIR}
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_run "chmod u+x INSTALL"
+
+  # Ansys installer does its own untarring
+  export TAR_OPTIONS="--group=$MAALI_MODULE_RESTRICT_GROUP"
+
+  # Sooo fussy about space
+  export TMPDIR="$MAALI_TOOL_BUILD_DIR/tmp"
+  mkdir $TMPDIR
+
+  maali_run "sg $MAALI_MODULE_RESTRICT_GROUP \"./INSTALL -silent -cfx -install_dir ${MAALI_INSTALL_DIR} -usetempdir $MAALI_TOOL_BUILD_DIR/tmp\""
+
+  if [ "$MAALI_SYSTEM_BUILD" == "YES" ]; then
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $MAALI_MODULE_RESTRICT_GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  else
+    GROUP=`ls -gd $MAALI_INSTALL_DIR | awk '{print $3}'`
+    maali_run "chmod 750 $MAALI_INSTALL_DIR"
+    maali_run "chgrp -R $GROUP $MAALI_INSTALL_DIR"
+    maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
+  fi
+
+  mpiwrapper="${MAALI_INSTALL_DIR}/${ANSYS_VERSION}/CFX/tools/multiport/mpi_wrapper/bin/mpirun.fl"
+  maali_run "sed -i -e 's/my_cmdline=\"srun \"/my_cmdline=\"srun --export=ALL \"/g' ${mpiwrapper}"
+
+}
+
+##############################################################################
+
+ANSYS_VERSION=v`echo "$MAALI_TOOL_MAJOR_MINOR_VERSION" | sed -e 's/\.//'`
+
+MAALI_MODULE_SET_PATH="$ANSYS_VERSION/CFX/bin $ANSYS_VERSION/Framework/bin/Linux64"
+MAALI_MODULE_SET_FLUENT_ENABLE_SLURM_SUPPORT='1 '
+MAALI_MODULE_SET_FL_ENABLE_CRAY_AFFINITY='1 '
+
+MAALI_MODULE_RESTRICT_GROUP='ANSYS'
+
