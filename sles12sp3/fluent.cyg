@@ -77,7 +77,7 @@ function maali_build {
   maali_run "chmod -R g-w,o-rwx $MAALI_INSTALL_DIR"
 
   # Override my_cmdline to use srun rather than mpirun.
-  mpiwrapper="${MAALI_INSTALL_DIR}/v${ANSYS_VERSION}/fluent/fluent${ANSYS_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
+  mpiwrapper="${MAALI_INSTALL_DIR}/v${ANSYS_VERSION}/fluent/fluent${MAALI_TOOL_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
   sed -i '/# start job/ i my_cmdline=\"srun --export=ALL -n \$FS_NPROC \$FS_CMD\"' ${mpiwrapper}
 
 }
