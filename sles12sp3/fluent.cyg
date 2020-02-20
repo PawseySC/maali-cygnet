@@ -80,6 +80,11 @@ function maali_build {
   mpiwrapper="${MAALI_INSTALL_DIR}/v${ANSYS_VERSION}/fluent/fluent${MAALI_TOOL_VERSION}.0/multiport/mpi_wrapper/bin/mpirun.fl"
   sed -i '/# start job/ i my_cmdline=\"srun --export=ALL -n \$FS_NPROC \$FS_CMD\"' ${mpiwrapper}
 
+  platformfile="${MAALI_INSTALL_DIR}/v${ANSYS_VERSION}/commonfiles/CPython/3_7/linx64/Release/Ansys/Util/Platform.py"
+  if [ -f "${platformfile}" ]; then
+    echo "Updating ${platformfile}"
+    sed -i -e "s/platform = None/platform = \'linx64\'/g" "${platformfile}"
+  fi
 }
 
 ##############################################################################
