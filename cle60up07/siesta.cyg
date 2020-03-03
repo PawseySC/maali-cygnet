@@ -1,0 +1,85 @@
+##############################################################################
+# maali cygnet file for siesta
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+SIESTA is both a method and its computer program implementation, to perform
+efficient electronic structure calculations and ab initio molecular dynamics
+simulations of molecules and solids. SIESTAs efficiency stems from the use of
+strictly localized basis sets and from the implementation of linear-scaling
+algorithms which can be applied to suitable systems. A very important feature
+of the code is that its accuracy and cost can be tuned in a wide range, from
+quick exploratory calculations to highly accurate simulations matching the
+quality of other approaches, such as plane-wave and all-electron methods.
+
+For further information see https://departments.icmab.es/leem/siesta/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://gitlab.com/siesta-project/siesta/-/archive/v$MAALI_TOOL_VERSION/siesta-v$MAALI_TOOL_VERSION.tar.gz"
+# MAALI_URL="https://launchpad.net/siesta/$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_VERSION/+download/siesta-$MAALI_TOOL_VERSION.tar.gz"
+
+# patch files to download
+#MAALI_TOOL_PATCHES="001 002"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cray-netcdf"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+MAALI_TOOL_CONFIGURE='--enable-mpi --enable-fast FC=ftn MPIFC=ftn SIESTA_ARCH=magnus-xc40-intel-libsci-mpi FFLAGS=\"-O2 -fp-model precise\" FPPFLAGS=\"-DGRID_DP -DPHI_GRID_SP -DMPI -DFC_HAVE_FLUSH -DFC_HAVE_ABORT -DCDF\" NETCDF_LIBS=-lnetcdf NETCDF_INTERFACE=libnetcdf_f90.a'
+
+###############################################################################
+
+function maali_build {
+  # this is the core function for creating software
+
+  cd "$MAALI_TOOL_BUILD_DIR/Obj"
+  maali_run "sh ../Src/obj_setup.sh"
+  sed 's/icc/mpicc/;s/ifort/mpiifort/;' intel.make > _arch.make
+  printf "MPI_INTERFACE = libmpi_f90.a\nMPI_INCLUDE = .\n" > arch.make 
+  cat _arch.make >> arch.make
+  rm _arch.make
+  maali_run "make -j $MAALI_CORES"
+  maali_makedir "$MAALI_INSTALL_DIR/bin/"
+  maali_run "install -m 755 siesta $MAALI_INSTALL_DIR/bin/"
+}
+#
+###############################################################################
+
+#SIESTA_ARCH=magnus-xc40-intel-libsci-mpi
+#FFLAGS=-O2 -fp-model precise
+#FC=ftn
+#FPPFLAGS=-DGRID_DP -DPHI_GRID_SP -DMPI -DFC_HAVE_FLUSH -DFC_HAVE_ABORT -DCDF
+#NETCDF_LIBS=-lnetcdf
+#NETCDF_INTERFACE=libnetcdf_f90.a
+
+#MPI_LIBS=
+#MPI_INTERFACE=libmpi_f90.a
+#MPI_INCLUDE=.
+#SYS=nag
+
