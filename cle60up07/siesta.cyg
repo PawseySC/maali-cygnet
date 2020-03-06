@@ -21,7 +21,7 @@ EOF
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
@@ -40,7 +40,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="cray-netcdf"
+MAALI_TOOL_PREREQ="cray-netcdf cray-hdf5 cray-mpich"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="$MAALI_DEFAULT_MPI"
@@ -57,16 +57,45 @@ MAALI_TOOL_CONFIGURE='--enable-mpi --enable-fast FC=ftn MPIFC=ftn SIESTA_ARCH=ma
 
 function maali_build {
   # this is the core function for creating software
-
-  cd "$MAALI_TOOL_BUILD_DIR/Obj"
-  maali_run "sh ../Src/obj_setup.sh"
-  sed 's/icc/mpicc/;s/ifort/mpiifort/;' intel.make > _arch.make
-  printf "MPI_INTERFACE = libmpi_f90.a\nMPI_INCLUDE = .\n" > arch.make 
-  cat _arch.make >> arch.make
-  rm _arch.make
-  maali_run "make -j $MAALI_CORES"
-  maali_makedir "$MAALI_INSTALL_DIR/bin/"
-  maali_run "install -m 755 siesta $MAALI_INSTALL_DIR/bin/"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  ROOT_DIR=`pwd`
+  cd Src/fdict
+  sed -e 's/ifort/ftn/g' -e '9 d' -e 's/#FFLAGS/FFLAGS/' arch-makes/intel.make > setup.make
+maali_run "make -j $MAALI_CORES"
+FDICT_PATH=`pwd`
+cd ../ncdf
+sed -Ee 's/(ifort|mpif90)/ftn/g' -e '7,39 d'  arch-makes/intel.make > setup.make
+sed -e 's/DIR)\/fdict/DIR)\/..\/fdict/' -e 's/MPI ?= 0/MPI ?= 1/' -e 's/CDF ?= 3/CDF ?= 4/' Makefile > Makefile_
+sed -e 's/_vpath\/\.\.\/fdict/_vpath\/..\/..\/fdict/' src/ncdf.sh > ncdf.sh_
+mv ncdf.sh_ src/ncdf.sh 
+chmod 0777 src/ncdf.sh
+mv Makefile_ Makefile
+maali_run "make -j $MAALI_CORES"
+cd $ROOT_DIR/Obj
+sed -e 's/SIESTA_ARCH = unknown/SIESTA_ARCH = intel-mpi/'\
+	-e '1 i\
+MPI_INTERFACE=libmpi_f90.a\
+MPI_INCLUDE=.\
+MPI_LIBS=\
+FPPFLAGS_MPI=-DMPI\
+NCDF_PATH=../Src/ncdf\
+NCDF_INCLUDE=-I $(NCDF_PATH)\
+NCDF_LIBS=-L$(NCDF_PATH) -lncdf\
+FPPFLAGS_NCDF=-DCDF -DNCDF -DNCDF_4 -DNCDF_PARALLEL\
+FDICT_PATH=../Src/ncdf/fdict/obj\
+FDICT_LIBS=-L$(FDICT_PATH) -lfdict\
+FDICT_INCLUDE=-I$(FDICT_PATH)\
+INCFLAGS+= $(FDICT_INCLUDE) $(NCDF_INCLUDE)'\
+	-e 's/^LIBS =/LIBS = $(FDICT_LIBS) $(NCDF_LIBS) $(MPI_LIBS)/'\
+	-e '/^LIBS/ i\
+	    FPPFLAGS+=$(FPPFLAGS_MPI) $(FPPFLAGS_NCDF)'\
+	-e '20 d'\
+	-e 's/ifort/ftn/'\
+	intel.make> arch.make
+maali_run "sh ../Src/obj_setup.sh"
+maali_run "make -j $MAALI_CORES"
+maali_makedir "$MAALI_INSTALL_DIR/bin/"
+maali_run "install -m 755 siesta $MAALI_INSTALL_DIR/bin/"
 }
 #
 ###############################################################################
@@ -82,4 +111,3 @@ function maali_build {
 #MPI_INTERFACE=libmpi_f90.a
 #MPI_INCLUDE=.
 #SYS=nag
-
