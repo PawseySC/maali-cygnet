@@ -12,15 +12,9 @@ For further information see http://www.ks.uiuc.edu/Research/vmd/
 EOF
 
 # specify which compilers we want to build the tool with
-if [ "${MAALI_CUDA_BUILD}" -eq 1 ]; then
-  MAALI_TOOL_COMPILERS="gcc/4.8.5"
-  MAALI_TOOL_CPU_TARGET="broadwell"
-else
-  MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-  MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
-fi
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CPU_TARGET="cascadelake broadwell"
 MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
-MAALI_TOOL_CUDA_COMPILERS="MAALI_DEFAULT_CUDA_COMPILERS"
 
 # URL to download the source code from (requires registration)
 MAALI_URL=""
@@ -35,7 +29,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 ## tool pre-requisites
-MAALI_TOOL_PREREQ="netcdf/4.5.0 fltk/1.3.4 tcltk/8.6.10"
+MAALI_TOOL_PREREQ="netcdf/4.5.0 fltk/1.3.5 tcltk/8.6.10"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -69,8 +63,8 @@ function maali_build {
   # compile VMD
   export VMDINSTALLBINDIR="${MAALI_INSTALL_DIR}/bin"
   export VMDINSTALLLIBRARYDIR="${MAALI_INSTALL_DIR}/lib"
-  if [ "${MAALI_CUDA_BUILD}" -eq 1 ]; then
-    maali_run "./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD CUDA"
+  if [ "$MAALI_CPU_TARGET" == "cascadelake" ] ; then
+    maali_run "./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD AVX512"
   else
     maali_run "./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD"
   fi
@@ -85,13 +79,6 @@ function maali_build {
   maali_run "sed -i -e '/^CC.*=/ s;gcc;mpicc;g' Makefile"
   maali_run "sed -i -e '/^CCPP.*=/ s;g++;mpic++;g' Makefile"
   maali_run "sed -i -e 's;-lmpich;-lmpi;g' Makefile"
-  if [ "${MAALI_CUDA_BUILD}" -eq 1 ]; then
-    maali_run "sed -i -e 's;/usr/local/cuda-8.0/bin/nvcc;nvcc;g' Makefile"
-    maali_run "sed -i -e '/NVCCFLAGS/ s; -gencode arch=compute_30,code=compute_30 -gencode arch=compute_30,code=sm_35 -gencode arch=compute_30,code=sm_37;;g' Makefile"
-    maali_run "sed -i -e '/NVCCFLAGS/ s; -gencode arch=compute_50,code=compute_50 -gencode arch=compute_50,code=sm_50;;g' Makefile"
-    maali_run "sed -i -e '/(NVCC) \$(DEFINES)/ s; -gencode arch=compute_30,code=compute_30; -gencode arch=compute_60,code=compute_60;g' Makefile"
-    maali_run "sed -i -e '/LIBS.*=/ s;-ldl;-ldl -lrt;g' Makefile"
-  fi
 
   maali_run "make"
   maali_run "make install"
