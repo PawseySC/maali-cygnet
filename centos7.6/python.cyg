@@ -53,6 +53,10 @@ function maali_build {
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-unicode=ucs4"
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
+
+  cd "$MAALI_INSTALL_DIR/bin"
+  maali_run "ln -s python3 python"
+  maali_run "ln -s pip3 pip"
 }
 
 ##############################################################################
