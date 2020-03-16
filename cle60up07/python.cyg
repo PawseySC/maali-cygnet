@@ -54,9 +54,11 @@ function maali_build {
   maali_run "make -j $MAALI_CORES"
   maali_run "make install"
 
-  cd "$MAALI_INSTALL_DIR/bin"
-  maali_run "ln -s python3 python"
-  maali_run "ln -s pip3 pip"
+  if [ $MAALI_TOOL_MAJOR_VERSION -ge 3 ]; then
+    cd "$MAALI_INSTALL_DIR/bin"
+    maali_run "ln -s python$MAALI_TOOL_MAJOR_VERSION python"
+    maali_run "ln -s pip$MAALI_TOOL_MAJOR_VERSION pip"
+  fi
 }
 
 ##############################################################################
