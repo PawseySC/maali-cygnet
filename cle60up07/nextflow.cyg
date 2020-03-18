@@ -1,0 +1,59 @@
+##############################################################################
+# maali cygnet file for nextflow
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Nextflow
+Data-driven computational pipelines
+
+Nextflow enables scalable and reproducible scientific workflows using software containers. 
+It allows the adaptation of pipelines written in the most common scripting languages.
+
+Its fluent DSL simplifies the implementation and the deployment of complex parallel and reactive workflows on clouds and clusters.
+
+For further information see https://www.nextflow.io
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from - it's java
+MAALI_URL="https://github.com/nextflow-io/nextflow/releases/download/v${MAALI_TOOL_VERSION}/nextflow"
+### e.g. 19.04.1
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="java/8u151"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=toplevel
+MAALI_MODULE_SET_NXF_HOME='\$env\(MYGROUP\)/.nextflow'
+MAALI_MODULE_QUOTES_NXF_HOME=off
+
+##############################################################################
+
+function maali_unpack {
+  log ".. supressing unpacking as executable script is being downloaded"
+}
+function maali_pre_build {
+  log ".. suppressing pre-build"
+}
+function maali_post_build {
+  log ".. suppressing post-build"
+}
+
+function maali_build {
+  maali_run "install -m 755 $MAALI_DST $MAALI_INSTALL_DIR/nextflow"
+}
+
+##############################################################################
