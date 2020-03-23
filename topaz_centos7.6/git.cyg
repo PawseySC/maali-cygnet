@@ -1,0 +1,50 @@
+##############################################################################
+# maali cygnet file for git
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Git is a free and open source distributed version control system 
+designed to handle everything from small to very large projects with speed and efficiency.
+
+Git is easy to learn and has a tiny footprint with lightning fast performance. 
+It outclasses SCM tools like Subversion, CVS, Perforce, and ClearCase 
+with features like cheap local branching, convenient staging areas, and multiple workflows.
+
+For further information see https://git-scm.com
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_CPU_TARGET="na"
+
+# URL to download the source code from
+MAALI_URL="https://mirrors.edge.kernel.org/pub/software/scm/git/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib64'
+MAALI_MODULE_SET_MANPATH=1
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_run "make configure"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+  maali_run "make all"
+  maali_run "make install"
+
+}

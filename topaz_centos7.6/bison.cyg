@@ -1,0 +1,48 @@
+##############################################################################
+# maali cygnet file for GNU Bison package 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Bison is a general-purpose parser generator that converts an annotated
+context-free grammar into a deterministic LR or generalized LR (GLR) parser
+employing LALR(1) parser tables. As an experimental feature, Bison can also
+generate IELR(1) or canonical LR(1) parser tables. Once you are proficient with
+Bison, you can use it to develop a wide range of language parsers, from those
+used in simple desk calculators to complex programming languages.
+
+For further information see https://www.gnu.org/software/bison/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# URL to download the source code from
+MAALI_URL="http://ftp.gnu.org/gnu/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="flex"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_BISON_ROOT='$MAALI_INSTALL_DIR'
+
+##############################################################################
+

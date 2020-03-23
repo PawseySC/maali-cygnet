@@ -1,0 +1,93 @@
+##############################################################################
+# maali cygnet file for singularity 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Singularity enables users to have full control of their environment. Singularity 
+containers can be used to package entire scientific workflows, software and 
+libraries, and even data.
+
+For further information see https://sylabs.io/singularity
+
+EOF
+
+# specify which compilers we want to build the tool with
+# Should only build it with the system gcc as it just forms the container host
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="na"
+
+# tool pre-requisites modules needed to install this new tool/package
+#MAALI_TOOL_PREREQ="mvapich"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/sylabs/singularity/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_SINGULARITY_BINDPATH='/astro,/group,/scratch,/pawsey'
+MAALI_MODULE_SET_SINGULARITY_CACHEDIR='os.getenv\(\"MYGROUP\"\)..\"/.singularity\"'
+MAALI_MODULE_QUOTES_SINGULARITY_CACHEDIR=off
+
+##############################################################################
+
+function maali_build {
+
+  # Singularity needs to be built / installed via root as it uses setuid bits
+  export CFLAGS="-fPIC -O3"
+  export FFLAGS="-fPIC -O3"
+
+  if [[ $MAALI_TOOL_MAJOR_VERSION -lt 3 ]]; then
+    #Version 2.x, Never tried it for version 1.x?
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
+    maali_run "make -j $MAALI_CORES"
+    maali_run "make install"
+  else
+    #version 3.x, Uses google Go now
+    cd "$MAALI_TOOL_BUILD_DIR"
+    # Pre-Dependency Needs Google Go?
+    # 3.2 needs at least go 1.12.x (Verified against stable 3.2.1)
+    export goversion=1.12.14
+    maali_run "wget https://dl.google.com/go/go${goversion}.linux-amd64.tar.gz"
+    maali_run "tar xpf go${goversion}.linux-amd64.tar.gz"
+    export GOROOT=$PWD/go
+    export PATH=$GOROOT/bin:$PATH
+
+    #Building with GO is really picky
+    maali_run "mkdir -p ${GOROOT}/src/github.com/sylabs"
+    cd ${GOROOT}/src/github.com/sylabs  
+    maali_run "tar xfz $MAALI_DST"
+    cd ${GOROOT}/src/github.com/sylabs/singularity
+    
+    #Need magical test for 3.5.1
+    #Broken it says needs golang 1.13.x but fails it's own internal tests
+    if [[ $MAALI_TOOL_MINOR_VERSION -ge 5 ]]; then
+      echo "Broken Version Detected patching"
+      maali_run "wget https://patch-diff.githubusercontent.com/raw/sylabs/singularity/pull/4769.patch"
+      maali_run "patch -p1 < 4769.patch"
+    fi
+
+    maali_run "./mconfig --prefix=$MAALI_INSTALL_DIR"
+    cd "${GOROOT}/src/github.com/sylabs/singularity/builddir"
+    maali_run "make -j $MAALI_CORES"
+    maali_run "make install"
+  fi
+  maali_run "sed -i 's/^ *mount *home *=.*/mount home = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
+  maali_run "sed -i 's/^ *allow *container *encrypted *=.*/allow container encrypted = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
+}
+
+##############################################################################
