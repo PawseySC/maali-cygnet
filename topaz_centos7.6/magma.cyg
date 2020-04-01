@@ -15,7 +15,7 @@ EOF
 MAALI_TOOL_COMPILERS="gcc/8.3.0"
 
 # specify the architectures we want to build the library on
-MAALI_TOOL_CPU_TARGET="broadwell"
+MAALI_TOOL_CPU_TARGET="cascadelake"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ="cuda intel-mkl"
