@@ -58,7 +58,7 @@ function maali_build {
 
 # Add Pascal GPU support to the include makefile
   cp ${MAALI_TOOL_BUILD_DIR}/make.inc-examples/make.inc.mkl-gcc ${MAALI_TOOL_BUILD_DIR}/make.inc
-  sed -i '20i GPU_TARGET ?= Pascal' ${MAALI_TOOL_BUILD_DIR}/make.inc
+  sed -i '20i GPU_TARGET ?= Volta' ${MAALI_TOOL_BUILD_DIR}/make.inc
 
 # Perform the build
   cd "$MAALI_TOOL_BUILD_DIR"
