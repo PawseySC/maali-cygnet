@@ -26,7 +26,7 @@ MAALI_URL=""
 # Be sure to put the patches into the tarball rather than using maali.
 # The directory name within the tarball should be vasp.$MAALI_TOOL_MAJOR_MINOR_VERSION.  E.g. vasp.5.3 and not vasp.5.3.5.
 # Location of the source code.
-MAALI_DST="$VASP_SRC"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
 
 # put a string here to help identify the patch level.
 VASP_VERSION='5.4.4.18Apr17'
