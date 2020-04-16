@@ -1,0 +1,32 @@
+##############################################################################
+# maali cygnet file for pyfits
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PyFITS provides an interface to FITS formatted files in the Python scripting
+language and PyRAF, the Python-based interface to IRAF. It is useful both for
+interactive data analysis and for writing analysis scripts in Python using FITS
+files as either input or output.
+
+For further information see http://www.stsci.edu/institute/software_hardware/pyfits
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON" 
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="d2to1/0.2.12.post1 numpy/1.18.2"
+
+##############################################################################
+
