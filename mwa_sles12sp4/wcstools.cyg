@@ -35,8 +35,8 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
 function maali_build {
-    mkdir -p $MAALI_INSTALL_DIR
-    cd $MAALI_TOOL_BUILD_DIR
+    export CC=gcc
+    export CXX=g++
     maali_run "make all -j $MAALI_CORES"
     maali_run "cp -r bin/ $MAALI_INSTALL_DIR/"
     maali_run "cp -r man/ $MAALI_INSTALL_DIR/"
