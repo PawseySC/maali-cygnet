@@ -43,4 +43,7 @@ function maali_build {
     maali_run "cmake .. -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR} -DCASACORE_ROOT_DIR=${CASACORE_ROOT} -DGSL_INCLUDE_DIR=$MAALI_GSL_HOME/include -DGSL_LIB=$MAALI_GSL_HOME/lib/libgsl.a -DGSL_CBLAS_LIB=$MAALI_GSL_HOME/lib/libgslcblas.a"
     maali_run "make -j ${MAALI_CORES}"
     maali_run "make install"
+    # Fix permissions.
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type d -exec chmod g+rwx,o+rx,o-w {} \;
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type f -exec chmod g+rw,o+rx,o-w {} \;
 }
