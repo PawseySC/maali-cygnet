@@ -1,0 +1,48 @@
+##############################################################################
+# maali cygnet file for hdf5-parallel
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HDF5 is a data model, library, and file format for storing and managing data.
+It supports an unlimited variety of datatypes, and is designed for flexible and
+efficient I/O and for high volume and complex data. HDF5 is portable and is
+extensible, allowing applications to evolve in their use of HDF5. The HDF5
+Technology suite includes tools and applications for managing, manipulating,
+viewing, and analyzing data in the HDF5 format.
+
+For further information see https://www.hdfgroup.org/hdf5/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.8.5 $MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$MAALI_TOOL_MAJOR_MINOR_VERSION/hdf5-$MAALI_TOOL_VERSION/src/hdf5-$MAALI_TOOL_VERSION.tar.bz2"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/hdf5-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/hdf5-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+#zlib >= 1.2.8
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='--enable-parallel --enable-fortran CC=mpicc FC=mpif90'
+MAALI_CORES=16
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
+
