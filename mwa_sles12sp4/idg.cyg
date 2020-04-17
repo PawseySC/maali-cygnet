@@ -35,7 +35,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="slurm pawseytools boost/1.66.0 intel-mkl"
+MAALI_TOOL_PREREQ="boost/1.66.0 intel-mkl/19.0.5"
 
 
 # for auto-building module files
@@ -47,12 +47,11 @@ MAALI_MODULE_SET_LIBRARY_PATH=1
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
-function maali_build {
-    
-    mkdir $MAALI_INSTALL_DIR
+function maali_build { 
     mkdir -p build
     cd build
-
+    export CC=gcc
+    export CXX=g++
     maali_run "cmake .. -DCMAKE_INSTALL_PREFIX=\"${MAALI_INSTALL_DIR}\" -DBUILD_WITH_MKL=ON"
     maali_run "make -j ${MAALI_CORES} VERBOSE=1"
     maali_run "make install"
