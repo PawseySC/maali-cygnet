@@ -28,6 +28,7 @@ MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib/bamtools'
 
 ##############################################################################
 
