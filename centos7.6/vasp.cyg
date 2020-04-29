@@ -16,6 +16,9 @@ MAALI_TOOL_CPU_TARGET="cascadelake"
 
 
 # specify which compilers we want to build the tool with
+## NOTE on GCC compiler: at present the CPU component of the build can only be performed 
+## with gcc/9.2.0, and the GPU component can only be built with gcc/8.3.0, 
+## so there is a double module swap in the maali_build function below
 MAALI_TOOL_COMPILERS="gcc/8.3.0"
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
 MAALI_CUDA_BUILD=1
