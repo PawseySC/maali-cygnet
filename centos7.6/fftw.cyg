@@ -14,12 +14,15 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
+# tool pre-requisites needed for compilation.
+MAALI_TOOL_PREREQ="openmpi-ucx-gpu"
+
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
 # add additional configure options
 #--enable-avx-- FFTW 3.3.2 is capable of using AVX intrinsics on AVX enabled processors (e.g. Intel Sandy Bridge and AMD Bulldozer)
-MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-sse2'
+MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-openmp --enable-mpi --enable-avx --enable-avx2 --enable-avx512'
 
 # runs in front of the configure line
 export CFLAGS="-fPIC"
@@ -66,9 +69,9 @@ function maali_build {
   maali_run "make install"
   maali_run "make clean"
   # Making double precision version with type prefix
-#  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-type-prefix"
-#  maali_run "make -j $MAALI_CORES"
-#  maali_run "make install"
+  maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE --enable-type-prefix"
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
 }
 
 ##############################################################################
