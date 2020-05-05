@@ -22,9 +22,9 @@ MAALI_TOOL_TYPE="devel"
 
 # add additional configure options
 #--enable-avx-- FFTW 3.3.2 is capable of using AVX intrinsics on AVX enabled processors (e.g. Intel Sandy Bridge and AMD Bulldozer)
-MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-openmp --enable-mpi'
+MAALI_TOOL_CONFIGURE='--enable-threads --enable-shared --enable-openmp --enable-mpi --enable-avx --enable-avx2'
 if [ $MAALI_CPU_TARGET = 'cascadelake' ]; then
-  MAALI_TOOL_CONFIGURE="$MAALI_TOOL_CONFIGURE --enable-avx --enable-avx2 --enable-avx512"
+  MAALI_TOOL_CONFIGURE="$MAALI_TOOL_CONFIGURE --enable-avx512"
 fi
 # runs in front of the configure line
 export CFLAGS="-fPIC"
