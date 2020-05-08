@@ -20,10 +20,14 @@ MAALI_TOOL_COMPILERS="binary"
 # https://developer.nvidia.com/compute/machine-learning/nccl/secure/v2.4/prod//nccl_2.4.7-1%2Bcuda10.1_x86_64.txz
 # nccl_2.4.7-1+cuda10.1_x86_64.txz
 
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.2" ]]; then
+   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run"
+   VERSION_EXTRA=".440.33.01"
+   nccl_ver="2.4.7-1"
+fi
+
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
-   #MAALI_URL="https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run"
    MAALI_URL="https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run"
-   #VERSION_EXTRA=".168_418.67"
    VERSION_EXTRA=".243_418.87.00"
    nccl_ver="2.4.7-1"
 fi
