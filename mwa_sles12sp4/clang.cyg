@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for Clang
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Clang project provides a language front-end and tooling infrastructure for 
+languages in the C language family (C, C++, Objective C/C++, OpenCL, CUDA, and 
+RenderScript) for the LLVM project. Both a GCC-compatible compiler driver (clang) 
+and an MSVC-compatible compiler driver (clang-cl.exe) are provided.
+
+For further information see https://clang.llvm.org
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/5.5.0"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="cascadelake"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/llvm-$MAALI_TOOL_VERSION.src.tar.xz"
+#MAALI_URL="http://www.llvm.org/releases/$MAALI_TOOL_VERSION/llvm-$MAALI_TOOL_VERSION.src.tar.xz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/llvm-$MAALI_TOOL_VERSION.src.tar.xz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/llvm-$MAALI_TOOL_VERSION.src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="cuda/10.2 gcc/5.5.0"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0 cuda/10.2 elfutils/0.177 libffi/3.2.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_cmake_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  cd tools/
+  wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/clang-$MAALI_TOOL_VERSION.src.tar.xz
+  tar -xJf clang-$MAALI_TOOL_VERSION.src.tar.xz
+  mv clang-$MAALI_TOOL_VERSION.src clang
+
+  cd $MAALI_TOOL_BUILD_DIR
+  cd projects/
+  wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/openmp-$MAALI_TOOL_VERSION.src.tar.xz
+  wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/compiler-rt-$MAALI_TOOL_VERSION.src.tar.xz
+  tar -xJf compiler-rt-$MAALI_TOOL_VERSION.src.tar.xz
+  tar -xJf openmp-$MAALI_TOOL_VERSION.src.tar.xz
+  mv compiler-rt-$MAALI_TOOL_VERSION.src compiler-rt
+  mv openmp-$MAALI_TOOL_VERSION.src openmp
+  cd $MAALI_TOOL_BUILD_DIR
+  mkdir -p build
+  cd build
+  maali_run 'cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCLANG_OPENMP_NVPTX_DEFAULT_ARCH=sm_70 -DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=35,60,70 ../'
+  maali_run "make -j 8"
+  maali_run "make install"
+  cd ..
+  mkdir build-openmp
+  cd build-openmp
+  maali_run 'cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${MAALI_TOOL_BUILD_DIR}/build/bin/clang -DCMAKE_CXX_COMPILER=${MAALI_TOOL_BUILD_DIR}/build/bin/clang++ -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCLANG_OPENMP_NVPTX_DEFAULT_ARCH=sm_70 -DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=35,60,70 ../projects/openmp'
+  maali_run "make -j 8"
+  maali_run "make install"
+}
