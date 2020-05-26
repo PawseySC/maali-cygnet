@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for rsem
+# maali cygnet file for RSEM
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -20,16 +20,18 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/deweylab/${MAALI_TOOL_NAME_ORIG}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_URL="https://github.com/deweylab/RSEM/archive/v${MAALI_TOOL_VERSION}.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/RSEM-${MAALI_TOOL_VERSION}.tar.gz"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/RSEM-${MAALI_TOOL_VERSION}"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ=""
+
+MAALI_TOOL_REAL_NAME=RSEM
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ=""
@@ -39,7 +41,6 @@ MAALI_TOOL_TYPE="bio-apps"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_PERLLIB=1
 
 ##############################################################################
 
@@ -47,7 +48,7 @@ function maali_build {
   cd $MAALI_TOOL_BUILD_DIR
 
   maali_run "make"
-  maali_run "make install DESTDIR=$MAALI_INSTALL_DIR"
+  maali_run "make install DESTDIR=$MAALI_INSTALL_DIR prefix=\"\""
 }
 
 ##############################################################################
