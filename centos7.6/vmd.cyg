@@ -13,8 +13,9 @@ EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-MAALI_TOOL_CPU_TARGET="cascadelake broadwell"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # URL to download the source code from (requires registration)
 MAALI_URL=""
@@ -63,11 +64,15 @@ function maali_build {
   # compile VMD
   export VMDINSTALLBINDIR="${MAALI_INSTALL_DIR}/bin"
   export VMDINSTALLLIBRARYDIR="${MAALI_INSTALL_DIR}/lib"
+
+  VMD_CONFIG_OPTS="LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD"
   if [ "$MAALI_CPU_TARGET" == "cascadelake" ] ; then
-    maali_run "./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD AVX512"
-  else
-    maali_run "./configure LINUXAMD64 OPENGL OPENGLPBUFFER FLTK TK XINPUT XINERAMA LIBPNG NETCDF COLVARS TCL PTHREADS SILENT GCC MPI IMD"
+    VMD_CONFIG_OPTS+=" AVX512"
   fi
+  if [ "${MAALI_CUDA_BUILD}" -eq 1 ]; then
+    VMD_CONFIG_OPTS+=" CUDA"
+  fi
+  maali_run "./configure ${VMD_CONFIG_OPTS}"
   # cat configure.options
 
   cd src
@@ -79,6 +84,13 @@ function maali_build {
   maali_run "sed -i -e '/^CC.*=/ s;gcc;mpicc;g' Makefile"
   maali_run "sed -i -e '/^CCPP.*=/ s;g++;mpic++;g' Makefile"
   maali_run "sed -i -e 's;-lmpich;-lmpi;g' Makefile"
+  if [ "${MAALI_CUDA_BUILD}" -eq 1 ]; then
+    maali_run "sed -i -e 's;/usr/local/cuda-8.0/bin/nvcc;nvcc;g' Makefile"
+    maali_run "sed -i -e '/NVCCFLAGS/ s; -gencode arch=compute_30,code=compute_30 -gencode arch=compute_30,code=sm_35 -gencode arch=compute_30,code=sm_37;;g' Makefile"
+    maali_run "sed -i -e '/NVCCFLAGS/ s; -gencode arch=compute_50,code=compute_50 -gencode arch=compute_50,code=sm_50;;g' Makefile"
+    maali_run "sed -i -e '/(NVCC) \$(DEFINES)/ s; -gencode arch=compute_30,code=compute_30; -gencode arch=compute_60,code=compute_60;g' Makefile"
+    maali_run "sed -i -e '/LIBS.*=/ s;-ldl;-ldl -lrt;g' Makefile"
+  fi
 
   maali_run "make"
   maali_run "make install"
