@@ -1,0 +1,81 @@
+##############################################################################
+# maali cygnet file for VASP
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic
+scale materials modelling, e.g. electronic structure calculations and
+quantum-mechanical molecular dynamics, from first principles.
+
+For further information see https://www.vasp.at/
+
+EOF
+
+MAALI_TOOL_CPU_TARGET="cascadelake"
+
+
+# specify which compilers we want to build the tool with
+## NOTE on GCC compiler: at present the CPU component of the build can only be performed 
+## with gcc/9.2.0, and the GPU component can only be built with gcc/8.3.0, 
+## so there is a double module swap in the maali_build function below
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_CUDA_BUILD=1
+
+# URL to download the source code from
+MAALI_URL=""
+
+# Be sure to put the patches into the tarball rather than using maali.
+# The directory name within the tarball should be vasp.$MAALI_TOOL_MAJOR_MINOR_VERSION.  E.g. vasp.5.3 and not vasp.5.3.5.
+# Location of the source code.
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
+
+# put a string here to help identify the patch level.
+VASP_VERSION='5.4.4.18Apr17'
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="intel-mkl intel-tbb magma-gpu fftw openmpi-ucx-gpu"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+# restrict the module to a specified group
+MAALI_MODULE_RESTRICT_GROUP='vasp'
+
+##############################################################################
+
+function maali_build {
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "mkdir -p $MAALI_INSTALL_DIR/bin"
+    # Have to swap because some fortran code gives error with previous gcc versions.. 
+    module swap gcc gcc/9.2.0
+    export CUDA_ROOT=$MAALI_CUDA_HOME
+    export MAGMA_ROOT=$MAALI_MAGMA_HOME
+    sed -e '6 i -DCMAKE_Fortran_COMPILER_SUPPORTS_CONTIGUOUS=FALSE\\'\
+        -e 's|/opt/gfortran/libs/|${MAALI_SYSTEMINTELTBB_HOME}/lib/intel64/gcc4.7 -L ${MAALI_SYSTEMINTELMKL_HOME}/lib/intel64|'\
+        -e 's/-lrefblas/-ltbb -lmkl_tbb_thread -lmkl_intel_lp64 -lmkl_cdft_core -lmkl_blacs_openmpi_lp64 -lmkl_core -lmkl_blas95_lp64/g'\
+        -e 's/-ltmglib -llapack/-lmkl_lapack95_lp64/'\
+        -e 's/-lscalapack $(BLACS)/-lmkl_scalapack_lp64/'\
+        -e 's|?= /opt/gfortran/fftw-3.3.4-GCC-5.4.1|= ${FFTW_HOME}|'\
+        -e 's|?= /usr/local/cuda|=$(CUDA_HOME)|'\
+        -e 's/-lcuda / /'\
+        -e '77 d'\
+        -e '78 d'\
+        -e '80 d'\
+        -e 's/_30/_60/g'\
+        arch/makefile.include.linux_gnu > makefile.include
+    maali_run "make all -j $MAALI_CORES" 
+    module swap gcc $MAALI_COMPILER
+    maali_run "make gpu -j $MAALI_CORES"
+    maali_run "make gpu_ncl -j $MAALI_CORES"
+    mv bin/* $MAALI_INSTALL_DIR/bin
+}
+
+##############################################################################

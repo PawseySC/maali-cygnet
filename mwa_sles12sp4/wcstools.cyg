@@ -1,0 +1,46 @@
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Astronomers often need to relate positions on an image of the sky to positions on the real sky to identify catalogued objects in images, tell other people where to look to find an identified object, or to compute motions of planets, satellites, asteroids, or comets. WCSTools is a package of programs and a library of utility subroutines for setting and using the world coordinate systems (WCS) in the headers of the most common astronomical image formats, FITS and IRAF .imh, to relate image pixels to sky coordinates. This software is all written in very portable C, so it should compile and run on any computer with a C compiler. 
+
+EOF
+
+# specify which compilers we want to build the tool with. We specify only compiler that work with CUDA build
+MAALI_TOOL_COMPILERS="gcc/5.5.0 gcc/8.3.0"
+
+MAALI_MODULE_SET_CPU_TARGET="cascadelake"
+
+# URL to download the source code from
+MAALI_URL="http://tdc-www.harvard.edu/software/wcstools/wcstools-$MAALI_TOOL_VERSION.tar.gz"
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+
+# for auto-building module files
+MAALI_MODULE_SET_MPI_NAME='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_MPI_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+function maali_build {
+    export CC=gcc
+    export CXX=g++
+    maali_run "make all -j $MAALI_CORES"
+    maali_run "cp -r bin/ $MAALI_INSTALL_DIR/"
+    maali_run "cp -r man/ $MAALI_INSTALL_DIR/"
+    # Fix permissions.
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type d -exec chmod g+rwx,o+rx,o-w {} \;
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type f -exec chmod g+rw,o+rx,o-w {} \;
+}

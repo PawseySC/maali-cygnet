@@ -1,0 +1,156 @@
+##############################################################################
+# maali cygnet file for CUDA
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+CUDA® is a parallel computing platform and programming model invented by
+NVIDIA. It enables dramatic increases in computing performance by harnessing
+the power of the graphics processing unit (GPU)
+
+For further information see https://developer.nvidia.com/cuda-zone
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# Specify where to download the CUDA runfile from and where to place it locally             
+# https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run
+# https://developer.nvidia.com/compute/machine-learning/nccl/secure/v2.4/prod//nccl_2.4.7-1%2Bcuda10.1_x86_64.txz
+# nccl_2.4.7-1+cuda10.1_x86_64.txz
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.2" ]]; then
+   MAALI_URL="http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run"
+   VERSION_EXTRA=".440.33.01"
+   nccl_ver="2.4.7-1"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
+   MAALI_URL="https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run"
+   VERSION_EXTRA=".243_418.87.00"
+   nccl_ver="2.4.7-1"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.2" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.2/Prod/local_installers/cuda_9.2.88_396.26_linux"
+   VERSION_EXTRA=".88_396.26"
+   nccl_ver="2.2.13-1"
+fi
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.1" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux-run"
+   VERSION_EXTRA=".85_387.26"
+   nccl_ver="2.1.15-1"
+fi
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "9.0" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.0.176_384.81_linux-run"
+   VERSION_EXTRA=".176_384.81"
+   nccl_ver="2.2.13-1"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_VERSION == "8" ]]; then
+   MAALI_URL="https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux.run"
+   VERSION_EXTRA=".61_375.26"
+   nccl_ver="2.2.13-1"
+fi
+
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}${VERSION_EXTRA}.run"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/cuda-${MAALI_TOOL_VERSION}${VERSION_EXTRA}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# packages that need to be installed in the operating system for this build to work
+MAALI_SYSTEM_PACKAGES_PREREQ=''
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=""
+
+# for auto-building module files
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
+  MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release ${MAALI_INSTALL_DIR}/nsight-systems-2019.3.7.5/Host-x86_64 ${MAALI_INSTALL_DIR}/nsight-systems-2019.3.7.5/Target-x86_64/x86_64"
+else
+  MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_VERSION -lt 8 ]]; then
+   MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/lib"
+   MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/lib"
+else
+   MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/extras/CUPTI/lib64"
+   MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/extras/CUPTI/lib64"
+fi
+
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}/doc/man"
+MAALI_MODULE_SET_CUDA_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
+MAALI_MODULE_SET_NVIDIA_CUDA_TOOLKIT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_CUDA_VER='$MAALI_TOOL_VERSION'
+
+function maali_unpack {
+
+  # use this for temporary files by the installer
+  maali_makedir "$MAALI_TOOL_BUILD_DIR"
+  export TMPDIR=${MAALI_TOOL_BUILD_DIR}
+}
+
+##############################################################################
+
+function maali_build {
+
+  echo "CUDA Binary Build"
+
+  # 10.x does weird things, 10.0 does not support sles12 offically only 10.1 supports sles12sp4
+  # 10.1 require 418.67 Driver version
+  if [[ $MAALI_TOOL_MAJOR_VERSION == "10" ]]; then
+     export PATH=$PATH:/sbin
+     maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR} --installpath=${MAALI_INSTALL_DIR}"
+  else
+     maali_run "sh $MAALI_DST --override --silent --toolkit --toolkitpath=${MAALI_INSTALL_DIR} --tmpdir=${MAALI_TOOL_BUILD_DIR}" 
+  fi
+
+  #Now add cuDNN support
+  for cudnn_version in 7.1 7.2 7.3;do
+    cudnnFile="${MAALI_SRC}/cudnn-${MAALI_TOOL_MAJOR_MINOR_VERSION}-linux-x64-v${cudnn_version}.tgz"
+    if [ -f $cudnnFile ]; then
+      echo "cuDNN ${cudnn_version} file detected -> Installing"
+      cd ${MAALI_INSTALL_DIR}
+      tar -xzf $cudnnFile
+      mv cuda/include/* include/
+      mv cuda/lib64/* lib64/
+      rmdir cuda/include
+      rmdir cuda/lib64
+      rmdir cuda
+    else
+      echo "no cuDNN ${cudnn_version} file detected"
+    fi
+  done
+
+  #Add NCCL support
+  ncclFile="${MAALI_SRC}/nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64.txz"
+  if [ -f $ncclFile ]; then
+     echo "NCCL file detected -> Installing"
+     cd ${MAALI_INSTALL_DIR}
+     tar -xJf $ncclFile
+     ncclPrefix="nccl_${nccl_ver}+cuda${MAALI_TOOL_MAJOR_MINOR_VERSION}_x86_64" 
+     mv ${ncclPrefix}/include/* include
+     mv ${ncclPrefix}/lib/* lib64
+     rmdir ${ncclPrefix}/include
+     rmdir ${ncclPrefix}/lib
+     mv ${ncclPrefix}/*.txt .
+     rmdir $ncclPrefix
+  else
+     echo "no NCCL file detected"
+  fi 
+
+}
+
+##############################################################################

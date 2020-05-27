@@ -29,7 +29,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-src"
 MAALI_TOOL_TYPE="bio-apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="intel-mkl/2017.0.5 eigen/3.3.4"
+MAALI_TOOL_PREREQ="intel-mkl/2017.0.4 eigen/3.3.4"
 
 # add additional configure options
 MAALI_TOOL_CONFIGURE=""

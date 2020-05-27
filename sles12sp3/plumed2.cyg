@@ -29,7 +29,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="openmpi/2.1.2 intel-mkl/2017.0.5" 
+MAALI_TOOL_PREREQ="openmpi/2.1.2 intel-mkl/2017.0.4"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH='bin'

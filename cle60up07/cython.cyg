@@ -1,0 +1,32 @@
+##############################################################################
+# maali cygnet file for Cython
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Cython is an optimising static compiler for both the Python programming
+language and the extended Cython programming language (based on Pyrex). It
+makes writing C extensions for Python as easy as Python itself.
+
+For further information see http://cython.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+#https://files.pythonhosted.org/packages/source/c/cython/Cython-$MAALI_TOOL_VERSION.tar.gz
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+

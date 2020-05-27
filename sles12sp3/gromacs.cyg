@@ -21,11 +21,15 @@ EOF
 # specify which compilers we want to build the tool with
 if [ $MAALI_CUDA_BUILD -eq 0 ]; then
    #MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+   #MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+   #gromacs/2020 does not support less than gcc/5
+   MAALI_DEFAULT_COMPILERS="gcc/5.5.0"
    MAALI_TOOL_CUDA_COMPILERS=""
 else
-   MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-   MAALI_TOOL_CUDA_COMPILERS="cuda/8.0.61_375.26"
+   #MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+   #cuda/8 does not support greater than gcc/5.  gromacs/2020 does not support less than gcc/5
+   MAALI_DEFAULT_COMPILERS="gcc/5.5.0"
+   MAALI_TOOL_CUDA_COMPILERS="cuda/8.0"
 fi
 
 # URL to download the source code from
@@ -47,7 +51,8 @@ MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.7 boost/1.65.1"
 MAALI_TOOL_CONFIGURE=' -DGMX_FFT_LIBRARY=fftw3 -DCMAKE_PREFIX_PATH=$MAALI_FFTW_HOME'
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake"
+#gromacs/2020.1 requires at least cmake/3.9.6
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -157,6 +162,12 @@ function maali_cmake_build {
       echo "Only GCC supported"
       exit 1
     fi
+}
+
+function maali_pre_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+# Do your plumed patching here
 }
 
 ##############################################################################

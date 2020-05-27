@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for Tachyon
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Tachyon Parallel / Multiprocessor Ray Tracing System 
+
+For further information see http://jedi.ks.uiuc.edu/~johns/tachyon/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_CPU_TARGET="sandybridge broadwell"
+#MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+
+# URL to download the source code from (requires registration)
+MAALI_URL="http://jedi.ks.uiuc.edu/~johns/tachyon/files/${MAALI_TOOL_VERSION}/tachyon-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.src.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="tools"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+
+##############################################################################
+
+function maali_pre_build {
+
+ mv ${MAALI_TOOL_BUILD_DIR%tachyon*}tachyon $MAALI_TOOL_BUILD_DIR
+
+}
+
+
+function maali_build {
+
+ cd $MAALI_TOOL_BUILD_DIR
+ cd unix
+
+ if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+   arch="linux-64-openmp"
+ elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+   arch="linux-icc-64-openmp"
+   sed -i 's; -openmp; -qopenmp;g' Make-arch
+ else
+   echo "Compiler $MAALI_COMPILER_NAME not supported by cygnet file"
+   exit
+ fi
+
+ maali_run "make $arch"
+
+ cd ../compile/$arch
+ maali_makedir "$MAALI_INSTALL_DIR/bin"
+ maali_makedir "$MAALI_INSTALL_DIR/lib"
+ maali_run "install -m 755 tachyon $MAALI_INSTALL_DIR/bin/"
+ maali_run "install -m 644 libtachyon.a $MAALI_INSTALL_DIR/lib/"
+}
+
+##############################################################################
