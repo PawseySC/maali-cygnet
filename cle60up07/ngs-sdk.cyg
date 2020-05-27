@@ -1,0 +1,38 @@
+##############################################################################
+# maali cygnet file for ngs-sdk
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="http://ftp-trace.ncbi.nlm.nih.gov/sra/ngs/${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}.${MAALI_TOOL_VERSION}-linux.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}.${MAALI_TOOL_VERSION}-linux"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PYTHONPATH=1
+MAALI_MODULE_SET_INCLUDE_PATH=1
+MAALI_MODULE_SET_PATH="bin64"
+MAALI_MODULE_SET_CLASSPATH="${MAALI_INSTALL_DIR}ngs-java/ngs-java.jar"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib64 ${MAALI_INSTALL_DIR}lib"
+
+##############################################################################
+
+function maali_python_build {
+
+  # change to build directory
+  cd $MAALI_TOOL_BUILD_DIR
+  cd ${MAALI_TOOL_BUILD_DIR}/ngs-python
+  maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}"
+
+}
+
+##############################################################################
