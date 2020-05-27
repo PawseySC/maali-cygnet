@@ -4,7 +4,7 @@
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-MAALI_TOOL_CPU_TARGET="cascadelake broadwell"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 # URL to download the source code from
 MAALI_URL="http://www.fftw.org/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
@@ -15,7 +15,11 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites needed for compilation.
-MAALI_TOOL_PREREQ="openmpi-ucx-gpu"
+if [ $MAALI_CUDA_BUILD -eq 1 ]; then
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_CUDAMPI_COMPILERS"
+else
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+fi
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
@@ -42,7 +46,6 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH=1
 MAALI_MODULE_SET_FFTW_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_FFTW_INCLUDE='$MAALI_APP_HOME/include'
 MAALI_MODULE_SET_FFTW_LIB='$MAALI_APP_HOME/lib'
-#MAALI_MODULE_SET_SETENV='FFTW_HOME=$MAALI_APP_HOME FFTW_INCLUDE=$MAALI_APP_HOME/include FFTW_LIB=$MAALI_APP_HOME/lib'
 MAALI_MODULE_WHATIS="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data."
 
 ##############################################################################
