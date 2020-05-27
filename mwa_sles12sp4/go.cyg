@@ -37,3 +37,5 @@ function maali_build {
   maali_run "cp -r $MAALI_TOOL_BUILD_DIR $MAALI_INSTALL_DIR"
 
 }
+
+###############################################################################
