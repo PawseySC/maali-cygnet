@@ -1,0 +1,65 @@
+##############################################################################
+# maali cygnet file for BSseeker2
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+BS Seeker 2 is a seamless and versatile pipeline for accurately and fast
+mapping the bisulfite-treated short reads.
+
+For further information see http://pellegrini.mcdb.ucla.edu/BS_Seeker2/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/BSSeeker/BSseeker2/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}.tar.gz"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="bio-apps"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-${MAALI_TOOL_VERSION}"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="pysam/0.13"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
+
+function maali_python_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  for file in `ls *.py`
+  do
+    maali_run "install -m 755 $file $MAALI_INSTALL_DIR/bin/"
+  done
+
+  maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages"
+  for library in bs_align bs_index bs_utils galaxy
+  do
+    maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library"
+    for file in `ls $library`
+    do
+      if [ -f "$library/$file" ]; then
+        maali_run "install -m 644 $library/$file $MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/"
+      elif [ -d "$library/$file" ]; then
+        maali_makedir "$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$PYTHON_LIB_VERSION/site-packages/$library/$file"
+      else
+        echo "ERROR - $library/$file is not a file or directory"
+        exit
+      fi
+    done
+  done
+
+}
+
+##############################################################################
