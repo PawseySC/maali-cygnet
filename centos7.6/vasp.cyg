@@ -12,16 +12,18 @@ For further information see https://www.vasp.at/
 
 EOF
 
-MAALI_TOOL_CPU_TARGET="cascadelake"
-
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # specify which compilers we want to build the tool with
 ## NOTE on GCC compiler: at present the CPU component of the build can only be performed 
 ## with gcc/9.2.0, and the GPU component can only be built with gcc/8.3.0, 
 ## so there is a double module swap in the maali_build function below
-MAALI_TOOL_COMPILERS="gcc/8.3.0"
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
-MAALI_CUDA_BUILD=1
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_CUDAMPI_COMPILERS"
+
+MAALI_CUDA_BUILD_ONLY=1
 
 # URL to download the source code from
 MAALI_URL=""
@@ -32,7 +34,7 @@ MAALI_URL=""
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION.tar.gz"
 
 # put a string here to help identify the patch level.
-VASP_VERSION='5.4.4.18Apr17'
+#VASP_VERSION='5.4.4.18Apr17'
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
@@ -41,7 +43,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME.$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="intel-mkl intel-tbb magma-gpu fftw openmpi-ucx-gpu"
+MAALI_TOOL_PREREQ="intel-mkl/2019.0.5 intel-tbb/2019.0.5 magma-gpu/2.5.3 fftw/3.3.8"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
