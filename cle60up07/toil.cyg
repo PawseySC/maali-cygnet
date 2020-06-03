@@ -1,1 +1,32 @@
-404: Not Found
+# maali cygnet file for toil
+#############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Toil is an open-source pure-Python workflow engine that lets people write better pipelines.
+
+For further information see https://toil.readthedocs.io/en/latest/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/DataBiosphere/$MAALI_TOOL_NAME/archive/$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1 cython/0.27.3"
+
+MAALI_TOOL_PREREQ="cython/0.27.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+##############################################################################
