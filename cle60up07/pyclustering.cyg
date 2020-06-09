@@ -1,0 +1,33 @@
+##############################################################################
+# maali cygnet file for pyclustering
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+tering is an open source Python, C++ data-mining library under General Public
+License 3. The library provides tools for cluster analysis, data visualization
+and contains oscillatory network models.
+
+For further information see https://pyclustering.github.io/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/annoviko/pyclustering/releases/download/${MAALI_TOOL_VERSION}/pyclustering-${MAALI_TOOL_VERSION}-binaries-all.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/pyclustering-$MAALI_TOOL_VERSION"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_PREREQ="matplotlib/2.1.0 numpy/1.13.3 scipy/1.0.0 pillow/5.1.0 six/1.11.0 python-dateutil/2.6.1 setuptools/38.2.1 enum34/1.1.6"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################

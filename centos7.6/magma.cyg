@@ -12,16 +12,17 @@ For further information see http://icl.cs.utk.edu/magma/
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/8.3.0"
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
-# enable CUDA build by default (will also add -gpu suffix to modulename)
-MAALI_CUDA_BUILD=1
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# prevent non-CUDA build
+MAALI_CUDA_BUILD_ONLY=1
 
 # specify the architectures we want to build the library on
-MAALI_TOOL_CPU_TARGET="cascadelake"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="intel-mkl"
+MAALI_TOOL_PREREQ="intel-mkl/2019.0.5"
 
 # URL to download the source code from
 MAALI_URL="http://icl.cs.utk.edu/projectsfiles/$MAALI_TOOL_NAME/downloads/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
