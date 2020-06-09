@@ -40,7 +40,8 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 
 #MAALI_TOOL_CONFIGURE='--enable-silex --enable-fortran --enable-shared --with-zlib --with-hdf5=$HDF5_DIR/include,$HDF5_DIR/lib --with-Qt-dir=$MAALI_QT_HOME'
 #MAALI_TOOL_CONFIGURE_NOHDF5='--enable-silex --enable-fortran --enable-shared --with-zlib --with-Qt-dir=$MAALI_QT_HOME'
-MAALI_TOOL_CONFIGURE='--disable-silex --enable-fortran --enable-shared --with-zlib --with-hdf5=$HDF5_DIR/include,$HDF5_DIR/lib'
+#--enable-install-lite-headers is needed for Visit
+MAALI_TOOL_CONFIGURE='--disable-silex --enable-fortran --enable-shared --with-zlib --with-hdf5=$HDF5_DIR/include,$HDF5_DIR/lib --enable-install-lite-headers'
 MAALI_TOOL_CONFIGURE_NOHDF5='--disable-silex --enable-fortran --enable-shared --with-zlib'
 
 ##############################################################################
