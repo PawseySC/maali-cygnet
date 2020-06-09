@@ -31,7 +31,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_PREREQ=""
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="-confirm-license -opensource -release -shared -system-zlib -system-libpng -system-libjpeg -opengl -verbose"
+MAALI_TOOL_CONFIGURE_ORIG="-confirm-license -opensource -release -shared -system-zlib -system-libpng -system-libjpeg -opengl -verbose"
 
 # for auto-building module fils
 MAALI_MODULE_SET_PATH=1
@@ -39,11 +39,18 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_Qt_ROOT='$MAALI_INSTALL_DIR'
 MAALI_MODULE_WHATIS="QT is a cross-platform application framework tool."
 
+#5.9.3 javascriptcore compile has error -skip javascriptcore
 ##############################################################################
+
 function maali_build {
 
+  # https://bugreports.qt.io/browse/QTBUG-74196.  For GCC 8.3 and above
+  sed 's/asm volatile /asm /' -i $MAALI_TOOL_BUILD_DIR/qtscript/src/3rdparty/javascriptcore/JavaScriptCore/jit/JITStubs.cpp
+
   if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    MAALI_TOOL_CONFIGURE="-platform linux-icc-64 $MAALI_TOOL_CONFIGURE"
+    MAALI_TOOL_CONFIGURE="-platform linux-icc-64 $MAALI_TOOL_CONFIGURE_ORIG"
+  else
+    MAALI_TOOL_CONFIGURE="$MAALI_TOOL_CONFIGURE_ORIG"
   fi
  
   cd "$MAALI_TOOL_BUILD_DIR"
