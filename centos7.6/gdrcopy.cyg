@@ -9,11 +9,10 @@ A low-latency GPU memory copy library based on NVIDIA GPUDirect RDMA technology
 EOF
 
 # specify which compilers we want to build the tool with
-# MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
-MAALI_TOOL_COMPILERS="binary"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # URL to download the source code from
 # https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz
@@ -28,9 +27,12 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
+# This is GPU-only software
+MAALI_CUDA_BUILD_ONLY=1
+
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_MANPATH=0
+#MAALI_MODULE_SET_PATH=1
+#MAALI_MODULE_SET_MANPATH=0
 MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_FCPATH=1
@@ -40,22 +42,30 @@ MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64"
 ##############################################################################
 
 function maali_build {
+
+  # So we can link on login nodes that do not have the GPU driver
+  export LIBRARY_PATH="$LIBRARY_PATH:${CUDA_HOME}/lib64/stubs"
+
   cd "$MAALI_TOOL_BUILD_DIR"
   # Nvidia scripts uses a env variable PREFIX
-  export PREFIX=$MAALI_INSTALL_DIR
+  export PREFIX=${MAALI_INSTALL_DIR}
   export DESTLIB="$MAALI_INSTALL_DIR/lib64"
   # Variable is hardcoded in their script
-  export CUDA=$NVIDIA_CUDA_HOME
-  # Need to premake directory, there build is kind of odd
+  export CUDA=${CUDA_HOME}
+  export NVIDIA_SRC_DIR=`find ${CUDA_HOME} -name "nv-p2p.h"|head -1|xargs dirname`
+  echo "PREFIX=${MAALI_INSTALL_DIR}"
+  echo "CUDA=${CUDA_HOME}"
+  echo "NVIDIA_SRC_DIR=${NVIDIA_SRC_DIR}"
+
   maali_run "mkdir -p $MAALI_INSTALL_DIR"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/lib64"
-  maali_run "mkdir -p $MAALI_INSTALL_DIR/include" 
   # Needs to call things like ldconfig which is /sbin as not in default path
   export PATH=$PATH:/sbin
-  maali_run "make"
-  maali_run "make install"
+
+  # installing everything requires "check" as a prerequisite
+  maali_run "make -e config driver lib"
+  maali_run "make -e lib_install"
   # Dummy Sym link
   cd "$MAALI_INSTALL_DIR"
-  ln -s lib64 lib 
+ 
 }
 
