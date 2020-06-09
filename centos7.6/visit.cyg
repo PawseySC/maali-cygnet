@@ -41,14 +41,13 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
 
 # tool pre-requisites modules needed to install this new tool/package
-#MAALI_TOOL_PREREQ="$MAALI_DEFAULT_27_PYTHON $MAALI_DEFAULT_MPI"
 MAALI_TOOL_PREREQ="python/3.6.3 qt/5.9.3 java/8u151 vtk/8.1.2 qwt/6.1.4 boost/1.66.0 hdf5/1.10.5 silo/4.10.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_VISIT_ROOT='$MAALI_APP_HOME'
 MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_TOOL_VERSION/linux-x86_64/lib'
-#MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION/linux-x86_64/lib/site-packages'
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION/linux-x86_64/lib/site-packages'
 
 MAALI_CMAKE_TOOL=1
 
