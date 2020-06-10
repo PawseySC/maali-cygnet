@@ -11,8 +11,8 @@ EOF
 
 # Compiler and target CPU architecture
 # intel compiler is not supported
-MAALI_TOOL_COMPILERS="pgi/19.7 gcc/4.8.5 gcc/7.2.0 gcc/8.3.0"
-MAALI_TOOL_CPU_TARGET="cascadelake broadwell"
+MAALI_TOOL_COMPILERS="gcc/7.2.0 gcc/8.3.0"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # URL to download source
 MAALI_URL="https://ffmpeg.org/releases/ffmpeg-$MAALI_TOOL_VERSION.tar.bz2"
@@ -20,11 +20,7 @@ MAALI_URL="https://ffmpeg.org/releases/ffmpeg-$MAALI_TOOL_VERSION.tar.bz2"
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 # Directory obtained when unzipping source file (name must match the actual content of the source file)
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
-
-# Runtime module dependencies
-MAALI_TOOL_PREREQ="cuda/10.2"
-# Build-only module dependencies
-MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0 cuda/10.2"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # Type of tool
 MAALI_TOOL_TYPE="devel"
@@ -35,15 +31,7 @@ MAALI_MODULE_SET_LIBRARY_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+MAALI_TOOL_CONFIGURE='--cc=$CC --cxx=$CXX --enable-pic --enable-shared --enable-avresample'  #--enable-cuda-nvcc --enable-nonfree
 
-##############################################################################
-# Functions to be redefined
-
-function maali_cmake_build {
-    maali_run "mkdir -p $MAALI_INSTALL_DIR"
-    maali_run "./configure --prefix=$MAALI_INSTALL_DIR --enable-cuda-nvcc --enable-nonfree"
-    maali_run "make -j $MAALI_CORES"
-    maali_run "make -j $MAALI_CORES install" 
-}
 
 ##############################################################################
