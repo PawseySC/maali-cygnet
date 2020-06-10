@@ -1,0 +1,41 @@
+##############################################################################
+# maali cygnet file for pygpu
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libgpuarray's goal is to make a common GPU ndarray(n dimensions array) that can 
+be reused by all projects that is as future proof as possible, while keeping it 
+easy to use for simple need/quick test.
+
+For further information see http://deeplearning.net/software/libgpuarray
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+
+# There is nothing to download
+MAALI_URL="https://github.com/Theano/libgpuarray/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# Load the prerequisite modules and python packages 
+MAALI_TOOL_PREREQ="gcc/8.3.0 libgpuarray/0.7.5"
+MAALI_TOOL_BUILD_PREREQ="setuptools/41.6.0 cython/0.29.14 numpy/1.13.3 nose/1.3.7 cmake/3.15.0"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libgpuarray-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+##############################################################################
+

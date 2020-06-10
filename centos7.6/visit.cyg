@@ -1,0 +1,189 @@
+##############################################################################
+# maali cygnet file for visit
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+VisIt is a point-and-click 3D scientific visualization application that
+supports common visualization techniques (e.g., iso-contouring and volume
+rendering) on structured and unstructured grids. Due to its distributed and
+parallel architecture, VisIt is able to handle very large datasets
+interactively.
+
+For further information see http://www.nersc.gov/users/data-analytics/data-visualization/visit-2/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+
+# specify te CPU types to be built for
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+
+# Visit has underscores in the version...a bit of sed to deal with that
+VISIT_VERSION="`echo $MAALI_TOOL_VERSION | sed -e 's/\./_/g'`"
+
+# URL to download the VisIt build script
+MAALI_URL="https://github.com/visit-dav/visit/releases/download/v${MAALI_TOOL_VERSION}/visit${MAALI_TOOL_VERSION}.tar.gz"
+
+# patch files to download
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+
+# location we are downloading VisIt build script to
+MAALI_DST="${MAALI_SRC}/visit${MAALI_TOOL_VERSION}.tar.gz"
+
+# location of VisIt build 
+MAALI_TOOL_BUILD_DIR="${MAALI_BUILD_DIR}/${MAALI_TOOL_NAME}${MAALI_TOOL_VERSION}/src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="python/3.6.3 qt/5.9.3 java/8u151 vtk/8.1.2 qwt/6.1.4 boost/1.66.0 hdf5/1.10.5 silo/4.10.2"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_VISIT_ROOT='$MAALI_APP_HOME'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_TOOL_VERSION/linux-x86_64/lib'
+MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION/linux-x86_64/lib/site-packages'
+
+MAALI_CMAKE_TOOL=1
+
+##############################################################################
+
+MAALI_TOOL_CONFIGURE=' -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_JAVA=ON'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PARALLEL=ON'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_DIR=${MAALI_PYTHON_DIR}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_FILTERS=OFF'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_SCRIPTING=OFF'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_QWT_DIR=${MAALI_QWT_HOME}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_ZLIB_DIR=/usr'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_MPI_COMPILER=mpicc'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_HDF5_DIR=${MAALI_HDF5_HOME}'
+#MAALI_TOOL_CONFIGURE+=' -DVISIT_NETCDF_DIR=${MAALI_NETCDF_HOME}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_BOOST_DIR=${MAALI_BOOST_HOME}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_QT_DIR=${MAALI_QT_HOME}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_SILO_DIR=${MAALI_SILO_HOME}'
+#MAALI_TOOL_CONFIGURE+=" -DVISIT_SELECTED_DATABASE_PLUGINS:STRING=\'VTK\'"
+MAALI_TOOL_CONFIGURE+=' -DVISIT_BOOST_DIR=${MAALI_BOOST_HOME}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_SILO_DIR=${MAALI_SILO_HOME}'
+
+#https://github.com/visit-dav/visit/issues/3498 says not to use VTK 8.2+ with Visit 3.1.2.  Stick with vtk/8.1.2
+#VTK must be compiled with ' -DVTK_RENDERING_BACKEND=OpenGL2 -DModule_vtkGUISupportQtOpenGL:BOOL=true'
+
+#To work with HDF5 1.10+
+# Use -DVISIT_SELECTED_DATABASE_PLUGINS to skip any that are annoying.
+# # -DVISIT_SELECTED_DATABASE_PLUGINS:STRING="Silo;VTK;H5Part"
+
+function fix_hdf5_version2 {
+  cmakefile=$1
+  sourcefiles=$2
+  echo 'SET_SOURCE_FILES_PROPERTIES(' >> $cmakefile
+  echo "  $sourcefiles" >> $cmakefile
+  echo '  PROPERTIES' >> $cmakefile
+#H5_USE_18_API=1 should be sufficient, sigh
+  echo '  COMPILE_DEFINITIONS "H5_USE_18_API=1;H5Dopen_vers=2;H5Eset_auto_vers=2;H5Eget_auto_vers=2;H5Gopen_vers=2;H5Eset_auto_vers=2;H5Dcreate_vers=2;H5E_auto_t_vers=2;H5Aiterate_vers=2"' >> $cmakefile
+  echo ')' >> $cmakefile
+}
+
+function maali_pre_build {
+
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/tools/data/xdmf_writer/CMakeLists.txt" "xdmf_writer.c"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/BATL/CMakeLists.txt"         "avtBATLFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/CaleHDF5/CMakeLists.txt"     "avtCaleHDF5FileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/CarpetHDF5/CMakeLists.txt"   "avtCarpetHDF5FileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/Denovo/CMakeLists.txt"       "DenovoCommonPluginInfo.C avtDenovoFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/CosmosPP/CMakeLists.txt"     "avtCosmosPPFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/GTC/CMakeLists.txt"          "avtGTCFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/M3DC1/CMakeLists.txt"        "avtM3DC1FileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/OpenPMD/CMakeLists.txt"      "avtOpenPMDFileFormat.C OpenPMDClasses/PMDFile.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/SXRIS/CMakeLists.txt"        "avtSXRISFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/Vs/CMakeLists.txt"           "VsFilter.C VsFile.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/XGC/CMakeLists.txt"          "avtXGCFileFormat.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/Velodyne/CMakeLists.txt"     "VelodyneReader.C"
+  fix_hdf5_version2 "${MAALI_TOOL_BUILD_DIR}/databases/Xolotl/CMakeLists.txt"       "avtXolotlFileFormat.C"
+
+  # This can't be good, but is required
+  export VISIT_C_FLAGS="$CFLAGS -fvisibility=hidden"
+  export VISIT_CXX_FLAGS="$CXXFLAGS -fvisibility=hidden -fpermissive"
+
+  # Don't know why the ifndef is being a pain.  REMOVE_DEFINITIONS(-DH5_USE_16_API -DH5_USE_16_API_DEFAULT) did not help.
+  sed -i -e 's/H5Oopen(locId, name);/H5Oopen(locId, name, H5P_DEFAULT);/g' ${MAALI_TOOL_BUILD_DIR}/databases/Vs/VsFilter.C
+
+}
+
+function post_maali_build {
+
+  # Create host XML file
+  cat <<EOF >"$MAALI_INSTALL_DIR/host_topaz.xml"
+<?xml version="1.0"?>
+<Object name="MachineProfile">
+    <Field name="hostNickname" type="string">topaz</Field>
+    <Field name="host" type="string">topaz.pawsey.org.au</Field>
+    <Field name="userName" type="string">notset</Field>
+    <Field name="hostAliases" type="string"></Field>
+    <Field name="directory" type="string">$MAALI_INSTALL_DIR</Field>
+    <Field name="shareOneBatchJob" type="bool">false</Field>
+    <Field name="sshPortSpecified" type="bool">true</Field>
+    <Field name="sshPort" type="int">22</Field>
+    <Field name="sshCommandSpecified" type="bool">true</Field>
+    <Field name="sshCommand" type="stringVector">"ssh" </Field>
+    <Field name="useGateway" type="bool">false</Field>
+    <Field name="gatewayHost" type="string"></Field>
+    <Field name="clientHostDetermination" type="string">MachineName</Field>
+    <Field name="manualClientHostName" type="string"></Field>
+    <Field name="tunnelSSH" type="bool">true</Field>
+    <Field name="maximumNodesValid" type="bool">true</Field>
+    <Field name="maximumNodes" type="int">1</Field>
+    <Field name="maximumProcessorsValid" type="bool">true</Field>
+    <Field name="maximumProcessors" type="int">16</Field>
+    <Object name="LaunchProfile">
+        <Field name="timeout" type="int">240</Field>
+        <Field name="numProcessors" type="int">1</Field>
+        <Field name="numNodesSet" type="bool">true</Field>
+        <Field name="numNodes" type="int">1</Field>
+        <Field name="partitionSet" type="bool">false</Field>
+        <Field name="partition" type="string"></Field>
+        <Field name="bankSet" type="bool">false</Field>
+        <Field name="bank" type="string"></Field>
+        <Field name="timeLimitSet" type="bool">false</Field>
+        <Field name="timeLimit" type="string"></Field>
+        <Field name="launchMethodSet" type="bool">true</Field>
+        <Field name="launchMethod" type="string">srun</Field>
+        <Field name="forceStatic" type="bool">true</Field>
+        <Field name="forceDynamic" type="bool">false</Field>
+        <Field name="active" type="bool">false</Field>
+        <Field name="arguments" type="stringVector"></Field>
+        <Field name="parallel" type="bool">true</Field>
+        <Field name="launchArgsSet" type="bool">true</Field>
+        <Field name="launchArgs" type="string">--mpi=pmi2</Field>
+        <Field name="sublaunchArgsSet" type="bool">false</Field>
+        <Field name="sublaunchArgs" type="string"></Field>
+        <Field name="sublaunchPreCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPreCmd" type="string"></Field>
+        <Field name="sublaunchPostCmdSet" type="bool">false</Field>
+        <Field name="sublaunchPostCmd" type="string"></Field>
+        <Field name="machinefileSet" type="bool">false</Field>
+        <Field name="machinefile" type="string"></Field>
+        <Field name="visitSetsUpEnv" type="bool">false</Field>
+        <Field name="canDoHWAccel" type="bool">false</Field>
+        <Field name="GPUsPerNode" type="int">1</Field>
+        <Field name="XArguments" type="string"></Field>
+        <Field name="launchXServers" type="bool">false</Field>
+        <Field name="XDisplay" type="string">:%l</Field>
+        <Field name="numThreads" type="int">0</Field>
+        <Field name="constrainNodeProcs" type="bool">false</Field>
+        <Field name="allowableNodes" type="intVector"></Field>
+        <Field name="allowableProcs" type="intVector"></Field>
+        <Field name="profileName" type="string">Parallel</Field>
+    </Object>
+    <Field name="activeProfile" type="int">0</Field>
+</Object>
+EOF
+
+}
+
+##############################################################################
