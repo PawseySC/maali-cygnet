@@ -55,9 +55,3 @@ function maali_pre_build {
     maali_run "wget https://github.com/opencv/opencv_contrib/archive/$MAALI_TOOL_VERSION.tar.gz"
     maali_run "tar -xf $MAALI_TOOL_VERSION.tar.gz"
 }
-
-function maali_post_build {
-
-    cd "$MAALI_TOOL_BUILD_DIR"
-    maali_run "make test"
-}
