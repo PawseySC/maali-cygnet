@@ -35,7 +35,7 @@ else
 fi
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="apps"
+MAALI_TOOL_TYPE="devel"
 
 MAALI_CMAKE_TOOL=1
 
