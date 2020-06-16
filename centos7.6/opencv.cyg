@@ -11,8 +11,9 @@ EOF
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 MAALI_TOOL_COMPILERS="gcc/7.2.0 gcc/8.3.0"
 MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
-MAALI_TOOL_PREREQ="python/3.6.3 ffmpeg/4.2.3 numpy/1.13.3 cuda/10.2"
+MAALI_TOOL_PREREQ="python/3.6.3 ffmpeg/4.2.3 numpy/1.13.3"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0 git/2.12.3"
+MAALI_CUDA_BUILD_ONLY=1
 # URL to download the source code from
 # Python prior to 3.X was distributed in .tar.xz format.  This is not the case any longer.
 # https://github.com/opencv/opencv/archive/4.3.0.zip
