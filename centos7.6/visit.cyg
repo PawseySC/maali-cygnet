@@ -41,42 +41,46 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="python/3.6.3 qt/5.9.3 java/8u151 vtk/8.1.2 qwt/6.1.4 boost/1.66.0 hdf5/1.10.5 silo/4.10.2"
+MAALI_TOOL_PREREQ="qt/5.9.3 java/8u151 qwt/6.1.4 hdf5/1.10.5 silo/4.10.2"
+#MAALI_TOOL_PREREQ="python/3.6.3 qt/5.9.3 java/8u151 vtk/8.1.2 qwt/6.1.4 boost/1.66.0 hdf5/1.10.5 silo/4.10.2"
+#Leave out python and boost for now, as Visit does not yet support python/3
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PATH='bin'
 MAALI_MODULE_SET_VISIT_ROOT='$MAALI_APP_HOME'
 MAALI_MODULE_SET_LD_LIBRARY_PATH='$MAALI_TOOL_VERSION/linux-x86_64/lib'
 MAALI_MODULE_SET_PYTHONPATH='$MAALI_TOOL_VERSION/linux-x86_64/lib/site-packages'
 
 MAALI_CMAKE_TOOL=1
 
+# Install our own VTK, as the system-wide VTK was only compiled with python3
+MAALI_MODULE_SET_PATH+=" VTK-8.1.2/bin"
+MAALI_MODULE_SET_VTK_HOME='VTK-8.1.2'
+MAALI_MODULE_SET_VTKDATA_ROOT="VTK-8.1.2/VTK-8.1.2"
+MAALI_MODULE_SET_PYTHONPATH+=' VTK-8.1.2/lib/python2.7/site-packages'
+MAALI_MODULE_SET_LD_LIBRARY_PATH+=' VTK-8.1.2/lib'
+
 ##############################################################################
 
 MAALI_TOOL_CONFIGURE=' -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR}'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_JAVA=ON'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_PARALLEL=ON'
-MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_DIR=${MAALI_PYTHON_DIR}'
-MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_FILTERS=OFF'
-MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_SCRIPTING=OFF'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_DIR=/usr'
+#MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_DIR=${MAALI_PYTHON_DIR}'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_FILTERS=ON'
+MAALI_TOOL_CONFIGURE+=' -DVISIT_PYTHON_SCRIPTING=ON'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_QWT_DIR=${MAALI_QWT_HOME}'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_ZLIB_DIR=/usr'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_MPI_COMPILER=mpicc'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_HDF5_DIR=${MAALI_HDF5_HOME}'
 #MAALI_TOOL_CONFIGURE+=' -DVISIT_NETCDF_DIR=${MAALI_NETCDF_HOME}'
-MAALI_TOOL_CONFIGURE+=' -DVISIT_BOOST_DIR=${MAALI_BOOST_HOME}'
+#MAALI_TOOL_CONFIGURE+=' -DVISIT_BOOST_DIR=${MAALI_BOOST_HOME}'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_QT_DIR=${MAALI_QT_HOME}'
-MAALI_TOOL_CONFIGURE+=' -DVISIT_SILO_DIR=${MAALI_SILO_HOME}'
 #MAALI_TOOL_CONFIGURE+=" -DVISIT_SELECTED_DATABASE_PLUGINS:STRING=\'VTK\'"
-MAALI_TOOL_CONFIGURE+=' -DVISIT_BOOST_DIR=${MAALI_BOOST_HOME}'
 MAALI_TOOL_CONFIGURE+=' -DVISIT_SILO_DIR=${MAALI_SILO_HOME}'
 
 #https://github.com/visit-dav/visit/issues/3498 says not to use VTK 8.2+ with Visit 3.1.2.  Stick with vtk/8.1.2
 #VTK must be compiled with ' -DVTK_RENDERING_BACKEND=OpenGL2 -DModule_vtkGUISupportQtOpenGL:BOOL=true'
-
-#To work with HDF5 1.10+
-# Use -DVISIT_SELECTED_DATABASE_PLUGINS to skip any that are annoying.
-# # -DVISIT_SELECTED_DATABASE_PLUGINS:STRING="Silo;VTK;H5Part"
 
 function fix_hdf5_version2 {
   cmakefile=$1
@@ -112,6 +116,8 @@ function maali_pre_build {
 
   # Don't know why the ifndef is being a pain.  REMOVE_DEFINITIONS(-DH5_USE_16_API -DH5_USE_16_API_DEFAULT) did not help.
   sed -i -e 's/H5Oopen(locId, name);/H5Oopen(locId, name, H5P_DEFAULT);/g' ${MAALI_TOOL_BUILD_DIR}/databases/Vs/VsFilter.C
+
+  install_vtk
 
 }
 
@@ -186,4 +192,55 @@ EOF
 
 }
 
+function install_vtk {
+#
 ##############################################################################
+
+  VTK_INSTALL_DIR=$MAALI_INSTALL_DIR/VTK-8.1.2
+
+  # Download VTK into the usual source directory
+  test -f $MAALI_SRC/VTK-8.1.2.tar.gz || $MAALI_WGET_CMD $MAALI_WGET_EXTRA -O $MAALI_SRC/VTK-8.1.2.tar.gz http://www.vtk.org/files/release/8.1/VTK-8.1.2.tar.gz
+  test -f $MAALI_SRC/VTKData-8.1.2.tar.gz || $MAALI_WGET_CMD $MAALI_WGET_EXTRA -O $MAALI_SRC/VTKData-8.1.2.tar.gz http://www.vtk.org/files/release/8.1/VTKData-8.1.2.tar.gz
+
+  # Assuming VTK6
+  VTK_DIR="${MAALI_TOOL_BUILD_DIR}/VTK-8.1.2"
+  VTK_BUILD_DIR="${VTK_DIR}/vtk-build"
+
+  export VTK_HOME="$VTK_INSTALL_DIR"
+  export VTKDATA_ROOT="VTK_INSTALL_DIR"
+
+  VTK_TOOL_CONFIGURE=' -DBUILD_SHARED_LIBS=on -DCMAKE_BUILD_TYPE=Release'
+  VTK_TOOL_CONFITURE+=' -DVTK_Group_MPI=off -DVTK_Group_Rendering=on -DVTK_Group_StandAlone=on -DVTK_WRAP_TCL=on'
+  VTK_TOOL_CONFIGURE+=' -DVTK_PYTHON_VERSION=3 -DVTK_WRAP_PYTHON=on'
+  VTK_TOOL_CONFIGURE+=' -DVTK_QT_VERSION:STRING=5 -DVTK_Group_Qt:BOOL=on'
+  VTK_TOOL_CONFIGURE+=' -DVTK_DATA_ROOT=${VTK_INSTALL_DIR}/VTKData'
+  VTK_TOOL_CONFIGURE+=' -DVTK_RENDERING_BACKEND=OpenGL2'
+  VTK_TOOL_CONFIGURE+=' -DModule_vtkGUISupportQtOpenGL:BOOL=true'
+  VTK_TOOL_CONFIGURE+=' -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 -DPYTHON_LIBRARY=/usr/lib64/libpython2.7.so'
+
+  #Unpack the VTK source
+  maali_makedir "${VTK_DIR}"
+  cd "${MAALI_TOOL_BUILD_DIR}"
+  maali_run "tar zxf $MAALI_SRC/VTK-8.1.2.tar.gz"
+
+  VTK_TOOL_CONFIGURE_EVAL=`eval echo "$VTK_TOOL_CONFIGURE"`
+
+  # cmake likes to build in a director of it's own
+  maali_makedir "${VTK_BUILD_DIR}"
+  cd "${VTK_BUILD_DIR}"
+
+  maali_run "cmake -DCMAKE_INSTALL_PREFIX=$VTK_INSTALL_DIR $VTK_TOOL_CONFIGURE_EVAL .."
+  if [ $DEBUG ]; then
+    maali_run "make -j $MAALI_CORES VERBOSE=TRUE"
+  else
+    maali_run "make -j $MAALI_CORES"
+  fi
+  maali_run "make install"
+
+
+  # unpack the vtkdata straight into the installation directory
+  cd $MAALI_INSTALL_DIR
+  maali_run "tar zxf $MAALI_SRC/VTKData-8.1.2.tar.gz"
+
+}
+
