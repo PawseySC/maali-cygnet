@@ -51,8 +51,10 @@ function maali_pre_build {
         -D PYTHON_LIBRARY=$MAALI_PYTHON_HOME/lib/libpython3.6m.so\
         -D PYTHON3_NUMPY_INCLUDE_DIRS=$MAALI_NUMPY_HOME/lib/python3.6/site-packages/numpy-1.13.3-py3.6-linux-x86_64.egg/numpy/core/include\
         -D OPENCV_GENERATE_PKGCONFIG=ON"
-
+   
    cd "$MAALI_TOOL_BUILD_DIR"
-    maali_run "wget https://github.com/opencv/opencv_contrib/archive/$MAALI_TOOL_VERSION.tar.gz"
-    maali_run "tar -xf $MAALI_TOOL_VERSION.tar.gz"
+   # Download the repo containing "OpenCV Contrib" extensions. These extensions are
+   # maintained in a different repo from the opencv one.
+   maali_run "wget https://github.com/opencv/opencv_contrib/archive/$MAALI_TOOL_VERSION.tar.gz"
+   maali_run "tar -xf $MAALI_TOOL_VERSION.tar.gz"
 }
