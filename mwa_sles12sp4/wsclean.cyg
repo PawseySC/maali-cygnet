@@ -23,7 +23,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="boost/1.66.0 hdf5/1.10.5 fftw/3.3.8 gsl/2.6 idg/0.7 cfitsio/3450 casacore/3.2.1"
+MAALI_TOOL_PREREQ="intel-mkl/19.0.5 boost/1.66.0 hdf5/1.10.5 idg/0.7 gsl/2.6 chgcentre/1.6 cfitsio/3450 casacore/3.2.1"
 
 
 # for auto-building module files
@@ -36,15 +36,19 @@ MAALI_MODULE_SET_CPATH=1
 MAALI_MODULE_SET_MANPATH=1
 
 function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+sed -i 's/fftw_make_planner_thread_safe()/void fftw_make_planner_thread_safe(void)/g' wsclean/*.cpp
+sed -i 's/fftwf_make_planner_thread_safe()/void fftwf_make_planner_thread_safe(void)/g' wsclean/*.cpp
+
     export CC=gcc
-    export CXX=g++ 
+    export CXX="g++ -std=c++11" 
+export CXXFLAGS="-fPIC -std=c++11"
     mkdir -p build
     cd build
-    maali_run "cmake ..  -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR} -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DIDGAPI_LIBRARIES=${MAALI_IDG_HOME}/lib/libidg-api.so -DIDGAPI_INCLUDE_DIRS=${MAALI_IDG_HOME}/include -DCASACORE_ROOT_DIR=${MAALI_CASACORE_HOME} -DGSL_INCLUDE_DIR=$MAALI_GSL_HOME/include -DGSL_LIB=$MAALI_GSL_HOME/lib/libgsl.a -DGSL_CBLAS_LIB=$MAALI_GSL_HOME/lib/libgslcblas.a -DFFTW3_LIB=$MAALI_FFTW_HOME/lib/libfftw3.a -DFFTW3F_LIB=$MAALI_FFTW_HOME/lib/libfftw3f.a -DFFTW3F_THREADS_LIB=$MAALI_FFTW_HOME/lib/libfftw3f_threads.a -DFFTW3_INCLUDE_DIR=$MAALI_FFTW_HOME/include -DFFTW3_THREADS_LIB=$MAALI_FFTW_HOME/lib/libfftw3_threads.a"
-    maali_run "make -j ${MAALI_CORES} VERBOSE=1"
+
+maali_run "cmake ..  -DCMAKE_INSTALL_PREFIX=${MAALI_INSTALL_DIR} -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DIDGAPI_LIBRARIES=${MAALI_IDG_HOME}/lib/libidg-api.so -DIDGAPI_INCLUDE_DIRS=${MAALI_IDG_HOME}/include -DFFTW3_LIB=${MKLROOT}/lib/intel64 -DCASACORE_ROOT_DIR=${MAALI_CASACORE_HOME} -DFFTW3F_THREADS_LIB=${MKLROOT}/lib/intel64 -DGSL_INCLUDE_DIR=$MAALI_GSL_HOME/include -DGSL_LIB=$MAALI_GSL_HOME/lib/libgsl.a -DGSL_CBLAS_LIB=$MAALI_GSL_HOME/lib/libgslcblas.a -DFFTW3F_LIB=${MKLROOT}/lib/intel64 -DFFTW3_THREADS_LIB=${MKLROOT}/lib/intel64 -DFFTW3_INCLUDE_DIR=${MKLROOT}/include/fftw"
+
+    maali_run "make -j12 VERBOSE=1"
     maali_run "make install"
 
-    # Fix permissions.
-    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type d -exec chmod g+rwx,o+rx,o-w {} \;
-    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type f -exec chmod g+rw,o+rx,o-w {} \;
 }
