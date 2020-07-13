@@ -1,7 +1,9 @@
 ##############################################################################
 # maali cygnet file for VASP
 ##############################################################################
-
+# !!!!! WARNING !!!!!!
+# Parallel compilation of this software does not behave correctly. Compile with only one core.
+# !!!!!!!!!!!!!!!!!!!!
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 The Vienna Ab initio Simulation Package (VASP) is a computer program for atomic
@@ -73,10 +75,10 @@ function maali_build {
         -e '80 d'\
         -e 's/_30/_60/g'\
         arch/makefile.include.linux_gnu > makefile.include
-    maali_run "make all -j $MAALI_CORES" 
+    maali_run "make all"
     module swap gcc $MAALI_COMPILER
-    maali_run "make gpu -j $MAALI_CORES"
-    maali_run "make gpu_ncl -j $MAALI_CORES"
+    maali_run "make gpu"
+    maali_run "make gpu_ncl"
     mv bin/* $MAALI_INSTALL_DIR/bin
 }
 
