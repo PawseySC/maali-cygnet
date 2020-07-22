@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for PyBDSF
+##############################################################################
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/lofar-astron/$MAALI_TOOL_NAME_ORIG/archive/v$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="python"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
+
+MAALI_TOOL_PREREQ="python/3.6.3 boost/1.72.0 matplotlib/2.1.0 pyfits/3.4 ipython/5.5.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
+##############################################################################
+function maali_build {
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "mkdir -p ${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages"
+  export PYTHONPATH=${MAALI_INSTALL_DIR}/lib/python${MAALI_PYTHON_LIB_VERSION}/site-packages:$PYTHONPATH
+  export CRAYPE_LINK_TYPE=dynamic
+  export LIBRARY_PATH=${MAALI_BOOST_HOME}/lib:$LIBRARY_PATH
+  sed -i "s/boost_python,/'boost_python36', 'boost_numpy36',/" setup.py 
+  maali_run "CC=cc CXX=CC python setup.py build"
+  maali_run "python setup.py install --prefix=${MAALI_INSTALL_DIR}"
+
+}
