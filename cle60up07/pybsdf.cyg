@@ -26,7 +26,7 @@ MAALI_TOOL_TYPE="python"
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1"
 
-MAALI_TOOL_PREREQ="python/3.6.3 boost/1.72.0 matplotlib/2.1.0 pyfits/3.4 ipython/5.5.0 numpy/1.19.0"
+MAALI_TOOL_PREREQ="python/3.6.3 boost/1.72.0 matplotlib/3.1.3 pyfits/3.4 ipython/5.5.0 numpy/1.19.0"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
