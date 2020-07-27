@@ -20,7 +20,7 @@ MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 MAALI_TOOL_CPU_TARGET="na"
 
 # tool pre-requisites modules needed to install this new tool/package
-#MAALI_TOOL_PREREQ="mvapich"
+MAALI_TOOL_PREREQ="go"
 
 # URL to download the source code from
 MAALI_URL="https://github.com/sylabs/singularity/releases/download/v${MAALI_TOOL_VERSION}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
@@ -46,48 +46,56 @@ MAALI_MODULE_QUOTES_SINGULARITY_CACHEDIR=off
 
 function maali_build {
 
-  # Singularity needs to be built / installed via root as it uses setuid bits
-  export CFLAGS="-fPIC -O3"
-  export FFLAGS="-fPIC -O3"
+  local MAALI_TOOL_BUG_VERSION=$(echo "$MAALI_TOOL_VERSION" | cut -d '.' -f 3)
 
-  if [[ $MAALI_TOOL_MAJOR_VERSION -lt 3 ]]; then
-    #Version 2.x, Never tried it for version 1.x?
+  if [[ $MAALI_COMPILER_NAME == "intel"* ]]; then
+    export CC=icc
+    export F77=ifort
+    export CFLAGS="-fPIC -xCORE-AVX2 -O3"
+    export FFLAGS="-fPIC -xCORE_AVX2 -O3"
+  else
+    export CC=gcc
+    export F77=gfortran
+    export CFLAGS="-fPIC -mavx2 -O3"
+    export FFLAGS="-fPIC -mavx2 -O3"
+  fi
+
+  if [[ $MAALI_TOOL_MAJOR_VERSION -lt 2 ]]; then
+    echo "Versions prior to 2.x.x are not supported"
+    exit 1
+  elif [[ $MAALI_TOOL_MAJOR_VERSION -lt 3 ]]; then
     cd "$MAALI_TOOL_BUILD_DIR"
     maali_run "./configure --prefix=$MAALI_INSTALL_DIR"
     maali_run "make -j $MAALI_CORES"
     maali_run "make install"
   else
-    #version 3.x, Uses google Go now
     cd "$MAALI_TOOL_BUILD_DIR"
-    # Pre-Dependency Needs Google Go?
-    # 3.2 needs at least go 1.12.x (Verified against stable 3.2.1)
-    export goversion=1.12.14
-    maali_run "wget https://dl.google.com/go/go${goversion}.linux-amd64.tar.gz"
-    maali_run "tar xpf go${goversion}.linux-amd64.tar.gz"
-    export GOROOT=$PWD/go
-    export PATH=$GOROOT/bin:$PATH
-
-    #Building with GO is really picky
-    maali_run "mkdir -p ${GOROOT}/src/github.com/sylabs"
-    cd ${GOROOT}/src/github.com/sylabs  
+  
+    maali_run "rm -rf ${GOPATH}/src/github.com/sylabs"
+    maali_run "mkdir -p ${GOPATH}/src/github.com/sylabs"
+    cd ${GOPATH}/src/github.com/sylabs
     maali_run "tar xfz $MAALI_DST"
-    cd ${GOROOT}/src/github.com/sylabs/singularity
-    
-    #Need magical test for 3.5.1
-    #Broken it says needs golang 1.13.x but fails it's own internal tests
-    if [[ $MAALI_TOOL_MINOR_VERSION -ge 5 ]]; then
-      echo "Broken Version Detected patching"
+    cd ${GOPATH}/src/github.com/sylabs/singularity
+
+    if [[ $MAALI_TOOL_MAJOR_VERSION -eq 3 && $MAALI_TOOL_MINOR_VERSION -eq 5 && $MAALI_TOOL_BUG_VERSION -lt 3 ]]; then
+      echo "Patching broken version"
       maali_run "wget https://patch-diff.githubusercontent.com/raw/sylabs/singularity/pull/4769.patch"
       maali_run "patch -p1 < 4769.patch"
     fi
 
     maali_run "./mconfig --prefix=$MAALI_INSTALL_DIR"
-    cd "${GOROOT}/src/github.com/sylabs/singularity/builddir"
+    cd "${GOPATH}/src/github.com/sylabs/singularity/builddir"
     maali_run "make -j $MAALI_CORES"
     maali_run "make install"
   fi
-  maali_run "sed -i 's/^ *mount *home *=.*/mount home = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
-  maali_run "sed -i 's/^ *allow *container *encrypted *=.*/allow container encrypted = no/g' $MAALI_INSTALL_DIR/etc/singularity/singularity.conf"
+
+  maali_run "sed -i 's/^ *mount *home *=.*/mount home = no/g' ${MAALI_INSTALL_DIR}/etc/singularity/singularity.conf"
+  maali_run "sed -i 's/^ *allow *container *encrypted *=.*/allow container encrypted = no/g' ${MAALI_INSTALL_DIR}/etc/singularity/singularity.conf"
+
+  echo "The following manual changes are required as root:"
+  echo "chown root ${MAALI_INSTALL_DIR}/libexec/singularity/bin/starter-suid"
+  echo "chown -R root ${MAALI_INSTALL_DIR}/etc"
+  echo "chmod u+s ${MAALI_INSTALL_DIR}/libexec/singularity/bin/starter-suid"
 }
 
 ##############################################################################
