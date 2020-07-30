@@ -19,12 +19,8 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
-if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "3.2" ]]; then
-   MAALI_URL="http://cran.csiro.au/src/base/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_MAJOR_VERSION/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
-else
-   MAALI_URL="https://cran.r-project.org/src/base/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_MAJOR_VERSION/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
-   MAALI_WGET_EXTRA=--no-check-certificate
-fi
+MAALI_URL="https://cran.r-project.org/src/base/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_MAJOR_VERSION/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_WGET_EXTRA=--no-check-certificate
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
@@ -33,7 +29,7 @@ MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME_ORIG}-$MAALI_TOOL_VERSION"
 
 # add additional configure options
-MAALI_TOOL_CONFIGURE="--enable-R-shlib --with-x=no"
+MAALI_TOOL_CONFIGURE="--enable-R-shlib --with-x=no --with-pcre1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
