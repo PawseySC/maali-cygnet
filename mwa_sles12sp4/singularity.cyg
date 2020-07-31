@@ -1,20 +1,23 @@
 ##############################################################################
-# maali cygnet file for singularity
+# maali cygnet file for singularity 
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-Singularity enables users to have full control of their environment. Singularity
-containers can be used to package entire scientific workflows, software and
+Singularity enables users to have full control of their environment. Singularity 
+containers can be used to package entire scientific workflows, software and 
 libraries, and even data.
 
-For further information see http://singularity.lbl.gov
+For further information see https://sylabs.io/singularity
 
 EOF
 
 # specify which compilers we want to build the tool with
 # Should only build it with the system gcc as it just forms the container host
-MAALI_TOOL_COMPILERS="gcc/4.8.5"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="na"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ="go"
@@ -26,6 +29,7 @@ MAALI_URL="https://github.com/sylabs/singularity/releases/download/v${MAALI_TOOL
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME"
 
 # type of tool (eg. apps, devel, python, etc.)
@@ -92,7 +96,6 @@ function maali_build {
   echo "chown root ${MAALI_INSTALL_DIR}/libexec/singularity/bin/starter-suid"
   echo "chown -R root ${MAALI_INSTALL_DIR}/etc"
   echo "chmod u+s ${MAALI_INSTALL_DIR}/libexec/singularity/bin/starter-suid"
-
 }
 
 ##############################################################################

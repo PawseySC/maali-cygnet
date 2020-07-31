@@ -37,7 +37,6 @@ MAALI_TOOL_TYPE="devel"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
-MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_SINGULARITY_BINDPATH='magnus:/astro,/group,/scratch,/pawsey,/var/opt/cray/alps,/etc/opt/cray/wlm_detect,/opt/cray,/etc/alternatives/cray-alps,/etc/alternatives/cray-udreg,/etc/alternatives/cray-ugni,/etc/alternatives/cray-wlm_detect,/etc/alternatives/cray-xpmem,/usr/lib64/libgfortran.so.3 galaxy:/askapbuffer,/astro,/group,/pawsey,/var/opt/cray/alps,/etc/opt/cray/wlm_detect,/opt/cray,/etc/alternatives/cray-alps,/etc/alternatives/cray-udreg,/etc/alternatives/cray-ugni,/etc/alternatives/cray-wlm_detect,/etc/alternatives/cray-xpmem,/usr/lib64/libgfortran.so.3 chaos:/askapbuffer,/astro,/group,/scratch,/pawsey,/var/opt/cray/alps,/etc/opt/cray/wlm_detect,/opt/cray,/etc/alternatives/cray-alps,/etc/alternatives/cray-udreg,/etc/alternatives/cray-ugni,/etc/alternatives/cray-wlm_detect,/etc/alternatives/cray-xpmem,/usr/lib64/libgfortran.so.3'
 MAALI_MODULE_KEY_SINGULARITY_BINDPATH='PAWSEY_CLUSTER'
 MAALI_MODULE_SET_SINGULARITY_CACHEDIR='\$env\(MYGROUP\)/.singularity'
