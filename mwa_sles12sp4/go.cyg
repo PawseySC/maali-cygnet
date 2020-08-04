@@ -26,9 +26,10 @@ MAALI_TOOL_BUILD_PREREQ=""
 # for auto-building module files
 MAALI_MODULE_SET_PATH="go/bin"
 MAALI_MODULE_SET_LD_LIBRARY_PATH="go/lib"
-MAALI_MODULE_SET_GOPATH='$MAALI_APP_HOME'
+MAALI_MODULE_SET_GOPATH='\"/astro/\"..os.getenv\(\"PAWSEY_PROJECT\"\)..\"/\"..os.getenv\(\"USER\"\)..\"/go\"'
 MAALI_MODULE_SET_GOROOT='$MAALI_APP_HOME/go'
 MAALI_MODULE_WHATIS="Go is an open source programming language that makes it easy to build simple, reliable, and efficient software."
+MAALI_MODULE_QUOTES_GOPATH=off
 
 ###############################################################################
 
