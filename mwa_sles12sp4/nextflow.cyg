@@ -37,7 +37,7 @@ MAALI_TOOL_PREREQ="java/8u151"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=toplevel
-MAALI_MODULE_SET_NXF_HOME='os.getenv\(\"MYGROUP\"\)..\"/.nextflow\"'
+MAALI_MODULE_SET_NXF_HOME='/astro/\"..os.getenv(\"PAWSEY_PROJECT\")..\"/\"..os.getenv(\"USER\"\)..\"/.nextflow\"'
 MAALI_MODULE_QUOTES_NXF_HOME=off
 
 ##############################################################################
