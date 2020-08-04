@@ -30,7 +30,9 @@ MAALI_TOOL_BUILD_DIR=""
 # this only creates a module file
 MAALI_REMODULE=1
 
-if [ "$MAALI_TOOL_VERSION" == "2017.0.4" ]; then
+if [ "$MAALI_TOOL_VERSION" == "2019.0.5" ]; then
+  INTEL_VERSION="19.0.5"
+elif [ "$MAALI_TOOL_VERSION" == "2017.0.4" ]; then
   INTEL_VERSION="17.0.5"
 elif [ "$MAALI_TOOL_VERSION" == "2017.0.3" ]; then
   INTEL_VERSION="17.0.4"
