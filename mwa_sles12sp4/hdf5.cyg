@@ -15,8 +15,71 @@ For further information see https://www.hdfgroup.org/hdf5/
 
 EOF
 
+#since HDF5 can be compiled with a variety of options, define API names
+
+# Set config options based on version
+# set the API config options
+HDF_V12API=""
+HDF_V10API=""
+HDF_V6API=""
+if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
+  HDF_V10API=--with-default-api-version=v110
+  HDF_V8API=--with-default-api-version=v16
+elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
+  HDF_V6API=--with-default-api-version=v16
+fi
+
+#default API name
+HDF_API_NAME=""
+if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
+  HDF_API_NAME="v112"
+elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
+  HDF_API_NAME="v110"
+elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
+  HDF_API_NAME="v16"
+fi
+HDF_API_NAME="api-$HDF_API_NAME"
+
+HDF_API_VERSION_CONFIG=""
+if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
+    if [[ $HDF_USE_API_VERSION -eq 10 ]]; then
+        HDF_API_NAME="v110"
+        HDF_API_VERSION_CONFIG=$HDF_V10API
+    fi
+    if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
+        HDF_API_NAME="v16"
+        HDF_API_VERSION_CONFIG=$HDF_V6API
+    fi
+fi
+if [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
+    if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
+        HDF_API_NAME="v16"
+        HDF_API_VERSION_CONFIG=$HDF_V6API
+    fi
+fi
+
+#default build options and tool pre-requisites
+HDF_BUILD_NAME="c++-noparallel"
+HDF_BUILD_CONFIG="--enable-fotran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
+MAALI_TOOL_PREREQ="szip/2.1.1"
+if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
+    HDF_BUILD_NAME="parallel"
+    HDF_BUILD_CONFIG="--enable-fotran --enable-parallel --with-zlib "
+    MAALI_TOOL_PREREQ="openmpi szip/2.1.1"
+fi
+
+MAALI_TOOL_SUFFIX="$HDF_BUILD_NAME-$HDF_API_NAME"
+
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+if [ $MAALI_CUDA_BUILD -eq 1 ] ; then
+  MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_CUDAMPI_COMPILERS"
+else
+  MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+fi
 
 # URL to download the source code from
 MAALI_URL="http://www.hdfgroup.org/ftp/HDF5/releases/$MAALI_TOOL_NAME-$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/src/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
@@ -25,16 +88,13 @@ MAALI_URL="http://www.hdfgroup.org/ftp/HDF5/releases/$MAALI_TOOL_NAME-$MAALI_TOO
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-$HDF_BUILD_NAME-$HDF"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="szip/2.1.1"
-
 # add additional configure options
-MAALI_TOOL_CONFIGURE='--with-zlib --with-szlib=$MAALI_SZIP_HOME --enable-fortran --enable-cxx --enable-build-mode=production --with-default-api-version=v110'
+MAALI_TOOL_CONFIGURE='$HDF_BUILD_CONFIG $HDF_API_VERSION_CONFIG --enable-build-mode=production '
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
