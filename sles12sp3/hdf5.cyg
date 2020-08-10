@@ -60,15 +60,15 @@ fi
 
 #default build options and tool pre-requisites
 HDF_BUILD_NAME="c++-noparallel"
-HDF_BUILD_CONFIG="--enable-fotran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
+HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
 MAALI_TOOL_PREREQ="szip/2.1.1"
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
+    MAALI_TOOL_PREREQ+=" $MAALI_DEFAULT_MPI"
     HDF_BUILD_NAME="parallel"
-    HDF_BUILD_CONFIG="--enable-fotran --enable-parallel --with-zlib "
-    MAALI_TOOL_PREREQ="openmpi szip/2.1.1"
+    HDF_BUILD_CONFIG="--enable-fortran --enable-parallel --with-zlib --with-slib=$MAALI_SZIP_HOME"
 fi
 
-MAALI_TOOL_SUFFIX="$HDF_BUILD_NAME-$HDF_API_NAME"
+MAALI_TOOL_SUFFIX="-$HDF_BUILD_NAME-$HDF_API_NAME"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
@@ -88,7 +88,9 @@ MAALI_URL="http://www.hdfgroup.org/ftp/HDF5/releases/$MAALI_TOOL_NAME-$MAALI_TOO
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
 
 # where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION-$HDF_BUILD_NAME-$HDF"
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION$MAALI_TOOL_SUFFIX"
+
+MAALI_UNPACK_MKDIR=1
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
@@ -109,6 +111,8 @@ MAALI_MODULE_SET_HDF5_DIR='$MAALI_APP_HOME'
 ##############################################################################
 
 function maali_pre_build {
+  mv $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/* $MAALI_TOOL_BUILD_DIR/
+  rmdir $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/
   cd "$MAALI_TOOL_BUILD_DIR"
   if [ "$MAALI_COMPILER" == "gcc/4.8.3" ]; then
     # Fails on:
