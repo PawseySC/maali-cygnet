@@ -68,7 +68,7 @@ if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
     HDF_BUILD_CONFIG="--enable-fortran --enable-parallel --with-zlib --with-slib=$MAALI_SZIP_HOME CC=mpicc FC=mpif90"
 fi
 
-MAALI_TOOL_SUFFIX="-$HDF_BUILD_NAME-$HDF_API_NAME"
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="-$HDF_BUILD_NAME-$HDF_API_NAME"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
