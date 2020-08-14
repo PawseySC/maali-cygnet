@@ -19,9 +19,9 @@ EOF
 HDF_USE_API_VERSION=
 HDF_WITH_PARALLEL=
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
-    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_API_USE_VERSION=12:10:6")
+    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_USE_API_VERSION=12:10:6")
 elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
-    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_API_USE_VERSION=10:6")
+    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_USE_API_VERSION=10:6")
 elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
     MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1")
 fi
@@ -56,14 +56,17 @@ HDF_PARALLEL_NAME="c++-noparallel"
 HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
 MAALI_TOOL_PREREQ="szip/2.1.1"
 
+
+# parse the build options, would be nice to make this a function 
+# the issue currently is the local scope of variables declared 
 if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
     for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
     do
         opt=(${i//=/ })
         optname=${opt[0]}
-        optval=${opt[0]}
-        if [[ "$optname" -eq "HDF_API_USE_VERSION" ]]; then
-            HDF_API_USE_VERSION=$optval
+        optval=${opt[1]}
+        if [[ "$optname" -eq "HDF_USE_API_VERSION" ]]; then
+            HDF_USE_API_VERSION=$optval
         fi
         if [[ "$optname" -eq "HDF5_WITH_PARALLEL" ]]; then
             HDF_WITH_PARALLEL=$optval
