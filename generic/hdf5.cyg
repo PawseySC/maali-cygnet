@@ -15,6 +15,17 @@ For further information see https://www.hdfgroup.org/hdf5/
 
 EOF
 
+#list extra build options in MAALI_TOOL_BUILD_OPTIONS_AVAIL
+HDF_USE_API_VERSION=
+HDF_WITH_PARALLEL=
+if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
+    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_API_USE_VERSION=12:10:6")
+elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
+    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1" "HDF_API_USE_VERSION=10:6")
+elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
+    MAALI_TOOL_BUILD_OPTIONS_AVAIL=("HDF_WITH_PARALLEL=0:1")
+fi
+
 #since HDF5 can be compiled with a variety of options, define API names
 
 # Set config options based on version
@@ -40,6 +51,27 @@ elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
 fi
 HDF_API_NAME="api-$HDF_API_NAME"
 
+#default build state
+HDF_PARALLEL_NAME="c++-noparallel"
+HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
+MAALI_TOOL_PREREQ="szip/2.1.1"
+
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[0]}
+        if [[ "$optname" -eq "HDF_API_USE_VERSION" ]]; then
+            HDF_API_USE_VERSION=$optval
+        fi
+        if [[ "$optname" -eq "HDF5_WITH_PARALLEL" ]]; then
+            HDF_WITH_PARALLEL=$optval
+        fi
+    done
+fi
+
+#now set api related build options and name
 HDF_API_VERSION_CONFIG=""
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
     if [[ $HDF_USE_API_VERSION -eq 10 ]]; then
@@ -58,12 +90,8 @@ if [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
     fi
 fi
 
-#default build options and tool pre-requisites
-HDF_BUILD_NAME="c++-noparallel"
-HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
-MAALI_TOOL_PREREQ="szip/2.1.1"
+#update build options if parallel build
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
-    MAALI_TOOL_PREREQ+=" $MAALI_DEFAULT_MPI"
     HDF_BUILD_NAME="parallel"
     HDF_BUILD_CONFIG="--enable-fortran --enable-parallel --with-zlib --with-slib=$MAALI_SZIP_HOME CC=mpicc FC=mpif90"
 fi
@@ -116,22 +144,7 @@ function maali_pre_build {
   mv $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/* $MAALI_TOOL_BUILD_DIR/
   rmdir $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/
   cd "$MAALI_TOOL_BUILD_DIR"
-  if [ "$MAALI_COMPILER" == "gcc/4.8.3" ]; then
-    # Fails on:
-    # Testing hard normalized long double -> signed char conversions        Command terminated by signal 11
-    # 0.08user 0.01system 0:00.15elapsed 63%CPU (0avgtext+0avgdata 3288maxresident)k
-    # 0inputs+216outputs (0major+12213minor)pagefaults 0swaps
-    export CFLAGS=-O0
-  else
-    export CFLAGS=
-  fi
-  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION -lt 1.10 ]]; then
-      echo "H5test_kind_LDFLAGS=-static-libgfortran" >> fortran/src/Makefile.am
-    fi
-  fi
-
-  echo "AAA = $LD_LIBRARY_PATH"
+  
 }
 
 ##############################################################################
