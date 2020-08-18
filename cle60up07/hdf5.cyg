@@ -52,13 +52,12 @@ fi
 #default API name
 HDF_API_NAME=""
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
-  HDF_API_NAME="v112"
+  HDF_API_VERSION_NAME="v112"
 elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
-  HDF_API_NAME="v110"
+  HDF_API_VERSION_NAME="v110"
 elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
-  HDF_API_NAME="v16"
+  HDF_API_VERSION_NAME="v16"
 fi
-HDF_API_NAME="api-$HDF_API_NAME"
 
 #default build state
 HDF_PARALLEL_NAME="c++-noparallel"
@@ -86,20 +85,21 @@ fi
 HDF_API_VERSION_CONFIG=""
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
     if [[ $HDF_USE_API_VERSION -eq 10 ]]; then
-        HDF_API_NAME="v110"
+        HDF_API_VERSION_NAME="v110"
         HDF_API_VERSION_CONFIG=$HDF_V10API
     fi
     if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
-        HDF_API_NAME="v16"
+        HDF_API_VERSION_NAME="v16"
         HDF_API_VERSION_CONFIG=$HDF_V6API
     fi
 fi
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
     if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
-        HDF_API_NAME="v16"
+        HDF_API_VERSION_NAME="v16"
         HDF_API_VERSION_CONFIG=$HDF_V6API
     fi
 fi
+HDF_API_NAME="api-$HDF_API_VERSION_NAME"
 
 #update build options if parallel build
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
@@ -144,7 +144,7 @@ function maali_pre_build {
   mv $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/* $MAALI_TOOL_BUILD_DIR/
   rmdir $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/
   cd "$MAALI_TOOL_BUILD_DIR"
-
+  
 }
 
 ##############################################################################
