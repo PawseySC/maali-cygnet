@@ -62,7 +62,7 @@ HDF_API_NAME="api-$HDF_API_NAME"
 
 #default build state
 HDF_PARALLEL_NAME="c++-noparallel"
-HDF_BUILD_CONFIG="--enable-cxx --with-zlib CC=cc CXX=CC"
+HDF_BUILD_CONFIG="--enable-cxx --enable-fortran --with-zlib CC=cc CXX=CC FC=ftn"
 MAALI_TOOL_PREREQ=""
 
 # parse the build options, would be nice to make this a function
@@ -105,7 +105,7 @@ fi
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
     HDF_BUILD_NAME="parallel"
     MAALI_TOOL_PREREQ="cray-mpich"
-    HDF_BUILD_CONFIG="--enable-parallel --with-zlib CC=cc"
+    HDF_BUILD_CONFIG="--enable-parallel --enable-fortran --with-zlib CC=cc FC=ftn"
 fi
 
 MAALI_TOOL_BUILD_OPTIONS_SUFFIX="-$HDF_BUILD_NAME-$HDF_API_NAME"

@@ -43,19 +43,17 @@ fi
 #default API name
 HDF_API_NAME=""
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
-  HDF_API_NAME="v112"
+  HDF_API_VERSION_NAME="v112"
 elif [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
-  HDF_API_NAME="v110"
+  HDF_API_VERSION_NAME="v110"
 elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
-  HDF_API_NAME="v16"
+  HDF_API_VERSION_NAME="v16"
 fi
-HDF_API_NAME="api-$HDF_API_NAME"
 
 #default build state
 HDF_PARALLEL_NAME="c++-noparallel"
 HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
 MAALI_TOOL_PREREQ="szip/2.1.1"
-
 
 # parse the build options, would be nice to make this a function 
 # the issue currently is the local scope of variables declared 
@@ -78,20 +76,21 @@ fi
 HDF_API_VERSION_CONFIG=""
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 12 ]]; then
     if [[ $HDF_USE_API_VERSION -eq 10 ]]; then
-        HDF_API_NAME="v110"
+        HDF_API_VERSION_NAME="v110"
         HDF_API_VERSION_CONFIG=$HDF_V10API
     fi
     if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
-        HDF_API_NAME="v16"
+        HDF_API_VERSION_NAME="v16"
         HDF_API_VERSION_CONFIG=$HDF_V6API
     fi
 fi
 if [[ $MAALI_TOOL_MINOR_VERSION -eq 10 ]]; then
     if [[ $HDF_USE_API_VERSION -eq 6 ]]; then
-        HDF_API_NAME="v16"
+        HDF_API_VERSION_NAME="v16"
         HDF_API_VERSION_CONFIG=$HDF_V6API
     fi
 fi
+HDF_API_NAME="api-$HDF_API_VERSION_NAME"
 
 #update build options if parallel build
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
