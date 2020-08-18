@@ -21,6 +21,9 @@ MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL
 # specify which cpus to target
 MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
 
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/7.2.0 intel/17.0.4.196 cce/8.6.5"
+
 #list extra build options in MAALI_TOOL_BUILD_OPTIONS_AVAIL
 HDF_USE_API_VERSION=
 HDF_WITH_PARALLEL=
@@ -59,8 +62,8 @@ HDF_API_NAME="api-$HDF_API_NAME"
 
 #default build state
 HDF_PARALLEL_NAME="c++-noparallel"
-HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
-MAALI_TOOL_PREREQ="szip/2.1.1"
+HDF_BUILD_CONFIG="--enable-cxx --with-zlib CC=cc CXX=CC"
+MAALI_TOOL_PREREQ=""
 
 # parse the build options, would be nice to make this a function
 # the issue currently is the local scope of variables declared
@@ -101,22 +104,11 @@ fi
 #update build options if parallel build
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
     HDF_BUILD_NAME="parallel"
-    HDF_BUILD_CONFIG="--enable-fortran --enable-parallel --with-zlib --with-slib=$MAALI_SZIP_HOME CC=mpicc FC=mpif90"
+    MAALI_TOOL_PREREQ="cray-mpich"
+    HDF_BUILD_CONFIG="--enable-parallel --with-zlib CC=cc"
 fi
 
 MAALI_TOOL_BUILD_OPTIONS_SUFFIX="-$HDF_BUILD_NAME-$HDF_API_NAME"
-
-# specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
-MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
-if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
-  if [[ $MAALI_CUDA_BUILD -eq 1 ]] ; then
-    MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_CUDAMPI_COMPILERS"
-  else
-    MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
-  fi
-fi
 
 # URL to download the source code from
 MAALI_URL="http://www.hdfgroup.org/ftp/HDF5/releases/$MAALI_TOOL_NAME-$MAALI_TOOL_MAJOR_MINOR_VERSION/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/src/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
