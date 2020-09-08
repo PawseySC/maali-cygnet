@@ -10,8 +10,61 @@ For further information see http://www.h5py.org/
 
 EOF
 
+# tool pre-requisites and
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_PREREQ="python/3.6.3 numpy/1.19.0 six/1.11.0 cray-hdf5/1.10.5.2"
+MAALI_TOOL_BUILD_PREREQ="python/3.6.3 setuptools/38.2.1 numpy/1.19.0 cython/0.27.3 cray-hdf5/1.10.5.2 "
+
+#default build state
+H5PY_BUILD_NAME=""
+H5PY_BUILD_CONFIG=""
+MAALI_TOOL_BUILD_OPTIONS_AVAIL=("H5PY_WITH_PARALLEL=0:1")
+
+# parse the build options, would be nice to make this a function
+# the issue currently is the local scope of variables declared
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[1]}
+        if [[ "$optname" -eq "H5PY_WITH_PARALLEL" ]]; then
+            H5PY_WITH_PARALLEL=$optval
+        fi
+    done
+fi
+
+#update build options if parallel build
+if [[ $H5PY_WITH_PARALLEL -eq 1 ]]; then
+    H5PY_BUILD_NAME="-parallel"
+    H5PY_BUILD_CONFIG="CC=cc HDF5_MPI=ON "
+    MAALI_TOOL_PREREQ="python/3.6.3 numpy/1.19.0 six/1.11.0 $MAALI_DEFAULT_MPI cray-hdf5-parallel/1.10.5.2 mpi4py "
+    MAALI_TOOL_BUILD_PREREQ="python/3.6.3 setuptools/38.2.1 numpy/1.19.0 cython/0.27.3 $MAALI_DEFAULT_MPI cray-hdf5-parallel/1.10.5.2 
+mpi4py "
+fi
+
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="$H5PY_BUILD_NAME"
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+#MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+MAALI_TOOL_COMPILERS="gcc/7.2.0 intel/17.0.4.196 cce/8.6.5"
+
+# specify which compilers we want to build the tool with
+# normally with python use DEFAULT_PYTHON 
+# but for this case, need PrgEnv-* and so cannot follow the 
+# default python build workflow 
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+#MAALI_TOOL_CRAY_CPU_TARGET="haswell"
+
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="python"
 
 # URL to download the source code from
 MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
@@ -22,11 +75,79 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="numpy/1.13.3 six/1.11.0"
+#update configure
+MAALI_TOOL_CONFIGURE="$H5PY_BUILD_CONFIG"
 
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools/38.2.1 cython/0.27.3 cray-hdf5/1.10.1.1"
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_PYTHONPATH=1
 
 ##############################################################################
+
+# since module needs to call setup.py with appropriate build options
+# overide maali build
+# note that since invoking maali_build this now must have extra stuff for a python package 
+# which is normally included when invoking maali_python_build and using 
+# MAALI_TOOL_COMPILERS=$MAALI_DEFAULT_PYTHON
+#
+
+
+#if maali is adjusted to allow PrgEnv-* with python a python build would be 
+#as follows 
+
+function maali_python_build {
+
+  MAALI_PYTHON_MAJOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1`
+
+  if [[ $MAALI_PYTHON_MAJOR_VERSION -gt 2 ]] && [[ $MAALI_PYTHON3_SKIP -eq 1 ]] ; then
+    echo "Don't install the package, but do create a module"
+  else
+    # should work with most python packages
+
+    # Call e.g. python2.7, python3.6 directly, rather than just python.
+    MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
+
+    # need to add the python library path to PYTHONPATH temporarily
+    MAALI_OLD_PYTHONPATH=$PYTHONPATH
+    MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
+    export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+    configopts=(${MAALI_TOOL_CONFIGURE// / })
+    for optval in ${configopts[@]}
+    do
+        export $optval
+    done
+
+    maali_makedir "$MAALI_NEWPYTHONPATH"
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+    #maali_run "$MAALI_TOOL_CONFIGURE python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build"
+    #maali_run "$MAALI_TOOL_CONFIGURE python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py install --prefix=$MAALI_INSTALL_DIR"
+    maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build"
+    maali_run "python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+    export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+  fi
+
+}
+
+# for now overridding module build
+
+function maali_build {
+    MAALI_PYTHON_MAJOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1`
+
+    # Call e.g. python2.7, python3.6 directly, rather than just python.
+    MAALI_PYTHON_MAJOR_MINOR_VERSION=`echo "$MAALI_PYTHON_VERSION" | cut -d '.' -f 1,2`
+
+    # need to add the python library path to PYTHONPATH temporarily
+    MAALI_OLD_PYTHONPATH=$PYTHONPATH
+    MAALI_NEWPYTHONPATH="${MAALI_INSTALL_DIR}/${MAALI_PYTHON_LIBDIR}/python${MAALI_PYTHON_LIB_VERSION}/site-packages"
+    export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
+    maali_makedir "$MAALI_NEWPYTHONPATH"
+
+    cd "$MAALI_TOOL_BUILD_DIR"
+    maali_run "$MAALI_TOOL_CONFIGURE python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py build"
+    maali_run "$MAALI_TOOL_CONFIGURE python${MAALI_PYTHON_MAJOR_MINOR_VERSION} setup.py install --prefix=$MAALI_INSTALL_DIR"
+
+    export PYTHONPATH=$MAALI_OLD_PYTHONPATH
+}
 
