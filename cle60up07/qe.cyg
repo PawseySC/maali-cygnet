@@ -14,7 +14,9 @@ EOF
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
 
 # specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+#MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+# prior, all cpu targets loaded but here limit to magnus
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
@@ -34,6 +36,7 @@ MAALI_TOOL_TYPE="apps"
 MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI"
 
 # add additional configure options
+# here we just enable paralle and intel scalapack
 MAALI_TOOL_CONFIGURE='--enable-parallel --enable-openmp --with-scalapack=intel'
 
 # for auto-building module files
@@ -48,14 +51,23 @@ function maali_build {
   # allows late evaluation
   MAALI_TOOL_CONFIGURE_EVAL=`eval echo "$MAALI_TOOL_CONFIGURE"`
 
+  # for compiling easiest to export required environment variables
   export CC=cc
   export FC=ftn
   export F77=ftn
   export F90=ftn
   export MPIF90=ftn
-  export LAPACK_LIBS="-L$MKLROOT -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64"
-  export SCALAPACK_LIBS="-L$MKLROOT -lmkl_scalapack_lp64 -Wl,--start-group"
-  export FFT_LIBS="-L$MKLROOT/intel64"
+
+  # prior, lapack libs variable defined, causes error in qe >=6.6
+  #export LAPACK_LIBS="-L$MKLROOT -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64 "
+  #export SCALAPACK_LIBS="-L$MKLROOT -lmkl_scalapack_lp64 -Wl,--start-group"
+
+  # now necessary libs in scalapack 
+  export SCALAPACK_LIBS="-L$MKLROOT -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64 -lmkl_scalapack_lp64 -Wl,--start-group"
+  export FFT_LIBS="-L$MKLROOT/intel64 -lmkl_cdft_core "
+  # DFLAGS for qe <6.6 did not appear to be critical, 
+  # but need for >=6.6 particularly the fourier transform define flag 
+  export DFLAGS=" -D__MPI -D__SCALAPACK -Duse_beef -D__DFTI " 
 
   maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE_EVAL"
   maali_run "make clean"
