@@ -1,0 +1,45 @@
+##############################################################################
+# maali cygnet file for singularity 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Singularity enables users to have full control of their environment. Singularity 
+containers can be used to package entire scientific workflows, software and 
+libraries, and even data.
+
+For further information see https://sylabs.io/singularity
+
+EOF
+
+# specify which compilers we want to build the tool with
+# Should only build it with the system gcc as it just forms the container host
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="na"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="singularity/$MAALI_TOOL_VERSION"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+# for auto-building module files
+MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='/usr/lib64:/pawsey/sles12sp3/devel/broadwell/gcc/4.8.5/openmpi/2.1.2/lib'
+MAALI_MODULE_SET_SINGULARITY_BINDPATH='/astro,/group,/scratch,/pawsey,/etc/dat.conf,/etc/libibverbs.d,/usr/lib64/libdaplofa.so.2,/usr/lib64/libdaplofa.so.2.0.0,/usr/lib64/libdat2.so.2,/usr/lib64/libdat2.so.2.0.0,/usr/lib64/libibverbs,/usr/lib64/libibverbs.so,/usr/lib64/libibverbs.so.1,/usr/lib64/libibverbs.so.1.1.14,/usr/lib64/libmlx5.so,/usr/lib64/libmlx5.so.1,/usr/lib64/libmlx5.so.1.1.14,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-3.so.200.18.0,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-cli-3.so.200.18.0,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-genl-3.so.200.18.0,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-idiag-3.so.200.18.0,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-nf-3.so.200.18.0,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-route-3.so.200.18.0,/usr/lib64/librdmacm.so,/usr/lib64/librdmacm.so.1,/usr/lib64/librdmacm.so.1.0.14,/usr/lib64/libnuma.so.1,/usr/lib64/libpciaccess.so.0,/usr/lib64/libpmi2.so.0,/usr/lib64/libpmi.so.0,/usr/lib64/slurm/libslurmfull.so,/usr/lib64/libosmcomp.so.3,/usr/lib64/libmemkind.so.0,/usr/lib64/libfabric.so.1,/usr/lib64/libpsm2.so.2,/usr/lib64/libpsm_infinipath.so.1,/usr/lib64/libinfinipath.so.4'
+
+##############################################################################
