@@ -1,0 +1,317 @@
+##############################################################################
+# maali cygnet file for QGIS
+##############################################################################
+
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+QGIS
+
+QGIS is a user friendly Open Source Geographic Information System (GIS) licensed 
+under the GNU General Public License. QGIS is an official project of the Open Source
+Geospatial Foundation (OSGeo). It runs on Linux, Unix, Mac OSX, Windows and Android 
+and supports numerous vector, raster, and database formats and functionalities.
+
+EOF
+
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_CPU_TARGET="cascadelake" # libxml2 has to be built for broadwell
+
+# URL to download source
+MAALI_URL=""
+# Local filename for downloaded source file
+MAALI_DST=""
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/qgis_build"
+
+# Runtime module dependencies
+MAALI_TOOL_PREREQ="hdf5/1.10.5 python/3.6.3 qt/5.9.3 gsl/2.4"
+# Build-only module dependencies
+MAALI_TOOL_BUILD_PREREQ="git cmake/3.18.0"
+
+# Type of tool
+MAALI_TOOL_TYPE="apps"
+
+# Variables to be defined in the modulefile
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+##############################################################################
+
+
+
+
+
+function autoconf_install {
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget "$1"
+    tar -xf "$2"
+    cd "$3"
+    if ! [[ -e configure ]] && [[ -f autogen.sh ]]; then
+        maali_run "./autogen.sh --prefix=$INSTALL_DIR $4"
+    else
+        [[ -f configure ]] || autoconf
+        maali_run "./configure --prefix=$INSTALL_DIR $4"
+    fi 
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd "$PREV_DIR"
+    rm -rf "$BUILD_DIR"
+}
+
+
+function cmake_install {
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget "$1"
+    tar -xf "$2"
+    cd "$3"
+    mkdir build
+    cd build
+    maali_run "cmake -D CMAKE_INSTALL_PREFIX=$INSTALL_DIR $4 .." 
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd "$PREV_DIR"
+    rm -rf "$BUILD_DIR"
+}
+
+
+function set_env_vars {
+    export PATH="$1/bin:$1/lib:$1/lib64:$1/libexec:$PATH"
+    export LD_LIBRARY_PATH="$1/lib:$1/lib64:$1/libexec:$LD_LIBRARY_PATH"
+    export LIBRARY_PATH="$1/lib:$1/lib64:$1/libexec:$LIBRARY_PATH"
+    export PKG_CONFIG_PATH="$1/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export PKG_CONFIG_PATH="$1/lib64/pkgconfig:$PKG_CONFIG_PATH"
+    export CPATH="$1/include:$CPATH"
+}
+
+
+
+
+
+function install_qgis {
+    set_env_vars "$INSTALL_DIR"
+    autoconf_install ftp://xmlsoft.org/libxml2/libxml2-2.9.8.tar.gz libxml2-2.9.8.tar.gz libxml2-2.9.8 "--without-python --with-pic"
+    # SQLITE3
+    echo "INSTALLING SQLITE3..."
+    autoconf_install https://www.sqlite.org/snapshot/sqlite-snapshot-202007281729.tar.gz sqlite-snapshot-202007281729.tar.gz sqlite-snapshot-202007281729 "CFLAGS=-DSQLITE_ENABLE_COLUMN_METADATA=1"
+
+    # Proj >= 4.9.3
+    echo "INSTALLING PROJ..."
+    autoconf_install https://download.osgeo.org/proj/proj-4.9.3.tar.gz proj-4.9.3.tar.gz proj-4.9.3
+
+    # GEOS >= 3.4
+    echo "INSTALLING GEOS..."
+    autoconf_install http://download.osgeo.org/geos/geos-3.8.1.tar.bz2 geos-3.8.1.tar.bz2 geos-3.8.1
+
+
+    echo "INSTALLING FREEXL..."
+    autoconf_install http://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-1.0.5.tar.gz freexl-1.0.5.tar.gz freexl-1.0.5
+
+    # SpatiaLite
+    echo "INSTALLING SPATIALITE..."
+    autoconf_install http://www.gaia-gis.it/gaia-sins/libspatialite-4.3.0a.tar.gz libspatialite-4.3.0a.tar.gz libspatialite-4.3.0a "--with-geosconfig=$INSTALL_DIR/bin/geos-config"
+
+    echo "INSTALLING LIBSPATIALINDEX..."
+    cmake_install https://github.com/libspatialindex/libspatialindex/archive/1.9.3.tar.gz 1.9.3.tar.gz libspatialindex-1.9.3
+
+    echo "INSTALLING GDAL.."
+    autoconf_install https://github.com/OSGeo/gdal/archive/v2.1.0.tar.gz v2.1.0.tar.gz gdal-2.1.0/gdal
+
+    echo "INSTALLING QWT..."
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://sourceforge.net/projects/qwt/files/qwt/6.1.5/qwt-6.1.5.tar.bz2/download
+    tar -xf download 
+    cd qwt-6.1.5
+    sed -i -e 's|/usr/local/qwt-\$\$QWT_VERSION|'"$INSTALL_DIR"'|g' qwtconfig.pri 
+    maali_run "qmake" 
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd "$PREV_DIR"
+    rm -rf "$BUILD_DIR"
+
+    echo "INSTALLING EXPAT..."
+    autoconf_install https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.gz expat-2.2.9.tar.gz expat-2.2.9
+
+    echo "INSTALLING QSCINTILLA2..."
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://www.riverbankcomputing.com/static/Downloads/QScintilla/2.11.5/QScintilla-2.11.5.tar.gz
+    tar -xf QScintilla-2.11.5.tar.gz
+    cd QScintilla-2.11.5/Qt4Qt5
+    QSCI_INSTALL_DIR="$INSTALL_DIR"
+    sed -i -e 's|\$\$\[QT_INSTALL_LIBS\]|'"$QSCI_INSTALL_DIR"'/lib|g' -e 's|\$\$\[QT_INSTALL_HEADERS\]|'"$QSCI_INSTALL_DIR"'/include|g' -e 's|\$\$\[QT_INSTALL_TRANSLATIONS\]|'"$QSCI_INSTALL_DIR"'/trans|g' -e 's|\$\$\[QT_INSTALL_DATA\]|'"$QSCI_INSTALL_DIR"'/data|g' -e 's|\$\$\[QT_INSTALL_DATA\]|'"$QSCI_INSTALL_DIR"'/data|g' -e 's|\$\$\[QT_HOST_DATA\]|'"$QSCI_INSTALL_DIR"'/data|g' qscintilla.pro 
+    maali_run "qmake qscintilla.pro"
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd "$PREV_DIR"
+    rm -rf "$BUILD_DIR"
+
+    cmake_install https://github.com/KDE/qca/archive/v2.3.1.tar.gz v2.3.1.tar.gz qca-2.3.1
+    cmake_install https://github.com/frankosterfeld/qtkeychain/archive/v0.10.0.tar.gz v0.10.0.tar.gz qtkeychain-0.10.0
+    cmake_install https://libzip.org/download/libzip-1.7.3.tar.gz libzip-1.7.3.tar.gz libzip-1.7.3
+    autoconf_install https://github.com/protocolbuffers/protobuf/releases/download/v3.12.4/protobuf-all-3.12.4.tar.gz protobuf-all-3.12.4.tar.gz protobuf-3.12.4
+    autoconf_install http://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz gperf-3.1.tar.gz gperf-3.1 
+    autoconf_install https://github.com/freedesktop/xorg-macros/archive/util-macros-1.19.1.tar.gz util-macros-1.19.1.tar.gz xorg-macros-util-macros-1.19.1
+    export ACLOCAL_PATH=$INSTALL_DIR/share/aclocal
+    autoconf_install https://github.com/freedesktop/libXcomposite/archive/libXcomposite-0.4.4.tar.gz libXcomposite-0.4.4.tar.gz libXcomposite-libXcomposite-0.4.4
+    autoconf_install https://gitlab.gnome.org/GNOME/libxslt/-/archive/v1.1.33/libxslt-v1.1.33.tar.gz libxslt-v1.1.33.tar.gz libxslt-v1.1.33
+
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://bootstrap.pypa.io/get-pip.py 
+    python3 get-pip.py -I --prefix=`pwd`/python
+    export PYTHONPATH=`pwd`/python/lib/python3.6/site-packages:$PYTHONPATH
+    export PATH=`pwd`/python/bin:$PATH
+    maali_run "pip3 install --prefix=`pwd`/meson meson"
+    wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip
+    unzip ninja-linux.zip
+    mv ninja meson/bin
+    export PYTHONPATH=`pwd`/meson/lib/python3.6/site-packages:$PYTHONPATH
+    export PATH=`pwd`/meson/bin:$PATH
+    wget https://gitlab.freedesktop.org/gstreamer/gstreamer/-/archive/1.17.2/gstreamer-1.17.2.tar.gz 
+    tar -xf gstreamer-1.17.2.tar.gz 
+    cd gstreamer-1.17.2
+    maali_run "meson --prefix=$INSTALL_DIR build"
+    maali_run "ninja -C build"
+    maali_run "ninja -C build install"
+    cd ../..
+    wget https://github.com/GStreamer/gst-plugins-base/archive/1.17.2.tar.gz
+    tar -xf 1.17.2.tar.gz
+    cd gst-plugins-base-1.17.2
+    maali_run "meson --prefix=$INSTALL_DIR build"
+    maali_run "ninja -C build"
+    maali_run "ninja -C build install"
+    cd $PREV_DIR
+    rm -rf $BUILD_DIR
+
+
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    git clone https://github.com/hunspell/hyphen.git hyphen
+    cd hyphen
+    autoreconf -fvi
+    maali_run "./configure --prefix=$INSTALL_DIR"
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd $PREV_DIR
+    rm -rf $BUILD_DIR
+
+    PREV_DIR=`pwd`
+    if [[ -d $INSTALL_DIR/data/icu ]]; then
+    rm -rf $INSTALL_DIR/data/icu
+    fi
+    mkdir -p $INSTALL_DIR/data/icu
+    cd $INSTALL_DIR/data/icu
+    wget https://github.com/unicode-org/icu/releases/download/release-53-2/icu4c-53_2-data.zip
+    unzip icu4c-53_2-data.zip
+    export ICU_DATA=$INSTALL_DIR/data/icu
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://github.com/unicode-org/icu/releases/download/release-53-2/icu4c-53_2-src.tgz
+    tar -xf icu4c-53_2-src.tgz
+    cd icu
+    mkdir build
+    cd build
+    ../source/runConfigureICU Linux --prefix=$INSTALL_DIR
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+    cd $PREV_DIR
+    rm -rf $BUILD_DIR
+
+    autoconf_install https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.gz ruby-2.7.1.tar.gz ruby-2.7.1  
+
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip
+    unzip ninja-linux.zip
+    export PATH=`pwd`:$PATH
+    wget https://github.com/qt/qtwebkit/archive/v5.212.0-alpha3.tar.gz 
+    tar -xf v5.212.0-alpha3.tar.gz 
+    cd qtwebkit-5.212.0-alpha3 
+    mkdir build
+    cd build
+    cmake -G Ninja -D CMAKE_INSTALL_PREFIX=$INSTALL_DIR -D PORT=Qt -DCMAKE_BUILD_TYPE=Release ..
+    sed -i -e 's|-licuuc|'"$INSTALL_DIR/lib/libicuuc.so"'|g' build.ninja 
+    sed -i -e 's|-licui18n|'"$INSTALL_DIR/lib/libicui18n.so"'|g' build.ninja 
+    sed -i -e 's|-fuse-linker-plugin||g' build.ninja
+    maali_run "ninja -j $NUM_CORES"
+    maali_run "ninja install"
+    cd $PREV_DIR
+    rm -rf $BUILD_DIR
+
+    PREV_DIR=`pwd`
+    mkdir -p "$BUILD_DIR"
+    cd "$BUILD_DIR"
+    wget https://bootstrap.pypa.io/get-pip.py 
+    python3 get-pip.py -I --prefix=`pwd`/python
+    export PYTHONPATH=`pwd`/python/lib/python3.6/site-packages:$PYTHONPATH
+    export PATH=`pwd`/python/bin:$PATH
+    wget https://downloads.sourceforge.net/project/pyqt/sip/sip-4.19.4/sip-4.19.4.tar.gz
+    tar -xf sip-4.19.4.tar.gz
+    cd sip-4.19.4
+    python3 configure.py -b $INSTALL_DIR/bin -d $INSTALL_DIR/python/lib/python3.6/site-packages -e $INSTALL_DIR/include -v $INSTALL_DIR/share/sip --no-stubs
+    maali_run "make -j $NUM_CORES"
+    maali_run "make install"
+
+    export PYTHONPATH=$INSTALL_DIR/python/lib/python3.6/site-packages:$PYTHONPATH
+    export PATH=$INSTALL_DIR/python/bin:$PATH
+    wget https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.9.2/PyQt5_gpl-5.9.2.tar.gz/download
+    tar -xf download
+    cd PyQt5_gpl-5.9.2
+    echo "# The target PyQt installation.
+    pyqt_module_dir = $INSTALL_DIR/python/lib/python3.6/site-packages
+    pyqt_bin_dir = $INSTALL_DIR/bin
+    pyqt_sip_dir = $INSTALL_DIR/share/sip/PyQt5
+    qt_shared = True
+
+    [Qt 5.9.3]
+    pyqt_modules = QtCore QtDBus QtDesigner QtGui QtHelp QtMultimedia
+    QtMultimediaWidgets QtNetwork QtOpenGL QtPrintSupport QtQml QtQuick
+    QtSensors QtSerialPort QtSql QtSvg QtTest 
+    QtWidgets QtXmlPatterns 
+    " > conf_file
+    maali_run "python3 configure.py --confirm-license --configuration conf_file"
+    sed -i -e 's|/pawsey/centos7.6/apps/gcc/4.8.5/python/3.6.3/|'"$INSTALL_DIR/python/"'|g' PyQt5.pro
+    qmake
+    maali_run "make -j $NUM_CORES" 
+    maali_run "make install"
+    cd $PREV_DIR
+    rm -rf $BUILD_DIR
+
+    cmake_install https://github.com/Exiv2/exiv2/archive/0.27.1.tar.gz 0.27.1.tar.gz exiv2-0.27.1 "-DCMAKE_BUILD_TYPE=Release"
+    PREV_DIR=`pwd`
+    mkdir -p $BUILD_DIR
+    cd $BUILD_DIR
+    wget https://github.com/qgis/QGIS/archive/final-3_14_1.tar.gz
+    tar -xf "final-3_14_1.tar.gz"
+    cd QGIS-final-3_14_1
+    mkdir build
+    cd build
+    wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip
+    unzip ninja-linux.zip
+    export PATH=`pwd`:$PATH
+    maali_run "cmake -G Ninja -DPYTHON_EXECUTABLE=$MAALI_PYTHON_HOME/bin/python3 -DPYTHON_LIBRARY=$MAALI_PYTHON_HOME/lib/libpython3.6m.so -D CMAKE_INSTALL_PREFIX=$INSTALL_DIR -D CMAKE_PREFIX_PATH=`pwd`/../external/qt3dextra-headers/cmake -D QT5_3DEXTRA_INCLUDE_DIR=`pwd`/../external/qt3dextra-headers -D QT5_3DEXTRA_LIBRARY=$MAALI_QT_HOME/lib/libQt53DExtras.so -D WITH_3D=True .."
+    maali_run "ninja -j $NUM_CORES qgis"
+    cp -r output/* $INSTALL_DIR
+    cd ~ 
+    rm -rf "$BUILD_DIR"
+}
+
+function maali_cmake_build {
+    INSTALL_DIR=$MAALI_INSTALL_DIR
+    BUILD_DIR=$INSTALL_DIR/build
+    NUM_CORES=$MAALI_CORES
+    install_qgis
+}
