@@ -15,10 +15,10 @@ For further information see http://www.boost.org/
 
 EOF
 
-# Request only the latest GNU and Intel compilers to be used
+# Compilers request
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS gcc/8.3.0 $MAALI_DEFAULT_INTEL_COMPILERS"
 
-# Only build for the Broadwell CPUs
+# Target request
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 # needed  for this URL
@@ -66,6 +66,7 @@ function maali_build {
     sed -i 's/${CXX:=icc} -xc++ check_cxx11.cpp/${CXX:=icc} -xc++ -std=c++11 check_cxx11.cpp/g' tools/build/src/engine/build.sh
     sed -i 's/B2_CXX="${CXX} -xc++"/B2_CXX="${CXX} -xc++ -std=c++11"/g' tools/build/src/engine/build.sh
   fi
+
   if [ "$MAALI_TOOL_MINOR_VERSION" -ge 66 ]; then
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=intel-linux"
     maali_run "./b2 headers"
