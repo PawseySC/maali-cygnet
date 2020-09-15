@@ -1,0 +1,48 @@
+##############################################################################
+# maali cygnet file for singularity 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Singularity enables users to have full control of their environment. Singularity 
+containers can be used to package entire scientific workflows, software and 
+libraries, and even data.
+
+For further information see https://sylabs.io/singularity
+
+EOF
+
+# specify which compilers we want to build the tool with
+# Should only build it with the system gcc as it just forms the container host
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="na"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="singularity/$MAALI_TOOL_VERSION"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+#MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# this only creates a module file
+MAALI_REMODULE=1
+
+# for auto-building module files
+MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='\"/usr/lib64:/pawsey/centos7.6/devel/\"..os.getenv\(\"CPU_TARGET\"\)..\"/gcc/8.3.0/openmpi-ucx/4.0.2/lib:/pawsey/centos7.6/devel/gcc/4.8.5/ucx/1.6.0/lib\"'
+MAALI_MODULE_QUOTES_SINGULARITYENV_LD_LIBRARY_PATH=off
+MAALI_MODULE_SET_SINGULARITYENV_OMPI_MCA_btl_openib_allow_ib='1'
+MAALI_MODULE_SET_SINGULARITYENV_FI_PROVIDER_PATH=' '
+MAALI_MODULE_SET_SINGULARITYENV_I_MPI_ROOT=' '
+
+##############################################################################
