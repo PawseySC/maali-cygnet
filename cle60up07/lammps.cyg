@@ -81,9 +81,9 @@ function maali_build {
 
 #Download Eigen required for USER-SMD package
         cd "$MAALI_INSTALL_DIR/lib/smd"
-        wget --no-check-certificate http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz
+        wget --no-check-certificate https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.tar.gz # now on gitlab
         tar -zxvf *.tar.gz
-        ln -s eigen* includelink
+        ln -s eigen-3.3.4 includelink # new dir name from gitlab
         cd "$MAALI_INSTALL_DIR/lib/voronoi"
 
 #To build Voronoi
