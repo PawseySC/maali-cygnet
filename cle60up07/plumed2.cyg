@@ -1,0 +1,72 @@
+##############################################################################
+# maali cygnet file for PLUMED2
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+PLUMED is an open source library for free energy calculations in molecular systems which works together with some of the most popular molecular dynamics engines. Free energy calculations can be performed as a function of many order parameters with a particular focus on biological problems, using state of the art methods such as metadynamics, umbrella sampling and Jarzynski-equation based steered MD. The software, written in C++, can be easily interfaced with both fortran and C/C++ codes.
+
+http://www.plumed.org
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from 
+MAALI_URL="https://github.com/plumed/plumed2/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz" 
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="cray-mpich/7.7.0 intel-mkl/2017.0.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH='bin'
+MAALI_MODULE_SET_CPATH='include'
+MAALI_MODULE_SET_INCLUDE='${MAALI_APP_HOME}/include'
+MAALI_MODULE_TYPE_INCLUDE=prepend
+MAALI_MODULE_SET_LIBRARY_PATH='lib'
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib'
+MAALI_MODULE_SET_PKG_CONFIG_PATH='lib/pkgconfig'
+MAALI_MODULE_SET_PLUMED_KERNEL='${MAALI_APP_HOME}/lib/libplumedKernel.so'
+MAALI_MODULE_SET_PLUMED_VIMPATH='${MAALI_APP_HOME}/lib/plumed/vim'
+MAALI_MODULE_SET_PLUMED_HOME='${MAALI_APP_HOME}'
+MAALI_MODULE_SET_PLUMED_LIB='${MAALI_APP_HOME}/lib'
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
+    maali_run "./configure --prefix=${MAALI_INSTALL_DIR} CXX=CC CC=cc FC=ftn CXXFLAGS=\"-O3 -funroll-loops\" CFLAGS=\"-O3 -funroll-loops -ffast-math\""
+    sed -i 's/CXXFLAGS_NOOPENMP=-O3 -funroll-loops/CXXFLAGS_NOOPENMP=-O3 -funroll-loops -ffast-math/g' Makefile.conf
+  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    module unload cray-libsci
+    maali_run "./configure --prefix=${MAALI_INSTALL_DIR} CXX=CC CC=cc FC=ftn CXXFLAGS=\"-O3\" CFLAGS=\"-O3\" LDFLAGS=\"-L${MKLROOT}/lib/intel64\" LIBS=\"-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl\" CPPFLAGS=\"-I${MKLROOT}/include\""
+  else
+    echo "Compiler $MAALI_COMPILER_NAME not supported by cygnet file"
+    exit
+  fi
+
+  maali_run "make -j $MAALI_CORES"
+  maali_run "make install"
+
+}
+
+##############################################################################
