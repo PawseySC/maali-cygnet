@@ -49,7 +49,7 @@ function maali_build {
   export LINK=CC
   export F90=ftn
 
-  export CRAYPE_LINK_TYPE='dynamic'
+  export CRAYPE_LINK_TYPE=dynamic
 
   if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
     export CCFLAGS="-O3 -hfp3 -hnoomp"
@@ -62,9 +62,10 @@ function maali_build {
     export FFT_PATH=
     export FFT_LIB='-mkl=sequential -dynamic'
   else #GNU
-    export CCFLAGS="-O3 -funroll-loops -std=c++11"
+    export CCFLAGS="-O3 -funroll-loops -std=c++11 -fopenmp"
     export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -I\$(FFTW_INC)"
     export FFT_LIB="-L\$(FFTW_DIR) -lfftw3 -lstdc++"
+    export LINKFLAGS='-fopenmp'             # for GNU Compilers
   fi
   export SHFLAGS='-fPIC'
 
@@ -147,7 +148,6 @@ function maali_build {
   
         maali_run "make -e -j $MAALI_CORES yes-all"
         maali_run "make no-gpu"
-        maali_run "make no-omp"
         maali_run "make no-kim"
         maali_run "make no-kokkos"
         maali_run "make no-latte"
@@ -159,14 +159,17 @@ function maali_build {
        		maali_run "make no-meam"
         	maali_run "make no-reax"	
 	fi
-        maali_run "make no-user-omp"
+   #     maali_run "make no-user-omp"
 	maali_run "make -e -j $MAALI_CORES yes-user-all"
         maali_run "make no-user-quip"
 	maali_run "make no-user-awpmd"
 	maali_run "make no-user-atc"
 	maali_run "make no-user-vtk"
-	
-	maali_run "make -e -j $MAALI_CORES mpi"
+	maali_run "make no-user-adios"
+        maali_run "make no-user-plumed"
+        maali_run "make no-user-scafacos"
+        maali_run "make no-message"	
+	maali_run "make -e -j6 mpi"
 }
 
 ##############################################################################
