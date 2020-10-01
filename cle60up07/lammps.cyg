@@ -30,7 +30,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-fftw/3.3.6.3 cray-hdf5-parallel/1.10.1.1 gsl/2.3 ffmpeg/3.4" 
+MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-fftw/3.3.6.3 cray-hdf5-parallel/1.10.1.1 gsl/2.3 ffmpeg/3.4 plumed2/2.4.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
@@ -129,6 +129,10 @@ function maali_build {
         sed -i 's/h5cc/cc/g' Makefile.h5cc
         make -f Makefile.h5cc
 
+#to link to plumed2 package -- available from release 9Nov18 on
+        cd "${MAALI_INSTALL_DIR}/src"
+        make lib-plumed args="-p $PLUMED_HOME -m shared"
+
 #to build MSCG
 #	cd "${MAALI_INSTALL_DIR}/lib/mscg"
 #	maali_run "git clone https://github.com/uchicago-voth/MSCG-release.git"
@@ -169,6 +173,9 @@ function maali_build {
         maali_run "make no-user-plumed"
         maali_run "make no-user-scafacos"
         maali_run "make no-message"	
+# plumed2 package -- available from release 9Nov18 on
+    maali_run "make yes-user-plumed"
+
 	maali_run "make -e -j6 mpi"
 }
 
