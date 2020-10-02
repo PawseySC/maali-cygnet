@@ -51,7 +51,7 @@ elif [[ $MAALI_TOOL_MINOR_VERSION -lt 10 ]]; then
 fi
 
 #default build state
-HDF_PARALLEL_NAME="c++-noparallel"
+HDF_BUILD_NAME="c++-noparallel"
 HDF_BUILD_CONFIG="--enable-fortran --enable-cxx --with-zlib --with-slib=$MAALI_SZIP_HOME"
 MAALI_TOOL_PREREQ="szip/2.1.1"
 

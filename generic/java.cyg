@@ -1,0 +1,65 @@
+##############################################################################
+# maali cygnet file for Java
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Java is a general-purpose computer programming language that is concurrent,
+class-based, object-oriented, and specifically designed to have as few
+implementation dependencies as possible. It is intended to let application
+developers write once, run anywhere (WORA), meaning that compiled Java code can
+run on all platforms that support Java without the need for recompilation.
+
+For further information see https://www.java.com/en/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download the source code from - it's java
+MAALI_URL=""
+
+# Java versions are of the style 8u40
+MAALI_JAVA_MAJOR_VERSION=`echo $MAALI_TOOL_VERSION | cut -d 'u' -f 1`
+MAALI_JAVA_UPDATE_VERSION=`echo $MAALI_TOOL_VERSION | cut -d 'u' -f 2`
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/jdk-$MAALI_TOOL_VERSION-linux-x64.tar.gz"
+
+# where the unpacked source code is located - no source code for you
+MAALI_TOOL_BUILD_DIR=""
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_JAVA_HOME='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_unpack {
+  log ".. supressing unpacking java source as it builds in place"
+}
+
+##############################################################################
+
+function maali_build {
+
+  if [ ! -f $MAALI_DST ]; then
+    echo "Please download Java $MAALI_TOOL_VERSION to $MAALI_DST before running maali"
+    exit 1
+  fi
+
+  cd $MAALI_INSTALL_DIR
+  cd ..
+  rmdir $MAALI_INSTALL_DIR
+  tar zxf $MAALI_DST
+  mv jdk*$MAALI_JAVA_MAJOR_VERSION*$MAALI_JAVA_UPDATE_VERSION* $MAALI_INSTALL_DIR
+}
+
+##############################################################################
