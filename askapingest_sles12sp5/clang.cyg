@@ -33,14 +33,20 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/llvm-$MAALI_TOOL_VERSION.src"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="gcc/8.3.0"
+MAALI_TOOL_PREREQ=""
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_BUILD_PREREQ="cmake elfutils/0.177 libffi/3.2.1"
+MAALI_TOOL_BUILD_PREREQ="gcc/8.3.0 cmake/3.18.2 elfutils/0.177 libffi/3.2.1"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_COMPILER='clang'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_CC='clang'
+MAALI_MODULE_SET_CXX='clang++'
 
 ##############################################################################
 
@@ -53,22 +59,72 @@ function maali_cmake_build {
 
   cd $MAALI_TOOL_BUILD_DIR
   cd projects/
+  # grab libcxx, libcxxabi, compiler-rt and openmp 
+  wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/libcxx-$MAALI_TOOL_VERSION.src.tar.xz
+  wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/libcxxabi-$MAALI_TOOL_VERSION.src.tar.xz
   wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/openmp-$MAALI_TOOL_VERSION.src.tar.xz
   wget https://github.com/llvm/llvm-project/releases/download/llvmorg-$MAALI_TOOL_VERSION/compiler-rt-$MAALI_TOOL_VERSION.src.tar.xz
+  tar -xJf libcxx-$MAALI_TOOL_VERSION.src.tar.xz
+  tar -xJf libcxxabi-$MAALI_TOOL_VERSION.src.tar.xz
   tar -xJf compiler-rt-$MAALI_TOOL_VERSION.src.tar.xz
   tar -xJf openmp-$MAALI_TOOL_VERSION.src.tar.xz
+  mv libcxx-$MAALI_TOOL_VERSION.src libcxx
+  mv libcxxabi-$MAALI_TOOL_VERSION.src libcxxabi
   mv compiler-rt-$MAALI_TOOL_VERSION.src compiler-rt
   mv openmp-$MAALI_TOOL_VERSION.src openmp
   cd $MAALI_TOOL_BUILD_DIR
-  mkdir -p build
-  cd build
-  maali_run 'cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_STANDARD=17 ../'
+
+  #build with gcc
+  mkdir -p build-with-gcc
+  cd build-with-gcc
+  gccbuilddir=$(pwd)
+  # note that to ensure that we build with the correct gcc toolchain 
+  # we explicitly store the paths 
+  linkflag=" -Wl,-rpath,${MAALI_GCC_HOME}/lib64 -L${MAALI_GCC_HOME}/lib64/ "
+  # set the cmake arguments 
+  cmakeargs=" "
+  cmakeargs+=" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install "
+  # use the loaded gcc module
+  cmakeargs+=" -DCMAKE_C_COMPILER=${MAALI_GCC_HOME}/bin/gcc -DCMAKE_CXX_COMPILER=${MAALI_GCC_HOME}/bin/g++ "
+  # use the linking flag to set the correct path to the tool chain
+  cmakeargs+=" -DCMAKE_CXX_LINK_FLAGS=${linkflag} "
+  # make optimed and shared 
+  cmakeargs+=" -DLLVM_OPTIMIZED_TABLEGEN=ON -DBUILD_SHARED_LIBS=ON "
+  # here just set the OMPTARGET deps explicitly
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBELF_INCLUDE=${MAALI_ELFUTILS_HOME}/include/ "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBELF_LIBRARIES=${MAALI_ELFUTILS_HOME}/lib/libelf.so "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBFFI_INCLUDE=${MAALI_LIBFFI_HOME}/include/ "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBFFI_LIBRARIES=${MAALI_LIBFFI_HOME}/lib64/libffi.so "
+  # now configure and compile 
+  maali_run 'cmake ${cmakeargs} ../'
   maali_run "make -j ${MAALI_CORES}"
-  maali_run "make install"
+  maali_run "make -j install "
   cd ..
-  mkdir build-openmp
-  cd build-openmp
-  maali_run 'cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${MAALI_TOOL_BUILD_DIR}/build/bin/clang -DCMAKE_CXX_COMPILER=${MAALI_TOOL_BUILD_DIR}/build/bin/clang++ -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DOPENMP_LLVM_TOOLS_DIR=${MAALI_TOOL_BUILD_DIR}/build/bin/ ../projects/openmp'
+
+  #build now with recently built clang compilers to bootstrap  
+  mkdir -p build 
+  cd build
+  compileflag=" -L${gccbuilddir}/install/lib/ "
+  linkflag=" -Wl,-rpath,${gccbuilddir}/lib/ -L${gccbuilddir}/install/lib/ "
+  # set the dynamic library to ensure that it uses the recently build toolchain. 
+  # depecating this as using CMAKE_EXE_LINKER_FLAGS  
+  #export LD_LIBRARY_PATH=${gccbuilddir}/install/lib/:$LD_LIBRARY_PATH
+  # set cmake arguments
+  cmakeargs=" "
+  cmakeargs+=" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR "
+  cmakeargs+=" -DCMAKE_C_COMPILER=${gccbuilddir}/bin/clang -DCMAKE_CXX_COMPILER=${gccbuilddir}/install/bin/clang++ "
+  cmakeargs+=" -DCMAKE_CXX_LINK_FLAGS=${linkflag} "
+  cmakeargs+=" -DCMAKE_CXX_FLAGS=${compileflag} "
+  cmakeargs+=" -DCMAKE_EXE_LINKER_FLAGS=${linkflag} "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBELF_INCLUDE=${MAALI_ELFUTILS_HOME}/include/ "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBELF_LIBRARIES=${MAALI_ELFUTILS_HOME}/lib/libelf.so "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBFFI_INCLUDE=${MAALI_LIBFFI_HOME}/include/ "
+  cmakeargs+=" -DLIBOMPTARGET_DEP_LIBFFI_LIBRARIES=${MAALI_LIBFFI_HOME}/lib64/libffi.so "
+  # set what to build explicitly here 
+  cmakeargs+=" -DLLVM_TOOL_LIBCXX_BUILD=ON -DLLVM_TOOL_LIBCXXABI_BUILD=OM -DLLVM_ENABLE_LIBCXX=ON -DLLVM_TOOL_COMPILER_RT_BUILD=ON -DLLVM_TOOL_OPENMP_BUILD=ON "
+
+  # now configure and compile 
+  maali_run 'cmake ${cmakeargs} ../'
   maali_run "make -j ${MAALI_CORES}"
-  maali_run "make install"
+  maali_run "make -j install"
 }
