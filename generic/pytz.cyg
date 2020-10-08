@@ -14,7 +14,8 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
 
 # URL to download the source code from
-MAALI_URL="https://github.com/stub42/pytz/archive/release_${MAALI_TOOL_VERSION}.zip"
+MAALI_URL="https://pypi.io/packages/source/p/pytz/pytz-${MAALI_TOOL_VERSION}.tar.gz"
+#MAALI_URL="https://github.com/stub42/pytz/archive/release_${MAALI_TOOL_VERSION}.zip"
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
@@ -24,62 +25,3 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 ##############################################################################
 
-function maali_unpack {
-
-  # unpack the tarball
-
-  cd $MAALI_BUILD_DIR
-
-  for MAALI_INDIVIDUAL_DST in $MAALI_DST; do
-
-    if [ ! -f "$MAALI_INDIVIDUAL_DST" ]; then
-      maali_die "$MAALI_INDIVIDUAL_DST does not exist"
-    fi
-
-    MAALI_DST_FILESIZE=$(stat -c%s "$MAALI_INDIVIDUAL_DST")
-    if [ $MAALI_DST_FILESIZE -eq 0 ]; then
-      maali_die "$MAALI_INDIVIDUAL_DST is 0 bytes big"
-    fi
-
-    mkdir -p "$MAALI_TOOL_BUILD_DIR"
-    cd "$MAALI_TOOL_BUILD_DIR"
-    unzip -qq $MAALI_INDIVIDUAL_DST
-    mv $MAALI_TOOL_NAME-release_$MAALI_TOOL_VERSION/* ./
-    rmdir MAALI_TOOL_NAME-release_$MAALI_TOOL_VERSION
-
-    if [ -d "$MAALI_TOOL_BUILD_DIR" ]; then
-      if [ "$MAALI_PROJECT" != "" ]; then
-        # this is only needed for /group
-        find $MAALI_TOOL_BUILD_DIR -type d -exec chmod g+s {} \;
-      fi
-    fi
-
-  done
-}
-
-function maali_python_build {
-  # should work with most python packages
-
-  # Call e.g. python2.7, python3.6 directly, rather than just python.
-  PYTHON_MAJOR_MINOR_VERSION=`echo "$PYTHON_VERSION" | cut -d '.' -f 1,2`
-  export PYTHON="python${PYTHON_MAJOR_MINOR_VERSION}"
-
-  # need to add the python library path to PYTHONPATH temporarily
-  MAALI_OLD_PYTHONPATH=$PYTHONPATH
-  MAALI_NEWPYTHONPATH="$MAALI_INSTALL_DIR/$MAALI_PYTHON_LIBDIR/python$MAALI_PYTHON_LIB_VERSION/site-packages"
-  export PYTHONPATH="$MAALI_NEWPYTHONPATH:$PYTHONPATH"
-
-  maali_makedir "$MAALI_NEWPYTHONPATH"
-  
-  cd "$MAALI_TOOL_BUILD_DIR"
-  echo $(pwd)
-if [ "$MAALI_COMPILER_NAME" == "gcc" ]; then
-  maali_run "python setup.py config"
-elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-  maali_run "python setup.py config --compiler=intelem build_clib --compiler=intelem build_ext --compiler=intelem"
-fi
-  maali_run "$PYTHON src/setup.py build"
-  maali_run "$PYTHON src/setup.py install --prefix=$MAALI_INSTALL_DIR"
-
-  export PYTHONPATH=$MAALI_OLD_PYTHONPATH
-}
