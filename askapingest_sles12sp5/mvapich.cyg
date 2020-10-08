@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for mvapich -- tested with versions 2.2 and 2.3a
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+MVAPICH is a high-performance implemenation of the MPI standard.  It's designed
+to exploit novel networking architectures, such as Infiniband, OmniPath, and
+RoCE.
+
+For further information see https://www.mvapich.cse.ohio-state.edu/
+
+EOF
+
+# specify which compilers and CPU TARGETS we want to build the tool with
+if [ "${MAALI_CUDA_BUILD}" = "1" ]; then
+	MAALI_TOOL_COMPILERS="gcc/4.8.5 gcc/8.3.0 intel/19.0.5 pgi/20.1"
+	MAALI_TOOL_CUDA_COMPILERS="cuda"
+	MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+else
+        MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+ 	MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+fi
+
+# URL to download the source code from
+MAALI_URL="http://mvapich.cse.ohio-state.edu/download/$MAALI_TOOL_NAME/mv2/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/${MAALI_TOOL_NAME}2-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# add additional configure options
+#
+#### NOTE ####
+# These configure options are only for getting a functional build
+# They can be changed for more performant options chosen
+##############
+MAALI_TOOL_CONFIGURE=" --with-psm2-libpath=/usr/lib64/ --with-psm2-include=/usr/inclue/ --with-device=ch3:psm --enable-romio --enable-cxx --enable-fortran-options=yes "
+
+# Used on when Maali is invoked with -n option 
+MAALI_CUDA_SUPPORT=0
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin"
+MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib"
+MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}doc/man"
+MAALI_MODULE_SET_MVAPICH2_HOME="${MAALI_INSTALL_DIR}"
+if [ "${MAALI_CUDA_BUILD}" = "1" ]; then
+ MAALI_MODULE_SET_MV2_USE_CUDA="\1"
+fi
+##############################################################################
+function maali_build {
+	cd $MAALI_TOOL_BUILD_DIR
+
+	echo "Building for CPU_TARGET=$MAALI_CPU_TARGET with COMPILER=$COMPILER"
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
+        echo "Assuming the Network is Infiniband"
+        unset F90
+        unset F90FLAGS
+	maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --with-ib-libpath=/usr/lib64" 
+	maali_run "make -j 8 VERBOSE=1"
+	maali_run "make install"
+}
