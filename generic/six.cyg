@@ -1,17 +1,14 @@
 ##############################################################################
-# maali cygnet file for pandas
+# maali cygnet file for six
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-pandas is a Python package providing fast, flexible, and expressive data
-structures designed to make working with structured (tabular, multidimensional,
-potentially heterogeneous) and time series data both easy and intuitive. It
-aims to be the fundamental high-level building block for doing practical, real
-world data analysis in Python.
+Six is a Python 2 and 3 compatibility library. It provides utility functions
+for smoothing over the differences between the Python versions with the goal of
+writing Python code that is compatible on both Python versions.
 
-
-For further information see http://pandas.pydata.org/
+For further information see https://pypi.python.org/pypi/six
 
 EOF
 
@@ -27,13 +24,5 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
-# tool pre-requisites
-MAALI_TOOL_PREREQ="numpy pytz python-dateutil"
-
-# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools cython"
-
-# for auto-building module files
-MAALI_MODULE_SET_PATH=1
-
 ##############################################################################
+

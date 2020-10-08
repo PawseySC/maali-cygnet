@@ -1,17 +1,13 @@
 ##############################################################################
-# maali cygnet file for pandas
+# maali cygnet file for pluggy
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-pandas is a Python package providing fast, flexible, and expressive data
-structures designed to make working with structured (tabular, multidimensional,
-potentially heterogeneous) and time series data both easy and intuitive. It
-aims to be the fundamental high-level building block for doing practical, real
-world data analysis in Python.
+A minimalist production ready plugin system
 
 
-For further information see http://pandas.pydata.org/
+For further information see https://github.com/pytest-dev/pluggy
 
 EOF
 
@@ -28,12 +24,11 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="numpy pytz python-dateutil"
+MAALI_TOOL_PREREQ=""
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="setuptools cython"
+MAALI_TOOL_BUILD_PREREQ=""
 
 # for auto-building module files
-MAALI_MODULE_SET_PATH=1
 
 ##############################################################################
