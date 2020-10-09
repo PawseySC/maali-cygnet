@@ -52,6 +52,8 @@ MAALI_TOOL_CONFIGURE=" --with-psm2-libpath=/usr/lib64/ --with-psm2-include=/usr/
 MAALI_CUDA_SUPPORT=0
 
 # for auto-building module files
+MAALI_MODULE_SET_MPI_NAME='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_MPI_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}bin"
 MAALI_MODULE_SET_LD_LIBRARY_PATH="${MAALI_INSTALL_DIR}lib"
 MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}doc/man"
@@ -59,6 +61,10 @@ MAALI_MODULE_SET_MVAPICH2_HOME="${MAALI_INSTALL_DIR}"
 if [ "${MAALI_CUDA_BUILD}" = "1" ]; then
  MAALI_MODULE_SET_MV2_USE_CUDA="\1"
 fi
+MAALI_MODULE_SET_MPICC='mpicc'
+MAALI_MODULE_SET_MPICXX='mpicxx'
+MAALI_MODULE_SET_MPIF90='mpif90'
+
 ##############################################################################
 function maali_build {
 	cd $MAALI_TOOL_BUILD_DIR
