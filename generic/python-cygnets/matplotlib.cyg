@@ -1,0 +1,38 @@
+##############################################################################
+# maali cygnet file for matplotlib
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Matplotlib is a Python 2D plotting library which produces publication quality
+figures in a variety of hardcopy formats and interactive environments across
+platforms. Matplotlib can be used in Python scripts, the Python and IPython
+shell, the jupyter notebook, web application servers, and four graphical user
+interface toolkits.
+
+For further information see https://matplotlib.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_PYTHON"
+
+# URL to download the source code from
+MAALI_URL="https://files.pythonhosted.org/packages/source/$MAALI_PYTHON_FIRSTLETTER/$MAALI_TOOL_NAME_ORIG/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME_ORIG-$MAALI_TOOL_VERSION"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="numpy pytz pyparsing six cycler python-dateutil "
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="setuptools"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+
+##############################################################################
