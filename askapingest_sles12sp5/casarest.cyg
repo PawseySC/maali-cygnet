@@ -1,0 +1,160 @@
+##############################################################################
+# maali cygnet file for casarest
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is the casarest package, the remainder of the AIPS++ libraries. It consists of the libraries:
+
+msvis
+calibration
+synthesis
+flagging
+simulators
+ionosphere
+The prorgram lwimager (part of synthesis) is the main deliverable.
+
+For further information, see https://github.com/casacore/casarest
+
+EOF
+
+#list extra build options in MAALI_TOOL_BUILD_OPTIONS_AVAIL
+#note that even though this cygnet is for casarest, 
+#the build options should be the same as those used for the 
+#related casacore, thus we leave the names unchanged
+CASACORE_WITH_OPENMP=1
+CASACORE_WITH_PTHREADS=1
+CASACORE_WITH_MPI=0
+CASACORE_WITH_HDF5=1
+CASACORE_WITH_FFTW=1
+CASACORE_WITH_PYTHON=0
+CASACORE_WITH_PYTHON3=0
+MAALI_TOOL_BUILD_OPTIONS_AVAIL=("CASACORE_WITH_OPENMP=1:0", "CASACORE_WITH_PTHREADS=1:0", "CASACORE_WITH_MPI=0:1", "CASACORE_WITH_HDF5=1:0", "CASACORE_WITH_FFTW=1:0", "CASACORE_WITH_PYTHON=0:1", "CASACORE_WITH_PYTHON3=0:1")
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="askapapps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.2"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 boost/1.66.0 "
+
+#location of casacore cata 
+CASACORE_DATA=/pawsey/askapingest_sles12sp5/casacore-data
+
+# add additional configure options
+# here are the default cmake options, directories point to appropriate. 
+MAALI_TOOL_CONFIGURE=""
+MAALI_TOOL_CONFIGURE+=' -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=RELEASE -DDATA_DIR=${CASACORE_DATA} '
+MAALI_TOOL_CONFIGURE+=' -DCASACORE_INCLUDE_DIR=${MAALI_CASACORE_HOME}/include/ '
+MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DLAPACK_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so '
+MAALI_TOOL_CONFIGURE+=' -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME} '
+
+# parse the build options, would be nice to make this a function 
+# the issue currently is the local scope of variables declared 
+CASACORE_BUILD_NAME=""
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[1]}
+        if [[ "$optname" -eq "CASACORE_WITH_MPI" ]]; then
+            CASACORE_WITH_MPI=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_OPENMP" ]]; then
+            CASACORE_WITH_OPENMP=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_PTHREADS" ]]; then
+            CASACORE_WITH_PTHREADS=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_HDF5" ]]; then
+            CASACORE_WITH_HDF5=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_FFTW" ]]; then
+            CASACORE_WITH_FFTW=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_PYTHON" ]]; then
+            CASACORE_WITH_PYTHON=$optval
+        fi
+        if [[ "$optname" -eq "CASACORE_WITH_PYTHON3" ]]; then
+            CASACORE_WITH_PYTHON3=$optval
+        fi
+    done
+fi
+
+#now parse build options, set build name
+if [[ $CASACORE_WITH_OPENMP -eq 1 ]]; then
+    MAALI_TOOL_CONFIGURE+=' -DUSE_OPENMP=ON '
+else 
+    CASACORE_BUILD_NAME+="-noopenmp"
+    MAALI_TOOL_CONFIGURE+=' -DUSE_OPENMP=OFF '
+fi
+if [[ $CASACORE_WITH_PTHREADS -eq 1 ]]; then
+    MAALI_TOOL_CONFIGURE+=' -DUSE_THREADS=ON '
+else 
+    CASACORE_BUILD_NAME+="-nothreads"
+    MAALI_TOOL_CONFIGURE+=' -DUSE_THREADS=OFF '
+fi
+if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=ON '
+    MAALI_TOOL_PREREQ+=" $MAALI_DEFAULT_MPI "
+    CASACORE_BUILD_NAME+="-mpi"
+else 
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=OFF '
+fi
+if [[ $CASACORE_WITH_HDF5 -eq 1 ]]; then
+    if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
+        MAALI_TOOL_PREREQ+=" hdf5/1.10.0-parallel-api-v110 "
+    else 
+        MAALI_TOOL_PREREQ+=" hdf5/1.10.0-c++-noparallel-api-v110 "
+        MAALI_TOOL_CONFIGURE+=' -DHDF5_CXX_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5c++ '
+    fi
+    MAALI_TOOL_CONFIGURE+=' -DHDF5_C_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5cc '
+else 
+    CASACORE_BUILD_NAME+="-nohdf5"
+fi
+if [[ $CASACORE_WITH_FFTW -eq 1 ]]; then
+    if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
+        MAALI_TOOL_PREREQ+=" fftw/3.3.8-mpi "
+    else 
+        MAALI_TOOL_PREREQ+=" fftw/3.3.8 "
+    fi
+else 
+    CASACORE_BUILD_NAME+="-nofftw"
+fi
+if [[ $CASACORE_WITH_PYTHON3 -eq 1 ]]; then
+    MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 "
+    CASACORE_BUILD_NAME+="-python3"
+    MAALI_MODULE_SET_PYTHONPATH=1
+else 
+    if [[ $CASACORE_WITH_PYTHON -eq 1 ]]; then
+        MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 "
+        CASACORE_BUILD_NAME+="-python2"
+        MAALI_MODULE_SET_PYTHONPATH=1
+    fi
+fi
+#set the build option name of the casacore that is to be loaded 
+MAALI_TOOL_PREREQ+=" casacore/3.2.1$CASACORE_BUILD_NAME"
+#set the build option name 
+CASAREST_BUILD_NAME=$CASACORE_BUILD_NAME
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="$CASAREST_BUILD_NAME"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CASAREST_ROOT='$MAALI_APP_HOME'
