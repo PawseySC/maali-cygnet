@@ -16,7 +16,7 @@ For more information, see https://doc.zeroc.com/ice/latest/introduction
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
 
 # url 
 MAALI_URL="https://github.com/zeroc-ice/ice/archive/v${MAALI_TOOL_VERSION}.tar.gz"
