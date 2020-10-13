@@ -41,7 +41,7 @@ MAALI_TOOL_TYPE="askapapps"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.18.2"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cfitsio/3450 wcslib/7.3 "
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 "
 
 #location of casacore cata 
 CASACORE_DATA=/pawsey/askapingest_sles12sp5/casacore-data
@@ -125,7 +125,7 @@ else
     MAALI_TOOL_CONFIGURE+=' -DUSE_FFTW=OFF '
 fi
 if [[ $CASACORE_WITH_PYTHON3 -eq 1 ]]; then
-    MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 intel-mkl/19.0.5  "
+    MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 "
     MAALI_TOOL_CONFIGURE+=' -DBUILD_PYTHON3=ON '
     MAALI_TOOL_CONFIGURE+=' -DBUILD_PYTHON=OFF '
     MAALI_TOOL_CONFIGURE+=' -DPYTHON3_EXECUTABLE=$PYTHON_DIR/bin/python3 -DPYTHON3_LIBRARY=$PYTHON_DIR/lib/libpython3.so '
@@ -134,7 +134,7 @@ if [[ $CASACORE_WITH_PYTHON3 -eq 1 ]]; then
     CASACORE_BUILD_NAME+="-python3"
 else 
     if [[ $CASACORE_WITH_PYTHON -eq 1 ]]; then
-        MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 intel-mkl/19.0.5  "
+        MAALI_TOOL_PREREQ+=" python/3.8.5 boost/1.66.0 numpy/1.19.2 "
         MAALI_TOOL_CONFIGURE+=' -DBUILD_PYTHON=ON '
         MAALI_TOOL_CONFIGURE+=' -DPYTHON_EXECUTABLE=$PYTHON_DIR/bin/python3 -DPYTHON_LIBRARY=$PYTHON_DIR/lib/libpython2.so ' 
         MAALI_TOOL_CONFIGURE+=' -DPYTHON_Boost_LIBRARIES=${MAALI_BOOST_HOME}/lib/libboost_python2.so -DPYTHON_Boost_INCLUDE_DIRS=${MAALI_BOOST_HOME}/include/ '
