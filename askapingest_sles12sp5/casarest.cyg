@@ -139,7 +139,6 @@ if [[ $CASACORE_WITH_FFTW -eq 1 ]]; then
     else 
         MAALI_TOOL_PREREQ+=" fftw/3.3.8 "
     fi
-    CASACORE_BUILD_NAME+="-nofftw"
 else 
     CASACORE_BUILD_NAME+="-nofftw"
 fi
