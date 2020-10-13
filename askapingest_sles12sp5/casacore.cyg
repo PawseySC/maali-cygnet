@@ -31,9 +31,6 @@ MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}/archive/v${M
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
-# where the unpacked source code is located
-MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
-
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="askapapps"
 
@@ -41,7 +38,7 @@ MAALI_TOOL_TYPE="askapapps"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.18.2"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 "
+MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 "
 
 #location of casacore cata 
 CASACORE_DATA=/pawsey/askapingest_sles12sp5/casacore-data
@@ -100,6 +97,13 @@ else
     CASACORE_BUILD_NAME+="-nothreads"
     MAALI_TOOL_CONFIGURE+=' -DUSE_THREADS=OFF '
 fi
+if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=ON '
+    MAALI_TOOL_PREREQ+=" $MAALI_DEFAULT_MPI "
+    CASACORE_BUILD_NAME+="-mpi"
+else 
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=OFF '
+fi
 if [[ $CASACORE_WITH_HDF5 -eq 1 ]]; then
     if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
         MAALI_TOOL_PREREQ+=" hdf5/1.10.0-parallel-api-v110 "
@@ -144,6 +148,10 @@ else
     fi
     MAALI_TOOL_CONFIGURE+=' -DBUILD_PYTHON3=OFF '
 fi
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="$CASACORE_BUILD_NAME"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
