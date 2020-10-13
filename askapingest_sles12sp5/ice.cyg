@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for cppzmq
+# maali cygnet file for ice
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -53,6 +53,6 @@ function maali_build {
 
   cd "$MAALI_TOOL_BUILD_DIR"
   cd cpp
-  maali_run "make -j $MAALI_CORES CONFIGS=cpp11-shared PLATFORMS=amd64 OPTIMISE=yes LANGUAGES=cpp prefix=$MAALI_INSTALL_DIR MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME}"
+  maali_run "make -j $MAALI_CORES CONFIGS=cpp11-shared PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp prefix=$MAALI_INSTALL_DIR MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME}"
   maali_run "make prefix=$MAALI_INSTALL_DIR install"
 }
