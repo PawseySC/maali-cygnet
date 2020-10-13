@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for cppzmq
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+The Internet Communications Engine (Ice) is an object-oriented RPC framework 
+that helps you build distributed applications with minimal effort. Ice allows
+you to focus your efforts on your application logic, and it takes care of all 
+interactions with low-level network programming interfaces. With Ice, there is 
+no need to worry about details such as opening network connections, serializing 
+and deserializing data for network transmission, or retrying failed connection 
+attempts.
+
+For more information, see https://doc.zeroc.com/ice/latest/introduction
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# url 
+MAALI_URL="https://github.com/zeroc-ice/ice/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="mcpp/2.7.2.14 lmdb/0.9.24 libdb/5.3.28"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_ICE_ROOT='$MAALI_APP_HOME'
+
+
+##############################################################################
+function maali_build {
+  # this is the core function for creating software
+
+  # allows late evaluation
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  cd cpp
+  maali_run "make -j $MAALI_CORES CONFIGS=cpp11-shared PLATFORMS=amd64 OPTIMISE=yes LANGUAGES=cpp prefix=$MAALI_INSTALL_DIR MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME}"
+  maali_run "make prefix=$MAALI_INSTALL_DIR install"
+}
