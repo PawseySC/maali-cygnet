@@ -32,7 +32,7 @@ MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}/archive/v${M
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="askapapps"
+MAALI_TOOL_TYPE="askap-devel"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 MAALI_TOOL_BUILD_PREREQ="cmake/3.18.2"
