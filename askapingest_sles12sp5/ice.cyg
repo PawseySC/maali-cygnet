@@ -15,9 +15,15 @@ For more information, see https://doc.zeroc.com/ice/latest/introduction
 
 EOF
 
+ICE_WITH_CPP11=1
+MAALI_TOOL_BUILD_OPTIONS_AVAIL=("ICE_WITH_CPP11=1:0")
+
 # specify which compilers we want to build the tool with
-#MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
-MAALI_TOOL_COMPILERS="gcc/5.5.0"
+if [[ $MAALI_TOOL_MINOR_VERSION -lt 6 ]]; then
+    MAALI_TOOL_COMPILERS="gcc/5.5.0"
+else  
+    MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
+fi
 
 # url 
 MAALI_URL="https://github.com/zeroc-ice/ice/archive/v${MAALI_TOOL_VERSION}.tar.gz"
@@ -37,6 +43,30 @@ MAALI_TOOL_BUILD_PREREQ="mcpp/2.7.2.14 lmdb/0.9.24 libdb/5.3.28"
 # tool pre-requisites 
 MAALI_TOOL_PREREQ=""
 
+# parse the build options, would be nice to make this a function 
+# the issue currently is the local scope of variables declared 
+ICE_BUILD_NAME=""
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[1]}
+        if [[ "$optname" -eq "ICE_WITH_CPP11" ]]; then
+            ICE_WITH_CPP11=$optval
+        fi
+    done
+fi
+
+if [[ $ICE_WITH_CPP11 -eq 1 ]]; then
+    ICE_BUILD_NAME+=""
+else 
+    ICE_BUILD_NAME+="-nocpp11"
+fi
+
+#set the build option name 
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="$ICE_BUILD_NAME"
+
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_CPATH=1
@@ -48,11 +78,16 @@ MAALI_MODULE_SET_ICE_ROOT='$MAALI_APP_HOME'
 
 ##############################################################################
 function maali_build {
-  # this is the core function for creating software
+    # this is the core function for creating software
 
-  # allows late evaluation
+    # allows late evaluation
 
-  cd "$MAALI_TOOL_BUILD_DIR"
-  cd cpp
-  maali_run "make -j${MAALI_CORES} CONFIGS=cpp11-shared PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
+    cd "$MAALI_TOOL_BUILD_DIR"
+    cd cpp
+
+    if [[ $ICE_WITH_CPP11 -eq 1 ]]; then
+        maali_run "make -j${MAALI_CORES} CONFIGS=cpp11-shared PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
+    else 
+        maali_run "make -j${MAALI_CORES} PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
+    fi
 }
