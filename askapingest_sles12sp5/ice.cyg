@@ -86,8 +86,8 @@ function maali_build {
     cd cpp
 
     if [[ $ICE_WITH_CPP11 -eq 1 ]]; then
-        maali_run "make -j${MAALI_CORES} CONFIGS="cpp11-shared shared" PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
+        maali_run "make -j${MAALI_CORES} CONFIGS=\"cpp11-shared\" PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
     else 
-        maali_run "make -j${MAALI_CORES} CONFIGS="shared" PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
+        maali_run "make -j${MAALI_CORES} CONFIGS=\"shared\" PLATFORMS=x86_64 OPTIMISE=yes LANGUAGES=cpp MCPP_HOME=${MAALI_MCPP_HOME} DB_HOME=${MAALI_LIBDB_HOME} LMDB_HOME=${MAALI_LMDB_HOME} prefix=${MAALI_INSTALL_DIR} install "
     fi
 }

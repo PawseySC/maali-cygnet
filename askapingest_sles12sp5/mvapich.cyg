@@ -46,7 +46,21 @@ MAALI_TOOL_PREREQ=""
 # These configure options are only for getting a functional build
 # They can be changed for more performant options chosen
 ##############
-MAALI_TOOL_CONFIGURE=" --with-psm2-libpath=/usr/lib64/ --with-psm2-include=/usr/inclue/ --with-device=ch3:psm --enable-romio --enable-cxx --enable-fortran-options=yes "
+MAALI_TOOL_CONFIGURE=""
+#optimized driver for Lustre
+MAALI_TOOL_CONFIGURE+=" --enable-romio --with-file-system=lustre "
+#enable shared libraries (default)
+MAALI_TOOL_CONFIGURE+=" --enable-shared"
+#enable some languages
+MAALI_TOOL_CONFIGURE+=" --enable-cxx --enable-fortran-options=yes "
+#use openfabris CH3 channel
+MAALI_TOOL_CONFIGURE+=" --with-device=ch3:mrail --with-rdma=gen2 --disable-mcast "
+#enable pmi port  
+MAALI_TOOL_CONFIGURE+=" --with-pmiport "
+#set slurm as process manager
+#MAALI_TOOL_CONFIGURE+=" --with-pm=slurm "
+#enable use of rsh
+MAALI_TOOL_CONFIGURE+=" --enable-rsh "
 
 # Used on when Maali is invoked with -n option 
 MAALI_CUDA_SUPPORT=0
@@ -79,7 +93,7 @@ function maali_build {
         echo "Assuming the Network is Infiniband"
         unset F90
         unset F90FLAGS
-	maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} --with-ib-libpath=/usr/lib64" 
+	maali_run "./configure --prefix=${MAALI_INSTALL_DIR} ${MAALI_TOOL_CONFIGURE} "
 	maali_run "make -j 8 VERBOSE=1"
 	maali_run "make install"
 }
