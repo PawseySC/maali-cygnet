@@ -1,0 +1,54 @@
+##############################################################################
+# maali cygnet file for HIP
+# written for version 3.8.0 on Topaz with CUDA backend
+##############################################################################
+
+# Package description
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HIP is a C++ Runtime API and Kernel Language that allows developers to create portable applications for AMD and NVIDIA GPUs from single source code.
+
+For more information see https://github.com/ROCm-Developer-Tools/HIP.
+
+EOF
+
+
+# Crays only : Programming Environment
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_CPU_TARGET="broadwell cascadelake"
+
+# URL to download source
+MAALI_URL="https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-$MAALI_TOOL_VERSION.tar.gz"
+# Local filename for downloaded source file
+MAALI_DST="$MAALI_SRC/rocm-$MAALI_TOOL_VERSION.tar.gz"
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/HIP-rocm-$MAALI_TOOL_VERSION"
+
+# Runtime module dependencies
+MAALI_TOOL_PREREQ="cuda/10.1"
+# Build-only module dependencies
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
+
+# Type of tool
+MAALI_TOOL_TYPE="devel"
+
+# Congigure Options
+MAALI_TOOL_CONFIGURE=' -DCMAKE_BUILD_TYPE=Release'
+
+# Variables to be defined in the modulefile
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MALLI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_CUDA_PATH='\$CUDA_HOME'
+MAALI_MODULE_SET_HIP_PLATFORM='nvcc'
+##############################################################################
+# Functions to be redefined
+
+
+
+##############################################################################
