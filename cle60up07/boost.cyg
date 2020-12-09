@@ -1,0 +1,98 @@
+##############################################################################
+# maali cygnet file for Boost
+##############################################################################
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Boost provides free peer-reviewed portable C++ source libraries.
+
+Boost emphasizes libraries that work well with the C++ Standard Library. Boost
+libraries are intended to be widely useful, and usable across a broad spectrum
+of applications. The Boost license encourages both commercial and
+non-commercial use.
+
+For further information see http://www.boost.org/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# Target request 
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# needed  for this URL
+MAALI_BOOST_VERSION=`echo $MAALI_TOOL_VERSION| sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION".tar.bz2/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION".tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="python/3.6.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_BOOST_ROOT='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_build {
+
+  AUX_PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d . -f1)
+  AUX_PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d . -f2)
+  AUX_PYTHON_REDUCED_VERSION=$AUX_PYTHON_MAJOR"."$AUX_PYTHON_MINOR
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+  #See https://github.com/HIT-SCIR/pyltp/pull/193
+  if [ "$MAALI_TOOL_VERSION" == "1.66.0" ]; then
+    sed -i -e 's;return PyUnicode_Check(obj) ? _PyUnicode_AsString(obj) : 0;return (void *)(PyUnicode_Check(obj) ? _PyUnicode_AsString(obj) : 0);g' libs/python/src/converter/builtin_converters.cpp
+  fi
+
+  export MAALI_CORES=12
+  #Intel-compiler specifics
+  if [[ "$MAALI_COMPILER_NAME" == "intel"* ]]; then
+    #See https://software.intel.com/en-us/forums/intel-c-compiler/topic/516083
+    sed -i -e 's/!defined(__EDG_VERSION__)/!defined(__EDG_VERSION__) || defined(__INTEL_COMPILER)/g' boost/mpl/aux_/config/gcc.hpp
+    #Compilation error fixed by Alexis Espinosa:
+    if [ "$MAALI_TOOL_MINOR_VERSION" -ge 73 ]; then
+      sed -i 's/${CXX:=icc} -xc++ check_cxx11.cpp/${CXX:=icc} -xc++ -std=c++11 check_cxx11.cpp/g' tools/build/src/engine/build.sh
+      sed -i 's/B2_CXX="${CXX} -xc++"/B2_CXX="${CXX} -xc++ -std=c++11"/g' tools/build/src/engine/build.sh
+    fi
+    #Installation process
+    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=intel-linux"
+    maali_run "./b2 headers"
+    maali_run "./b2 -j$MAALI_CORES install toolset=intel cxxflags=-I$PYTHON_DIR/include/python${AUX_PYTHON_REDUCED_VERSION}m --with=all --prefix=$MAALI_INSTALL_DIR"
+
+  #GNU compiler specifics
+  else
+    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=gcc"
+    maali_run "./b2 headers"
+    maali_run "./b2 -j$MAALI_CORES install toolset=gcc cxxflags=-I$PYTHON_DIR/include/python${AUX_PYTHON_REDUCED_VERSION}m --with=all --prefix=$MAALI_INSTALL_DIR"
+  fi
+
+  #Known fix for 1.64.0 bug:
+  if [ "$MAALI_TOOL_VERSION" == "1.64.0" ]; then
+    sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/matrix.hpp
+    sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/storage.hpp
+  fi
+
+}
+
+##############################################################################

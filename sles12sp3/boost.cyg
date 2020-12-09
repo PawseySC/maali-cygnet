@@ -6,7 +6,7 @@ read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 Boost provides free peer-reviewed portable C++ source libraries.
 
-We emphasize libraries that work well with the C++ Standard Library. Boost
+Boost emphasizes libraries that work well with the C++ Standard Library. Boost
 libraries are intended to be widely useful, and usable across a broad spectrum
 of applications. The Boost license encourages both commercial and
 non-commercial use.
@@ -51,47 +51,40 @@ MAALI_MODULE_SET_BOOST_ROOT='$MAALI_APP_HOME'
 
 function maali_build {
 
+  AUX_PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d . -f1)
+  AUX_PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d . -f2)
+  AUX_PYTHON_REDUCED_VERSION=$AUX_PYTHON_MAJOR"."$AUX_PYTHON_MINOR
+
   cd "$MAALI_TOOL_BUILD_DIR"
 
-  #https://github.com/HIT-SCIR/pyltp/pull/193
+  #See https://github.com/HIT-SCIR/pyltp/pull/193
   if [ "$MAALI_TOOL_VERSION" == "1.66.0" ]; then
     sed -i -e 's;return PyUnicode_Check(obj) ? _PyUnicode_AsString(obj) : 0;return (void *)(PyUnicode_Check(obj) ? _PyUnicode_AsString(obj) : 0);g' libs/python/src/converter/builtin_converters.cpp
   fi
 
   export MAALI_CORES=12
-  # Intel-compiler specifics
+  #Intel-compiler specifics
   if [[ "$MAALI_COMPILER_NAME" == "intel"* ]]; then
-
-  if [ "$MAALI_TOOL_MINOR_VERSION" -ge 73 ]; then
-    sed -i 's/${CXX:=icc} -xc++ check_cxx11.cpp/${CXX:=icc} -xc++ -std=c++11 check_cxx11.cpp/g' tools/build/src/engine/build.sh
-    sed -i 's/B2_CXX="${CXX} -xc++"/B2_CXX="${CXX} -xc++ -std=c++11"/g' tools/build/src/engine/build.sh
-  fi
-
-  if [ "$MAALI_TOOL_MINOR_VERSION" -ge 66 ]; then
+    #See https://software.intel.com/en-us/forums/intel-c-compiler/topic/516083
+    sed -i -e 's/!defined(__EDG_VERSION__)/!defined(__EDG_VERSION__) || defined(__INTEL_COMPILER)/g' boost/mpl/aux_/config/gcc.hpp
+    #Compilation error fixed by Alexis Espinosa:
+    if [ "$MAALI_TOOL_MINOR_VERSION" -ge 73 ]; then
+      sed -i 's/${CXX:=icc} -xc++ check_cxx11.cpp/${CXX:=icc} -xc++ -std=c++11 check_cxx11.cpp/g' tools/build/src/engine/build.sh
+      sed -i 's/B2_CXX="${CXX} -xc++"/B2_CXX="${CXX} -xc++ -std=c++11"/g' tools/build/src/engine/build.sh
+    fi
+    #Installation process
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=intel-linux"
     maali_run "./b2 headers"
-    maali_run "./b2 -j$MAALI_CORES install toolset=intel cxxflags=-I$PYTHON_DIR/include/python3.6m --with=all --prefix=$MAALI_INSTALL_DIR"
-  else
-    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=intel-linux"
-    maali_run "./bjam -j$MAALI_CORES toolset=intel release"
-    maali_run "./bjam install --prefix=$MAALI_INSTALL_DIR"
-  fi
+    maali_run "./b2 -j$MAALI_CORES install toolset=intel cxxflags=-I$PYTHON_DIR/include/python${AUX_PYTHON_REDUCED_VERSION}m --with=all --prefix=$MAALI_INSTALL_DIR"
 
-  # GNU compiler specifics
+  #GNU compiler specifics
   else
-
-  if [ "$MAALI_TOOL_MINOR_VERSION" -ge 66 ]; then
     maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=gcc"
     maali_run "./b2 headers"
-    maali_run "./b2 -j$MAALI_CORES install toolset=gcc cxxflags=-I$PYTHON_DIR/include/python3.6m --with=all --prefix=$MAALI_INSTALL_DIR"
-  else
-    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --without-libraries=python"
-    maali_run "./bjam -j$MAALI_CORES toolset=gcc release"
-    maali_run "./bjam install --prefix=$MAALI_INSTALL_DIR"
+    maali_run "./b2 -j$MAALI_CORES install toolset=gcc cxxflags=-I$PYTHON_DIR/include/python${AUX_PYTHON_REDUCED_VERSION}m --with=all --prefix=$MAALI_INSTALL_DIR"
   fi
 
-  fi
-
+  #Known fix for 1.64.0 bug:
   if [ "$MAALI_TOOL_VERSION" == "1.64.0" ]; then
     sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/matrix.hpp
     sed -i -e 's;#include <boost/serialization/array.hpp>;#include <boost/serialization/array_wrapper.hpp>;g;' $MAALI_INSTALL_DIR/include/boost/numeric/ublas/storage.hpp
