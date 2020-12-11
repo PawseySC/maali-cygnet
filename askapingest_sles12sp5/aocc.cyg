@@ -1,0 +1,88 @@
+##############################################################################
+# maali cygnet file for AOCC
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The AOCC compiler system is a high performance, production quality 
+code generation tool. The AOCC environment provides various options 
+to developers when building and optimizing C, C++, and Fortran 
+applications targeting 32-bit and 64-bit Linux® platforms. 
+The AOCC compiler system offers a high level of advanced optimizations, 
+multi-threading and processor support that includes global optimization, 
+vectorization, inter-procedural analyses, loop transformations, and code 
+generation. AMD also provides highly optimized libraries, which 
+extract the optimal performance from each x86 processor core when 
+utilized. The AOCC Compiler Suite simplifies and accelerates 
+development and tuning for x86 applications.
+
+For further information see https://developer.amd.com/amd-aocc/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="clang/10.0.1"
+
+# specify the architectures we want to build the library on
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
+
+# URL to download the source code from
+# there is no way to download source in automated fashion as requires agreeing to a EULA
+MAALI_URL=""
+
+# location we are downloading the source code to
+# since the installation requires that two tar files are unpacked leave this empty 
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/aocc-$MAALI_TOOL_VERSION.src"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="clang/10.0.1"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_BUILD_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_COMPILER='aocc'
+MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_CC='aocc'
+MAALI_MODULE_SET_CXX='aocc'
+
+##############################################################################
+
+function maali_build {
+  
+  cd $MAALI_TOOL_BUILD_DIR
+  echo "NOW BUILDING 00000000000000000000000000000000000000000000000 " $(pwd)
+  # first unpack the compiler
+  tar -xJf ${MAALI_SRC}/aocc-compiler-$MAALI_TOOL_VERSION.tar
+  mv aocc-compiler-$MAALI_TOOL_VERSION aocc
+  #then unpack the math libraries
+  tar -xJf ${MAALI_SRC}/aocl-linux-aocc-${MAALI_TOOL_VERSION}-4.tar.gz
+  mv aocl-linux-aocc-${MAALI_TOOL_VERSION}-4 aocl
+
+  # now install the amd optimised libraries to the install directory 
+  cd aocl
+#  ./install -t ${MAALI_INSTALL_DIR}/
+#  mkdir -p ${MAALI_INSTALL_DIR}/amd-libs
+#  mv ${MAALI_INSTALL_DIR}/${MAALI_TOOL_VERSION}/* ${MAALI_INSTALL_DIR}/amd-libs/
+#  export LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib:${LIBRARY_PATH}
+  cd ../
+  
+  # now install the compilers themselves 
+#  mv aocc/bin ./
+#  mv aocc/lib32 ./
+#  mv aocc/lib ./
+#  mv aocc/libexe ./
+#  mv aocc/share ./
+#  rm -rf aocl
+#  rm -rf aocc
+}
