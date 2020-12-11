@@ -58,9 +58,9 @@ MAALI_TOOL_CONFIGURE+=" --with-device=ch3:mrail --with-rdma=gen2 --disable-mcast
 #enable pmi port  
 MAALI_TOOL_CONFIGURE+=" --with-pmiport "
 #set slurm as process manager
-#MAALI_TOOL_CONFIGURE+=" --with-pm=slurm "
+MAALI_TOOL_CONFIGURE+=" --with-pm=slurm "
 #enable use of rsh
-MAALI_TOOL_CONFIGURE+=" --enable-rsh "
+#MAALI_TOOL_CONFIGURE+=" --enable-rsh "
 
 # Used on when Maali is invoked with -n option 
 MAALI_CUDA_SUPPORT=0

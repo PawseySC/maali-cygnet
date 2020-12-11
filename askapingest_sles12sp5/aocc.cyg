@@ -22,6 +22,7 @@ EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="clang/10.0.1"
+#MAALI_TOOL_COMPILERS="gcc/8.3.0"
 
 # specify the architectures we want to build the library on
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_TOOL_CPU_TARGET"
@@ -42,6 +43,7 @@ MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
 MAALI_TOOL_PREREQ="clang/10.0.1"
+#MAALI_TOOL_PREREQ="gcc/8.3.0"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_BUILD_PREREQ=""
@@ -60,29 +62,49 @@ MAALI_MODULE_SET_CXX='aocc'
 
 function maali_build {
   
+  mkdir -p $MAALI_TOOL_BUILD_DIR
   cd $MAALI_TOOL_BUILD_DIR
-  echo "NOW BUILDING 00000000000000000000000000000000000000000000000 " $(pwd)
+  mkdir -p ${MAALI_INSTALL_DIR}/lib/
+  mkdir -p ${MAALI_INSTALL_DIR}/lib32/
+  mkdir -p ${MAALI_INSTALL_DIR}/libexe/
+  mkdir -p ${MAALI_INSTALL_DIR}/include/
+  mkdir -p ${MAALI_INSTALL_DIR}/bin/
+  mkdir -p ${MAALI_INSTALL_DIR}/share/
+  
   # first unpack the compiler
-  tar -xJf ${MAALI_SRC}/aocc-compiler-$MAALI_TOOL_VERSION.tar
-  mv aocc-compiler-$MAALI_TOOL_VERSION aocc
-  #then unpack the math libraries
-  tar -xJf ${MAALI_SRC}/aocl-linux-aocc-${MAALI_TOOL_VERSION}-4.tar.gz
+  tar xf ${MAALI_SRC}/aocc-compiler-${MAALI_TOOL_VERSION}.0.tar
+  mv aocc-compiler-${MAALI_TOOL_VERSION}.0 aocc
+  # then unpack the math libraries
+  tar xf ${MAALI_SRC}/aocl-linux-aocc-${MAALI_TOOL_VERSION}-4.tar.gz
   mv aocl-linux-aocc-${MAALI_TOOL_VERSION}-4 aocl
 
   # now install the amd optimised libraries to the install directory 
   cd aocl
-#  ./install -t ${MAALI_INSTALL_DIR}/
-#  mkdir -p ${MAALI_INSTALL_DIR}/amd-libs
-#  mv ${MAALI_INSTALL_DIR}/${MAALI_TOOL_VERSION}/* ${MAALI_INSTALL_DIR}/amd-libs/
-#  export LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib:${LIBRARY_PATH}
+  ./install.sh -t $(pwd)
+  cp -r ./${MAALI_TOOL_VERSION}/lib/* ${MAALI_INSTALL_DIR}/lib/
+  cp -r ./${MAALI_TOOL_VERSION}/include/* ${MAALI_INSTALL_DIR}/include/
   cd ../
+
+  # for aocc compiler need to add the math library path to the LD_LIBRARY_PATH 
+  # and the LIBRARY_PATH
+  export LD_LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib/:${LD_LIBRARY_PATH}
+  export LIBRARY_PATH=${MAALI_INSTALL_DIR}/lib/:${LIBRARY_PATH}
+
+  # also need to explicitly add the libm to the LIBRARY_PATH 
+  export LIBRARY_PATH=/usr/lib64:${LIBRARY_PATH}
   
-  # now install the compilers themselves 
-#  mv aocc/bin ./
-#  mv aocc/lib32 ./
-#  mv aocc/lib ./
-#  mv aocc/libexe ./
-#  mv aocc/share ./
-#  rm -rf aocl
-#  rm -rf aocc
+  # now install the compilers themselves
+  cd aocc 
+  # check that the prereqs are met and that all is well 
+  ./AOCC-prerequisites-check.sh
+  cd ../
+
+  cp -r aocc/bin/* ${MAALI_INSTALL_DIR}/bin/
+  cp -r aocc/lib/* ${MAALI_INSTALL_DIR}/lib/
+  cp -r aocc/lib32/* ${MAALI_INSTALL_DIR}/lib32/
+  cp -r aocc/libexe/* ${MAALI_INSTALL_DIR}/libexe/
+  cp -r aocc/include/* ${MAALI_INSTALL_DIR}/include/
+  cp -r aocc/share/* ${MAALI_INSTALL_DIR}/share/
+  rm -rf aocl
+  rm -rf aocc
 }
