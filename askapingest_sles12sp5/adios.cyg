@@ -1,0 +1,114 @@
+##############################################################################
+# maali cygnet file for adios
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The Adaptable IO System (ADIOS) provides a simple, flexible way for scientists 
+to describe the data in their code that may need to be written, read, or 
+processed outside of the running simulation. By providing an external to the 
+code XML file describing the various elements, their types, and how you wish 
+to process them this run, the routines in the host code (either Fortran or C) 
+can transparently change how they process the data.
+
+For more info see https://www.olcf.ornl.gov/center-projects/adios/
+
+EOF
+
+#list extra build options in MAALI_TOOL_BUILD_OPTIONS_AVAIL
+# adios can be built with either hdf5 or parallel hdf5
+ADIOS_USE_PARALLEL_HDF5=0
+ADIOS_USE_MPICH_ABI=0
+MAALI_TOOL_BUILD_OPTIONS_AVAIL=("ADIOS_USE_PARALLEL_HDF5=0:1 ADIOS_USE_MPICH_ABI=0:1")
+
+ADIOS_BUILD_CONFIG='--with-zlib --with-bzip2 --with-szip="${MAALI_SZIP_HOME}" CC=mpicc FC=mpif90'
+MAALI_TOOL_PREREQ=" szip "
+
+# parse the build options, would be nice to make this a function 
+# the issue currently is the local scope of variables declared 
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[1]}
+        if [[ "$optname" -eq "ADIOS_USE_PARALLEL_HDF5" ]]; then
+            ADIOS_USE_PARALLEL_HDF5=$optval
+        fi
+        if [[ "$optname" -eq "ADIOS_USE_MPICH_ABI" ]]; then
+            ADIOS_USE_MPICH_ABI=$optval
+        fi
+    done
+fi
+
+#update build options if parallel build
+if [[ $ADIOS_USE_PARALLEL_HDF5 -eq 1 ]]; then
+    ADIOS_HDF5_BUILD_NAME="phdf5"
+    ADIOS_BUILD_CONFIG+=' --with-phdf5="${MAALI_HDF5_HOME}" '
+    MAALI_TOOL_PREREQ+=" hdf5/1.12.0-parallel-api-v110 "
+else
+    ADIOS_HDF5_BUILD_NAME="hdf5"
+    ADIOS_BUILD_CONFIG+=' --with-hdf5="${MAALI_HDF5_HOME}" '
+    MAALI_TOOL_PREREQ+=" hdf5/1.12.0-c++-noparallel-api-v110 "
+fi
+if [[ $ADIOS_USE_MPICH_ABI -eq 1 ]]; then
+    ADIOS_MPI_BUILD_NAME="mpi-abi-mpich"
+    MAALI_TOOL_PREREQ+=" mvapich/2.3b "
+else
+    ADIOS_MPI_BUILD_NAME="mpi-abi-openmpi"
+    MAALI_TOOL_PREREQ+=" openmpi-ucx/4.0.3 "
+fi
+
+MAALI_TOOL_BUILD_OPTIONS_SUFFIX="-$ADIOS_HDF5_BUILD_NAME-$ADIOS_MPI_BUILD_NAME"
+
+# specify which compilers we want to build the tool with
+#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
+  if [[ $MAALI_CUDA_BUILD -eq 1 ]] ; then
+    MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_CUDAMPI_COMPILERS"
+  else
+    MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI_COMPILERS"
+  fi
+fi
+
+# URL to download the source code from
+MAALI_URL="http://users.nccs.gov/~pnorbert/adios-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION$MAALI_TOOL_SUFFIX"
+
+MAALI_UNPACK_MKDIR=1
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE='$ADIOS_BUILD_CONFIG'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_ADIOS_DIR='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_pre_build {
+  # move the files extracted from tar file to appropriate directory, remove tar made directory
+  mv $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/* $MAALI_TOOL_BUILD_DIR/
+  rmdir $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/
+  cd "$MAALI_TOOL_BUILD_DIR"
+  
+}
+
+##############################################################################
