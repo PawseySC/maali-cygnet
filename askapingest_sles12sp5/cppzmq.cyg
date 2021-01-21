@@ -27,7 +27,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_TOOL_BUILD_PREREQ="cmake"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="libzmq/4.3.3"
+MAALI_TOOL_PREREQ="libzmq/4.3.2"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
@@ -36,3 +36,17 @@ MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_C_INCLUDE_PATH=1
 MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
 MAALI_MODULE_SET_CPPZMQ_ROOT='$MAALI_APP_HOME'
+
+function maali_cmake_build {
+  cd $MAALI_TOOL_BUILD_DIR
+  maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+  cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-build"
+
+  # now configure and compile
+  cmakeargs=" "
+  cmakeargs+=" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR "
+  cmakeargs+=" -DCPPZMQ_BUILD_TESTS=OFF "
+  maali_run 'cmake ${cmakeargs} ../'
+  maali_run "make -j ${MAALI_CORES}"
+  maali_run "make -j install"
+}

@@ -42,8 +42,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/aocc-$MAALI_TOOL_VERSION.src"
 MAALI_TOOL_TYPE="devel"
 
 # tool pre-requisites
-MAALI_TOOL_PREREQ="clang/10.0.1"
-#MAALI_TOOL_PREREQ="gcc/8.3.0"
+MAALI_TOOL_PREREQ=""
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_BUILD_PREREQ=""
@@ -51,12 +50,14 @@ MAALI_TOOL_BUILD_PREREQ=""
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
-
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
 MAALI_MODULE_SET_MANPATH=1
 MAALI_MODULE_SET_COMPILER='aocc'
 MAALI_MODULE_SET_COMPILER_VER='$MAALI_TOOL_VERSION'
-MAALI_MODULE_SET_CC='aocc'
-MAALI_MODULE_SET_CXX='aocc'
+MAALI_MODULE_SET_CC='clang'
+MAALI_MODULE_SET_CXX='clang++-w'
 
 ##############################################################################
 
@@ -107,4 +108,20 @@ function maali_build {
   cp -r aocc/share/* ${MAALI_INSTALL_DIR}/share/
   rm -rf aocl
   rm -rf aocc
+
+  # add a C++ wrapper to the amd optimised clang++ compiler to use the libc++ library
+  cd ${MAALI_INSTALL_DIR}/bin
+  echo "#! /bin/bash" >> clang++-w
+  echo "# " >> clang++-w
+  echo "# This file is wraps the clang C++ compiler so as to always use the libc++ library." >> clang++-w
+  echo "# Simple script to compile and/or link C++ programs." >> clang++-w
+  echo "#" >> clang++-w
+  echo "# Handling of command-line options:" >> clang++-w
+  echo "#   This is a little tricky because some options may contain blanks." >> clang++-w
+  echo "#   Currently all command line options are just forwarded to clang++ but it" >>clang++-w 
+  echo "#   it might be useful to add some handling like --showme" >> clang++-w
+  echo "" >> clang++-w
+  echo "# run the compiler" >> clang++-w
+  echo "clang++ -stdlib=libc++ \"\$@\"" >> clang++-w
+
 }
