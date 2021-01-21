@@ -23,6 +23,10 @@ MAALI_TOOL_BUILD_OPTIONS_AVAIL=("ADIOS_USE_PARALLEL_HDF5=0:1 ADIOS_USE_MPICH_ABI
 
 ADIOS_BUILD_CONFIG='--with-zlib --with-bzip2 --with-szip="${MAALI_SZIP_HOME}" CC=mpicc FC=mpif90'
 MAALI_TOOL_PREREQ=" szip "
+if [[ ${MAALI_TOOL_MAJOR_VERSION} -ge 2 ]]; then
+    MAALI_TOOL_BUILD_PREREQ+=" cmake/3.19.1 "
+    ADIOS_BUILD_CONFIG='-DADIOS2_WITH_BZip2=ON -DADIOS2_USE_SZ=ON -DADIOS2_USE_MPI=ON CC=mpicc FC=mpif90'
+fi
 
 # parse the build options, would be nice to make this a function 
 # the issue currently is the local scope of variables declared 
@@ -44,11 +48,19 @@ fi
 #update build options if parallel build
 if [[ $ADIOS_USE_PARALLEL_HDF5 -eq 1 ]]; then
     ADIOS_HDF5_BUILD_NAME="phdf5"
-    ADIOS_BUILD_CONFIG+=' --with-phdf5="${MAALI_HDF5_HOME}" '
+    if [[ ${MAALI_TOOL_MAJOR_VERSION} -ge 2 ]]; then 
+        ADIOS_BUILD_CONFIG+=' -DADIOS2_USE_HDF5=ON -DHDF5_ROOT="${MAALI_HDF5_HOME}" '
+    else 
+        ADIOS_BUILD_CONFIG+=' --with-phdf5="${MAALI_HDF5_HOME}" '
+    fi 
     MAALI_TOOL_PREREQ+=" hdf5/1.12.0-parallel-api-v110 "
 else
     ADIOS_HDF5_BUILD_NAME="hdf5"
-    ADIOS_BUILD_CONFIG+=' --with-hdf5="${MAALI_HDF5_HOME}" '
+    if [[ ${MAALI_TOOL_MAJOR_VERSION} -ge 2 ]]; then 
+        ADIOS_BUILD_CONFIG+=' -DADIOS2_USE_HDF5=ON -DHDF5_ROOT="${MAALI_HDF5_HOME}" '
+    else 
+        ADIOS_BUILD_CONFIG+=' --with-hdf5="${MAALI_HDF5_HOME}" '
+    fi
     MAALI_TOOL_PREREQ+=" hdf5/1.12.0-c++-noparallel-api-v110 "
 fi
 if [[ $ADIOS_USE_MPICH_ABI -eq 1 ]]; then
@@ -62,8 +74,8 @@ fi
 MAALI_TOOL_BUILD_OPTIONS_SUFFIX="-$ADIOS_HDF5_BUILD_NAME-$ADIOS_MPI_BUILD_NAME"
 
 # specify which compilers we want to build the tool with
-#MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
-MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+#MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
@@ -75,7 +87,11 @@ if [[ $HDF_WITH_PARALLEL -eq 1 ]]; then
 fi
 
 # URL to download the source code from
-MAALI_URL="http://users.nccs.gov/~pnorbert/adios-${MAALI_TOOL_VERSION}.tar.gz"
+if [[ ${MAALI_TOOL_MAJOR_VERSION} -ge 2 ]]; then
+    MAALI_URL="https://github.com/ornladios/ADIOS2/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+else 
+    MAALI_URL="http://users.nccs.gov/~pnorbert/adios-${MAALI_TOOL_VERSION}.tar.gz"
+fi
 
 # location we are downloading the source code to
 MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
