@@ -45,3 +45,14 @@ MAALI_MODULE_SET_PKG_CONFIG_PATH='lib/pkgconfig'
 MAALI_MODULE_SET_BLAS='$MAALI_APP_HOME'
 
 ##############################################################################
+
+function maali_pre_build {
+  # move the files extracted from tar file to appropriate directory, remove tar made directory
+
+  rmdir ${MAALI_TOOL_BUILD_DIR}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}
+  $MAALI_TOOL_BUILD_DIR/OpenBLAS-$MAALI_TOOL_VERSION ${MAALI_TOOL_BUILD_DIR}/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}
+  mv $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/* $MAALI_TOOL_BUILD_DIR/
+  rm -rf $MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION/
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+}
