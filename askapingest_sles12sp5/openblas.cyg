@@ -1,0 +1,47 @@
+##############################################################################
+# maali cygnet file for openblas 
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+In scientific computing, OpenBLAS is an open-source implementation of the 
+BLAS (Basic Linear Algebra Subprograms) and LAPACK APIs with many 
+hand-crafted optimizations for specific processor types. It is developed at 
+the Lab of Parallel Software and Computational Science, ISCAS.
+
+For further information see http://https://www.openblas.net//
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS" 
+
+# URL to download the source code from
+
+MAALI_URL=https://github.com/xianyi/OpenBLAS/releases/download/v${MAALI_TOOL_VERSION}/OpenBLAS-${MAALI_TOOL_VERSION}.tar.gz
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tgz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ=""
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/3.19.1"
+
+# add additional configure options
+MAALI_TOOL_CONFIGURE=''
+
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib'
+MAALI_MODULE_SET_LIBRARY_PATH='lib'
+MAALI_MODULE_SET_BLAS_LIB='${MAALI_APP_HOME}/lib'
+MAALI_MODULE_SET_PKG_CONFIG_PATH='lib/pkgconfig'
+MAALI_MODULE_SET_BLAS='$MAALI_APP_HOME'
+
+##############################################################################
