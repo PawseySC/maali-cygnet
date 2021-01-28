@@ -85,7 +85,7 @@ MAALI_TOOL_BUILD_PREREQ="cmake/3.19.1"
 
 # tool pre-requisites 
 #MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 boost/1.66.0"
-MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 boost/1.66.0"
+#MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 boost/1.66.0"
 MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 boost/1.75.0"
 
 #location of casacore cata 
@@ -148,7 +148,7 @@ else
 fi
 if [[ $CASACORE_WITH_OPENBLAS -eq 1 ]]; then
     MAALI_TOOL_PREREQ+=" openblas/0.3.13 "
-    MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib/intel64/libopenblas.a -DLAPACK_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib64/libopenblas.a '
+    MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib64/libopenblas.a -DLAPACK_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib64/libopenblas.a '
     CASACORE_BUILD_NAME+="-openblas"
 else 
     MAALI_TOOL_PREREQ+=" intel-mkl/19.0.5 "
