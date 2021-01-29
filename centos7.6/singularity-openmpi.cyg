@@ -39,7 +39,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_REMODULE=1
 
 # for auto-building module files
-MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='\"/usr/lib64:/pawsey/centos7.6/devel/\"..os.getenv\(\"CPU_TARGET\"\)..\"/gcc/8.3.0/openmpi-ucx/4.0.2/lib:/pawsey/centos7.6/devel/gcc/4.8.5/ucx/1.6.0/lib\"'
+MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='\"/usr/lib64:/pawsey/centos7.6/devel/\"..os.getenv\(\"CPU_TARGET\"\)..\"/gcc/8.3.0/openmpi-ucx/4.0.2/lib:/pawsey/centos7.6/devel/gcc/4.8.5/ucx/1.6.0/lib:\$LD_LIBRARY_PATH\"'
 MAALI_MODULE_QUOTES_SINGULARITYENV_LD_LIBRARY_PATH=off
 MAALI_MODULE_SET_SINGULARITY_BINDPATH='os.getenv\(\"SINGULARITY_BINDPATH\"\)..\",/usr/lib64/libfabric.so.1,/usr/lib64/libpsm_infinipath.so.1,/usr/lib64/libinfinipath.so.4\"'
 MAALI_MODULE_QUOTES_SINGULARITY_BINDPATH=off

@@ -40,7 +40,7 @@ MAALI_REMODULE=1
 
 # for auto-building module files
 
-MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='\"/usr/lib64:/pawsey/mwa_sles12sp5/devel/\"..os.getenv\(\"CPU_TARGET\"\)..\"/gcc/8.3.0/cuda/10.2/openmpi-ucx-gpu/4.0.3/lib:/pawsey/mwa_sles12sp5/devel/binary/cuda/10.2/gdrcopy-gpu/1.3/lib64:/pawsey/mwa_sles12sp5/devel/gcc/4.8.5/cuda/10.2/ucx-gpu/1.6.0/lib\"'
+MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='\"/usr/lib64:/pawsey/mwa_sles12sp5/devel/\"..os.getenv\(\"CPU_TARGET\"\)..\"/gcc/8.3.0/cuda/10.2/openmpi-ucx-gpu/4.0.3/lib:/pawsey/mwa_sles12sp5/devel/binary/cuda/10.2/gdrcopy-gpu/1.3/lib64:/pawsey/mwa_sles12sp5/devel/gcc/4.8.5/cuda/10.2/ucx-gpu/1.6.0/lib:\$LD_LIBRARY_PATH\"'
 MAALI_MODULE_QUOTES_SINGULARITYENV_LD_LIBRARY_PATH=off
 MAALI_MODULE_SET_SINGULARITYENV_OMPI_MCA_btl_openib_allow_ib=' '
 MAALI_MODULE_SET_SINGULARITYENV_FI_PROVIDER_PATH=' '
