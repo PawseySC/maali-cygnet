@@ -39,7 +39,7 @@ MAALI_TOOL_TYPE="devel"
 MAALI_REMODULE=1
 
 # for auto-building module files
-MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='/usr/lib64:/pawsey/sles12sp3/devel/broadwell/gcc/4.8.5/openmpi/2.1.2/lib'
+MAALI_MODULE_SET_SINGULARITYENV_LD_LIBRARY_PATH='/usr/lib64:/pawsey/sles12sp3/devel/broadwell/gcc/4.8.5/openmpi/2.1.2/lib:\$LD_LIBRARY_PATH'
 MAALI_MODULE_SET_SINGULARITY_BINDPATH='/astro,/group,/scratch,/pawsey,/etc/dat.conf,/etc/libibverbs.d,/usr/lib64/libdaplofa.so.2,/usr/lib64/libdaplofa.so.2.0.0,/usr/lib64/libdat2.so.2,/usr/lib64/libdat2.so.2.0.0,/usr/lib64/libibverbs,/usr/lib64/libibverbs.so,/usr/lib64/libibverbs.so.1,/usr/lib64/libibverbs.so.1.1.14,/usr/lib64/libmlx5.so,/usr/lib64/libmlx5.so.1,/usr/lib64/libmlx5.so.1.1.14,/usr/lib64/libnl-3.so.200,/usr/lib64/libnl-3.so.200.18.0,/usr/lib64/libnl-cli-3.so.200,/usr/lib64/libnl-cli-3.so.200.18.0,/usr/lib64/libnl-genl-3.so.200,/usr/lib64/libnl-genl-3.so.200.18.0,/usr/lib64/libnl-idiag-3.so.200,/usr/lib64/libnl-idiag-3.so.200.18.0,/usr/lib64/libnl-nf-3.so.200,/usr/lib64/libnl-nf-3.so.200.18.0,/usr/lib64/libnl-route-3.so.200,/usr/lib64/libnl-route-3.so.200.18.0,/usr/lib64/librdmacm.so,/usr/lib64/librdmacm.so.1,/usr/lib64/librdmacm.so.1.0.14,/usr/lib64/libnuma.so.1,/usr/lib64/libpciaccess.so.0,/usr/lib64/libpmi2.so.0,/usr/lib64/libpmi.so.0,/usr/lib64/slurm/libslurmfull.so,/usr/lib64/libosmcomp.so.3,/usr/lib64/libmemkind.so.0,/usr/lib64/libfabric.so.1,/usr/lib64/libpsm2.so.2,/usr/lib64/libpsm_infinipath.so.1,/usr/lib64/libinfinipath.so.4'
 
 ##############################################################################
