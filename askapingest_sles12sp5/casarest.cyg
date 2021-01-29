@@ -192,7 +192,8 @@ else
     fi
 fi
 #set the build option name of the casacore that is to be loaded 
-MAALI_TOOL_PREREQ+=" casacore/3.2.1$CASACORE_BUILD_NAME"
+#MAALI_TOOL_PREREQ+=" casacore/3.2.1$CASACORE_BUILD_NAME"
+MAALI_TOOL_PREREQ+=" casacore/3.3.0$CASACORE_BUILD_NAME"
 #set the build option name 
 CASAREST_BUILD_NAME=$CASACORE_BUILD_NAME
 MAALI_TOOL_BUILD_OPTIONS_SUFFIX="$CASAREST_BUILD_NAME"
