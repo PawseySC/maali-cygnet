@@ -25,11 +25,56 @@ EOF
 CASACORE_WITH_OPENMP=1
 CASACORE_WITH_PTHREADS=1
 CASACORE_WITH_MPI=0
+CASACORE_WITH_MPI_MPICH_ABI=0
 CASACORE_WITH_HDF5=1
 CASACORE_WITH_FFTW=1
 CASACORE_WITH_PYTHON=0
 CASACORE_WITH_PYTHON3=0
-MAALI_TOOL_BUILD_OPTIONS_AVAIL=("CASACORE_WITH_OPENMP=1:0", "CASACORE_WITH_PTHREADS=1:0", "CASACORE_WITH_MPI=0:1", "CASACORE_WITH_HDF5=1:0", "CASACORE_WITH_FFTW=1:0", "CASACORE_WITH_PYTHON=0:1", "CASACORE_WITH_PYTHON3=0:1")
+CASACORE_WITH_OPENBLAS=0
+MAALI_TOOL_BUILD_OPTIONS_AVAIL=("CASACORE_WITH_OPENMP=1:0", "CASACORE_WITH_PTHREADS=1:0", "CASACORE_WITH_MPI=0:1", "CASACORE_WITH_MPI_MPICH_ABI=0:1", "CASACORE_WITH_HDF5=1:0", "CASACORE_WITH_FFTW=1:0", "CASACORE_WITH_PYTHON=0:1", "CASACORE_WITH_PYTHON3=0:1", "CASACORE_WITH_ADIOS=0:1", "CASACORE_WITH_OPENBLAS=0:1")
+
+# parse the build options, would be nice to make this a function 
+# the issue currently is the local scope of variables declared 
+CASACORE_BUILD_NAME=""
+if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
+    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
+    do
+        opt=(${i//=/ })
+        optname=${opt[0]}
+        optval=${opt[1]}
+        echo $optname $optval 
+        if [ "$optname" = "CASACORE_WITH_MPI" ]; then
+            CASACORE_WITH_MPI=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_MPI_MPICH_ABI" ]; then
+            CASACORE_WITH_MPI_MPICH_ABI=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_OPENMP" ]; then
+            CASACORE_WITH_OPENMP=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_PTHREADS" ]; then
+            CASACORE_WITH_PTHREADS=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_HDF5" ]; then
+            CASACORE_WITH_HDF5=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_FFTW" ]; then
+            CASACORE_WITH_FFTW=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_PYTHON" ]; then
+            CASACORE_WITH_PYTHON=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_PYTHON3" ]; then
+            CASACORE_WITH_PYTHON3=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_ADIOS" ]; then
+            CASACORE_WITH_ADIOS=$optval
+        fi
+        if [ "$optname" = "CASACORE_WITH_OPENBLAS" ]; then
+            CASACORE_WITH_OPENBLAS=$optval
+        fi
+    done
+fi
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/5.5.0"
@@ -44,10 +89,11 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_TYPE="askap-devel"
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
-MAALI_TOOL_BUILD_PREREQ="cmake/3.18.2"
+MAALI_TOOL_BUILD_PREREQ="cmake/3.19.1"
 
 # tool pre-requisites 
-MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 intel-mkl/19.0.5 boost/1.66.0 "
+#MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 boost/1.66.0"
+MAALI_TOOL_PREREQ="cfitsio/3450 wcslib/7.3 boost/1.75.0"
 
 #location of casacore cata 
 CASACORE_DATA=/pawsey/askapingest_sles12sp5/casacore-data
@@ -69,41 +115,8 @@ MAALI_TOOL_CONFIGURE+=' -DCASA_MS_LIBRARY:FILEPATH=${MAALI_CASACORE_HOME}/lib/li
 MAALI_TOOL_CONFIGURE+=' -DCASA_SCIMATH_F_LIBRARY:FILEPATH=${MAALI_CASACORE_HOME}/lib/libcasa_scimath_f.so '
 MAALI_TOOL_CONFIGURE+=' -DCASA_SCIMATH_LIBRARY:FILEPATH=${MAALI_CASACORE_HOME}/lib/libcasa_scimath.so '
 MAALI_TOOL_CONFIGURE+=' -DCASA_TABLES_LIBRARY:FILEPATH=${MAALI_CASACORE_HOME}/lib/libcasa_tables.so '
-MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DLAPACK_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so '
 MAALI_TOOL_CONFIGURE+=' -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME} '
 
-# parse the build options, would be nice to make this a function 
-# the issue currently is the local scope of variables declared 
-CASACORE_BUILD_NAME=""
-if [[ ${#MAALI_TOOL_BUILD_OPTIONS[@]} -gt 0 ]]; then
-    for i in ${MAALI_TOOL_BUILD_OPTIONS[@]}
-    do
-        opt=(${i//=/ })
-        optname=${opt[0]}
-        optval=${opt[1]}
-        if [[ "$optname" -eq "CASACORE_WITH_MPI" ]]; then
-            CASACORE_WITH_MPI=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_OPENMP" ]]; then
-            CASACORE_WITH_OPENMP=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_PTHREADS" ]]; then
-            CASACORE_WITH_PTHREADS=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_HDF5" ]]; then
-            CASACORE_WITH_HDF5=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_FFTW" ]]; then
-            CASACORE_WITH_FFTW=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_PYTHON" ]]; then
-            CASACORE_WITH_PYTHON=$optval
-        fi
-        if [[ "$optname" -eq "CASACORE_WITH_PYTHON3" ]]; then
-            CASACORE_WITH_PYTHON3=$optval
-        fi
-    done
-fi
 
 #now parse build options, set build name
 if [[ $CASACORE_WITH_OPENMP -eq 1 ]]; then
@@ -116,22 +129,47 @@ if [[ $CASACORE_WITH_PTHREADS -eq 1 ]]; then
 else 
     CASACORE_BUILD_NAME+="-nothreads"
 fi
+if [[ $CASACORE_WITH_ADIOS -eq 1 ]]; then
+    CASACORE_WITH_HDF5=1
+    CASACORE_WITH_MPI=1
+    CASACORE_WITH_MPI_MPICH_ABI=0
+    echo "Compiling with ADIOS support, automatically enabling MPI and parallel HDF5"
+    MAALI_TOOL_PREREQ+=" adios/2.7.0-phdf5-mpi-abi-openmpi "
+    CASACORE_BUILD_NAME+="-adios2"
+else
+    MAALI_TOOL_CONFIGURE+=' -DUSE_ADIOS2=OFF '
+fi
 if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=ON '
     CASACORE_BUILD_NAME+="-mpi"
-    MAALI_TOOL_PREREQ+=" $MAALI_DEFAULT_MPI "
+    if [[ $CASACORE_WITH_MPI_MPICH_ABI -eq 1 ]]; then
+        MAALI_TOOL_PREREQ+=" mvpaich/2.3b "
+    else
+        MAALI_TOOL_PREREQ+=" openmpi-ucx/4.0.3 "
+        CASACORE_BUILD_NAME+="-openmpi-abi"
+    fi
 else 
-    CASACORE_BUILD_NAME+=""
+    MAALI_TOOL_CONFIGURE+=' -DUSE_MPI=OFF '
 fi
 if [[ $CASACORE_WITH_HDF5 -eq 1 ]]; then
     if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
-        MAALI_TOOL_PREREQ+=" hdf5/1.10.0-parallel-api-v110 "
+        MAALI_TOOL_PREREQ+=" hdf5/1.10.5-parallel-api-v110 "
+        MAALI_TOOL_CONFIGURE+=' -DHDF5_C_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5pcc '
     else 
-        MAALI_TOOL_PREREQ+=" hdf5/1.10.0-c++-noparallel-api-v110 "
+        MAALI_TOOL_PREREQ+=" hdf5/1.10.5-c++-noparallel-api-v110 "
         MAALI_TOOL_CONFIGURE+=' -DHDF5_CXX_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5c++ '
+        MAALI_TOOL_CONFIGURE+=' -DHDF5_C_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5cc '
     fi
-    MAALI_TOOL_CONFIGURE+=' -DHDF5_C_COMPILER_EXECUTABLE:FILEPATH=${HDF5_DIR}/bin/h5cc '
 else 
     CASACORE_BUILD_NAME+="-nohdf5"
+fi
+if [[ $CASACORE_WITH_OPENBLAS -eq 1 ]]; then
+    MAALI_TOOL_PREREQ+=" openblas/0.3.13 "
+    MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib64/libopenblas.a -DLAPACK_LIBRARIES=${MAALI_OPENBLAS_HOME}/lib64/libopenblas.a '
+    CASACORE_BUILD_NAME+="-openblas"
+else 
+    MAALI_TOOL_PREREQ+=" intel-mkl/19.0.5 "
+    MAALI_TOOL_CONFIGURE+=' -DBLAS_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DLAPACK_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so '
 fi
 if [[ $CASACORE_WITH_FFTW -eq 1 ]]; then
     if [[ $CASACORE_WITH_MPI -eq 1 ]]; then
