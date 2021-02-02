@@ -54,6 +54,8 @@ function maali_build {
   temp_arch="LINUXAMD64"
   export TCLINC="-I${MAALI_TCLTK_HOME}/include"
   export TCLLIB="-L${MAALI_TCLTK_HOME}/lib"
+  export NETCDFINC="-I${MAALI_NETCDF_HOME}/include"
+  export NETCDFLIB="-L${MAALI_NETCDF_HOME}/lib"
   export PLUGINDIR="${MAALI_INSTALL_DIR}/lib/plugins"
   maali_run "sed -i -e 's;-ltcl8.5;-ltcl8.6;g' Make-arch"
 
