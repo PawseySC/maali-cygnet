@@ -8,6 +8,8 @@ LAMMPS is a classical molecular dynamics code, and an acronym for Large-scale At
 
 EOF
 
+# tested from version 7Aug19 on
+
 # specify which PrgEnv we want to build the tool with
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
@@ -75,7 +77,7 @@ function maali_build {
   export LMP_INC='-DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_FFMPEG -DLAMMPS_GZIP -DPACK_ARRAY'
   export HDF5_PATH='$HDF5_DIR'
  
-  cd "$MAALI_INSTALL_DIR/src"	
+  cd "$MAALI_INSTALL_DIR/src"
   maali_wiki " ... make packages"
   maali_run "make clean-all" 
 
@@ -102,22 +104,6 @@ function maali_build {
 	cd "${MAALI_INSTALL_DIR}/lib/colvars"
 	sed -i 's/g++/CC/g' Makefile.g++
 	make -f Makefile.g++
-
-#to build user-poems
-        cd "${MAALI_INSTALL_DIR}/lib/poems"
-        sed -i 's/g++/CC/g' Makefile.g++
-        make -f Makefile.g++
-
-#to build user-meam
-        cd "${MAALI_INSTALL_DIR}/lib/meam"
-        sed -i '0,/gfortran/! s/gfortran/ftn/' Makefile.gfortran
-	make -f Makefile.gfortran
-
-#to build user-reax (problem)
-        cd "${MAALI_INSTALL_DIR}/lib/reax"
-        sed -i '/Makefile/!s/gfortran/ftn/g' Makefile.gfortran 
-        make -f Makefile.gfortran
-	sed -i 's/-lgfortran//g' Makefile.lammps
 
 ##to build user-qmmm
         cd "${MAALI_INSTALL_DIR}/lib/qmmm"
@@ -150,33 +136,28 @@ function maali_build {
 
         cd "$MAALI_INSTALL_DIR/src"
   
+# tested from version 7Aug19 on
         maali_run "make -e -j $MAALI_CORES yes-all"
         maali_run "make no-gpu"
         maali_run "make no-kim"
         maali_run "make no-kokkos"
         maali_run "make no-latte"
         maali_run "make no-mscg"
-        maali_run "make no-user-cuda"
-        maali_run "make no-user-intel"
+        maali_run "make no-message"
+        maali_run "make no-poems"
 	if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-	        maali_run "make no-user-qmmm"
-       		maali_run "make no-meam"
-        	maali_run "make no-reax"	
+        maali_run "make no-user-intel"
+        maali_run "make no-user-qmmm"
 	fi
-   #     maali_run "make no-user-omp"
-	maali_run "make -e -j $MAALI_CORES yes-user-all"
         maali_run "make no-user-quip"
-	maali_run "make no-user-awpmd"
-	maali_run "make no-user-atc"
-	maali_run "make no-user-vtk"
-	maali_run "make no-user-adios"
-        maali_run "make no-user-plumed"
+        maali_run "make no-user-awpmd"
+        maali_run "make no-user-atc"
+        maali_run "make no-user-vtk"
+        maali_run "make no-user-adios"
         maali_run "make no-user-scafacos"
-        maali_run "make no-message"	
-# plumed2 package -- available from release 9Nov18 on
-    maali_run "make yes-user-plumed"
+        maali_run "make no-user-mesont"
 
-	maali_run "make -e -j6 mpi"
+        maali_run "make -e -j6 mpi"
 }
 
 ##############################################################################
