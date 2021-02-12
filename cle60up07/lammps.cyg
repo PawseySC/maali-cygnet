@@ -156,15 +156,13 @@ function maali_build {
         maali_run "make no-kokkos"
         maali_run "make no-latte"
         maali_run "make no-mscg"
-        maali_run "make no-user-cuda"
-        maali_run "make no-user-intel"
 	if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+        maali_run "make no-user-intel"
 	        maali_run "make no-user-qmmm"
        		maali_run "make no-meam"
         	maali_run "make no-reax"	
 	fi
    #     maali_run "make no-user-omp"
-	maali_run "make -e -j $MAALI_CORES yes-user-all"
         maali_run "make no-user-quip"
 	maali_run "make no-user-awpmd"
 	maali_run "make no-user-atc"
