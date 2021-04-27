@@ -1,0 +1,43 @@
+##############################################################################
+# maali cygnet file for Rclone
+##############################################################################
+
+# Package description
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Rclone is a command line program to manage files on cloud storage. It is a feature rich alternative to cloud vendors' web storage interfaces. Over 40 cloud storage products support rclone including S3 object stores, business & consumer file storage services, as well as standard transfer protocols.
+
+For further information see https://rclone.org/
+ 
+EOF
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="binary"
+
+# URL to download source
+MAALI_URL="https://downloads.rclone.org/v$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION-linux-amd64.zip"
+# Local filename for downloaded source file
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.zip"
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION-linux-amd64"
+
+MAALI_TOOL_TYPE="tools"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_MANPATH=1
+##############################################################################
+
+function maali_build {
+
+  maali_run "cd $MAALI_TOOL_BUILD_DIR"
+
+  maali_makedir "$MAALI_INSTALL_DIR/bin"
+  maali_makedir "$MAALI_INSTALL_DIR/share/man/man1"
+
+  maali_run "install -m 755 rclone $MAALI_INSTALL_DIR/bin"
+  maali_run "install -m 644 rclone.1 $MAALI_INSTALL_DIR/share/man/man1"
+}
+
+##############################################################################
