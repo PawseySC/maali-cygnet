@@ -32,8 +32,8 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/gcc-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="devel"
-MAALI_TOOL_BUILD_PREREQ="cuda/10.1"
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_TOOL_BUILD_PREREQ="cuda/10.2"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.2"
 
 # this is evil, do not try this at home
 MAALI_TOOL_NAME='gcc'
