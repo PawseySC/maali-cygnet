@@ -17,6 +17,7 @@ non-biological systems, e.g. polymers.
 For further information see http://www.gromacs.org/
 
 EOF
+# tested with gromacs/2021.2
 # had to hardcode this one as the vmd module depends on openmpi-ucx instead of openmpi-ucx-gpu (creating a conflict)
 VMD_HOME="/pawsey/centos7.6/apps/cascadelake/gcc/8.3.0/openmpi-ucx/4.0.2/vmd/1.9.3"
 # Only build for gcc
