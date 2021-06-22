@@ -34,11 +34,17 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
-
+if [[ $MAALI_TOOL_VERSION == 2020* ]]; then
+USE_PLUMED=1
+else
+USE_PLUMED=0
+fi
 # tool pre-requisites
 # only use plumed when installing a supported gromacs version
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI intel-mkl/2019.0.5 fftw/3.3.8 boost/1.66.0 " #plumed2/2.7.1"
-
+MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI intel-mkl/2019.0.5 fftw/3.3.8 boost/1.66.0 " 
+if [ $USE_PLUMED ]; then
+	MAALI_TOOL_PREREQ+="plumed2/2.7.1"
+fi
 # add additional configure options
 MAALI_TOOL_CONFIGURE='-DREGRESSIONTEST_DOWNLOAD=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DGMX_GPU=CUDA -DGMX_FFT_LIBRARY=fftw3 -DGMX_USE_PLUGINS=ON -DBUILD_SHARED_LIBS=ON -DGMX_VMD_PLUGIN_PATH=$VMD_HOME/lib/plugins/LINUXAMD64/molfile'
 
@@ -110,7 +116,9 @@ function maali_cmake_build {
 
 function maali_pre_build {
     cd "$MAALI_TOOL_BUILD_DIR"
-    # plumed patch -p -e "$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION" -m shared
+    if [ $USE_PLUMED ]; then
+        plumed patch -p -e "$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION" -m shared
+    fi
 	# Do your plumed patching here
 }
 
