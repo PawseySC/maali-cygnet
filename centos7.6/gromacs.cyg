@@ -21,6 +21,7 @@ VMD_HOME="/pawsey/centos7.6/apps/cascadelake/gcc/8.3.0/openmpi-ucx/4.0.2/vmd/1.9
 # Only build for gcc
 MAALI_TOOL_COMPILERS="gcc/8.3.0"
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI"
 MAALI_CUDA_BUILD_ONLY=1
 
 # URL to download the source code from
@@ -41,7 +42,7 @@ USE_PLUMED=0
 fi
 # tool pre-requisites
 # only use plumed when installing a supported gromacs version
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI intel-mkl/2019.0.5 fftw/3.3.8 boost/1.66.0 " 
+MAALI_TOOL_PREREQ="intel-mkl/2019.0.5 fftw/3.3.8 boost/1.66.0 " 
 if [ $USE_PLUMED ]; then
 	MAALI_TOOL_PREREQ+="plumed2/2.7.1"
 fi
