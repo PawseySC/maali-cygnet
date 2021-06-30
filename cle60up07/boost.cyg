@@ -1,0 +1,66 @@
+##############################################################################
+# maali cygnet file for Boost
+##############################################################################
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Boost provides free peer-reviewed portable C++ source libraries.
+
+Boost emphasizes libraries that work well with the C++ Standard Library. Boost
+libraries are intended to be widely useful, and usable across a broad spectrum
+of applications. The Boost license encourages both commercial and
+non-commercial use.
+
+For further information see http://www.boost.org/
+
+EOF
+
+# specify which PrgEnv we want to build the tool with
+MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_GCC_PRGENV $MAALI_DEFAULT_CRAY_INTEL_PRGENV"
+
+# specify which cpus to target
+MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/4.9.3 gcc/5.3.0 gcc/7.2.0 gcc/7.3.0 gcc/8.1.0 gcc/8.3.0 intel/17.0.4.196" #intel/19.0.5" 
+
+# needed  for this URL
+MAALI_BOOST_VERSION=`echo $MAALI_TOOL_VERSION| sed -e 's/\./_/g'`
+
+# URL to download the source code from
+MAALI_URL="http://sourceforge.net/projects/$MAALI_TOOL_NAME/files/$MAALI_TOOL_NAME/$MAALI_TOOL_VERSION/${MAALI_TOOL_NAME}_${MAALI_BOOST_VERSION}.tar.gz/download"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION".tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/"$MAALI_TOOL_NAME"_"$MAALI_BOOST_VERSION
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="python/3.6.3 numpy/1.19.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_BOOST_ROOT='$MAALI_APP_HOME'
+
+##############################################################################
+
+function maali_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
+    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=intel-linux"
+    maali_run "./b2 -j$MAALI_CORES install toolset=intel cxxflags=-I$PYTHON_DIR/include/python3.6m --with=all --prefix=$MAALI_INSTALL_DIR"
+  else
+    maali_run "./bootstrap.sh --prefix=$MAALI_INSTALL_DIR --with-toolset=gcc"
+    maali_run "./b2 headers"
+    maali_run "./b2 -j$MAALI_CORES install toolset=gcc cxxflags=-I$PYTHON_DIR/include/python3.6m --with=all --prefix=$MAALI_INSTALL_DIR"
+  fi
+}
+
+##############################################################################
