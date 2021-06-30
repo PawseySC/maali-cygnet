@@ -17,12 +17,11 @@ non-biological systems, e.g. polymers.
 For further information see http://www.gromacs.org/
 
 EOF
-# tested with gromacs/2021.2
-# had to hardcode this one as the vmd module depends on openmpi-ucx instead of openmpi-ucx-gpu (creating a conflict)
 VMD_HOME="/pawsey/centos7.6/apps/cascadelake/gcc/8.3.0/openmpi-ucx/4.0.2/vmd/1.9.3"
 # Only build for gcc
 MAALI_TOOL_COMPILERS="gcc/8.3.0"
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_TOOL_MPI_COMPILERS="$MAALI_DEFAULT_MPI"
 MAALI_CUDA_BUILD_ONLY=1
 
 # URL to download the source code from
@@ -36,12 +35,19 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
-
+if [[ $MAALI_TOOL_VERSION == 2020* ]]; then
+USE_PLUMED=1
+else
+USE_PLUMED=0
+fi
 # tool pre-requisites
-MAALI_TOOL_PREREQ="$MAALI_DEFAULT_MPI fftw/3.3.8 boost/1.66.0"
-
+# only use plumed when installing a supported gromacs version
+MAALI_TOOL_PREREQ="intel-mkl/2019.0.5 fftw/3.3.8 boost/1.66.0 " 
+if [ $USE_PLUMED ]; then
+	MAALI_TOOL_PREREQ+="plumed2/2.7.1"
+fi
 # add additional configure options
-MAALI_TOOL_CONFIGURE='-DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DGMX_GPU=CUDA -DGMX_FFT_LIBRARY=fftw3 -DGMX_MPI=ON -DGMX_USE_PLUGINS=ON -DGMX_DEFAULT_SUFFIX=OFF -DGMX_VMD_PLUGIN_PATH=$VMD_HOME/lib/plugins/LINUXAMD64/molfile'
+MAALI_TOOL_CONFIGURE='-DREGRESSIONTEST_DOWNLOAD=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR -DGMX_GPU=CUDA -DGMX_FFT_LIBRARY=fftw3 -DGMX_USE_PLUGINS=ON -DBUILD_SHARED_LIBS=ON -DGMX_VMD_PLUGIN_PATH=$VMD_HOME/lib/plugins/LINUXAMD64/molfile'
 
 # tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
 #gromacs/2020.1 requires at least cmake/3.9.6
@@ -59,10 +65,29 @@ LIB=lib64
 MAALI_MODULE_SET_GMXLDLIB='$MAALI_APP_HOME/"$LIB"'
 MAALI_MODULE_SET_LD_LIBRARY_PATH="$LIB"
 
+
+
+function support_build {
+    # cmake likes to build in a directory of it's own.
+    maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$1"
+    cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-$1"
+
+    maali_run "cmake $2 .."
+    if [ $DEBUG ]; then
+      maali_run "make -j $MAALI_CORES  VERBOSE=TRUE"
+    else
+      maali_run "make -j $MAALI_CORES"
+    fi
+    maali_run "make install"
+}
+
+
 ##############################################################################
 function maali_cmake_build {
   # for tools that use cmake
+  export VMDDIR="/pawsey/centos7.6/apps/cascadelake/gcc/8.3.0/openmpi-ucx/4.0.2/vmd/1.9.3"
   MAALI_TOOL_CONFIGURE+=" -DCUDA_TOOLKIT_ROOT_DIR=$MAALI_CUDA_HOME" 
+  # Only use AVX2_256 hardware acceleration when appropriate
   # Only use AVX2_256 hardware acceleration when appropriate
   if [ ${CPU_TARGET} == "cascadelake" ]; then
     MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX_512"
@@ -71,20 +96,18 @@ function maali_cmake_build {
   else
     MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX_256"
   fi
-
   if [[ $MAALI_COMPILER_NAME == "gcc"* ]]; then
 
-    # cmake likes to build in a directory of it's own. CUDA, single-precision
-    maali_makedir "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-cuda"
-    cd "$MAALI_TOOL_BUILD_DIR/$MAALI_TOOL_NAME-cuda"
-
-    maali_run "cmake $MAALI_TOOL_CONFIGURE .."
-    if [ $DEBUG ]; then
-      maali_run "make -j $MAALI_CORES  VERBOSE=TRUE"
-    else
-      maali_run "make -j $MAALI_CORES"
-    fi
-    maali_run "make install"
+    # there are 4 different builds of gromacs that can reside within the same folder, depending on the user needs
+    # BUILD 1: single precision, no MPI
+    support_build float_serial "$MAALI_TOOL_CONFIGURE" 
+    # BUILD 2: single precision, MPI
+    support_build float_mpi "$MAALI_TOOL_CONFIGURE -DGMX_MPI=ON -DGMX_BUILD_MDRUN_ONLY=ON"
+    # Commented out because double precision is not supported on gpu 
+    # # BUILD 3: double precision, no MPI
+    # support_build double_serial "$MAALI_TOOL_CONFIGURE -DGMX_DOUBLE=ON" 
+    # BUILD 4: double precision, MPI
+    # support_build double_mpi "$MAALI_TOOL_CONFIGURE -DGMX_DOUBLE=ON -DGMX_MPI=ON -DGMX_THREAD_MPI=OFF -DGMX_BUILD_MDRUN_ONLY=ON"
 
   else
       echo "Only GCC supported"
@@ -93,9 +116,11 @@ function maali_cmake_build {
 }
 
 function maali_pre_build {
-  cd "$MAALI_TOOL_BUILD_DIR"
-
-# Do your plumed patching here
+    cd "$MAALI_TOOL_BUILD_DIR"
+    if [ $USE_PLUMED ]; then
+        plumed patch -p -e "$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION" -m shared
+    fi
+	# Do your plumed patching here
 }
 
 ##############################################################################
