@@ -1,0 +1,52 @@
+##############################################################################
+# maali cygnet file for casacore
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The casacore package contains the core libraries of the old AIPS++/CASA
+package. This split was made to get a better separation of core libraries and
+applications. CASA is now built on top of casacore.
+
+For further information see http://casacore.github.io/casacore/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_MPI_COMPILERS="openmpi-ucx-gpu/4.0.2"
+
+# URL to download the source code from
+if (( $(bc <<< "${MAALI_TOOL_MAJOR_MINOR_VERSION} < 2.0") )); then
+MAALI_URL="ftp://ftp.atnf.csiro.au/pub/software/$MAALI_TOOL_NAME/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+elif (( $(bc <<< "${MAALI_TOOL_MAJOR_MINOR_VERSION} >= 2.0") )); then
+MAALI_URL="https://github.com/${MAALI_TOOL_NAME}/${MAALI_TOOL_NAME}/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+fi
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.bz2"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ="python/3.6.3 cfitsio/3.48 wcslib/7.6 hdf5-parallel-gpu/1.10.5 fftw/3.3.8 boost/1.76.0 numpy/1.19.0 intel-mkl/2019.0.5"
+
+CASACORE_DATA=/pawsey/centos7.6/data/casacore-data
+# add additional configure options
+MAALI_CMAKE_TOOL=1
+#MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON=OFF -DBUILD_PYTHON3=ON -DPYTHON3_LIBRARY=${PYTHON_DIR}/lib/libpython3.6m.so -DPYTHON3_INCLUDE_DIR=${PYTHON_DIR}/include/python3.6m -DPYTHON3_Boost_LIBRARIES=${BOOST_ROOT}/lib/libboost_python.so -DPYTHON3_Boost_INCLUDE_DIRS=${BOOST_ROOT}/boost/include -DBoost_PYTHON-PY36_LIBRARY_RELEASE=${MAALI_BOOST_HOME}/lib/libboost_python.so -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=OFF -DBLAS_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DLAPACK_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME} -DHDF5_ROOT_DIR=${HDF5_DIR} -DFFTW3F_THREADS_LIBRARY=${FFTW_LIB}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_LIB}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_LIB}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_LIB}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INCLUDE} -DDATA_DIR=/ivec/cle52/Casacore_data/data -DCMAKE_EXE_LINKER_FLAGS=-lcurl -DBOOST_LIBRARYDIR=${MAALI_BOOST_HOME}/lib        -DPYTHON3_LIBRARY=$MAALI_PYTHON_HOME/lib/libpython3.6m.so -DPYTHON3_INCLUDE_DIR=$MAALI_PYTHON_HOME/include/python3.6m -DPYTHON3_EXECUTABLE=$MAALI_PYTHON_HOME/bin/python3 -DBoost_PYTHON-PY36_LIBRARY_RELEASE=${MAALI_BOOST_HOME}/lib/libboost_python.so -Dboost_python36_DIR=$BOOST_ROOT/lib/cmake/boost_python-1.70.0'
+
+MAALI_TOOL_CONFIGURE='-DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON=OFF -DBUILD_PYTHON3=ON -DUSE_HDF5=ON -DUSE_FFTW3=ON -DUSE_OPENMP=OFF -DBLAS_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DLAPACK_LIBRARIES=${MKLROOT}/lib/intel64/libmkl_rt.so -DCFITSIO_ROOT_DIR=${MAALI_CFITSIO_HOME} -DHDF5_ROOT_DIR=${HDF5_DIR} -DFFTW3F_THREADS_LIBRARY=${FFTW_LIB}/libfftw3f_threads.so -DFFTW3_THREADS_LIBRARY=${FFTW_LIB}/libfftw3_threads.so -DFFTW3F_LIBRARY=${FFTW_LIB}/libfftw3f.so -DFFTW3_LIBRARY=${FFTW_LIB}/libfftw3.so -DFFTW3_INCLUDE_DIR=${FFTW_INCLUDE} -DDATA_DIR=${CASACORE_DATA} -DCMAKE_EXE_LINKER_FLAGS=-lcurl -DBOOST_LIBRARYDIR=${MAALI_BOOST_HOME}/lib -DWCSLIB_ROOT_DIR=${MAALI_WCSLIB_HOME}'
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CASACORE_ROOT='$MAALI_APP_HOME'
+

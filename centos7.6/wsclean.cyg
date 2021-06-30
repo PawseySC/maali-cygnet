@@ -1,0 +1,56 @@
+##############################################################################
+# maali cygnet file for wsclean
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The GNU Scientific Library (GSL) is a numerical library for C and C++
+programmers. It is free software under the GNU General Public License.
+
+The library provides a wide range of mathematical routines such as random
+number generators, special functions and least-squares fitting. There are over
+1000 functions in total with an extensive test suite.
+
+For further information see https://www.gnu.org/software/gsl/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+
+# URL to download the source code from
+MAALI_URL="" #https://github.com/MWATelescope/cotter/archive/refs/tags/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="" #$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="" #$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+MAALI_TOOL_PREREQ="fftw/3.3.8 hdf5/1.10.5 gsl/2.6 casacore/3.2.1 cfitsio/3.48 idg-gpu/0.7"
+
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+function maali_cmake_build {
+    cd $MAALI_BUILD_DIR
+    [[ -d code ]] && rm -rf code
+    git clone https://git.code.sf.net/p/wsclean/code
+    cd code/wsclean
+    git checkout wsclean$MAALI_TOOL_VERSION
+    MAALI_TOOL_CONFIGURE=" -DCASACORE_ROOT_DIR=${CASACORE_ROOT} -DCFITSIO_ROOT_DIR=${CFITSIO_ROOT}  -DFFTW3_LIB=${FFTW_LIB}/libfftw3.so -DFFTW3_THREADS_LIB=${FFTW_LIB}/libfftw3_threads.so -DFFTW3F_LIB=${FFTW_LIB}/libfftw3f.so -DFFTW3F_THREADS_LIB=${FFTW_LIB}/libfftw3f_threads.so -DFFTW3_INCLUDE_DIR=${FFTW_INCLUDE} -DGSL_LIB=${MAALI_GSL_HOME}/lib/libgsl.so -DGSL_CBLAS_LIB=${MAALI_GSL_HOME}/lib/libgslcblas.so -DGSL_INCLUDE_DIR=${MAALI_GSL_HOME}/include -DHDF5_DIR=$MAALI_HDF5_HOME -DIDGAPI_DIR=${MAALI_IDG_HOME}" #-DHDF5_INCLUDE_DIR=$MAALI_HDF5PARALLEL_HOME/include -DHDF5_LIBRARIES=$MAALI_HDF5PARALLEL_HOME/lib
+     mkdir build && cd build
+    maali_run "cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
+    maali_run "make -j $MAALI_CORES"
+    maali_run "make install"
+}
+##############################################################################
