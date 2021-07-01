@@ -18,13 +18,11 @@ MAALI_TOOL_CRAY_CPU_TARGET="haswell"
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="gcc/7.2.0 intel/17.0.4.196" 
-
+MAALI_TOOL_MPI_COMPILERS="cray-mpich/7.7.0"
 DOWNLOAD_LINK_VERSION=$MAALI_TOOL_VERSION
 VLEN=`expr length $MAALI_TOOL_VERSION`
 (( VLEN = VLEN - 2 ))
-echo $VLEN
 if [ $VLEN -eq 5 ]; then
-        echo "DOWNLOAD VERSION IS 5"
         DOWNLOAD_LINK_VERSION="${MAALI_TOOL_VERSION:0:5}20${MAALI_TOOL_VERSION:5}"
 elif [ $VLEN -eq 4 ]; then
         DOWNLOAD_LINK_VERSION="${MAALI_TOOL_VERSION:0:4}20${MAALI_TOOL_VERSION:4}"
@@ -42,8 +40,7 @@ MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cray-mpich/7.7.0 python/3.6.3 cray-fftw/3.3.8.4 cray-hdf5-parallel/1.10.1.1 cray-netcdf-hdf5parallel/4.4.1.1.6 gsl/2.3  ffmpeg/3.4 plumed2/2.4.2"
-
+MAALI_TOOL_PREREQ="python/3.6.3 cray-fftw/3.3.8.4 cray-hdf5-parallel/1.10.1.1 cray-netcdf-hdf5parallel/4.4.1.1.6 gsl/2.3  ffmpeg/3.4 plumed2/2.4.2"
 MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
 # for auto-building module files
 MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
