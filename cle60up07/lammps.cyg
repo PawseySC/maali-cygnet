@@ -52,7 +52,6 @@ MAALI_MODULE_SET_PYTHONPATH='lib/python3.6/site-packages/'
 
 function maali_cmake_build {
 
-    export CRAYPE_LINK_TYPE=dynamic
     cd $MAALI_TOOL_BUILD_DIR
     mkdir build
     cd build

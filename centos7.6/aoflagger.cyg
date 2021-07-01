@@ -4,19 +4,18 @@
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The GNU Scientific Library (GSL) is a numerical library for C and C++
-programmers. It is free software under the GNU General Public License.
+AOFlagger makes it possible to detect radio-frequency interference in radio-observations. 
+In this process, often called “flagging” the data, samples that are contaminated by 
+interference are marked. As shown by the figure below, the frequencies covered by telescopes 
+like LOFAR and the MWA are considerably affected by radio-frequency interference (RFI). 
+Efficient RFI detection is essential to obtain high quality images.
 
-The library provides a wide range of mathematical routines such as random
-number generators, special functions and least-squares fitting. There are over
-1000 functions in total with an extensive test suite.
-
-For further information see https://www.gnu.org/software/gsl/
+For further information see https://aoflagger.readthedocs.io
 
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 MAALI_URL=""
@@ -55,6 +54,4 @@ function maali_cmake_build {
     maali_run "cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
     maali_run "make -j $MAALI_CORES"
     maali_run "make install"
-
-
 }

@@ -13,6 +13,8 @@ a three-clause BSD license to enable its compatibility with a wide range of open
 source licenses. Permission for this release has been obtained from the SOFA board, 
 and is available in the LICENSE file included in this source distribution.
 
+For further information visit https://github.com/liberfa/erfa
+
 EOF
 
 # specify which compilers we want to build the tool with
@@ -28,7 +30,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="libs"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

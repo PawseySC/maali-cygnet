@@ -1,5 +1,5 @@
 ##############################################################################
-# maali cygnet file for Boost
+# maali cygnet file for gdb
 ##############################################################################
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
@@ -15,10 +15,12 @@ GDB can do four main kinds of things (plus other things in support of these) to 
 
 Those programs might be executing on the same machine as GDB (native), on another machine (remote), or on a simulator. GDB can run on most popular UNIX and Microsoft Windows variants, as well as on Mac OS X.
 
+For further information visit https://www.gnu.org/software/gdb/
+
 EOF
 
 # Request only the latest GNU and Intel compilers to be used
-MAALI_TOOL_COMPILERS="gcc/8.3.0 gcc/9.2.0 gcc/10.2.0 gcc/11.1.0"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
 
 

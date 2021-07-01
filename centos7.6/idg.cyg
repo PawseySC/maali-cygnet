@@ -2,15 +2,13 @@ read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 Image Domain Gridding (IDG)
 This repository will contain the three subprojects of Image Domain Gridding:
-
-
-idg-lib: The core library
-
-idg-bin: Examples in C++ and Python
-
-idg-api: An API which is used in WSClean
+    - idg-lib: The core library
+    - idg-bin: Examples in C++ and Python
+    - idg-api: An API which is used in WSClean
 
 Each repository can also be installed separately if desired.
+
+For further information, visit https://gitlab.com/astron-idg/idg
 
 EOF
 
@@ -26,7 +24,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="apps"
+MAALI_TOOL_TYPE="libs"
 
 # tool pre-requisites modules needed to install this new tool/package
 MAALI_TOOL_PREREQ="boost/1.76.0 intel-mkl/2019.0.5"

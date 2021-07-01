@@ -4,19 +4,20 @@
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The GNU Scientific Library (GSL) is a numerical library for C and C++
-programmers. It is free software under the GNU General Public License.
+libsigc++ implements a typesafe callback system for standard C++. It allows you to 
+define signals and to connect those signals to any callback function, either global 
+or a member function, regardless of whether it is static or virtual.
 
-The library provides a wide range of mathematical routines such as random
-number generators, special functions and least-squares fitting. There are over
-1000 functions in total with an extensive test suite.
+It also contains adaptor classes for connection of dissimilar callbacks and has an 
+ease of use unmatched by other C++ callback libraries. Libsigc++ is licensed under 
+the GNU Library General Public License, LGPL.
 
-For further information see https://www.gnu.org/software/gsl/
+For further information, visit https://libsigcplusplus.github.io/libsigcplusplus/
 
 EOF
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
 
 # URL to download the source code from
 #MAALI_URL=https://github.com/libsigcplusplus/libsigcplusplus/releases/download/${MAALI_TOOL_VERSION}/libsigc++-${MAALI_TOOL_VERSION}.tar.gz
@@ -30,7 +31,7 @@ MAALI_DST="$MAALI_SRC/libsigc++-${MAALI_TOOL_VERSION}.tar.xz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/libsigc++-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="libs"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1

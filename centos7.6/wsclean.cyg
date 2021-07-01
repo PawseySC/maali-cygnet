@@ -4,14 +4,17 @@
 
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
-The GNU Scientific Library (GSL) is a numerical library for C and C++
-programmers. It is free software under the GNU General Public License.
+WSClean (w-stacking clean) is a fast generic widefield imager. It uses the 
+w-stacking algorithm and can make use of the w-snapshot algorithm. As of Feb 2014, 
+it is 2-12 times faster than CASA's w-projection, depending on the array configuration. 
+It supports full-sky imaging and proper beam correction for homogeneous dipole 
+arrays such as the MWA.
 
-The library provides a wide range of mathematical routines such as random
-number generators, special functions and least-squares fitting. There are over
-1000 functions in total with an extensive test suite.
+WSClean allows Hogbom and Cotton-Schwab cleaning and has wideband, multiscale, 
+compressed sensing and joined-polarization deconvolution modes. All operations 
+are performed on the CPU.
 
-For further information see https://www.gnu.org/software/gsl/
+For further information, visit https://gitlab.com/aroffringa/wsclean 
 
 EOF
 
@@ -28,7 +31,7 @@ MAALI_DST="" #$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="" #$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="apps"
 
 MAALI_TOOL_PREREQ="fftw/3.3.8 hdf5/1.10.5 gsl/2.6 casacore/3.2.1 cfitsio/3.48 idg-gpu/0.7"
 

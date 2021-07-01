@@ -13,6 +13,8 @@ PAL rather than SLALIB. Routines calling SOFA use modern nutation and precession
 return slightly different answers than native SLALIB. PAL functions not available in SOFA were
 ported from the Fortran version of SLALIB that ships as part of the Starlink software and uses a GPL licence.
 
+For further information, visit https://github.com/Starlink/pal/
+
 EOF
 
 # specify which compilers we want to build the tool with
@@ -28,7 +30,7 @@ MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
 
 # type of tool (eg. apps, devel, python, etc.)
-MAALI_TOOL_TYPE="devel"
+MAALI_TOOL_TYPE="libs"
 
 # for auto-building module files
 MAALI_MODULE_SET_PATH=1
