@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 # maali cygnet file for LAMMPS
 ##############################################################################
 
@@ -14,150 +14,69 @@ EOF
 MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_INTEL_PRGENV $MAALI_DEFAULT_CRAY_GCC_PRGENV"
 
 # specify which cpus to target
-MAALI_TOOL_CRAY_CPU_TARGET="$MAALI_DEFAULT_CRAY_PES"
+MAALI_TOOL_CRAY_CPU_TARGET="haswell"
 
 # specify which compilers we want to build the tool with
-MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+MAALI_TOOL_COMPILERS="gcc/7.2.0 intel/17.0.4.196" 
+
+DOWNLOAD_LINK_VERSION=$MAALI_TOOL_VERSION
+VLEN=`expr length $MAALI_TOOL_VERSION`
+(( VLEN = VLEN - 2 ))
+echo $VLEN
+if [ $VLEN -eq 5 ]; then
+        echo "DOWNLOAD VERSION IS 5"
+        DOWNLOAD_LINK_VERSION="${MAALI_TOOL_VERSION:0:5}20${MAALI_TOOL_VERSION:5}"
+elif [ $VLEN -eq 4 ]; then
+        DOWNLOAD_LINK_VERSION="${MAALI_TOOL_VERSION:0:4}20${MAALI_TOOL_VERSION:4}"
+fi;
 
 # URL to download the source code from 
-MAALI_URL="https://lammps.sandia.gov/tars/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz"
+MAALI_URL="https://lammps.sandia.gov/tars/${MAALI_TOOL_NAME}-${DOWNLOAD_LINK_VERSION}.tar.gz"
 
 # location we are downloading the source code to
-MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${MAALI_TOOL_VERSION}.tar.gz" 
+MAALI_DST="$MAALI_SRC/${MAALI_TOOL_NAME}-${DOWNLOAD_LINK_VERSION}.tar.gz" 
 
 # where the unpacked source code is located
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
-
 # type of tool (eg. apps, devel, python, etc.)
 MAALI_TOOL_TYPE="apps"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_PREREQ="cray-mpich/7.7.0 cray-fftw/3.3.6.3 cray-hdf5-parallel/1.10.1.1 gsl/2.3 ffmpeg/3.4 plumed2/2.4.2"
+MAALI_TOOL_PREREQ="cray-mpich/7.7.0 python/3.6.3 cray-fftw/3.3.8.4 cray-hdf5-parallel/1.10.1.1 cray-netcdf-hdf5parallel/4.4.1.1.6 gsl/2.3  ffmpeg/3.4 plumed2/2.4.2"
 
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
 # for auto-building module files
 MAALI_MODULE_SET_LAMMPS_ROOT='$MAALI_APP_HOME'
-MAALI_MODULE_SET_PATH='src'
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH='lib64'
+MAALI_MODULE_SET_PYTHONPATH='lib/python3.6/site-packages/'
 
 ##############################################################################
 
-function maali_build {
+function maali_cmake_build {
 
-  MAALI_LOCAL_BUILD_DIR="$MAALI_APPS_DIR/$COMPILER/$COMPILER_VER/$MAALI_TOOL_NAME"
-
-  mv $MAALI_TOOL_BUILD_DIR/* $MAALI_INSTALL_DIR
-
-  export MAALI_CORES=6
-  export CC=CC
-  export LINK=CC
-  export F90=ftn
-
-  export CRAYPE_LINK_TYPE=dynamic
-
-  if [ "$MAALI_COMPILER_NAME" == "cce" ]; then
-    export CCFLAGS="-O3 -hfp3 -hnoomp"
-    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -\I$(FFTW_INC)"
-    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3"
-  elif [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-    module unload cray-libsci
-    export CCFLAGS="-O2 -std=c++11 -DLAMMPS_MEMALIGN=64 -fno-alias -ansi-alias -restrict -qoverride-limits"
-    export FFT_INC='-DFFT_MKL -DFFT_SINGLE -I\$(MKLROOT)/include'
-    export FFT_PATH=
-    export FFT_LIB='-mkl=sequential -dynamic'
-  else #GNU
-    export CCFLAGS="-O3 -funroll-loops -std=c++11 -fopenmp"
-    export FFT_INC="-DFFT_FFTW3 -DFFT_SINGLE -I\$(FFTW_INC)"
-    export FFT_LIB="-L\$(FFTW_DIR) -lfftw3 -lstdc++"
-    export LINKFLAGS='-fopenmp'             # for GNU Compilers
-  fi
-  export SHFLAGS='-fPIC'
-
-  export MPI_INC='-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1'
-  export JPG_INC='-I/usr/include'
-  export JPG_LIB='-L/usr/lib -ljpeg -lpng16 -L${MAALI_FFMPEG_HOME}/lib -lavcodec -lavformat -lavutil -lavfilter -lavdevice -lswresample -lswscale '
-  export LMP_INC='-DLAMMPS_JPEG -DLAMMPS_PNG -DLAMMPS_FFMPEG -DLAMMPS_GZIP -DPACK_ARRAY'
-  export HDF5_PATH='$HDF5_DIR'
- 
-  cd "$MAALI_INSTALL_DIR/src"
-  maali_wiki " ... make packages"
-  maali_run "make clean-all" 
-
-#Download Eigen required for USER-SMD package
-        cd "$MAALI_INSTALL_DIR/lib/smd"
-        wget --no-check-certificate https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.tar.gz # now on gitlab
-        tar -zxvf *.tar.gz
-        ln -s eigen-3.3.4 includelink # new dir name from gitlab
-        cd "$MAALI_INSTALL_DIR/lib/voronoi"
-
-#To build Voronoi
-	maali_run "wget http://math.lbl.gov/voro++/download/dir/voro++-0.4.6.tar.gz"
-	maali_run "tar -xvf voro++-0.4.6.tar.gz"
-	cd voro++-0.4.6/
-	sed -i 's/g++/CC/g' config.mk
-	sed -i 's;/usr/local;$MAALI_INSTALL_DIR/lib/voronoi/voro++-0.4.6;g' config.mk
-	maali_run "make"
-	maali_run "make install"
-	cd ..
-	ln -s voro++-0.4.6/src includelink
-	ln -s voro++-0.4.6/src liblink
-
-#to build user-colvars
-	cd "${MAALI_INSTALL_DIR}/lib/colvars"
-	sed -i 's/g++/CC/g' Makefile.g++
-	make -f Makefile.g++
-
-##to build user-qmmm
-        cd "${MAALI_INSTALL_DIR}/lib/qmmm"
-        sed -i 's/mpicxx/CC/g' Makefile.gfortran
-        make -f Makefile.gfortran
-
-#to build h5md
-        cd "${MAALI_INSTALL_DIR}/lib/h5md"
-        sed -i 's/h5cc/cc/g' Makefile.h5cc
-        make -f Makefile.h5cc
-
-#to link to plumed2 package -- available from release 9Nov18 on
-        cd "${MAALI_INSTALL_DIR}/src"
-        make lib-plumed args="-p $PLUMED_HOME -m shared"
-
-#to build MSCG
-#	cd "${MAALI_INSTALL_DIR}/lib/mscg"
-#	maali_run "git clone https://github.com/uchicago-voth/MSCG-release.git"
-#	mv MSCG-release/* .
-#	cd "${MAALI_INSTALL_DIR}/lib/mscg/src"
-#	sed -i 's/\-lgsl \-lgslcblas/\$\(MAALI\_GSL\_HOME\)\/lib \-lgsl \-lgslcblas/g' ../Makefile.mpi
-#	sed -i 's/mpicc/cc/g' ../Makefile.mpi
-#	sed -i 's/-O2/-O2 -std=c++11/g' ../Makefile.mpi
-#	make -f ../Makefile.mpi libmscg.a
-#	cd "${MAALI_INSTALL_DIR}/lib/mscg"
-#	sed -i 's/\-lgsl \-lgslcblas/\-L \$\(MAALI\_GSL\_HOME\)\/lib \-lgsl \-lgslcblas/g' Makefile.lammps.mpi 
-#	cp Makefile.lammps.mpi Makefile.lammps
-#	ln -s src includelink
-#	ln -s src liblink
-
-        cd "$MAALI_INSTALL_DIR/src"
-  
-# tested from version 7Aug19 on
-        maali_run "make -e -j $MAALI_CORES yes-all"
-        maali_run "make no-gpu"
-        maali_run "make no-kim"
-        maali_run "make no-kokkos"
-        maali_run "make no-latte"
-        maali_run "make no-mscg"
-        maali_run "make no-message"
-        maali_run "make no-poems"
-	if [ "$MAALI_COMPILER_NAME" == "intel" ]; then
-        maali_run "make no-user-intel"
-        maali_run "make no-user-qmmm"
-	fi
-        maali_run "make no-user-quip"
-        maali_run "make no-user-awpmd"
-        maali_run "make no-user-atc"
-        maali_run "make no-user-vtk"
-        maali_run "make no-user-adios"
-        maali_run "make no-user-scafacos"
-        maali_run "make no-user-mesont"
-
-        maali_run "make -e -j6 mpi"
+    export CRAYPE_LINK_TYPE=dynamic
+    cd $MAALI_TOOL_BUILD_DIR
+    mkdir build
+    cd build
+        cmake_command="cmake ../cmake -DBUILD_MPI=ON -DNETCDF_DIR=$NETCDF_DIR -DNETCDF_LIBRARIES=$NETCDF_DIR/lib -DNETCDF_INCLUDE_DIRS=$NETCDF_DIR/include -DBUILD_OMP=ON -DBUILD_SHARED_LIBS=ON -DBUILD_TOOLS=ON -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR\
+                -DPKG_ASPHERE=ON -DPKG_BODY=ON -DPKG_CLASS2=ON -DPKG_COLLOID=ON -DPKG_COMPRESS=ON -DPKG_CORESHELL=ON    \
+                -DPKG_DIPOLE=ON -DPKG_GRANULAR=OF -DPKG_KSPACE=ON -DPKG_MANYBODY=ON -DPKG_MC=ON -DPKG_MISC=ON -DPKG_MLIAP=ON \
+                -DPKG_MOLECULE=ON -DPKG_MPIIO=ON -DPKG_MSCG=ON -DPKG_OPT=ON -DPKG_PERI=ON  -DPKG_PYTHON=ON -DPKG_QEQ=ON \
+                -DPKG_REPLICA=ON -DPKG_RIGID=ON -DPKG_SHOCK=ON -DPKG_SNAP=ON -DPKG_SPIN=ON -DPKG_SRD=ON\
+                -DPKG_USER-BOCS=ON -DPKG_USER-CGDNA=ON -DPKG_USER-CGSDK=ON -DPKG_USER-COLVARS=ON    \
+                -DPKG_USER-DIFFRACTION=ON -DPKG_USER-DPD=ON -DPKG_USER-DRUDE=ON -DPKG_USER-EFF=ON -DPKG_USER-FEP=ON    \
+                -DPKG_USER-H5MD=ON -DPKG_USER-LB=ON -DPKG_USER-MANIFOLD=ON -DPKG_USER-MEAMC=ON    \
+                -DPKG_USER-MESODPD=ON -DPKG_USER-MGPT=ON -DPKG_USER-MISC=ON -DPKG_USER-MOFFF=ON    \
+                -DPKG_USER-MOLFILE=ON -DPKG_USER-NETCDF=ON -DPKG_USER-OMP=ON -DPKG_USER-PHONON=ON -DPKG_USER-PLUMED=ON -DPKG_USER-PTM=ON    \
+                -DPKG_USER-QTB=ON  -DPKG_USER-REACTION=ON    \
+                -DPKG_USER-REAXC=ON -DPKG_USER-SDPD=ON -DPKG_USER-SMD=ON -DPKG_USER-SMTBQ=ON    \
+                -DPKG_USER-SPH=ON -DPKG_USER-TALLY=ON -DPKG_USER-UEF=ON -DPKG_USER-YAFF=ON    \
+                -DPKG_VORONOI=ON -DWITH_FFMPEG=ON -DWITH_GZIP=ON -DWITH_JPEG=ON -DWITH_PNG=ON -DFFT=FFTW3 -DFFTW3_INCLUDE_DIR=${FFTW_INC} -DFFTW3_LIBRARY=$FFTW_DIR"
+        
+        maali_run "$cmake_command"
+        maali_run "make -j $MAALI_CORES"
+        maali_run "make install"
 }
 
 ##############################################################################
