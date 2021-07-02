@@ -1,0 +1,53 @@
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Image Domain Gridding (IDG)
+This repository will contain the three subprojects of Image Domain Gridding:
+    - idg-lib: The core library
+    - idg-bin: Examples in C++ and Python
+    - idg-api: An API which is used in WSClean
+
+Each repository can also be installed separately if desired.
+
+For further information, visit https://gitlab.com/astron-idg/idg
+
+EOF
+
+# specify which compilers we want to build the tool with. We specify only compiler that work with CUDA build
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+
+# URL to download the source code from
+MAALI_URL="https://gitlab.com/astron-idg/idg/-/archive/$MAALI_TOOL_VERSION/idg-$MAALI_TOOL_VERSION.tar.gz"
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="libs"
+
+# tool pre-requisites modules needed to install this new tool/package
+MAALI_TOOL_PREREQ="boost/1.76.0 intel-mkl/2019.0.5"
+
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+
+# for auto-building module files
+MAALI_MODULE_SET_MPI_NAME='$MAALI_TOOL_NAME'
+MAALI_MODULE_SET_MPI_VER='$MAALI_TOOL_VERSION'
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+
+function maali_build { 
+    mkdir -p build
+    cd build
+    maali_run "cmake .. -DCMAKE_INSTALL_PREFIX=\"${MAALI_INSTALL_DIR}\" -DBUILD_WITH_MKL=ON -DBUILD_LIB_CUDA=ON -DCUDA_ROOT_DIR=$CUDA_HOME"
+    maali_run "make -j ${MAALI_CORES} VERBOSE=1"
+    maali_run "make install"
+    ln -s  $MAALI_CUDA_HOME/lib64/stubs/libcuda.so  $MAALI_INSTALL_DIR/lib/libcuda.so.1
+    # Fix permissions.
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type d -exec chmod g+rwx,o+rx,o-w {} \;
+    find "${MAALI_INSTALL_DIR}" -user "${USER}" -type f -exec chmod g+rw,o+rx,o-w {} \;
+}

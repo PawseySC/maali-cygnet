@@ -1,0 +1,72 @@
+##############################################################################
+# maali cygnet file for pal
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+The PAL library is a partial re-implementation of Pat Wallace's popular SLALIB library
+written in C using a Gnu GPL license and layered on top of the IAU's SOFA library 
+(or the BSD-licensed ERFA) where appropriate. PAL attempts to stick to the SLA C API
+where possible although palObs() has a more C-like API than the equivalent slaObs() function.
+In most cases it is enough to simply change the function prefix of a routine in order to link against 
+PAL rather than SLALIB. Routines calling SOFA use modern nutation and precession models so will 
+return slightly different answers than native SLALIB. PAL functions not available in SOFA were
+ported from the Fortran version of SLALIB that ships as part of the Starlink software and uses a GPL licence.
+
+For further information, visit https://github.com/Starlink/pal/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/Starlink/pal/releases/download/v${MAALI_TOOL_VERSION}/pal-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="libs"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+MAALI_TOOL_PREREQ="erfa/2.0.0"
+##############################################################################
+
+
+
+function my_build {
+    MAALI_TOOL_CONFIGURE=" --without-starlink --with-erfa=${MAALI_ERFA_HOME}"
+    cd $MAALI_TOOL_BUILD_DIR
+    if [ -s bootstrap.sh ]; then
+        ./bootstrap.sh
+    fi
+    if [ -s configure ]; then
+        maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE"
+        maali_run "make CFLAGS=-g CXXFLAGS=-g -j $MAALI_CORES"
+        maali_run "make install"
+    elif [ -s CMakeLists.txt ]; then
+        mkdir build && cd build
+        maali_run "cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
+        maali_run "make -j $MAALI_CORES"
+        maali_run "make install"
+    elif [ -s Makefile ]; then
+        maali_run "make CFLAGS=-g CXXFLAGS=-g -j $MAALI_CORES"
+        if [ $name = "lua" ]; then
+            mv src/lua src/luac $INSTALL_DIR/bin
+        fi
+    fi
+}
+
+function maali_build {
+    my_build
+}

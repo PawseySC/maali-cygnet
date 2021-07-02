@@ -1,0 +1,55 @@
+##############################################################################
+# maali cygnet file for libxml2
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Libxml2 is the XML C parser and toolkit developed for the Gnome project (but usable 
+outside of the Gnome platform), it is free software available under the MIT License. 
+XML itself is a metalanguage to design markup languages, i.e. text language where 
+semantic and structure are added to the content using extra "markup" information 
+enclosed between angle brackets. HTML is the most well-known markup language. 
+Though the library is written in C a variety of language bindings make it available 
+in other environments.
+
+Libxml2 is known to be very portable, the library should build and work without 
+serious troubles on a variety of systems (Linux, Unix, Windows, CygWin, MacOS, 
+MacOS X, RISC Os, OS/2, VMS, QNX, MVS, VxWorks, ...)
+
+For further information visit http://xmlsoft.org/
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+
+# URL to download the source code from
+MAALI_URL="https://gitlab.gnome.org/GNOME/libxml2/-/archive/v${MAALI_TOOL_VERSION}/libxml2-v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="libs"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+MAALI_TOOL_CONFIGURE=" --without-python --with-pic"
+
+##############################################################################
+
+function maali_build {
+    cd $MAALI_TOOL_BUILD_DIR
+    maali_run "./autogen.sh"
+    maali_run "./configure --prefix=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE" 
+    maali_run "make CFLAGS=-g CXXFLAGS=-g -j $CORES"
+    maali_run "make install"
+}

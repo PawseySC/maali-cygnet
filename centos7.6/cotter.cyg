@@ -1,0 +1,65 @@
+##############################################################################
+# maali cygnet file for cotter
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+Cotter is the name of André Offringa's pre-processing pipeline for MWA data. 
+
+The most important actions Cotter performs are (in order):
+
+    Apply mapping from input nr to tile number/polarisation index and from coarse channel to frequency
+    Correct the phases for the cable length delay
+    Calculate u,v,w coordinates and other required meta data
+    Shift the phases from zenith to the pointing centre
+    Correct for digital gains of the coarse channels and (try to) correct the 
+        coarse-channel filter shapes created by the poly-phase filters.
+    Flag invalid channels (the DC channels and the outer most channels of each coarse channel) 
+        and the first 4 seconds (corrupt because of delay in tile initialization)
+    RFI detection (for which it uses the AOFlagger library)
+    Calculate some statistics
+    (Optionally) average in time or frequency direction, calculate weights
+
+
+Cotter is primarily used to convert the raw output of the MWA telescope 
+("gpubox files" containing visibilities) into an intermediate format for calibration; 
+either the CASA measurement set or UVFITS.  Bear in mind that André's "calibrate" 
+program requires measurement sets for calibration.  It is possible to convert UVFITS 
+files to a measurement set format via CASA.
+
+For further information visit https://github.com/MWATelescope/cotter
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+
+# URL to download the source code from
+MAALI_URL="https://github.com/MWATelescope/cotter/archive/refs/tags/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="apps"
+
+MAALI_TOOL_PREREQ="fftw/3.3.8 erfa/2.0.0 pal/0.9.8 gsl/2.6 casacore/3.2.1 cfitsio/3.48 aoflagger/3.1.0"
+
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+function maali_pre_build {
+MAALI_TOOL_CONFIGURE=" -DFFTW3_LIB=${FFTW_LIB}/libfftw3.so -DCASA_CASA_LIB=${CASACORE_ROOT}/lib/libcasa_casa.so -DCASA_MEASURES_LIB=${CASACORE_ROOT}/lib/libcasa_measures.so -DCASA_MS_LIB=${CASACORE_ROOT}/lib/libcasa_ms.so -DCASA_TABLES_LIB=${CASACORE_ROOT}/lib/libcasa_tables.so -DCASA_INCLUDE_DIR=${CASACORE_ROOT}/include -DCFITSIO_LIBRARY=${CFITSIO_ROOT}/lib/libcfitsio.so -DCFITSIO_INCLUDE_DIR=${CFITSIO_ROOT}/include -DPYTHON_LIBRARY=${PYTHON_DIR}/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=${PYTHON_DIR}/include/python3.6m -DLIBPAL_LIB=${MAALI_PAL_HOME}/lib/libpal.so -DLIBPAL_INCLUDE_DIR=${MAALI_PAL_HOME}/include -DAOFLAGGER_LIB=${MAALI_AOFLAGGER_HOME}/lib/libaoflagger.so -DAOFLAGGER_INCLUDE_DIR=${MAALI_AOFLAGGER_HOME}/include -DCASACORE_ROOT_DIR=$CASACORE_ROOT"
+
+}
+
+##############################################################################

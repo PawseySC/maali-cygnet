@@ -1,0 +1,57 @@
+##############################################################################
+# maali cygnet file for aoflagger
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+AOFlagger makes it possible to detect radio-frequency interference in radio-observations. 
+In this process, often called “flagging” the data, samples that are contaminated by 
+interference are marked. As shown by the figure below, the frequencies covered by telescopes 
+like LOFAR and the MWA are considerably affected by radio-frequency interference (RFI). 
+Efficient RFI detection is essential to obtain high quality images.
+
+For further information see https://aoflagger.readthedocs.io
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# URL to download the source code from
+MAALI_URL=""
+
+# location we are downloading the source code to
+MAALI_DST=""
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+MAALI_TOOL_PREREQ="libsigcpp/2.3.1 gsl/2.6 casacore/3.2.1 libxml2/2.9.12 cfitsio/3.48 lua/5.3 fftw/3.3.8"
+
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0 git/2.12.3"
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_MANPATH=1
+MAALI_MODULE_SET_PKG_CONFIG_PATH=1
+
+##############################################################################
+
+
+function maali_cmake_build {
+    MAALI_TOOL_CONFIGURE="-DFFTW3_LIB=${FFTW_LIB}/libfftw3.so -DLUA_LIBRARY:FILEPATH=${MAALI_LUA_HOME}/lib/liblua53.a -DLUA_INCLUDE_DIR=${MAALI_LUA_HOME}/include -DFFTW3_INCLUDE_DIR=${FFTW_INCLUDE} -DCASACORE_ROOT_DIR=${CASACORE_ROOT} -DCFITSIO_ROOT_DIR=${CFITSIO_ROOT} -DPYTHON_LIBRARY=${PYTHON_DIR}/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=${PYTHON_DIR}/include/python3.6m"
+    cd $MAALI_BUILD_DIR
+    [[ -d aoflagger ]] && rm -rf aoflagger
+    maali_run "git clone --recurse-submodules https://gitlab.com/aroffringa/aoflagger.git"
+    cd aoflagger
+    maali_run "git checkout v$MAALI_TOOL_VERSION"
+    mkdir build && cd build
+    maali_run "cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR $MAALI_TOOL_CONFIGURE .."
+    maali_run "make -j $MAALI_CORES"
+    maali_run "make install"
+}

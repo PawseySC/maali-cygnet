@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for gdb
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+GDB, the GNU Project debugger, allows you to see what is going on `inside' another program while it executes -- or what another program was doing at the moment it crashed.
+
+GDB can do four main kinds of things (plus other things in support of these) to help you catch bugs in the act:
+
+    Start your program, specifying anything that might affect its behavior.
+    Make your program stop on specified conditions.
+    Examine what has happened, when your program has stopped.
+    Change things in your program, so you can experiment with correcting the effects of one bug and go on to learn about another. 
+
+Those programs might be executing on the same machine as GDB (native), on another machine (remote), or on a simulator. GDB can run on most popular UNIX and Microsoft Windows variants, as well as on Mac OS X.
+
+For further information visit https://www.gnu.org/software/gdb/
+
+EOF
+
+# Request only the latest GNU and Intel compilers to be used
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_CPU_TARGET="$MAALI_DEFAULT_CPU_TARGET"
+
+
+# URL to download the source code from
+MAALI_URL="http://ftp.gnu.org/gnu/gdb/gdb-${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/"$MAALI_TOOL_NAME"-"$MAALI_TOOL_VERSION".tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/"$MAALI_TOOL_NAME"-"$MAALI_TOOL_VERSION
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool pre-requisites
+MAALI_TOOL_PREREQ="python/3.6.3"
+
+MAALI_TOOL_CONFIGURE=" --with-python" 
+# for auto-building module files
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+
+##############################################################################
+function maali_pre_build {
+    echo '#!/bin/sh'                          > makeinfo
+    echo 'echo "makeinfo (GNU texinfo) 5.2"' >> makeinfo 
+    chmod a+x makeinfo 
+    MAALI_TOOL_CONFIGURE+=" MAKEINFO=`realpath ./makeinfo`" 
+
+}
