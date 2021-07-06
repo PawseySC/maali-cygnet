@@ -1,0 +1,58 @@
+##############################################################################
+# maali cygnet file for mcpp
+##############################################################################
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+This is a fork of mcpp. mcpp is a C/C++ preprocessor used by the Ice Slice 
+compilers.
+
+This fork consists of a simplified version of mcpp 2.7.2 plus various fixes, 
+tailored to the Slice compilers requirements. Its build system creates only 
+a static library and no command-line preprocessor. The resulting static library
+is later used when creating the Ice Slice shared library or statically-linked 
+Slice compilers such as slice2js.
+
+For more info, see https://github.com/zeroc-ice/mcpp
+
+EOF
+
+# specify which compilers we want to build the tool with
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_COMPILERS"
+
+# url 
+MAALI_URL="https://github.com/zeroc-ice/mcpp/archive/v${MAALI_TOOL_VERSION}.tar.gz"
+
+# location we are downloading the source code to
+MAALI_DST="$MAALI_SRC/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION.tar.gz"
+
+# where the unpacked source code is located
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/$MAALI_TOOL_NAME-$MAALI_TOOL_VERSION"
+
+# type of tool (eg. apps, devel, python, etc.)
+MAALI_TOOL_TYPE="devel"
+
+# tool build pre-requisites - not added to the module, only needed for building (loaded after MAALI_TOOL_PREREQ)
+MAALI_TOOL_BUILD_PREREQ=""
+
+# tool pre-requisites 
+MAALI_TOOL_PREREQ=""
+
+# for auto-building module files
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+MAALI_MODULE_SET_C_INCLUDE_PATH=1
+MAALI_MODULE_SET_CPLUS_INCLUDE_PATH=1
+MAALI_MODULE_SET_MCPP_ROOT='$MAALI_APP_HOME'
+
+##############################################################################
+function maali_build {
+  # this is the core function for creating software
+
+  # allows late evaluation
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "make -j $MAALI_CORES PREFIX=$MAALI_INSTALL_DIR "
+  maali_run "make PREFIX=$MAALI_INSTALL_DIR install"
+}
