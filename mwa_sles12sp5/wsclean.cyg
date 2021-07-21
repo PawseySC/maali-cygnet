@@ -1,3 +1,7 @@
+##############################################################################
+# maali cygnet file for wsclean
+##############################################################################
+
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 WSClean (w-stacking clean) is a fast generic widefield imager. It uses the w-stacking algorithm and can make use of the w-snapshot algorithm. As of Feb 2014, it is 2-12 times faster than CASA's w-projection, depending on the array configuration. It supports full-sky imaging and proper beam correction for homogeneous dipole arrays such as the MWA.
@@ -27,8 +31,6 @@ MAALI_TOOL_PREREQ="intel-mkl/19.0.5 boost/1.66.0 hdf5/1.10.5 idg/0.7 gsl/2.6 chg
 
 
 # for auto-building module files
-MAALI_MODULE_SET_MPI_NAME='$MAALI_TOOL_NAME'
-MAALI_MODULE_SET_MPI_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_LIBRARY_PATH=1

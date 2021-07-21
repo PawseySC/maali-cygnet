@@ -1,3 +1,7 @@
+##############################################################################
+# maali cygnet file for idg
+##############################################################################
+
 read -r -d '' MAALI_MODULE_WHATIS << EOF
 
 Image Domain Gridding (IDG)
@@ -35,8 +39,6 @@ MAALI_TOOL_PREREQ="boost/1.66.0 intel-mkl/19.0.5"
 
 
 # for auto-building module files
-MAALI_MODULE_SET_MPI_NAME='$MAALI_TOOL_NAME'
-MAALI_MODULE_SET_MPI_VER='$MAALI_TOOL_VERSION'
 MAALI_MODULE_SET_PATH=1
 MAALI_MODULE_SET_LD_LIBRARY_PATH=1
 MAALI_MODULE_SET_LIBRARY_PATH=1
