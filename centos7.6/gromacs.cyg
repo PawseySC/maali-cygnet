@@ -87,15 +87,15 @@ function maali_cmake_build {
   # for tools that use cmake
   export VMDDIR="/pawsey/centos7.6/apps/cascadelake/gcc/8.3.0/openmpi-ucx/4.0.2/vmd/1.9.3"
   MAALI_TOOL_CONFIGURE+=" -DCUDA_TOOLKIT_ROOT_DIR=$MAALI_CUDA_HOME" 
-  # Only use AVX2_256 hardware acceleration when appropriate
-  # Only use AVX2_256 hardware acceleration when appropriate
-  if [ ${CPU_TARGET} == "cascadelake" ]; then
-    MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX_512"
-  elif [ ${CPU_TARGET} == "haswell" ] || [ ${CPU_TARGET} == "broadwell" ]; then
-    MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX2_256"
-  else
-    MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX_256"
-  fi
+  # gromacs output suggests the following:
+  # ----------------
+  # Highest SIMD level requested by all nodes in run: AVX2_256
+  # SIMD instructions selected at compile time:       AVX_512
+  # This program was compiled for different hardware than you are running on,
+  # which could influence performance.This host supports AVX-512, but since it
+  # only has 1 AVX-512FMA unit, it would be faster to use AVX2 instead.
+  # -----------------
+  MAALI_TOOL_CONFIGURE+=" -DGMX_SIMD=AVX2_256"
   if [[ $MAALI_COMPILER_NAME == "gcc"* ]]; then
 
     # there are 4 different builds of gromacs that can reside within the same folder, depending on the user needs
