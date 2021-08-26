@@ -18,8 +18,7 @@ EOF
 #MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
 
 # Compiler and target CPU architecture
-MAALI_TOOL_COMPILERS="gcc/8.3.0"
-MAALI_TOOL_CPU_TARGET="broadwell cascadelake"
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # URL to download source
 MAALI_URL="https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-$MAALI_TOOL_VERSION.tar.gz"
@@ -45,10 +44,17 @@ MAALI_MODULE_SET_CPATH=1
 MALLI_MODULE_SET_FCPATH=1
 MAALI_MODULE_SET_FPATH=1
 MAALI_MODULE_SET_CUDA_PATH='\$CUDA_HOME'
-MAALI_MODULE_SET_HIP_PLATFORM='nvcc'
 ##############################################################################
 # Functions to be redefined
 
+function maali_pre_build {
 
+  if [[ "$MAALI_TOOL_MAJOR_VERSION" -ge "4" ]]; then
+    export HIP_PLATFORM='nvidia'
+  else
+    export HIP_PLATFORM='nvcc'
+  fi
+
+}
 
 ##############################################################################
