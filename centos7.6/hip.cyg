@@ -19,6 +19,8 @@ EOF
 
 # Compiler and target CPU architecture
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.1 cuda/11.1"
+MAALI_CUDA_SUFFIX=""
 
 # URL to download source
 MAALI_URL="https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-$MAALI_TOOL_VERSION.tar.gz"
@@ -28,7 +30,7 @@ MAALI_DST="$MAALI_SRC/rocm-$MAALI_TOOL_VERSION.tar.gz"
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/HIP-rocm-$MAALI_TOOL_VERSION"
 
 # Runtime module dependencies
-MAALI_TOOL_PREREQ="cuda/10.1"
+MAALI_TOOL_PREREQ=""
 # Build-only module dependencies
 MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
 
