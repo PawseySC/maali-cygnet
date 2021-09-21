@@ -1,0 +1,73 @@
+##############################################################################
+# maali cygnet file for hipSOLVER
+##############################################################################
+
+# Package description
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+hipSOLVER is a LAPACK marshalling library, with multiple supported backends. Currently, hipSOLVER supports rocSOLVER and cuSOLVER as backends.
+
+For more information see https://github.com/ROCmSoftwarePlatform/hipSOLVER.
+
+EOF
+
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="cuda/11.1"
+MAALI_CUDA_BUILD_ONLY=1
+
+# URL to download source
+MAALI_URL="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
+# Local filename for downloaded source file
+MAALI_DST=""
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/hipSOLVER-$MAALI_TOOL_VERSION"
+
+if [ "$MAALI_TOOL_VERSION" ==  "16Aug2021" ] ; then
+  HIPSOLVER_COMMIT="a40ffc72ea6229c4a144c15ccaa468cef655b1d1"
+  HIP_VERSION="4.3.0"
+else
+  maali_die "hipSOLVER version $MAALI_TOOL_VERSION not supported"
+fi
+
+# Runtime module dependencies
+MAALI_TOOL_PREREQ="hip/$HIP_VERSION"
+# Build-only module dependencies
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
+
+# Type of tool
+MAALI_TOOL_TYPE="devel"
+
+# Congigure Options
+MAALI_TOOL_CONFIGURE=' -DCMAKE_BUILD_TYPE=Release -DUSE_CUDA=ON -DCMAKE_MODULE_PATH=$MAALI_HIP_HOME/cmake'
+
+# Variables to be defined in the modulefile
+MAALI_MODULE_SET_CPATH=1
+MALLI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+##############################################################################
+# Functions to be redefined
+
+function maali_download {
+  log ".. supressing downloading as we are using a git repository"
+}
+
+
+function maali_unpack {
+  log " .. supressing unpacking as we are using a git repository"
+}
+
+
+function maali_pre_build {
+
+  maali_run "git clone $MAALI_URL $MAALI_TOOL_BUILD_DIR/"
+  cd "$MAALI_TOOL_BUILD_DIR"
+  maali_run "git checkout $HIPSOLVER_COMMIT"
+
+}
+
+##############################################################################
