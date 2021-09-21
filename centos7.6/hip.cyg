@@ -1,6 +1,5 @@
 ##############################################################################
 # maali cygnet file for HIP
-# written for version 3.8.0 on Topaz with CUDA backend
 ##############################################################################
 
 # Package description
@@ -20,6 +19,7 @@ EOF
 # Compiler and target CPU architecture
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 MAALI_TOOL_CUDA_COMPILERS="cuda/10.1 cuda/11.1"
+MAALI_CUDA_BUILD_ONLY=1
 MAALI_CUDA_SUFFIX=""
 
 # URL to download source
