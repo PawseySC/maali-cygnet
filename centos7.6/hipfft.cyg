@@ -1,0 +1,61 @@
+##############################################################################
+# maali cygnet file for hipFFT
+##############################################################################
+
+# Package description
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+hipFFT is a FFT marshalling library, with multiple supported backends. Currently, hipFFT supports rocFFT and cuFFT as backends.
+
+For more information see https://github.com/ROCmSoftwarePlatform/hipFFT.
+
+EOF
+
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="cuda/11.1"
+MAALI_CUDA_BUILD_ONLY=1
+
+# URL to download source
+MAALI_URL="https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-$MAALI_TOOL_VERSION.tar.gz"
+# Local filename for downloaded source file
+MAALI_DST="$MAALI_SRC/hipFFT-rocm-$MAALI_TOOL_VERSION.tar.gz"
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/hipFFT-rocm-$MAALI_TOOL_VERSION"
+
+# Runtime module dependencies
+HIP_VERSION="$MAALI_TOOL_VERSION"
+MAALI_TOOL_PREREQ="hip/$HIP_VERSION"
+# Build-only module dependencies
+MAALI_TOOL_BUILD_PREREQ="cmake/3.15.0"
+
+# Type of tool
+MAALI_TOOL_TYPE="devel"
+
+# Congigure Options
+MAALI_TOOL_CONFIGURE=' -DCMAKE_BUILD_TYPE=Release -DBUILD_WITH_LIB=CUDA -DCMAKE_MODULE_PATH=$MAALI_HIP_HOME/cmake'
+
+# Variables to be defined in the modulefile
+MAALI_MODULE_SET_CPATH=1
+MALLI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_LIBRARY_PATH=1
+MAALI_MODULE_SET_LD_LIBRARY_PATH=1
+##############################################################################
+# Functions to be redefined
+
+function maali_pre_build {
+
+  cd "$MAALI_TOOL_BUILD_DIR"
+
+# Marco's "Back to the Future"-style hack - hopefully not required from 4.4.0 on
+  if [ "$MAALI_TOOL_MAJOR_VERSION" -le 4 ] && [ "$MAALI_TOOL_MINOR_VERSION" -le 3 ] ; then
+    git_cmake_fix="894ea5c18b477fda9acc006c0d60a4803acf1a76" # 25 August commit with latest fixes
+    wget -O cmake/dependencies.cmake https://raw.githubusercontent.com/ROCmSoftwarePlatform/hipFFT/"${git_cmake_fix}"/cmake/dependencies.cmake
+  fi
+
+}
+
+##############################################################################
