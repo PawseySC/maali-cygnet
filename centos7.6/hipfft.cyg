@@ -53,7 +53,7 @@ function maali_pre_build {
 # Marco's "Back to the Future"-style hack - hopefully not required from 4.4.0 on
   if [ "$MAALI_TOOL_MAJOR_VERSION" -le 4 ] && [ "$MAALI_TOOL_MINOR_VERSION" -le 3 ] ; then
     git_cmake_fix="894ea5c18b477fda9acc006c0d60a4803acf1a76" # 25 August commit with latest fixes
-    wget -O cmake/dependencies.cmake https://raw.githubusercontent.com/ROCmSoftwarePlatform/hipFFT/"${git_cmake_fix}"/cmake/dependencies.cmake
+    maali_run "wget -O cmake/dependencies.cmake https://raw.githubusercontent.com/ROCmSoftwarePlatform/hipFFT/${git_cmake_fix}/cmake/dependencies.cmake"
   fi
 
 }
