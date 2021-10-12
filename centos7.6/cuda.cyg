@@ -20,10 +20,22 @@ MAALI_TOOL_COMPILERS="binary"
 # https://developer.nvidia.com/compute/machine-learning/nccl/secure/v2.4/prod//nccl_2.4.7-1%2Bcuda10.1_x86_64.txz
 # nccl_2.4.7-1+cuda10.1_x86_64.txz
 
+if [[ $MAALI_TOOL_VERSION == "11.4.2" ]]; then
+   MAALI_URL="https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda_11.4.2_470.57.02_linux.run"
+   VERSION_EXTRA="_470.57.02"
+   nccl_ver="2.11.4-1"
+fi
+
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "11.1" ]]; then
+   MAALI_URL="https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run"
+   VERSION_EXTRA=".1_455.32.00"
+   nccl_ver="2.8.3-1"
+fi
+
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.2" ]]; then
    MAALI_URL="http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run"
-   VERSION_EXTRA=".440.33.01"
-   nccl_ver="2.4.7-1"
+   VERSION_EXTRA=".89_440.33.01"
+   nccl_ver="2.6.4-1"
 fi
 
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
@@ -73,7 +85,9 @@ MAALI_TOOL_CONFIGURE=""
 
 # for auto-building module files
 
-if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.2" ]]; then
+  MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release ${MAALI_INSTALL_DIR}/nsight-systems-2019.5.2/host-linux-x64 ${MAALI_INSTALL_DIR}/nsight-systems-2019.5.2/target-linux-x64"
+elif [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.1" ]]; then
   MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release ${MAALI_INSTALL_DIR}/nsight-systems-2019.3.7.5/Host-x86_64 ${MAALI_INSTALL_DIR}/nsight-systems-2019.3.7.5/Target-x86_64/x86_64"
 else
   MAALI_MODULE_SET_PATH="${MAALI_INSTALL_DIR}/bin ${MAALI_INSTALL_DIR}/samples/bin/x86_64/linux/release"
@@ -87,8 +101,8 @@ else
    MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/extras/CUPTI/lib64"
 fi
 
-MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
-MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/CL ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/CL ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
 MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}/doc/man"
 MAALI_MODULE_SET_CUDA_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
@@ -154,3 +168,4 @@ function maali_build {
 }
 
 ##############################################################################
+
