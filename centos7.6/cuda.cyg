@@ -20,10 +20,16 @@ MAALI_TOOL_COMPILERS="binary"
 # https://developer.nvidia.com/compute/machine-learning/nccl/secure/v2.4/prod//nccl_2.4.7-1%2Bcuda10.1_x86_64.txz
 # nccl_2.4.7-1+cuda10.1_x86_64.txz
 
+if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "11.4.2" ]]; then
+   MAALI_URL="https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda_11.4.2_470.57.02_linux.run"
+   VERSION_EXTRA="_470.57.02"
+   nccl_ver="2.11.4-1"
+fi
+
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "11.1" ]]; then
    MAALI_URL="https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run"
    VERSION_EXTRA=".1_455.32.00"
-   nccl_ver="2.8.3-0"
+   nccl_ver="2.8.3-1"
 fi
 
 if [[ $MAALI_TOOL_MAJOR_MINOR_VERSION == "10.2" ]]; then
@@ -95,8 +101,8 @@ else
    MAALI_MODULE_SET_LIBRARY_PATH="${MAALI_INSTALL_DIR}/lib64 ${MAALI_INSTALL_DIR}/extras/CUPTI/lib64"
 fi
 
-MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
-MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/cl ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_FPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/CL ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
+MAALI_MODULE_SET_CPATH="${MAALI_INSTALL_DIR}/include ${MAALI_INSTALL_DIR}/include/CL ${MAALI_INSTALL_DIR}/extras/CUPTI/include"
 MAALI_MODULE_SET_MANPATH="${MAALI_INSTALL_DIR}/doc/man"
 MAALI_MODULE_SET_CUDA_HOME='$MAALI_APP_HOME'
 MAALI_MODULE_SET_NVIDIA_CUDA_HOME='$MAALI_APP_HOME'
