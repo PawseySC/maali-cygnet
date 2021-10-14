@@ -169,3 +169,10 @@ function maali_build {
 
 ##############################################################################
 
+### Post-installation
+### Note by Marco
+# Mimicking what is in the install path of cuda/10.1, I added the header file nv-p2p/nv-p2p.h
+# This is needed when installing gdrcopy
+# I got it from the following path in the compute nodes: /usr/src/nvidia-470.57.02/nvidia/nv-p2p.h
+# Basically this file ships with the Nvidia driver source base
+
