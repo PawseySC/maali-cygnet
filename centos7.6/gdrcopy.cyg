@@ -12,7 +12,7 @@ EOF
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 
 # tool pre-requisites modules needed to install this new tool/package
-MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.1 cuda/11.4.2"
 
 # URL to download the source code from
 # https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz
@@ -57,7 +57,8 @@ function maali_build {
   echo "CUDA=${CUDA_HOME}"
   echo "NVIDIA_SRC_DIR=${NVIDIA_SRC_DIR}"
 
-  maali_run "mkdir -p $MAALI_INSTALL_DIR"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/lib64"
+  maali_run "mkdir -p $MAALI_INSTALL_DIR/include"
   # Needs to call things like ldconfig which is /sbin as not in default path
   export PATH=$PATH:/sbin
 
@@ -66,6 +67,6 @@ function maali_build {
   maali_run "make -e lib_install"
   # Dummy Sym link
   cd "$MAALI_INSTALL_DIR"
- 
+  maali_run "ln -s lib64 lib"
 }
 

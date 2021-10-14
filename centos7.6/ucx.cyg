@@ -20,7 +20,7 @@ EOF
 # specify which compilers we want to build the tool with
 # MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_SYSTEM_GCC"
 MAALI_TOOL_COMPILERS="gcc/4.8.5"
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.1 cuda/11.4.2"
 
 # tool pre-requisites modules needed to install this new tool/package
 # MAALI_TOOL_PREREQ="cuda/10.1"
