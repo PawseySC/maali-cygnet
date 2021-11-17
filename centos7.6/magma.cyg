@@ -1,4 +1,4 @@
-#############################################################################
+##############################################################################
 # maali cygnet file for MAGMA 
 ##############################################################################
 
@@ -13,7 +13,7 @@ EOF
 
 # specify which compilers we want to build the tool with
 MAALI_TOOL_COMPILERS="$MAALI_DEFAULT_GCC_COMPILERS"
-MAALI_TOOL_CUDA_COMPILERS="cuda/10.1 cuda/11.1"
+MAALI_TOOL_CUDA_COMPILERS="$MAALI_DEFAULT_CUDA_COMPILERS"
 
 # prevent non-CUDA build
 MAALI_CUDA_BUILD_ONLY=1
