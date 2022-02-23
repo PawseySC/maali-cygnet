@@ -15,6 +15,9 @@ EOF
 # Compiler and target CPU architecture
 MAALI_TOOL_COMPILERS="binary"
 
+# rclone is using an expired lets encrypt cert
+MAALI_WGET_EXTRA=--no-check-certificate
+
 # URL to download source
 MAALI_URL="https://downloads.rclone.org/v$MAALI_TOOL_VERSION/$MAALI_TOOL_NAME-v$MAALI_TOOL_VERSION-linux-amd64.zip"
 # Local filename for downloaded source file
