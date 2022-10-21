@@ -1,0 +1,74 @@
+##############################################################################
+# maali cygnet file for HIP
+##############################################################################
+
+# Package description
+
+read -r -d '' MAALI_MODULE_WHATIS << EOF
+
+HIP is a C++ Runtime API and Kernel Language that allows developers to create portable applications for AMD and NVIDIA GPUs from single source code.
+
+For more information see https://github.com/ROCm-Developer-Tools/HIP.
+
+EOF
+
+
+# Crays only : Programming Environment
+#MAALI_TOOL_CRAY_PRGENV="$MAALI_DEFAULT_CRAY_PRGENVS"
+
+# Compiler and target CPU architecture
+MAALI_TOOL_COMPILERS="gcc/8.3.0"
+MAALI_TOOL_CUDA_COMPILERS="cuda/10.2"
+MAALI_CUDA_BUILD_ONLY=1
+MAALI_CUDA_SUFFIX=""
+
+# URL to download source
+MAALI_URL=""
+# Local filename for downloaded source file
+MAALI_DST=""
+# Directory obtained when unzipping source file (name must match the actual content of the source file)
+MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/HIP"
+
+# Runtime module dependencies
+MAALI_TOOL_PREREQ=""
+# Build-only module dependencies
+MAALI_TOOL_BUILD_PREREQ="cmake/3.18.0"
+
+# Type of tool
+MAALI_TOOL_TYPE="devel"
+
+# Congigure Options
+MAALI_TOOL_CONFIGURE=' -DCMAKE_BUILD_TYPE=Release'
+
+# Variables to be defined in the modulefile
+MAALI_MODULE_SET_PATH=1
+MAALI_MODULE_SET_CPATH=1
+MAALI_MODULE_SET_FCPATH=1
+MAALI_MODULE_SET_FPATH=1
+MAALI_MODULE_SET_HIP_PATH='$MAALI_APP_HOME'
+MAALI_MODULE_SET_CUDA_PATH='\$CUDA_HOME'
+##############################################################################
+# Functions to be redefined
+
+function maali_pre_build {
+   mkdir -p $MAALI_TOOL_BUILD_DIR
+   cd $MAALI_TOOL_BUILD_DIR
+   maali_run "wget https://github.com/ROCm-Developer-Tools/hipamd/archive/refs/tags/rocm-${MAALI_TOOL_VERSION}.tar.gz"
+   maali_run "tar xf rocm-${MAALI_TOOL_VERSION}.tar.gz"
+   maali_run "rm rocm-${MAALI_TOOL_VERSION}.tar.gz"
+
+   maali_run "wget https://github.com/ROCm-Developer-Tools/HIP/archive/refs/tags/rocm-${MAALI_TOOL_VERSION}.tar.gz"
+   maali_run "tar xf rocm-${MAALI_TOOL_VERSION}.tar.gz"
+}
+function maali_cmake_build {
+	cd $MAALI_TOOL_BUILD_DIR
+	HIP_COMMON="$MAALI_TOOL_BUILD_DIR/HIP-rocm-${MAALI_TOOL_VERSION}"
+	cd hipamd-rocm-${MAALI_TOOL_VERSION}
+	mkdir -p build; cd build
+	maali_run "cmake -DHIP_COMMON_DIR=$HIP_COMMON -DHIP_PLATFORM=nvidia -DCMAKE_INSTALL_PREFIX=$MAALI_INSTALL_DIR .."
+	maali_run "make -j$MAALI_CORES"
+	maali_run "make install"
+	
+}
+
+##############################################################################
