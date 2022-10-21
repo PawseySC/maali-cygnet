@@ -23,9 +23,9 @@ MAALI_CUDA_BUILD_ONLY=1
 MAALI_CUDA_SUFFIX=""
 
 # URL to download source
-MAALI_URL="" #"https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_URL=""
 # Local filename for downloaded source file
-MAALI_DST="" #"$MAALI_SRC/rocm-$MAALI_TOOL_VERSION.tar.gz"
+MAALI_DST=""
 # Directory obtained when unzipping source file (name must match the actual content of the source file)
 MAALI_TOOL_BUILD_DIR="$MAALI_BUILD_DIR/HIP"
 
